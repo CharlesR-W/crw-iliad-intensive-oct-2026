@@ -1,0 +1,339 @@
+Introduction to singular
+learning theory
+
+
+Zach Furman
+Background & Motivation
+Background & Motivation
+
+• Why does deep learning work? Can we understand it?
+  • Classical statistical learning theory actively predicted that deep learning
+    couldn't work
+
+• Two mysteries:
+  • Generalization
+  • Learned structure
+Generalization
+
+What the classical theory said:
+Generalization
+Generalization
+
+
+
+
+                 Illustration by Pearce et al. (2023)
+Learned structure
+
+
+
+
+                    Illustration by Pearce et al. (2023)
+Learned structure
+
+
+
+
+                    Nanda et al. (2023)
+Singular learning theory:
+overview
+    Singular learning theory: overview
+
+     • Created 25 years ago by Sumio Watanabe, by
+       dropping a single assumption from statistical
+       learning theory
+                                                                                           ℱ
+     • Where did statistical learning theory go wrong?
+       • It assumed non-degeneracy: that the
+          parameter-to-function map is locally
+          injective
+
+       • When this assumption doesn't hold, we call
+          the model singular, and much of classical      When the parameter-function map isn’t one-to-one, the choice
+          statistical learning theory falls apart             of parameterization can’t be swept under the rug.
+
+
+
+
+𝒲
+Singular learning theory: overview
+
+• Points in parameter space which are degenerate are called singularities
+  • "How singular" a model is changes depending on where you are in
+    parameter space
+
+  • More singular points act as if they have a lower parameter count and
+    generalize better
+
+• In many examples, singularities correspond with learned structure
+  • Studying singularities can potentially allow reverse-engineering a model's
+    learned algorithm
+What exactly is a singular
+model?
+Singular model: definition
+
+We say that a model p(x | w) is singular at a parameter w ∈ W if there exists a
+non-zero direction v ∈ TW such that the directional derivative ∇v p(x | w) = 0
+for all x in the domain of the model*. It is regular otherwise.
+
+A singular model is a model which is singular for at least one w. It is a regular
+model otherwise.
+
+
+*Equivalently, the Fisher information matrix is not full rank.
+Example
+Regular model: Gaussian                Singular model: Cubically-parameterized Gaussian
+
+             1                                      1       −(x−w 3)2
+p(x | w) =       e
+                          2
+                     −(x−w)            p(x | w) =       e
+             π                                      π
+ d            1                         d            1
+                                                        6w (x − w ) e−( x − w )
+                                                                             3 2
+                                                          2      3
+   p(x | w) =    (x − w) e −(x − w)2
+                                          p(x | w) =
+dw                                     dw             π
+               π
+ d                1     −x 2            d
+       p(x | w) =    xe                       p(x | w) = 0
+dw w=0             π                   dw w=0
+What models are singular?
+Examples of singular models:                              In general, singular models often:
+• Layered neural networks
+                                                          • Have hierarchical structures.
+• Radial basis functions
+• Normal mixtures                                         • Contain hidden variables.
+• Binomial and multinomial mixtures                       • Consist of several information
+• Mixtures of statistical models                              processing modules.
+• Reduced rank regressions                                • Are designed to obtain hidden
+• Boltzmann machines                                          knowledge from random samples.
+• Bayes networks                                          • Estimate probabilistic grammars.
+• Hidden Markov models
+                                                          • Are made by superposition of
+• Stochastic context-free grammars                            parametric functions.
+
+                                      Lists from Watanabe (2009)
+Singular models break statistics
+
+Much of parametric statistics and learning theory fails for singular models:
+
+• Generalization error is not necessarily proportional to parameter count
+• The Cramer-Rao inequality does not hold
+• The BIC is incorrect
+• Maximum-likelihood estimation is not e cient
+• The Bayesian posterior distribution is not asymptotically Gaussian
+• Their information geometry is not Riemannian
+
+                                   ffi
+How do you deal with singular
+models?
+The learning coefficient
+
+• We can quantify the "e ective size" of a singular model for some parameter w
+  with the learning coe cient, λ
+
+• The learning coe cient is a geometric invariant of the loss function which
+  captures volume scaling
+
+
+
+
+                        ff
+                  ffi
+            ffi
+     The learning coefficient
+     De ne V(ϵ) as the Lebesgue measure of all parameters with population loss L(w) within ϵ
+     of the minimum. Then, asymptotically as ϵ → 0, this has the following functional form:
+                                                          λ
+                                            V(ϵ) ≈ cϵ
+     where c is some constant and λ is the learning coe cient.
+
+
+
+
+                                            (assuming m = 1)
+
+                                                   ffi
+fi
+Some remarks
+
+The learning coe cient is a sort of fractal dimension: if I have a length ϵ
+                                            λ
+hypercube in λ dimensions, its volume is ϵ .
+                    d
+Regular models: λ =   where d is the parameter count.
+                    2
+                    d
+Singular models: λ ≤ .
+                    2
+
+
+
+            ffi
+      Generalization in singular models
+
+      The Bayesian generalization error in a singular model is given to leading order
+      by
+
+
+                                              (n)
+                                         λ     1
+                                   G(n) ≈ + o
+                                         n
+      where n is the number of training samples. For singular models, the learning
+      coe cient replaces the parameter count as the dominant contribution to
+      generalization error.
+
+
+
+
+ffi
+Free energy and phase
+transitions
+Free energy
+
+The Bayesian free energy is de ned as
+
+
+                                        ∫W
+                                                 −βnLn(w)
+                      Fn(Wα) = − log         e              dw,
+                                         α
+
+where Wα is a subset of parameter space, and Ln(w) is the negative log-
+likelihood across the entire dataset.
+
+
+Bayesian inference may be characterized as a variational problem of
+minimizing the free energy.
+
+                         fi
+The free energy formula                     Watanabe (1999)
+
+
+
+
+         Fn(Wα) ≈ nLn(w*
+                       α ) + λ(w*
+                                α ) log n
+The free energy formula                                  Watanabe (1999)
+
+
+
+
+             Fn(Wα) ≈ nLn(w*
+                           α ) + λ(w*
+                                    α ) log n
+
+      Tradeo between accuracy (energy) and complexity (entropy)
+
+
+
+
+ ff
+The free energy formula                              Watanabe (1999)
+
+
+
+
+         Fn(Wα) ≈ nLn(w*
+                       α ) + λ(w*
+                                α ) log n
+
+         This tradeo depends on the dataset size n
+
+
+
+
+   ff
+Internal model selection
+
+Suppose a model's parameter space W can be
+partitioned into two subspaces, W1 and W2. Then
+                        −Fn(W1)    −Fn(W2)
+      Fn(W) = − log(e      +e     )
+            ≈ min{Fn(W1), Fn(W2)}
+Bayesian inference implicitly selects between
+submodels via free energy minimization: it is
+                                                  Image credit:
+automatically performing model selection.         Jesse Hoogland
+Phase transitions
+
+                     Fn(Wα) ≈ nLn(w*
+                                   α ) + λ(w*
+                                            α ) log n
+
+
+
+
+ Ln(w*
+     1
+       ) < Ln(w*
+               2
+                 )
+  λ(w*
+     1
+       ) > λ(w*
+              2
+                )
+Applications and empirical
+validation
+Estimating learning coefficients at scale
+
+
+
+
+     Furman & Lau (2024)       Lau et al. (2024)
+A toy model of superposition   Chen et al. (2023)
+
+                               Image credit:
+                               Jesse Hoogland
+Language models   Hoogland et al. (2024)
+Beyond learning coefficients?
+
+
+                                 Baker et al. (2025)
+
+
+
+
+                                Adam et al. (2025)
+Deeper theory?
+
+                                   Lehalleur et al. (2024)
+
+
+
+
+                 Murfet & Troiani (2025)
+More information
+
+• Learn more about SLT:
+  devinterp.com/resources
+
+• Read the latest papers:
+  devinterp.com/publications
+
+• Join the Discord:
+  devinterp.com/discord
+
+• Try the tools: github.com/
+  timaeus-research/devinterp/
+A toy model of superposition
+
+• Setup: Anthropic's toy model of superposition (Elhage et al. 2022)
+• A very simple model:
+                         T
+   f(x, w) = ReLU(W Wx + b)
+                                      2
+             ∑
+   Ln(w) =        | | xi − f(xi, w) | |
+             xi
+A toy model of superposition   Elhage et al. (2022)
+A toy model of superposition   Chen et al. (2023)
+Language models   Hoogland et al. (2024)
+Algorithmic tasks   Carroll et al. (in prep)
+

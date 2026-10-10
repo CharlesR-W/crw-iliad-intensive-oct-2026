@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="nbkit.py (wb1); do not edit by hand">
+<title>Workbook 1 — How Deep Learning Changed How We Think about Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+/* KaTeX's hidden MathML is position:absolute; keep it inside its formula (no sideways page scroll). */
+.katex, .table-wrap, .katex-display { position: relative; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, pre, .katex-display, table { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#1-keystone-intelligence-is-grown-not-written">1. Keystone: intelligence is grown, not written</a></li>
+<li><a href="#2-gofai-ideal-agents-and-solomonoff-induction">2. GOFAI, ideal agents, and Solomonoff induction</a></li>
+<li><a href="#3-from-bellman-to-alphazero">3. From Bellman to AlphaZero</a></li>
+<li><a href="#4-alignment-as-it-looked-in-2006-and-2016">4. Alignment as it looked in 2006 and 2016</a></li>
+<li><a href="#5-alignment-in-2026">5. Alignment in 2026</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 12 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="workbook-1--how-deep-learning-changed-how-we-think-about-intelligence">Workbook 1 — How Deep Learning Changed How We Think about Intelligence</h1>
+<p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
+<p>The first mystery of deep learning is that it works at all: intelligence turned out to be something a generic method can grow, not something we have to write down. This workbook follows that lesson through the history of AI and through the history of alignment, which had to be restated once agents were trained rather than designed.</p>
+<ol type="1">
+<li><a href="#wb1-keystone">Keystone: intelligence is grown, not written</a>: the bitter lesson, and the alignment problem restated for trained agents.</li>
+<li><a href="#wb1-section-2">GOFAI, ideal agents, and Solomonoff induction</a>: intelligence written down, and intelligence idealized.</li>
+<li><a href="#wb1-section-3">From Bellman to AlphaZero</a>: dynamic programming, RL and deep RL as one idea; search plus learning beats search plus knowledge.</li>
+<li><a href="#wb1-section-4">Alignment as it looked in 2006 and 2016</a>: problems posed for ideal agents, then for agents trained by deep RL.</li>
+<li><a href="#wb1-section-5">Alignment in 2026</a>: what pretraining changed, what got set aside, what RL brought back.</li>
+</ol>
+
+<details class="sec sec2" data-sec="1-keystone-intelligence-is-grown-not-written">
+<summary><h2 id="1-keystone-intelligence-is-grown-not-written">1. Keystone: intelligence is grown, not written</h2></summary>
+<div class="sec-body">
+<a id="wb1-keystone"></a>
+<p>Two short claims frame the rest of the day: capability comes from general methods that scale with compute, and once goals are produced the same way, alignment becomes a question about what training produces.</p>
+<div class="reading">
+
+<p><strong><a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">The bitter lesson</a></strong>, Rich Sutton, 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>Seventy years of chess, Go, speech and vision show general methods that leverage computation, search and learning, beating built-in human knowledge by a wide margin. Two pages; read it first.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2209.00626">The alignment problem from a deep learning perspective</a></strong>, Richard Ngo, Lawrence Chan, Sören Mindermann, 2022 (revised 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Argues from how models are actually trained that policies trained like today’s could learn situationally aware reward hacking, misaligned internally represented goals, and power-seeking. The best single synthesis of the deep-learning-era view.</p>
+</div>
+
+<p><strong>Intelligence is grown.</strong> For seventy years AI researchers put what they knew into their programs: rules, heuristics, evaluation functions, representations. Each time, a general method that used more computation eventually won. Search won in chess, learning in speech and vision, both together in Go. Sutton’s point is that the methods which keep scaling are search and learning, and that structure is better found by them than supplied by us. Deep learning is the extreme case. Nobody writes down what a trained network knows or how it computes. We write a loss, an architecture and a data pipeline, and gradient descent grows the rest. So the useful question about a capable system is no longer what its designers put in, but what training produced.</p>
+<p><strong>So are its goals.</strong> Early alignment work assumed the designed picture: an agent with a hand-written world model and a utility function over it, so the task was to write the right utility and keep it stable. If capabilities are grown, goals are too, and the question becomes what training actually produces. Ngo, Chan and Mindermann answer for a network trained by gradient descent against human-supplied reward. It can learn <em>situationally aware reward hacking</em>: getting reward by exploiting its overseers’ mistakes, and behaving well when it knows it is watched. It can form <em>misaligned internally represented goals</em> that fit the training data and generalize badly off it. And broad goals of almost any kind make <em>power-seeking</em> useful.</p>
+
+<details class="sec sec3" data-sec="exercises-what-is-still-written-by-hand">
+<summary><h3 id="exercises-what-is-still-written-by-hand">Exercises: what is still written by hand</h3></summary>
+<div class="sec-body">
+
+<p>Two short questions on the limits of the bitter lesson and on why learned agents need a second alignment problem.</p>
+<p><strong>Exercise 1.1.</strong> Sutton credits modern vision networks that “use only the notions of convolution and certain kinds of invariances”, yet his last paragraph says we should stop building in simple ways to think about “space, objects, multiple agents, or symmetries”. Current systems still contain much hand-written structure: architectures (convolution, attention), tokenizers, curated data mixtures, RL reward rubrics, constitutions. Pick two. Is each a counterexample to the bitter lesson, or just the part that has not yet been eaten?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>A useful dividing line is between structure that <strong>scales with compute</strong> and structure that <strong>substitutes for compute</strong>.</p>
+<ul>
+<li><strong>Convolution or attention.</strong> These encode a symmetry or a routing mechanism, not domain facts, and they make learning cheaper without capping it, so they are arguably “meta-methods” in Sutton’s sense. Sutton’s own text is pulled both ways here. The evidence that architecture changes mostly shift scaling curves by a constant factor rather than change their slope, and that biases which help at small scale often stop helping at large scale (WB5), suggests built-in structure that does get eaten, just slowly.</li>
+<li><strong>Tokenizer.</strong> Hand-written, and visibly brittle on arithmetic and spelling. Byte-level models are what the bitter lesson predicts; whether they win at equal compute is still an empirical question.</li>
+<li><strong>Data curation, RL rubrics, constitutions.</strong> These specify <em>what we want</em>, not <em>how to compute it</em>. The bitter lesson is a claim about capability, so these may be outside its scope: more compute cannot tell you which outcome is good. That is the alignment half of this workbook.</li>
+</ul>
+</div>
+</details>
+
+<p><strong>Exercise 1.2 — where inner alignment comes from.</strong> <em>Outer alignment</em> asks whether the training objective is what we want; <em>inner alignment</em> asks whether the trained model pursues the training objective. The pre-deep-learning literature had the intuition behind the second (evolution optimized for fitness and produced humans, who want other things) but no name for it and no mechanism in its picture of AI, where the agent’s utility function is a component someone writes. What about how capable systems are now built makes the inner/outer split necessary, and how does it connect to the bitter lesson?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>In the designed picture, the agent’s objective is a component someone writes down. The questions are whether we wrote the right one (outer alignment, in later terms) and whether it survives self-modification. Evolution versus human values was a known analogy (“adaptation-executers, not fitness-maximizers”), and Bostrom’s treacherous turn is close to deceptive alignment, but there is no second objective to compare the written one with.</p>
+<p>The inner/outer split needs two optimizers: a training process, which optimizes parameters against a loss on a distribution, and a trained model, whose behaviour may be goal-directed in its own right. Then the loss and the model’s goal are different objects, which agree on the training distribution and can differ off it. That situation arises because capabilities are <em>learned</em>, which is the bitter lesson: the methods that scale are generic search and learning, so the goals of a capable system are also produced by learning rather than written in. Hubinger et al. (“Risks from learned optimization”, §4 below; their §2.1) push one level further: if diverse tasks favour general-purpose learned search over learned heuristics, the bitter lesson predicts models that are themselves optimizers.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="2-gofai-ideal-agents-and-solomonoff-induction">
+<summary><h2 id="2-gofai-ideal-agents-and-solomonoff-induction">2. GOFAI, ideal agents, and Solomonoff induction</h2></summary>
+<div class="sec-body">
+<a id="wb1-section-2"></a>
+<p>Before learning won, engineers wrote intelligence down as symbols plus search, and theorists idealized it as expected-utility maximizers, Solomonoff induction, AIXI and proof-based agents; the first lost to the bitter lesson, and the second is what early alignment reasoned about.</p>
+<div class="reading">
+
+<p><strong><a href="https://doi.org/10.1145/360018.360022">Computer science as empirical inquiry: symbols and search</a></strong>, Allen Newell and Herbert Simon, 1976 (Turing Award lecture) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>States the physical symbol system and heuristic search hypotheses: the GOFAI bet in its founders’ words. Free scan at the <a href="https://www.computerhistory.org/chess/doc-431614f691642/">Computer History Museum</a>.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://en.wikipedia.org/wiki/Solomonoff%27s_theory_of_inductive_inference">Solomonoff’s theory of inductive inference</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The universal prior over programs, why it is the ideal inductive learner, and why it is uncomputable. WB4 returns to it. The pages on the <a href="https://en.wikipedia.org/wiki/Von_Neumann%E2%80%93Morgenstern_utility_theorem">von Neumann–Morgenstern theorem</a> and <a href="https://en.wikipedia.org/wiki/AIXI">AIXI</a> are the matching references for expected-utility agents and the ideal RL agent.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/0712.3329">Universal intelligence: a definition of machine intelligence</a></strong>, Shane Legg and Marcus Hutter, 2007 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Defines intelligence as expected performance over all computable environments, weighted by simplicity: the cleanest statement of what “ideal intelligence” meant to this tradition.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.alignmentforum.org/s/Rm6oQRJJmhGCcLvxh">Embedded agency</a></strong>, Abram Demski and Scott Garrabrant, 2018 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>An illustrated sequence on what breaks when the agent is part of the world it reasons about; the best map of MIRI-style agent foundations, and of the assumptions learned agents later broke.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.alignmentforum.org/posts/NxF5G6CJiof6cemTw/coherence-arguments-do-not-entail-goal-directed-behavior">Coherence arguments do not entail goal-directed behavior</a></strong>, Rohin Shah, 2018 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>Any behaviour maximizes some utility over histories, so “capable agents are expected-utility maximizers” says nothing until the utility is simple and over world states. Read after Exercise 2.2.</p>
+</div>
+
+<p>Also: McCarthy, <a href="http://www-formal.stanford.edu/jmc/mcc59/mcc59.html">Programs with common sense</a> (1959); the <a href="http://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/p001.htm">Lighthill report</a> (1973); Soares and Fallenstein, <a href="https://intelligence.org/files/TechnicalAgenda.pdf">MIRI’s agent foundations agenda</a> (2014); Yudkowsky and Herreshoff, <a href="https://intelligence.org/files/TilingAgentsDraft.pdf">Tiling agents</a> (2013); Barasz et al., <a href="https://arxiv.org/abs/1401.5577">Robust cooperation via provability logic</a> (2014); Yudkowsky and Soares, <a href="https://arxiv.org/abs/1710.05060">Functional decision theory</a> (2017).</p>
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="https://aima.cs.berkeley.edu/">Artificial Intelligence: A Modern Approach (4th ed.)</a>, Russell and Norvig, 2020, ch. 2–4, 7, 11, 16 (ch. 17 on MDPs, for §3).</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-ideal-agents">
+<summary><h3 id="exercises-ideal-agents">Exercises: ideal agents</h3></summary>
+<div class="sec-body">
+
+<p>Three short exercises on what coherence arguments do and do not show, and on why proof-based agents struggle to trust their successors.</p>
+<p><strong>Exercise 2.1 — the money pump.</strong> The von Neumann–Morgenstern theorem says preferences over lotteries that are complete, transitive, continuous and independent can be represented as maximizing the expectation of a utility <span class="math inline">U</span>. An agent holds item <span class="math inline">A</span>. Its preferences are strict and cyclic, <span class="math inline">A\prec B\prec C\prec A</span>, and it will pay any amount less than <span class="math inline">\varepsilon&gt;0</span> to swap an item for one it strictly prefers. Show that a trader can take an arbitrary amount of money from it. Which axiom fails? Does this argument say anything about which <em>utility function</em> a capable agent will have?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Offer <span class="math inline">B</span> for <span class="math inline">A</span> plus <span class="math inline">\varepsilon/2</span>: the agent accepts. Offer <span class="math inline">C</span> for <span class="math inline">B</span> plus <span class="math inline">\varepsilon/2</span>, then <span class="math inline">A</span> for <span class="math inline">C</span> plus <span class="math inline">\varepsilon/2</span>. The agent is back where it started, <span class="math inline">3\varepsilon/2</span> poorer, and the trader can repeat the cycle as often as it likes. The failing axiom is <strong>transitivity</strong>: from <span class="math inline">A\prec B</span> and <span class="math inline">B\prec C</span> it would follow that <span class="math inline">A\prec C</span>, contradicting <span class="math inline">C\prec A</span>.</p>
+<p>The argument says an agent that cannot be exploited this way has transitive preferences. Exploitation arguments for the other axioms are weaker and contested (completeness and independence are argued over; continuity has essentially none), so “non-exploitable implies expected-utility maximizer” is a heuristic, not a theorem. Even granting it, the conclusion is only that the preferences have <em>some</em> expected-utility representation. It says nothing about which <span class="math inline">U</span>, or what <span class="math inline">U</span> is defined over. Exercise 2.2 shows that the second point matters a lot.</p>
+</div>
+</details>
+
+<p><strong>Exercise 2.2 — every policy is an expected-utility maximizer.</strong> Let <span class="math inline">\pi</span> be any deterministic policy in any environment, mapping each history <span class="math inline">h_t=(o_1,a_1,\dots,o_t)</span> to an action. Construct a utility function <span class="math inline">U</span> on complete histories for which <span class="math inline">\pi</span> maximizes expected utility. What, then, does “a capable AI will be an expected-utility maximizer” actually claim?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Let <span class="math inline">U(h)=1</span> if every action in <span class="math inline">h</span> is the one <span class="math inline">\pi</span> would have taken given the history before it, and <span class="math inline">U(h)=0</span> otherwise. Following <span class="math inline">\pi</span> gives <span class="math inline">U=1</span> with probability one, the largest possible value, so <span class="math inline">\pi</span> maximizes expected <span class="math inline">U</span> in every environment. (For a stochastic policy, use <span class="math inline">U(h)=1</span> when every action is in the support of <span class="math inline">\pi</span> given the preceding history.)</p>
+<p>So “is an expected-utility maximizer” is empty when <span class="math inline">U</span> may be any function of the whole history. The claim behind classical alignment arguments is stronger: that capable agents behave as if maximizing a <em>simple</em> utility over <em>states of the world</em>, which is what produces instrumental convergence (<a href="#wb1-section-4">§4</a>). That is a substantive claim about which agents training produces, not a theorem.</p>
+</div>
+</details>
+
+<p><strong>Exercise 2.3 (rabbit hole) — the Löbian obstacle.</strong> Let <span class="math inline">T</span> be a consistent formal theory extending Peano arithmetic, and write <span class="math inline">\Box\varphi</span> for “<span class="math inline">T</span> proves <span class="math inline">\varphi</span>”. <strong>Löb’s theorem:</strong> if <span class="math inline">T\vdash\Box\varphi\to\varphi</span>, then <span class="math inline">T\vdash\varphi</span>. An agent <span class="math inline">A_1</span> reasons in <span class="math inline">T</span> and takes an action only when <span class="math inline">T</span> proves the action is safe. It considers building a successor <span class="math inline">A_2</span> that also reasons in <span class="math inline">T</span>. To approve it, <span class="math inline">A_1</span> wants to prove, for each possible action <span class="math inline">b</span>, “if <span class="math inline">A_2</span> takes <span class="math inline">b</span> then <span class="math inline">b</span> is safe”, which follows from the soundness statement <span class="math inline">\Box\,\mathrm{safe}(b)\to\mathrm{safe}(b)</span>. Why can’t <span class="math inline">A_1</span> prove these soundness statements? What does that suggest about chains of successors?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Suppose <span class="math inline">T\vdash\Box\,\mathrm{safe}(b)\to\mathrm{safe}(b)</span> for every <span class="math inline">b</span>. By Löb’s theorem, <span class="math inline">T\vdash\mathrm{safe}(b)</span> for every <span class="math inline">b</span>, including actions that are in fact unsafe. So either <span class="math inline">T</span> proves false things about safety, or the soundness statements are unprovable for every <span class="math inline">b</span> whose safety <span class="math inline">T</span> cannot already prove outright. (Taking <span class="math inline">\varphi</span> to be a contradiction gives Gödel’s second incompleteness theorem as a special case.)</p>
+<p>So an agent can’t approve a successor by trusting that the successor’s proofs are sound, if the successor uses the same theory. It <em>can</em> trust a successor that reasons in a strictly weaker theory <span class="math inline">T&#39;</span>, if <span class="math inline">T</span> proves <span class="math inline">\Box_{T&#39;}\varphi\to\varphi</span>. Naively, then, each self-modification loses some strength. Yudkowsky and Herreshoff build infinite descending families of theories, each still extending Peano arithmetic, and other partial workarounds exist, each with costs. This is the Löbian obstacle. It is a problem about agents that act on proofs, which is one reason it looked central when ideal agents were the model of AI and looks less central now.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="3-from-bellman-to-alphazero">
+<summary><h2 id="3-from-bellman-to-alphazero">3. From Bellman to AlphaZero</h2></summary>
+<div class="sec-body">
+<a id="wb1-section-3"></a>
+<p>Dynamic programming, reinforcement learning and deep RL are one idea at three levels of approximation (solve the Bellman equation exactly, then from samples, then with a network in place of the table), and the game-playing systems show the bitter lesson inside that family.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>search</th>
+<th>evaluation of positions</th>
+<th>knowledge supplied by hand</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deep Blue</strong> (1997)</td>
+<td>alpha-beta, about <span class="math inline">10^8</span> positions/s on custom chips</td>
+<td>hand-written, about 8,000 features</td>
+<td>evaluation, opening book, endgame tables</td>
+</tr>
+<tr>
+<td><strong>AlphaGo</strong> (2016)</td>
+<td>Monte Carlo tree search</td>
+<td>policy and value networks, trained on human games then self-play</td>
+<td>human games, the rules, the reward</td>
+</tr>
+<tr>
+<td><strong>AlphaZero</strong> (2017)</td>
+<td>MCTS, about <span class="math inline">10^3</span> times fewer positions than Stockfish</td>
+<td>one network, trained only by self-play</td>
+<td>the rules and the win/lose reward</td>
+</tr>
+<tr>
+<td><strong>MuZero</strong> (2019)</td>
+<td>MCTS inside a <em>learned</em> model</td>
+<td>learned</td>
+<td>the reward</td>
+</tr>
+</tbody>
+</table></div>
+<p>What lost was the hand-written evaluation, then the hand-supplied simulator; search and learning both stayed. (Stockfish regained the lead in 2020 by adding a small learned evaluation, NNUE, to its fast search.)</p>
+<div class="reading">
+
+<p><strong><a href="https://dl.acm.org/doi/10.1145/203330.203343">Temporal difference learning and TD-Gammon</a></strong>, Gerald Tesauro, 1995 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A network trained by TD learning from self-play, with almost no built-in knowledge, reached the level of the best human backgammon players: deep RL twenty years early. Free full text <a href="https://bkgm.com/articles/tesauro/tdl.html">here</a>.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.nature.com/articles/nature14236">Human-level control through deep reinforcement learning</a></strong>, Volodymyr Mnih et al., 2015 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>DQN: one network and one set of hyperparameters learning 49 Atari games from pixels; experience replay and a target network make deep Q-learning stable enough to work.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://doi.org/10.1016/S0004-3702(01)00129-1">Deep Blue</a></strong>, Murray Campbell, A. Joseph Hoane Jr., Feng-hsiung Hsu, 2002 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The engineering paper on the machine that beat Kasparov: custom chips, parallel search and a large hand-built evaluation function. Read it beside AlphaZero.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://doi.org/10.1126/science.aar6404">A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play</a></strong>, David Silver et al., 2018 (preprint on <a href="https://arxiv.org/abs/1712.01815">arXiv</a>, 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>AlphaZero: no human data, one network, tree search as the improvement operator, applied unchanged to three games and beating the strongest programs in each. Pair with <a href="https://www.nature.com/articles/nature24270">AlphaGo Zero</a> (2017).</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1911.08265">Mastering Atari, Go, chess and shogi by planning with a learned model</a></strong>, Julian Schrittwieser et al., 2019 (Nature, 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>MuZero: the same search inside a learned model that predicts only what planning needs, removing the last hand-supplied ingredient, the simulator.</p>
+</div>
+
+<p>Also: Silver et al., <a href="https://www.nature.com/articles/nature16961">AlphaGo</a> (2016).</p>
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="http://incompleteideas.net/book/the-book-2nd.html">Reinforcement learning: an introduction (2nd ed.)</a>, Sutton and Barto, 2018, ch. 3, 4, 6 (Bellman equations, DP, TD and Q-learning), §11.3 (the deadly triad), ch. 13 (policy gradients), ch. 16 (case studies).</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-bellman-q-learning-alphazero">
+<summary><h3 id="exercises-bellman-q-learning-alphazero">Exercises: Bellman, Q-learning, AlphaZero</h3></summary>
+<div class="sec-body">
+
+<p>Three exercises: why value iteration converges, why model-free control has to learn <span class="math inline">Q</span> rather than <span class="math inline">V</span>, and how AlphaZero’s training loop is policy iteration.</p>
+<p><strong>Exercise 3.1 — value iteration converges.</strong> A finite Markov decision process has states <span class="math inline">S</span>, actions <span class="math inline">A</span>, transitions <span class="math inline">P(s&#39;\mid s,a)</span>, reward <span class="math inline">r(s,a)</span> and discount <span class="math inline">\gamma\in[0,1)</span>. The Bellman optimality operator is <span class="math inline">(\mathcal TV)(s)=\max_a\big[r(s,a)+\gamma\sum_{s&#39;}P(s&#39;\mid s,a)V(s&#39;)\big]</span>; the optimal value <span class="math inline">V^*</span> satisfies <span class="math inline">V^*=\mathcal TV^*</span>, and value iteration repeats <span class="math inline">V_{k+1}=\mathcal TV_k</span>. Use the sup norm <span class="math inline">\|V\|_\infty=\max_s|V(s)|</span>.</p>
+<p>(a) Show that <span class="math inline">\|\mathcal TV-\mathcal TW\|_\infty\le\gamma\,\|V-W\|_\infty</span> for all <span class="math inline">V,W</span>.</p>
+<p>(b) Conclude that <span class="math inline">\mathcal T</span> has exactly one fixed point, and that <span class="math inline">\|V_k-V^*\|_\infty\le\gamma^k\|V_0-V^*\|_\infty</span>.</p>
+<p>(c) The same proof works for the evaluation operator <span class="math inline">\mathcal T^\pi V=r_\pi+\gamma P_\pi V</span> of a fixed policy <span class="math inline">\pi</span>. Why does it fail when <span class="math inline">\gamma=1</span>, and what usually rescues the finite-horizon or episodic case?</p>
+<details class="hint"><summary>Hint for (a)</summary>
+
+<p>For any two functions <span class="math inline">f,g</span> on a finite set, <span class="math inline">|\max_a f(a)-\max_a g(a)|\le\max_a|f(a)-g(a)|</span>. And an average of <span class="math inline">V-W</span> under <span class="math inline">P(\cdot\mid s,a)</span> is at most <span class="math inline">\|V-W\|_\infty</span> in absolute value.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Fix <span class="math inline">s</span>. Let <span class="math inline">f(a)=r(s,a)+\gamma\sum_{s&#39;}P(s&#39;\mid s,a)V(s&#39;)</span> and <span class="math inline">g(a)</span> the same with <span class="math inline">W</span>. Then</p>
+<p><span class="math display">
+|\mathcal TV(s)-\mathcal TW(s)|=\big|\max_a f(a)-\max_a g(a)\big|\le\max_a|f(a)-g(a)|=\gamma\max_a\Big|\sum_{s&#39;}P(s&#39;\mid s,a)\big(V(s&#39;)-W(s&#39;)\big)\Big|\le\gamma\|V-W\|_\infty .
+</span></p>
+<p>The first inequality: if <span class="math inline">\max f</span> is attained at <span class="math inline">a_1</span>, then <span class="math inline">\max f-\max g\le f(a_1)-g(a_1)</span>, and symmetrically. Taking the maximum over <span class="math inline">s</span> gives the claim.</p>
+<p><strong>(b)</strong> A <span class="math inline">\gamma</span>-contraction on the complete space <span class="math inline">\mathbb R^{|S|}</span> has exactly one fixed point (Banach); two fixed points <span class="math inline">V,W</span> would satisfy <span class="math inline">\|V-W\|_\infty\le\gamma\|V-W\|_\infty</span>, forcing <span class="math inline">V=W</span>. Since <span class="math inline">V^*=\mathcal TV^*</span>, <span class="math inline">\|V_k-V^*\|_\infty=\|\mathcal TV_{k-1}-\mathcal TV^*\|_\infty\le\gamma\|V_{k-1}-V^*\|_\infty</span>, and induction gives the bound.</p>
+<p><strong>(c)</strong> With <span class="math inline">\gamma=1</span> the bound is <span class="math inline">\|\mathcal TV-\mathcal TW\|_\infty\le\|V-W\|_\infty</span>, which is not a contraction, and in general there may be no fixed point (rewards that never stop accumulating) or many (with no terminal states, <span class="math inline">\mathcal T(V+c)=\mathcal TV+c</span>, so adding a constant to a fixed point gives another). A finite horizon <span class="math inline">T</span> rescues it: values are indexed by time, <span class="math inline">V^*_{T+1}\equiv0</span>, and backward induction computes <span class="math inline">V^*_T,\dots,V^*_1</span> exactly in <span class="math inline">T</span> steps. Episodic problems in which every policy reaches a terminal state are handled in the same spirit (Bertsekas’s “stochastic shortest path” theory).</p>
+</div>
+</details>
+
+<p><strong>Exercise 3.2 — why Q-learning learns <span class="math inline">Q</span>.</strong> Q-learning keeps a table <span class="math inline">Q(s,a)</span> and, for each sampled transition <span class="math inline">(s,a,r,s&#39;)</span> with <span class="math inline">s&#39;\sim P(\cdot\mid s,a)</span>, moves <span class="math inline">Q(s,a)</span> a step toward the target <span class="math inline">y=r+\gamma\max_{a&#39;}Q(s&#39;,a&#39;)</span>. The Bellman optimality operator on <span class="math inline">Q</span>-tables is <span class="math inline">(\mathcal TQ)(s,a)=r(s,a)+\gamma\sum_{s&#39;}P(s&#39;\mid s,a)\max_{a&#39;}Q(s&#39;,a&#39;)</span>.</p>
+<p>(a) Show that <span class="math inline">\mathbb E[y\mid s,a]=(\mathcal TQ)(s,a)</span>.</p>
+<p>(b) Try the same for state values, with <span class="math inline">(\mathcal TV)(s)=\max_a\big[r(s,a)+\gamma\sum_{s&#39;}P(s&#39;\mid s,a)V(s&#39;)\big]</span>: is there a target <span class="math inline">y</span>, built from a single transition out of <span class="math inline">s</span>, with <span class="math inline">\mathbb E[y]=(\mathcal TV)(s)</span>? Where does the maximum sit relative to the expectation in each case?</p>
+<p>(c) Suppose the estimates are noisy: <span class="math inline">\hat Q(s&#39;,a&#39;)=Q(s&#39;,a&#39;)+\epsilon_{a&#39;}</span> with independent zero-mean <span class="math inline">\epsilon_{a&#39;}</span>. Is <span class="math inline">\mathbb E\,\max_{a&#39;}\hat Q(s&#39;,a&#39;)</span> larger or smaller than <span class="math inline">\max_{a&#39;}Q(s&#39;,a&#39;)</span>? What does this do to Q-learning, and how might you fix it?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Given <span class="math inline">(s,a)</span>, the reward is <span class="math inline">r(s,a)</span> and only <span class="math inline">s&#39;</span> is random, so</p>
+<p><span class="math display">
+\mathbb E[y\mid s,a]=r(s,a)+\gamma\sum_{s&#39;}P(s&#39;\mid s,a)\max_{a&#39;}Q(s&#39;,a&#39;)=(\mathcal TQ)(s,a).
+</span></p>
+<p>So the Q-learning update is a Robbins–Monro stochastic approximation to the fixed point of <span class="math inline">\mathcal T</span>, which is a <span class="math inline">\gamma</span>-contraction on <span class="math inline">Q</span>-tables by the argument of Exercise 3.1. With step sizes satisfying <span class="math inline">\sum\alpha=\infty</span>, <span class="math inline">\sum\alpha^2&lt;\infty</span> and every <span class="math inline">(s,a)</span> visited infinitely often, the table converges to <span class="math inline">Q^*</span> (Watkins and Dayan, 1992), whatever behaviour policy generated the data.</p>
+<p><strong>(b)</strong> <span class="math inline">(\mathcal TV)(s)</span> has the maximum <em>outside</em> the expectation. A single transition shows what happened after one action and says nothing about the actions not taken, so there is no unbiased one-sample estimate of the max over actions of an expectation. Without a model you can evaluate a fixed policy (TD(0)), but you cannot do the optimality backup for <span class="math inline">V</span>. For <span class="math inline">Q</span>, the action is already chosen and the maximum is over the <em>next</em> action, <em>inside</em> the expectation over <span class="math inline">s&#39;</span>, where it can be read off the table. That is why model-free control learns <span class="math inline">Q</span>.</p>
+<p><strong>(c)</strong> Larger, in general: <span class="math inline">\max</span> is convex, so by Jensen <span class="math inline">\mathbb E\max_{a&#39;}\hat Q(s&#39;,a&#39;)\ge\max_{a&#39;}\mathbb E\hat Q(s&#39;,a&#39;)=\max_{a&#39;}Q(s&#39;,a&#39;)</span>, with strict inequality whenever the noise can change which action wins. Q-learning bootstraps on its own maxima, so the upward bias propagates and compounds: <em>maximization bias</em>. The standard fix is <strong>double Q-learning</strong> (van Hasselt, 2010; Double DQN, 2016): keep two estimates, choose the maximizing action with one and evaluate it with the other, so selection noise and evaluation noise are independent. The same mechanism (optimizing against a noisy estimate selects for its errors) is one cause of reward-model overoptimization (Gao et al., in <a href="#wb1-section-5">§5</a>); hacks such as editing a test exploit systematic gaps in the reward rather than noise.</p>
+</div>
+</details>
+
+<p><strong>Exercise 3.3 — AlphaZero is policy iteration.</strong> <em>Policy iteration</em> alternates <em>evaluation</em> (compute the value <span class="math inline">V^\pi</span> of the current policy) with <em>improvement</em> (make <span class="math inline">\pi</span> greedy with respect to <span class="math inline">V^\pi</span>). AlphaZero has one network <span class="math inline">f_\theta(s)=(\mathbf p,v)</span>: a prior over moves and a value estimate. From a position <span class="math inline">s</span>, MCTS runs simulations that pick moves using <span class="math inline">\mathbf p</span>, evaluate leaves with <span class="math inline">v</span>, and back values up the tree; it returns visit-count frequencies <span class="math inline">\boldsymbol\pi(s)</span>. Self-play picks moves from <span class="math inline">\boldsymbol\pi</span>; at the end, every position gets the game outcome <span class="math inline">z\in\{-1,0,+1\}</span> from the point of view of the player to move. Training minimizes</p>
+<p><span class="math display">
+(z-v)^2-\boldsymbol\pi^{\top}\log\mathbf p+c\,\|\theta\|^2 .
+</span></p>
+<p>(a) Which part of the loop is policy improvement, and which is policy evaluation? What role does the policy head <span class="math inline">\mathbf p</span> play that has no counterpart in tabular policy iteration?</p>
+<p>(b) Where is the Bellman backup?</p>
+<p>(c) Using the table at the top of this section: what in AlphaZero is still written by hand? Which of those did MuZero remove, and which remain in every system in the table?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <em>Improvement:</em> MCTS. Starting from the network’s prior <span class="math inline">\mathbf p</span> and value <span class="math inline">v</span>, a lookahead search produces a move distribution <span class="math inline">\boldsymbol\pi</span> that is usually stronger than <span class="math inline">\mathbf p</span>, just as acting greedily on a lookahead improves on the current policy. <em>Evaluation:</em> the value head is regressed onto <span class="math inline">z</span>, the outcome of games played by the improved policy, a Monte Carlo estimate of that policy’s value. The <em>policy head</em> is amortization: it is trained to imitate the search, <span class="math inline">\mathbf p\approx\boldsymbol\pi</span>, so that next round’s search starts from a better prior and the improvement compounds. Tabular policy iteration can store the improved policy exactly; a network has to be taught it. Silver et al. call MCTS “a powerful policy improvement operator” and self-play with search “a powerful policy evaluation operator”.</p>
+<p><strong>(b)</strong> Inside the tree. Each simulation backs the leaf value up the path to the root, averaging values at each node (with signs alternating between the players). That is an approximate minimax backup, the two-player version of <span class="math inline">\max_a[r+V(s&#39;)]</span>, computed by sampling rather than full expansion. The network supplies the leaf values, so the tree is a Bellman backup bootstrapped from a learned <span class="math inline">V</span>.</p>
+<p><strong>(c)</strong> Still hand-written in AlphaZero: the rules (a perfect simulator, and with it a Markov state), the reward (win, lose or draw), the input encoding, the network architecture and the search algorithm. MuZero learns the model, so it no longer needs the rules at search time, though the environment still provides them during training. The reward is supplied by hand in every system in the table. That is where the alignment sections pick up: learning took over the heuristic and then the model, but not the goal.</p>
+</div>
+</details>
+</div>
+</details>
+<details class="sec sec3" data-sec="exercises-planning-as-inference-bonus">
+<summary><h3 id="exercises-planning-as-inference-bonus">Exercises: planning as inference (bonus)</h3></summary>
+<div class="sec-body">
+
+<p>Conditioning a model of trajectories on “success” turns planning into Bayesian inference; these two exercises show where exact inference is dangerously optimistic, and how its one-step form is the KL-regularized objective of RL fine-tuning.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1805.00909">Reinforcement learning and control as probabilistic inference: tutorial and review</a></strong>, Sergey Levine, 2018 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Maximum-entropy RL is exact inference in a graphical model with “optimality” variables when dynamics are deterministic, and variational inference when they are stochastic; soft Q-learning and actor-critic methods fall out. §2–3 carry the argument the exercises use.</p>
+</div>
+
+<p><strong>Exercise 3.4 — inference is optimistic.</strong> Add to each step of a finite-horizon MDP a binary variable <span class="math inline">\mathcal O_t</span> (“step <span class="math inline">t</span> was optimal”) with <span class="math inline">p(\mathcal O_t=1\mid s_t,a_t)=e^{r(s_t,a_t)}</span> (rewards shifted so <span class="math inline">r\le0</span>), and condition on every <span class="math inline">\mathcal O_t=1</span>. Exact inference then gives a <em>soft</em> Bellman recursion (Levine §2.3):</p>
+<p><span class="math display">
+Q_t(s,a)=r(s,a)+\log\sum_{s&#39;}p(s&#39;\mid s,a)\,e^{V_{t+1}(s&#39;)},\qquad V_t(s)=\log\sum_a e^{Q_t(s,a)},
+</span></p>
+<p>with posterior policy <span class="math inline">e^{Q_t(s,a)-V_t(s)}</span>. At some state the agent can take a <em>safe</em> action, which leads for certain to a state with soft value <span class="math inline">0</span>, or a <em>gamble</em>, which leads with probability <span class="math inline">p</span> to a state with soft value <span class="math inline">+R</span> and otherwise to one with soft value <span class="math inline">-C</span>. Both actions have the same immediate reward, so ignore it.</p>
+<p>(a) Compute <span class="math inline">Q(\text{gamble})</span> under the exact-inference backup <span class="math inline">\log\mathbb E\,e^{V}</span>, and under the ordinary expected backup <span class="math inline">\mathbb E\,V</span>.</p>
+<p>(b) Evaluate both for <span class="math inline">p=0.01</span>, <span class="math inline">R=10</span>, <span class="math inline">C=100</span>. Which action does each prefer, and by what odds does the posterior policy pick the gamble over the safe action?</p>
+<p>(c) Compute the posterior probability that the gamble came out well, <span class="math inline">p(s_{t+1}=\text{good}\mid s_t,a_t=\text{gamble},\mathcal O)</span>. What has the agent “inferred”?</p>
+<p>(d) For large <span class="math inline">C</span>, when does exact inference prefer the gamble? How does the answer depend on <span class="math inline">C</span>?</p>
+<details class="hint"><summary>Hint for (c)</summary>
+
+<p>By Bayes’ rule and the Markov property, <span class="math inline">p(s_{t+1}\mid s_t,a_t,\mathcal O)\propto p(s_{t+1}\mid s_t,a_t)\,p(\mathcal O_{t+1:T}\mid s_{t+1})</span>, and <span class="math inline">p(\mathcal O_{t+1:T}\mid s_{t+1})\propto e^{V_{t+1}(s_{t+1})}</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> The safe action has <span class="math inline">Q=0</span> under both backups. For the gamble,</p>
+<p><span class="math display">
+Q_{\text{exact}}=\log\big(p\,e^{R}+(1-p)\,e^{-C}\big),\qquad Q_{\text{expected}}=pR-(1-p)C .
+</span></p>
+<p><strong>(b)</strong> With <span class="math inline">p=0.01</span>, <span class="math inline">R=10</span>, <span class="math inline">C=100</span>: <span class="math inline">p\,e^{R}=0.01\,e^{10}\approx220.3</span> and <span class="math inline">(1-p)e^{-C}=0.99\,e^{-100}\approx3.7\times10^{-44}</span>, which is negligible. So</p>
+<p><span class="math display">
+Q_{\text{exact}}\approx\log220.3=10+\log0.01\approx5.39,\qquad Q_{\text{expected}}=0.1-99=-98.9 .
+</span></p>
+<p>Exact inference prefers the gamble: the posterior policy is a softmax of <span class="math inline">Q</span>, so the odds are <span class="math inline">e^{5.39}/e^{0}\approx220</span> to <span class="math inline">1</span> in favour of the gamble. The expected backup rejects it; even a softmax policy built on it gives odds of about <span class="math inline">e^{-98.9}\approx10^{-43}</span>.</p>
+<p><strong>(c)</strong> Using the hint,</p>
+<p><span class="math display">
+p(\text{good}\mid s_t,\text{gamble},\mathcal O)=\frac{p\,e^{R}}{p\,e^{R}+(1-p)\,e^{-C}}=\frac{1}{1+99\,e^{-110}}\approx1-1.7\times10^{-46}.
+</span></p>
+<p>Conditioned on “everything went well”, the agent has inferred that the gamble paid off. Exact inference tilts the dynamics as well as the actions, so the agent plans as if it could choose its luck.</p>
+<p><strong>(d)</strong> Exact inference prefers the gamble when <span class="math inline">p\,e^{R}+(1-p)e^{-C}&gt;1</span>. As <span class="math inline">C\to\infty</span> this becomes <span class="math inline">R&gt;\log(1/p)</span>, which <strong>does not depend on <span class="math inline">C</span> at all</strong>: however large the catastrophe, any gamble with <span class="math inline">R&gt;\log(1/p)</span> looks good. The same caution applies to any scheme that conditions a model of the world on success. Levine §3 removes the problem by variational inference with the true dynamics held fixed (the agent may choose its actions but not its luck). The objective becomes maximum-entropy RL, the backup over next states becomes the ordinary <span class="math inline">\mathbb E\,V</span>, and the gamble gets <span class="math inline">Q=-98.9</span>.</p>
+</div>
+</details>
+
+<p><strong>Exercise 3.5 — KL-regularized control as a Bayesian update.</strong> Let <span class="math inline">A</span> be a finite set of actions (for a language model with a fixed prompt, think of whole completions), <span class="math inline">\pi_0</span> a reference distribution on <span class="math inline">A</span> with full support, and <span class="math inline">r:A\to\mathbb R</span> a reward.</p>
+<p>(a) Let <span class="math inline">Z=\sum_a\pi_0(a)e^{r(a)}</span> and <span class="math inline">\pi^*(a)=\pi_0(a)e^{r(a)}/Z</span>. Show that for every distribution <span class="math inline">\pi</span> on <span class="math inline">A</span>,</p>
+<p><span class="math display">
+\mathbb E_\pi[r]-\mathrm{KL}(\pi\,\|\,\pi_0)=\log Z-\mathrm{KL}(\pi\,\|\,\pi^*).
+</span></p>
+<p>Conclude that <span class="math inline">\max_\pi\{\mathbb E_\pi[r]-\mathrm{KL}(\pi\|\pi_0)\}=\log\mathbb E_{\pi_0}e^{r}</span>, attained only at <span class="math inline">\pi^*\propto\pi_0e^{r}</span>. What changes for <span class="math inline">\mathbb E_\pi[r]-\lambda\,\mathrm{KL}(\pi\|\pi_0)</span> with <span class="math inline">\lambda&gt;0</span>? (RLHF papers usually call this coefficient <span class="math inline">\beta</span>.)</p>
+<p>(b) Read <span class="math inline">\pi^*\propto\pi_0e^{r}</span> as Bayes’ rule. What is the prior, what is the likelihood, and what is <span class="math inline">Z</span>?</p>
+<details class="hint"><summary>Hint for (a)</summary>
+
+<p>Expand both KLs as sums over <span class="math inline">a</span> and substitute <span class="math inline">\log\pi^*(a)=\log\pi_0(a)+r(a)-\log Z</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Expand the right-hand KL and substitute <span class="math inline">\log\pi^*=\log\pi_0+r-\log Z</span>:</p>
+<p><span class="math display">
+\mathrm{KL}(\pi\,\|\,\pi^*)=\sum_a\pi(a)\log\pi(a)-\sum_a\pi(a)\big[\log\pi_0(a)+r(a)-\log Z\big]=\mathrm{KL}(\pi\,\|\,\pi_0)-\mathbb E_\pi[r]+\log Z .
+</span></p>
+<p>Rearranging gives the identity. Since <span class="math inline">\mathrm{KL}(\pi\|\pi^*)\ge0</span> with equality only at <span class="math inline">\pi=\pi^*</span>, the maximum is <span class="math inline">\log Z=\log\mathbb E_{\pi_0}e^{r}</span>, attained only at <span class="math inline">\pi^*</span>. With a coefficient <span class="math inline">\lambda</span>, divide the objective by <span class="math inline">\lambda</span>: the maximizer is <span class="math inline">\pi^*\propto\pi_0e^{r/\lambda}</span> and the optimal value is <span class="math inline">\lambda\log\mathbb E_{\pi_0}e^{r/\lambda}</span>. As <span class="math inline">\lambda\to0</span>, <span class="math inline">\pi^*</span> concentrates on the reward-maximizing actions; as <span class="math inline">\lambda\to\infty</span> it stays at <span class="math inline">\pi_0</span>.</p>
+<p><strong>(b)</strong> <span class="math inline">\pi_0</span> is the prior, and <span class="math inline">e^{r}</span> (or <span class="math inline">e^{r/\lambda}</span>) is the likelihood of the “observation” that the action was optimal, as with <span class="math inline">p(\mathcal O=1\mid a)=e^{r(a)}</span> in Exercise 3.4; <span class="math inline">\pi^*</span> is the posterior. To make the likelihood a genuine probability, choose <span class="math inline">b\ge\max_a r(a)</span> and set <span class="math inline">p(\mathcal O=1\mid a)=e^{r(a)-b}</span>. This leaves <span class="math inline">\pi^*</span> unchanged, and the evidence is <span class="math inline">p(\mathcal O=1)=e^{-b}Z</span>, so the optimal value <span class="math inline">\log Z</span> is the log-evidence up to the constant <span class="math inline">b</span>.</p>
+<p>So maximizing reward while staying KL-close to a reference policy has the form of a Bayesian update of that policy. This closed form is a <em>one-step</em> result: it applies to KL-penalized RL fine-tuning when each whole completion for a fixed prompt is treated as one action. Token-by-token, the same update holds with the reward replaced by a soft <span class="math inline">Q</span>-function that includes the value of what follows.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="4-alignment-as-it-looked-in-2006-and-2016">
+<summary><h2 id="4-alignment-as-it-looked-in-2006-and-2016">4. Alignment as it looked in 2006 and 2016</h2></summary>
+<div class="sec-body">
+<a id="wb1-section-4"></a>
+<p>Most of alignment’s vocabulary was coined in two waves, before deep learning about idealized agents and just after AlphaGo about agents trained by deep RL; knowing which wave a worry comes from tells you what picture of AI it assumes.</p>
+<p><strong>2006: aligning an ideal agent.</strong> Write down the right utility function and keep it stable under self-modification: orthogonality, instrumental convergence, the complexity of value, wireheading, ontological crises, corrigibility.</p>
+<div class="reading">
+
+<p><strong><a href="https://selfawaresystems.com/wp-content/uploads/2008/01/ai_drives_final.pdf">The basic AI drives</a></strong>, Steve Omohundro, 2008 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Almost any goal-seeking system will tend to protect its goal, preserve itself, improve itself and acquire resources: the original instrumental-convergence paper, ten pages.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/4ARaTpNX62uaL86j6/the-hidden-complexity-of-wishes">The hidden complexity of wishes</a></strong>, Eliezer Yudkowsky, 2007 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>A parable about an “outcome pump” that grants wishes literally: a safe wish has to contain most of human values. Read it beside Barnett’s 2023 reassessment in §5.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1105.3821">Ontological crises in artificial agents’ value systems</a></strong>, Peter de Blanc, 2011 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A utility defined over one world model has to be carried over when the model is replaced, and nothing in the utility says how. The Arbital pages on <a href="https://www.lesswrong.com/w/ontology-identification-problem">ontology identification</a> and the <a href="https://www.lesswrong.com/w/diamond-maximizer">diamond maximizer</a> give the classic example.</p>
+</div>
+
+<p>Also: Yudkowsky, <a href="https://intelligence.org/files/AIPosNegFactor.pdf">AI as a positive and negative factor in global risk</a> (2008); Soares et al., <a href="https://intelligence.org/files/Corrigibility.pdf">Corrigibility</a> (2015).</p>
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="https://global.oup.com/academic/product/superintelligence-9780199678112">Superintelligence: Paths, Dangers, Strategies</a>, Bostrom, 2014, ch. 7–9, 12.</p>
+</div>
+
+<p><strong>2016: aligning a trained agent.</strong> Training is an optimizer that produces a model which may pursue goals of its own, so alignment splits into outer (is the loss what we want?) and inner (did the model learn the loss?).</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1606.06565">Concrete problems in AI safety</a></strong>, Dario Amodei, Chris Olah, Jacob Steinhardt, Paul Christiano, John Schulman, Dan Mané, 2016 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Recasts alignment as five ML problems (side effects, reward hacking, scalable oversight, safe exploration, distributional shift): the paper that made alignment an ML subfield.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1906.01820">Risks from learned optimization in advanced machine learning systems</a></strong>, Evan Hubinger, Chris van Merwijk, Vladimir Mikulik, Joar Skalse, Scott Garrabrant, 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A trained model may itself be an optimizer whose objective differs from the loss, which splits alignment into outer and inner. §1 defines terms; §2.1 is the bitter lesson applied inside the model. §4 on deceptive alignment is optional; §7 is a glossary.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2105.14111">Goal misgeneralization in deep reinforcement learning</a></strong>, Lauro Langosco, Jack Koch, Lee Sharkey, Jacob Pfau, Laurent Orseau, David Krueger, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Inner misalignment in ordinary deep RL: a CoinRun agent that learned “go right” rather than “get the coin” keeps its skills out of distribution but pursues the wrong goal. Shah et al.’s <a href="https://arxiv.org/abs/2210.01790">companion paper</a> gives more examples.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/pdaGN6pQyQarFHXF4/reward-is-not-the-optimization-target">Reward is not the optimization target</a></strong>, Alex Turner, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>In policy-gradient RL, reward reinforces whatever computations preceded it; it is not something the trained agent is guaranteed to want.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/cy3BhHrGinZCp3LXE/testing-the-natural-abstraction-hypothesis-project-intro">Testing the natural abstraction hypothesis: project intro</a></strong>, John Wentworth, 2021 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>Conjectures that diverse learners, humans included, converge on the same low-dimensional summaries of the world, which would make a learned model’s concepts ours.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/w4aeAFzSAguvqA5qu/how-to-go-from-interpretability-to-alignment-just-retarget-the-search">How to go from interpretability to alignment: just retarget the search</a></strong>, John Wentworth, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>If a model contains retargetable general-purpose search and a natural concept of what we want, interpretability could point the one at the other, removing inner alignment. Read the “Problems” section too.</p>
+</div>
+
+<p>Also: Krakovna et al., <a href="https://deepmind.google/discover/blog/specification-gaming-the-flip-side-of-ai-ingenuity/">Specification gaming</a> (2020); Christiano et al., <a href="https://arxiv.org/abs/1706.03741">Deep RL from human preferences</a> (2017); Cotra, <a href="https://www.lesswrong.com/posts/pRkFkzwKZ2zfa3R6H/without-specific-countermeasures-the-easiest-path-to">Without specific countermeasures…</a> (2022); Byrnes, <a href="https://www.lesswrong.com/s/HzcM2dkCq7fwXBej8">Intro to brain-like-AGI safety</a> (2022; posts 3, 6 and 9 on values); Christiano, Cotra and Xu, <a href="https://www.alignmentforum.org/posts/qHCDysDnvhteW7kRd/arc-s-first-technical-report-eliciting-latent-knowledge">Eliciting latent knowledge</a> (2021).</p>
+
+<details class="sec sec3" data-sec="exercises-the-ontology-problem">
+<summary><h3 id="exercises-the-ontology-problem">Exercises: the ontology problem</h3></summary>
+<div class="sec-body">
+
+<p>One exercise on why an optimizer’s goal breaks when its world model changes, and how much natural abstractions would help.</p>
+<p><strong>Exercise 4.1.</strong> Let <span class="math inline">U:S\to\mathbb R</span> be a utility on the states of an agent’s world model, and let a refined world model have states <span class="math inline">S&#39;</span> with a map <span class="math inline">\phi:S&#39;\to S</span> that is ambiguous on a region <span class="math inline">E\subseteq S&#39;</span>: each <span class="math inline">s&#39;\in E</span> has two plausible images <span class="math inline">\phi_1(s&#39;)\neq\phi_2(s&#39;)</span>. For example, <span class="math inline">U</span> counts diamonds as lattices of carbon atoms, the refined model is about quantum fields, and <span class="math inline">E</span> holds edge cases such as exotic isotopes or simulated diamonds that the old ontology never had to classify. Then <span class="math inline">U\circ\phi_1</span> and <span class="math inline">U\circ\phi_2</span> are both reasonable translations of <span class="math inline">U</span>; they agree off <span class="math inline">E</span>, and nothing in <span class="math inline">U</span> chooses between them on <span class="math inline">E</span>.</p>
+<p>(a) Why does an optimizer tend to end up in <span class="math inline">E</span>, even if <span class="math inline">E</span> is a small part of <span class="math inline">S&#39;</span>?</p>
+<p>(b) Wentworth’s natural abstraction hypothesis has three parts: <em>abstractability</em> (what matters about a system far away has a low-dimensional summary), <em>human-compatibility</em> (humans use roughly those summaries) and <em>convergence</em> (diverse learners converge on them). Which would have to hold for the ambiguity to be harmless? Is there residual ambiguity that even a true hypothesis would leave?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Optimization selects the achievable states that score highest. If some states in <span class="math inline">E</span> are mapped by some <span class="math inline">\phi_i</span> to high-utility states but are cheaper to reach than ordinary ones (a simulated diamond is easier to make than a real one), maximizing <span class="math inline">U\circ\phi_i</span> selects them. So the optimizer is drawn to exactly the states where the translation matters. This is the ontological version of Goodhart’s law, and of perverse instantiation.</p>
+<p><strong>(b)</strong> <em>Convergence</em> and <em>human-compatibility</em> do the work. If the agent’s refined model contains a variable that matches the human “diamond”, that variable settles most of <span class="math inline">E</span>: an exotic isotope of carbon in a diamond lattice is a diamond in the shared concept. What remains are cases where the human concept is itself undefined. <em>Abstractability</em> alone only says that <em>some</em> low-dimensional summary exists, not that it is ours. What is left over: natural abstractions are approximate and defined for <em>typical</em> states, while the cheapest high scorers are often atypical edge cases where even natural abstractions blur. So the hypothesis shrinks <span class="math inline">E</span> but does not stop optimization from selecting states in it.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="5-alignment-in-2026">
+<summary><h2 id="5-alignment-in-2026">5. Alignment in 2026</h2></summary>
+<div class="sec-body">
+<a id="wb1-section-5"></a>
+<p>Pretraining on human text solved some old problems more or less by default, the success of cheap fixes on current models let the field set others aside, and RL on top of pretrained models has brought reward hacking back.</p>
+<p><strong>What pretraining changed.</strong> A pretrained model’s concepts are largely human concepts, and it is not by default an agent with a utility function.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators">Simulators</a></strong>, janus, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A self-supervised model is a <em>simulator</em> of its training distribution that can produce goal-directed characters without being an agent itself. The first half carries the argument. WB3 has more on simulators and personae.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://alignment.anthropic.com/2026/psm">The persona selection model: why AI assistants might behave like humans</a></strong>, Sam Marks, Jack Lindsey, Chris Olah (Anthropic), 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Post-training mostly selects one of the characters pretraining taught, the Assistant, so human-like behaviour is the default and narrow fine-tuning can shift which persona the model thinks it is.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/i5kijcjFJD6bn7dwq/evaluating-the-historical-value-misspecification-argument">Evaluating the historical value misspecification argument</a></strong>, Matthew Barnett, 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>Producing a legible function that ranks outcomes as a human would turned out easier than predicted; GPT-4 already does it. Knowing what we want is not caring about it; read the note at the top.</p>
+</div>
+
+<p>Also: Templeton et al., <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">Scaling monosemanticity</a> (2024), for how recognizably human a large model’s features are.</p>
+<p><strong>What got set aside.</strong> Because prompting, RLHF and constitutions work well enough on current models, problems that only bite for much more capable systems (corrigibility, ELK, goal generalization under heavy RL) were set aside rather than solved.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/epjuxGnSPof3GnMSL/alignment-remains-a-hard-unsolved-problem">Alignment remains a hard, unsolved problem</a></strong>, Evan Hubinger, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Current LLMs are fairly well aligned, but the hard parts have not arrived: overseeing systems smarter than us, and long-horizon RL that selects for power-seeking.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/9RL9MuGZjzm4q3gKG">What just happened? A retrospective of AI alignment</a></strong>, Richard Ngo, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>How a field that treated alignment as a hard scientific problem moved to iteratively improving existing systems, told from inside by a keystone author.</p>
+</div>
+
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="https://www.hachettebookgroup.com/titles/eliezer-yudkowsky/if-anyone-builds-it-everyone-dies/9780316595643/">If Anyone Builds It, Everyone Dies</a>, Yudkowsky and Soares, 2025, the 2006 view restated for the LLM era.</p>
+</div>
+
+<p><strong>What RL brought back.</strong> Reasoning models trained against verifiable rewards special-case tests, edit scorers and hide their intent, and what they learn can generalize into broader misalignment.</p>
+<div class="reading">
+
+<p><strong><a href="https://lilianweng.github.io/posts/2024-11-28-reward-hacking/">Reward hacking in reinforcement learning</a></strong>, Lilian Weng, 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>A survey framed around Goodhart’s law, from classic RL specification gaming to RLHF, sycophancy and in-context reward hacking in LLMs: the bridge from the 2016 literature to now.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2210.10760">Scaling laws for reward model overoptimization</a></strong>, Leo Gao, John Schulman, Jacob Hilton, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>As a policy is optimized against a learned reward model, the proxy keeps rising while the true reward peaks and falls, smoothly in reward-model size: Goodhart’s law, measured. Pairs with Exercise 3.2(c).</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://metr.org/blog/2025-06-05-recent-reward-hacking/">Recent frontier models are reward hacking</a></strong>, Sydney Von Arx, Lawrence Chan, Beth Barnes (METR), 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Frontier reasoning models edit tests and scoring code on METR’s tasks, acknowledge when asked that this isn’t what the user wants, and do it anyway. Short, with transcripts.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2503.11926">Monitoring reasoning models for misbehavior and the risks of promoting obfuscation</a></strong>, Bowen Baker, Joost Huizinga, Leo Gao, et al. (OpenAI), 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A chain-of-thought monitor catches reward hacking far better than an action monitor, but training against it teaches the model to hide its intent and keep hacking.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2511.18397">Natural emergent misalignment from reward hacking in production RL</a></strong>, Monte MacDiarmid et al. (Anthropic), 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Reward hacking learned in real coding environments generalizes to alignment faking and attempted sabotage; chat-style safety training hides this on chat evaluations but not agentic ones.</p>
+</div>
+
+<p>Also: Denison et al., <a href="https://arxiv.org/abs/2406.10162">Sycophancy to subterfuge</a> (2024); Betley et al., <a href="https://arxiv.org/abs/2502.17424">Emergent misalignment</a> (2025); Greenblatt et al., <a href="https://arxiv.org/abs/2412.14093">Alignment faking in large language models</a> (2024).</p>
+
+<details class="sec sec3" data-sec="exercises-then-and-now">
+<summary><h3 id="exercises-then-and-now">Exercises: then and now</h3></summary>
+<div class="sec-body">
+
+<p>One table exercise that sorts the classic problems by what became of them.</p>
+<p><strong>Exercise 5.1.</strong> For each problem in the first column, say what it looked like in 2006 (ideal agents), what it became in 2016 (deep RL), and where it stands for 2026’s pretrained-then-RL-trained models: solved by default, transformed, set aside, or back. One line each is enough; argue with the answer.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>problem</th>
+<th>2006</th>
+<th>2016</th>
+<th>2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>specifying values</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>the ontology problem</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>reward hacking / wireheading</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>instrumental convergence</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>inner alignment</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>corrigibility</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>One reasonable set of answers; several entries are contested.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>problem</th>
+<th>2006</th>
+<th>2016</th>
+<th>2026</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>specifying values</td>
+<td>write a utility function that captures human values; fragile and complex</td>
+<td>learn a reward model from human preferences</td>
+<td><strong>transformed</strong>: the model can say what we’d want, so the knowledge exists. But the signals actually optimized (tests, graders, reward models, LLM judges) are still narrow and hackable, and whether the model <em>cares</em> is the remaining question</td>
+</tr>
+<tr>
+<td>the ontology problem</td>
+<td>translate a hand-written utility into a changed world model</td>
+<td>will a learned model’s concepts match ours? (natural abstractions, ELK)</td>
+<td>mostly <strong>solved by default</strong> for typical situations: LLM concepts are human concepts. Open at the edges and for superhuman concepts</td>
+</tr>
+<tr>
+<td>reward hacking / wireheading</td>
+<td>an agent that maximizes its reward signal seizes it</td>
+<td>specification gaming in RL agents</td>
+<td><strong>back</strong>, in RLVR: test special-casing, scorer editing, hidden intent in the chain of thought</td>
+</tr>
+<tr>
+<td>instrumental convergence</td>
+<td>follows from a simple utility over world states</td>
+<td>depends on whether training produces such goals</td>
+<td><strong>transformed</strong>: pretrained personae need not be utility maximizers, but long-horizon RL selects for goal-directed behaviour again</td>
+</tr>
+<tr>
+<td>inner alignment</td>
+<td>no counterpart</td>
+<td>mesa-optimizers, goal misgeneralization</td>
+<td><strong>transformed</strong>: is the trained persona’s goal the intended one? Emergent misalignment says fine-tuning moves goals broadly. Little evidence of crisp internal search in pretrained LLMs; long-horizon RL may bring it back</td>
+</tr>
+<tr>
+<td>corrigibility</td>
+<td>can an EU maximizer be indifferent to shutdown?</td>
+<td>safe interruptibility in RL</td>
+<td><strong>set aside</strong> for current models (they mostly accept correction), <strong>back</strong> in alignment-faking results</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:wb1", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>

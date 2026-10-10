@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="nbkit.py (wb6); do not edit by hand">
+<title>Workbook 6 — Mysteries myriad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+/* KaTeX's hidden MathML is position:absolute; keep it inside its formula (no sideways page scroll). */
+.katex, .table-wrap, .katex-display { position: relative; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, pre, .katex-display, table { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#1-transformer-middle-layers">1. Transformer middle layers</a></li>
+<li><a href="#2-bottom-up-learning">2. Bottom-up learning</a></li>
+<li><a href="#3-model-stitching-works">3. Model stitching works</a></li>
+<li><a href="#4-critical-periods">4. Critical periods</a></li>
+<li><a href="#5-superposition-and-adversarial-attacks-and-on-you-too">5. Superposition and adversarial attacks (and on you too)</a></li>
+<li><a href="#6-critical-modules">6. Critical modules</a></li>
+<li><a href="#7-distillation-and-pruning">7. Distillation and pruning</a></li>
+<li><a href="#8-rewinding-and-lottery-tickets">8. Rewinding and lottery tickets</a></li>
+<li><a href="#9-gradient-descent-in-a-tiny-subspace">9. Gradient descent in a tiny subspace</a></li>
+<li><a href="#10-spectra-and-curvature">10. Spectra and curvature</a></li>
+<li><a href="#11-low-rank-rl-updates-and-the-kl-leash">11. Low-rank RL updates and the KL leash</a></li>
+<li><a href="#12-physics-of-language-models">12. Physics of language models</a></li>
+<li><a href="#13-hidden-signals-low-rank-logits-and-subliminal-learning">13. Hidden signals: low-rank logits and subliminal learning</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 5 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="workbook-6--mysteries-myriad">Workbook 6 — Mysteries myriad</h1>
+<p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
+<p>A catalogue of readings on strange empirical facts about trained networks. Each section links one to four papers, with a few sentences on what each shows, so you can decide what to read. The sections are independent. §5 and §9–§11 also have short exercises. Worked answers to those exercises are folded under “Solution” directly after each one; they are available to everyone.</p>
+<ul>
+<li><a href="#wb6-section-1">§1. Transformer middle layers</a>: intermediate layers often give better embeddings than the last layer.</li>
+<li><a href="#wb6-section-2">§2. Bottom-up learning</a>: lower layers settle first during training.</li>
+<li><a href="#wb6-section-3">§3. Model stitching works</a>: one linear layer joins the bottom of one network to the top of another.</li>
+<li><a href="#wb6-section-4">§4. Critical periods</a>: a deficit early in training can persist through later training.</li>
+<li><a href="#wb6-section-5">§5. Superposition and adversarial attacks (and on you too)</a>: more sparse features than dimensions; predictive but non-robust features; perturbations that bias briefly shown humans. One exercise, one interactive figure.</li>
+<li><a href="#wb6-section-6">§6. Critical modules</a>: many layers can be reset to their initial weights after training; a few cannot.</li>
+<li><a href="#wb6-section-7">§7. Distillation and pruning</a>: a small model learns much more from a large model’s soft outputs than from labels; pruning is in §8.</li>
+<li><a href="#wb6-section-8">§8. Rewinding and lottery tickets</a>: sparse trainable subnetworks, and stability to SGD noise early in training.</li>
+<li><a href="#wb6-section-9">§9. Gradient descent in a tiny subspace</a>: the gradient concentrates in a few top Hessian directions. One exercise.</li>
+<li><a href="#wb6-section-10">§10. Spectra and curvature</a>: the Hessian as a bulk plus outliers, and what batch norm does. One exercise.</li>
+<li><a href="#wb6-section-11">§11. Low-rank RL updates and the KL leash</a>: RL updates reported as sparse yet full-rank, or as rank-1 dominated; on-policy RL forgets less. Two exercises.</li>
+<li><a href="#wb6-section-12">§12. Physics of language models</a>: transformers trained on synthetic grammars, probed for parse structure.</li>
+<li><a href="#wb6-section-13">§13. Hidden signals: low-rank logits and subliminal learning</a>: models’ outputs share low-rank structure; traits pass from teacher to student through data that never mentions them.</li>
+</ul>
+<p>The Training Dynamics materials take up the dynamics behind §4 and §8–§11.</p>
+
+<details class="sec sec2" data-sec="1-transformer-middle-layers">
+<summary><h2 id="1-transformer-middle-layers">1. Transformer middle layers</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-1"></a>
+<p><em>Connects to:</em> WB2 §1.F, WB5 §3.B.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2502.02013">Layer by layer: uncovering hidden representations in language models</a></strong>, Skean, Arefin, Zhao, Patel, Naghiyev, LeCun &amp; Shwartz-Ziv (ICML 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>On 32 text-embedding tasks, intermediate layers of the tested models (transformers and state-space models) often give better downstream features than the final layer. The paper proposes label-free measures of representation quality, based on information theory, geometry and invariance to input perturbations, and uses them to track how this changes with depth.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="2-bottom-up-learning">
+<summary><h2 id="2-bottom-up-learning">2. Bottom-up learning</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-2"></a>
+<p><em>Connects to:</em> WB5 §3.A.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1706.05806">SVCCA: singular vector canonical correlation analysis for deep learning dynamics and interpretability</a></strong>, Raghu, Gilmer, Yosinski &amp; Sohl-Dickstein (NeurIPS 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Introduces SVCCA, an SVD truncation followed by canonical correlation analysis, for comparing layer representations. With it the authors find that layers have low effective dimensionality and that networks converge from the bottom up during training, which motivates “freeze training”: freezing lower layers in sequence to save computation.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="3-model-stitching-works">
+<summary><h2 id="3-model-stitching-works">3. Model stitching works</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-3"></a>
+<p><em>Connects to:</em> WB5 §3.A.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2106.07682">Revisiting model stitching to compare neural representations</a></strong>, Bansal, Nakkiran &amp; Barak (NeurIPS 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Joins the lower layers of one trained network to the upper layers of another through one trainable linear layer (a 1×1 convolution for CNNs) and measures the loss in performance. Networks of the same architecture trained with different seeds, or with supervised versus self-supervised objectives, stitch with little loss. Representations learned with more data, width or training time can be stitched into weaker models and improve them (“more is better”).</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="4-critical-periods">
+<summary><h2 id="4-critical-periods">4. Critical periods</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-4"></a>
+<p><em>Connects to:</em> <a href="#wb6-section-8">§8</a> (what is decided early).</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1711.08856">Critical learning periods in deep neural networks</a></strong>, Achille, Rovere &amp; Soatto (ICLR 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>In their experiments, training on blurred images for the first epochs left a deficit that persisted through subsequent training on clean images, while the same deficit introduced later did little harm. Deficits that leave low-level statistics intact, such as vertical flips, had no lasting effect. The Fisher information in the weights rises early in training and then falls, which the authors relate to the critical period.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="5-superposition-and-adversarial-attacks-and-on-you-too">
+<summary><h2 id="5-superposition-and-adversarial-attacks-and-on-you-too">5. Superposition and adversarial attacks (and on you too)</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-5"></a>
+<p><em>Connects to:</em> WB5 §3.C (linear representations).</p>
+<p>High-dimensional space holds exponentially many almost-orthogonal directions, so a network can store more sparse features than it has dimensions, at the price of interference when several are active at once. Interference is one proposed account of adversarial vulnerability: a small input change aligned with many stored directions moves many features at once. Ilyas et al. below give a competing account, in which adversarial perturbations exploit features that really are predictive. Storing a feature redundantly is a candidate route to error correction, for which there is no reading here.</p>
+<div class="reading">
+
+<p><strong><a href="https://transformer-circuits.pub/2022/toy_model/index.html">Toy models of superposition</a></strong>, Elhage et al. (Anthropic, 2022; also arXiv 2209.10652) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>In a toy ReLU autoencoder, networks store more sparse features than they have dimensions, which offers an explanation of polysemantic neurons. Whether they do so is a phase change in sparsity and importance, the stored features form regular polytopes, and in these toy models superposition goes together with adversarial vulnerability. The section ‘Superposition as a Phase Change’ has the two-feature phase diagram in the figure below.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1905.02175">Adversarial examples are not bugs, they are features</a></strong>, Ilyas, Santurkar, Tsipras, Engstrom, Tran &amp; Madry (NeurIPS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Argues that adversarial vulnerability comes from non-robust features: patterns that really do predict the label but are brittle and incomprehensible to humans. Training on adversarially perturbed images relabelled with the attack’s target class (a set that looks mislabelled to a human) still gives non-trivial accuracy on the clean test set. Conversely, a dataset restricted to robust features gives a model with non-trivial robustness under standard training.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1802.08195">Adversarial examples that fool both computer vision and time-limited humans</a></strong>, Elsayed, Shankar, Cheung, Papernot, Kurakin, Goodfellow &amp; Sohl-Dickstein (NeurIPS 2018) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Builds perturbations that transfer across an ensemble of models with a retina-like front end, then shows them to people for a fraction of a second. The perturbations measurably bias the humans’ choice between two classes.</p>
+</div>
+
+<p><strong>Exercise 5.1 (packing almost-orthogonal directions).</strong> Let <span class="math inline">u,v</span> be independent, uniformly random unit vectors in <span class="math inline">\mathbb R^m</span>.</p>
+<ul>
+<li>(a) Show that <span class="math inline">\mathbb E\langle u,v\rangle=0</span> and <span class="math inline">\mathbb E\langle u,v\rangle^2=1/m</span>.</li>
+<li>(b) Take as given the concentration bound <span class="math inline">\Pr(|\langle u,v\rangle|&gt;\varepsilon)\le2e^{-m\varepsilon^2/2}</span>. Show that if <span class="math inline">N^2e^{-m\varepsilon^2/2}&lt;1</span>, then <span class="math inline">N</span> independent random unit vectors have all pairwise <span class="math inline">|\cos|\le\varepsilon</span> with positive probability. Conclude that <span class="math inline">\mathbb R^m</span> contains about <span class="math inline">e^{m\varepsilon^2/4}</span> such directions.</li>
+</ul>
+<p><em>Hint:</em> (a) condition on <span class="math inline">v</span> and use <span class="math inline">\mathbb E[uu^\top]=I/m</span> (isotropy, and the trace is 1); (b) union bound over pairs.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">u</span> and <span class="math inline">-u</span> have the same distribution, so <span class="math inline">\mathbb E\langle u,v\rangle=0</span>. By isotropy <span class="math inline">\mathbb E[uu^\top]=\kappa I</span>, and taking the trace gives <span class="math inline">\mathbb E\|u\|^2=1=\kappa m</span>. Conditioning on <span class="math inline">v</span>, <span class="math inline">\mathbb E\langle u,v\rangle^2=v^\top\mathbb E[uu^\top]v=1/m</span>. A typical overlap is of size <span class="math inline">1/\sqrt m</span>.</p>
+<p><strong>(b)</strong> There are <span class="math inline">N(N-1)/2</span> pairs. By the union bound, <span class="math display">\Pr(\text{some pair has }|\cos|&gt;\varepsilon)\le\frac{N(N-1)}2\cdot2e^{-m\varepsilon^2/2}&lt;N^2e^{-m\varepsilon^2/2}&lt;1,</span> so with positive probability no pair is bad, and such a configuration exists. The condition holds for any <span class="math inline">N&lt;e^{m\varepsilon^2/4}</span>: exponentially many directions in <span class="math inline">m</span>, against only <span class="math inline">m</span> exactly orthogonal ones. If features are sparse, the small overlaps rarely matter at the same time, which is why storing more than <span class="math inline">m</span> of them can pay.</p>
+</div>
+</details>
+
+<p>The smallest case already shows the trade-off. The toy model compresses features <span class="math inline">x</span> to <span class="math inline">Wx</span> and reads them back as <span class="math inline">\mathrm{ReLU}(W^\top Wx+b)</span>, with squared error weighted by each feature’s importance. Put two features with importances <span class="math inline">1</span> and <span class="math inline">r\le1</span>, each active with probability <span class="math inline">p</span>, into one dimension. Dedicating the dimension to feature 1 (with the best constant guess for feature 2) costs <span class="math inline">r</span> times the variance of feature 2, which is of order <span class="math inline">rp</span>. Storing both antipodally (<span class="math inline">W=[1,-1]</span>, with the ReLU erasing negative interference) costs only when both fire, with probability <span class="math inline">p^2</span>. With features uniform on <span class="math inline">[0,1]</span> when active, antipodal storage wins for <span class="math inline">p&lt;4r/(2+5r)</span>: sparse features get superposed even when one matters little, and dense features force a choice.</p>
+<p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/superposition.html"><code>superposition.html</code></a>. Panel 1 is the two-feature, one-dimension phase diagram over density and relative importance: the dashed boundary is the closed-form comparison above, the solid one optimizes weights and biases, and dots are trained models. Panel 2 trains <span class="math inline">n=5</span> or <span class="math inline">6</span> features in <span class="math inline">m=2</span> dimensions in your browser; as sparsity increases, the features go from dedicated dimensions to antipodal pairs to a regular polygon.</p>
+</div>
+</details>
+<details class="sec sec2" data-sec="6-critical-modules">
+<summary><h2 id="6-critical-modules">6. Critical modules</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-6"></a>
+<p><em>Connects to:</em> WB2 §4.C.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1902.01996">Are all layers created equal?</a></strong>, Zhang, Bengio &amp; Singer (2019; JMLR 2022) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Resets one layer of a trained network at a time, either to its initial weights or to fresh random weights. For many layers, resetting to the initial weights barely changes performance (“robust” layers); a few layers are “critical”, and which ones depends on the architecture. The authors discuss what this implies for generalization measures and caution that architecture matters.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="7-distillation-and-pruning">
+<summary><h2 id="7-distillation-and-pruning">7. Distillation and pruning</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-7"></a>
+<p><em>Connects to:</em> <a href="#wb6-section-8">§8</a> for pruning.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1503.02531">Distilling the knowledge in a neural network</a></strong>, Hinton, Vinyals &amp; Dean (2015) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Training a model on the temperature-softened outputs of a larger model (MNIST) or of an ensemble (speech recognition) transfers much of the teacher’s performance; the paper argues that the small probabilities given to wrong classes carry much of the useful information. In one MNIST experiment the digit 3 never appears in the transfer set, yet the student gets most test 3s right, and 98.6% once its bias for that class is raised.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="8-rewinding-and-lottery-tickets">
+<summary><h2 id="8-rewinding-and-lottery-tickets">8. Rewinding and lottery tickets</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-8"></a>
+<p><em>Connects to:</em> WB5 §3.A (parameter symmetries).</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1803.03635">The lottery ticket hypothesis: finding sparse, trainable neural networks</a></strong>, Frankle &amp; Carbin (ICLR 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Iterative magnitude pruning, with the surviving weights reset to their initial values, finds subnetworks under 10–20% of the original size that train in isolation to the original accuracy on MNIST and CIFAR-10. The same masks with re-randomized weights do worse. Deeper networks (VGG, ResNet) needed learning-rate warmup or a lower learning rate.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1912.05671">Linear mode connectivity and the lottery ticket hypothesis</a></strong>, Frankle, Dziugaite, Roy &amp; Carbin (ICML 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Calls a network stable to SGD noise from step <span class="math inline">k</span> if two copies trained on from step <span class="math inline">k</span> with different data orders are linearly connected: error does not rise along the straight line between them. Subnetworks found by iterative magnitude pruning reach full accuracy only when they are stable in this sense. In the tested settings that happens at initialization for small MNIST networks, but only early in training for larger ones such as ResNet-50 on ImageNet.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="9-gradient-descent-in-a-tiny-subspace">
+<summary><h2 id="9-gradient-descent-in-a-tiny-subspace">9. Gradient descent in a tiny subspace</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-9"></a>
+<p><em>Connects to:</em> WB2 §4.B.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1812.04754">Gradient descent happens in a tiny subspace</a></strong>, Gur-Ari, Roberts &amp; Dyer (2018) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Measures how much of the gradient lies in the span of the top Hessian eigenvectors during training. After a short initial phase most of it does; the number of top directions matches the number of classes in the tested classifiers, and the subspace changes slowly. Short, with a toy model explaining the count.</p>
+</div>
+
+<p><strong>Exercise 9.1 (a quadratic toy).</strong> This toy is not the paper’s model. It shows that “the gradient lies in the top subspace” and “the loss goes down along the top subspace” can come apart. Take <span class="math inline">L(\theta)=\tfrac12(\theta-\theta^*)^\top H(\theta-\theta^*)</span> with <span class="math inline">H</span> symmetric positive semi-definite, orthonormal eigenvectors <span class="math inline">v_i</span> with eigenvalues <span class="math inline">\lambda_1\ge\lambda_2\ge\dots</span>, and write <span class="math inline">\theta-\theta^*=\sum_i c_iv_i</span>. The paper’s overlap is <span class="math inline">\lVert P_kg\rVert^2/\lVert g\rVert^2</span>, where <span class="math inline">g=\nabla L</span> and <span class="math inline">P_k</span> projects onto <span class="math inline">v_1,\dots,v_k</span>.</p>
+<ul>
+<li>(a) Show that the overlap equals <span class="math inline">\sum_{i\le k}\lambda_i^2c_i^2\big/\sum_i\lambda_i^2c_i^2</span>, and that <span class="math inline">L=\tfrac12\sum_i\lambda_ic_i^2</span>.</li>
+<li>(b) For gradient descent <span class="math inline">\theta\leftarrow\theta-\eta g</span>, show that <span class="math inline">c_i(t)=(1-\eta\lambda_i)^t\,c_i(0)</span>.</li>
+<li>(c) Take one outlier <span class="math inline">\lambda_1=\Lambda</span> and <span class="math inline">p-1</span> bulk directions with <span class="math inline">\lambda_i=\mu</span>, where <span class="math inline">0&lt;\mu\le\Lambda/2</span>, and <span class="math inline">k=1</span>. Assume <span class="math inline">c_1(0)\neq0</span> and some bulk <span class="math inline">c_i(0)\neq0</span>. For which step sizes <span class="math inline">0&lt;\eta&lt;2/\Lambda</span> does the overlap tend to 1 as <span class="math inline">t\to\infty</span>?</li>
+<li>(d) Take <span class="math inline">\Lambda=100</span>, <span class="math inline">\mu=1</span>, <span class="math inline">p=1000</span>, <span class="math inline">\eta=0.0199</span> and all <span class="math inline">c_i(0)=1</span>. At <span class="math inline">t=0</span> and at <span class="math inline">t=100</span>, compute the overlap and the fraction of the one-step loss decrease that comes from the bulk.</li>
+</ul>
+<p><em>Hint for (d):</em> direction <span class="math inline">i</span> contributes <span class="math inline">\tfrac12\lambda_ic_i^2\bigl(1-(1-\eta\lambda_i)^2\bigr)</span> to the decrease in one step.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">g=H(\theta-\theta^*)=\sum_i\lambda_ic_iv_i</span> and <span class="math inline">P_kg=\sum_{i\le k}\lambda_ic_iv_i</span>. By orthonormality, <span class="math inline">\lVert g\rVert^2=\sum_i\lambda_i^2c_i^2</span> and <span class="math inline">\lVert P_kg\rVert^2=\sum_{i\le k}\lambda_i^2c_i^2</span>. Likewise <span class="math inline">L=\tfrac12\sum_i\lambda_ic_i^2</span>.</p>
+<p><strong>(b)</strong> <span class="math inline">\theta-\theta^*\leftarrow(\theta-\theta^*)-\eta H(\theta-\theta^*)=(I-\eta H)(\theta-\theta^*)</span>, and <span class="math inline">v_i</span> is an eigenvector of <span class="math inline">I-\eta H</span> with eigenvalue <span class="math inline">1-\eta\lambda_i</span>. So <span class="math inline">c_i\leftarrow(1-\eta\lambda_i)c_i</span> at each step.</p>
+<p><strong>(c)</strong> Let <span class="math inline">r_1=|1-\eta\Lambda|</span> and <span class="math inline">r_b=1-\eta\mu</span>. Since <span class="math inline">\eta&lt;2/\Lambda</span> and <span class="math inline">\mu\le\Lambda/2</span>, <span class="math inline">0&lt;\eta\mu&lt;1</span>, so <span class="math inline">0&lt;r_b&lt;1</span>. By (a) and (b), with <span class="math inline">k=1</span>, <span class="math display">\text{overlap}(t)=\frac{\Lambda^2c_1(0)^2\,r_1^{2t}}{\Lambda^2c_1(0)^2\,r_1^{2t}+\mu^2\sum_{i\ge2}c_i(0)^2\,r_b^{2t}},</span> which tends to 1 if <span class="math inline">r_1&gt;r_b</span> and to 0 if <span class="math inline">r_1&lt;r_b</span>. If <span class="math inline">\eta\Lambda\le1</span>, then <span class="math inline">r_1=1-\eta\Lambda&lt;1-\eta\mu=r_b</span>, so the outlier decays faster and the overlap goes to 0. If <span class="math inline">\eta\Lambda&gt;1</span>, then <span class="math inline">r_1=\eta\Lambda-1</span>, and <span class="math inline">r_1&gt;r_b</span> iff <span class="math inline">\eta(\Lambda+\mu)&gt;2</span>. So the overlap tends to 1 exactly for <span class="math display">\frac{2}{\Lambda+\mu}&lt;\eta&lt;\frac{2}{\Lambda},</span> a narrow open window just below the stability limit. There the outlier component flips sign every step and shrinks only slowly. At <span class="math inline">\eta=2/(\Lambda+\mu)</span> exactly, <span class="math inline">r_1=r_b</span> and the overlap stays at its initial value.</p>
+<p><strong>(d)</strong> <span class="math inline">r_1=|1-1.99|=0.99</span> and <span class="math inline">r_b=1-0.0199=0.9801</span>; note <span class="math inline">\eta=0.0199&gt;2/101\approx0.0198</span>, so we are in the window.</p>
+<ul>
+<li><span class="math inline">t=0</span>: overlap <span class="math inline">=10^4/(10^4+999)\approx0.909</span>. One-step decrease: outlier <span class="math inline">\tfrac12\cdot100\cdot(1-0.9801)=0.995</span>; bulk <span class="math inline">\tfrac12\cdot999\cdot(1-0.9801^2)=499.5\times0.0394\approx19.68</span>. The bulk supplies <span class="math inline">19.68/20.68\approx95\%</span> of the decrease.</li>
+<li><span class="math inline">t=100</span>: <span class="math inline">c_1^2=0.99^{200}\approx0.134</span> and <span class="math inline">c_i^2=0.9801^{200}\approx0.0180</span> for the bulk. Overlap <span class="math inline">=1340/(1340+17.9)\approx0.987</span>. Decrease: outlier <span class="math inline">50\times0.134\times0.0199\approx0.133</span>; bulk <span class="math inline">499.5\times0.0180\times0.0394\approx0.353</span>. The bulk still supplies about <span class="math inline">73\%</span>.</li>
+</ul>
+<p>So an overlap near 1 is compatible with most of the loss decrease coming from outside the top subspace: the gradient is dominated by a large, oscillating component that contributes little progress. (In this toy the outlier eventually dominates the decrease too, after about 150 steps, because it is the slowest-decaying direction.) The overlap measures where the gradient is, not where learning happens. The toy does not settle whether real training behaves this way; that takes intervention experiments on real networks.</p>
+</div>
+</details>
+</div>
+</details>
+<details class="sec sec2" data-sec="10-spectra-and-curvature">
+<summary><h2 id="10-spectra-and-curvature">10. Spectra and curvature</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-10"></a>
+<p><em>Connects to:</em> WB2 §1.D, WB2 §4.C.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1901.10159">An investigation into neural net optimization via Hessian eigenvalue density</a></strong>, Ghorbani, Krishnan &amp; Xiao (ICML 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Estimates the full Hessian eigenvalue density of large networks, up to ImageNet scale, with stochastic Lanczos quadrature. In networks without batch normalization, large isolated eigenvalues appear early in training and the gradient concentrates in their eigenspace. With batch normalization these outliers are largely absent, which the authors connect to faster optimization.</p>
+</div>
+
+<p><strong>Exercise 10.1 (scale invariance).</strong> This calculation is not in the paper. It shows one concrete way batch normalization changes curvature. When batch normalization uses the current batch’s statistics, with the <span class="math inline">\varepsilon</span> in its denominator set to zero and nonzero pre-activation variance, rescaling a unit’s nonzero incoming weight vector <span class="math inline">w</span> by <span class="math inline">\alpha&gt;0</span> leaves its normalized output unchanged. (This fails with frozen inference statistics or an added weight penalty.) So, with all other parameters fixed, <span class="math inline">L(\alpha w)=L(w)</span> for every <span class="math inline">\alpha&gt;0</span>; assume <span class="math inline">L</span> is twice differentiable near <span class="math inline">w</span>. Write <span class="math inline">g=\nabla L(w)</span> and <span class="math inline">H=\nabla^2L(w)</span>, both taken with respect to <span class="math inline">w</span>.</p>
+<ul>
+<li>(a) Show that <span class="math inline">w^\top g=0</span>.</li>
+<li>(b) Show that <span class="math inline">\nabla L(\alpha w)=\alpha^{-1}\nabla L(w)</span> and <span class="math inline">\nabla^2L(\alpha w)=\alpha^{-2}\nabla^2L(w)</span>.</li>
+<li>(c) Show that <span class="math inline">Hw=-g</span>. Deduce that the curvature along <span class="math inline">w</span>, <span class="math inline">w^\top Hw</span>, is zero. When is <span class="math inline">w</span> an eigenvector of <span class="math inline">H</span> with eigenvalue 0, and why is it not one in general?</li>
+<li>(d) For a gradient step <span class="math inline">w&#39;=w-\eta g</span>, show that <span class="math inline">\lVert w&#39;\rVert^2=\lVert w\rVert^2+\eta^2\lVert g\rVert^2</span>. Using (b), separate the effect of changing <span class="math inline">\lVert w\rVert</span> from that of changing the unit direction <span class="math inline">u=w/\lVert w\rVert</span>. What effective step size multiplies the gradient with respect to the direction?</li>
+</ul>
+<p>Compare the layer rescaling in WB2 §1.D: as there, curvature measured in these weights is not a property of the function alone.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Differentiate <span class="math inline">L(\alpha w)=L(w)</span> with respect to <span class="math inline">\alpha</span>: <span class="math inline">w^\top\nabla L(\alpha w)=0</span> for all <span class="math inline">\alpha&gt;0</span>. At <span class="math inline">\alpha=1</span>, <span class="math inline">w^\top g=0</span>. The gradient is always orthogonal to <span class="math inline">w</span>.</p>
+<p><strong>(b)</strong> Differentiate <span class="math inline">L(\alpha w)=L(w)</span> with respect to <span class="math inline">w</span>: <span class="math inline">\alpha\nabla L(\alpha w)=\nabla L(w)</span>, so <span class="math inline">\nabla L(\alpha w)=\alpha^{-1}\nabla L(w)</span>. Differentiate this identity with respect to <span class="math inline">w</span> again: <span class="math inline">\alpha\,\nabla^2L(\alpha w)=\alpha^{-1}\nabla^2L(w)</span>, so <span class="math inline">\nabla^2L(\alpha w)=\alpha^{-2}\nabla^2L(w)</span>.</p>
+<p><strong>(c)</strong> Differentiate <span class="math inline">\nabla L(\alpha w)=\alpha^{-1}\nabla L(w)</span> with respect to <span class="math inline">\alpha</span>. The left side gives <span class="math inline">\nabla^2L(\alpha w)\,w</span> and the right side <span class="math inline">-\alpha^{-2}\nabla L(w)</span>. At <span class="math inline">\alpha=1</span>, <span class="math inline">Hw=-g</span>. Then <span class="math inline">w^\top Hw=-w^\top g=0</span> by (a).</p>
+<p>If <span class="math inline">g=0</span> (a stationary point), <span class="math inline">Hw=0</span>, so <span class="math inline">w</span> is an eigenvector with eigenvalue 0. If <span class="math inline">g\neq0</span>, <span class="math inline">Hw=-g</span> is nonzero and orthogonal to <span class="math inline">w</span>, so it cannot be a multiple of <span class="math inline">w</span>: <span class="math inline">w</span> is not an eigenvector. <span class="math inline">H</span> couples the radial direction to the gradient direction. Away from a minimum <span class="math inline">H</span> need not be positive semi-definite, so <span class="math inline">w^\top Hw=0</span> does not force <span class="math inline">Hw=0</span>.</p>
+<p><strong>(d)</strong> <span class="math inline">\lVert w-\eta g\rVert^2=\lVert w\rVert^2-2\eta\,w^\top g+\eta^2\lVert g\rVert^2=\lVert w\rVert^2+\eta^2\lVert g\rVert^2</span>, using (a). So under plain gradient descent (no weight decay) the weight norm never decreases. By (b) with <span class="math inline">\alpha=\lVert w\rVert</span> applied to <span class="math inline">u=w/\lVert w\rVert</span>, <span class="math inline">\nabla L(w)=\lVert w\rVert^{-1}\nabla L(u)</span> and, exactly, <span class="math inline">H(w)=\lVert w\rVert^{-2}H(u)</span>. To first order the unit direction moves as <span class="math inline">u&#39;\approx u-(\eta/\lVert w\rVert^2)\nabla L(u)</span>, so the effective step size on the function is <span class="math inline">\eta/\lVert w\rVert^2</span>. Norm growth lowers this factor and the radial factor in <span class="math inline">H(w_t)=\lVert w_t\rVert^{-2}H(u_t)</span>. It does not guarantee that the Hessian eigenvalues decrease during training, because <span class="math inline">H(u_t)</span> also changes as the direction moves. Weight decay works against the norm growth.</p>
+</div>
+</details>
+</div>
+</details>
+<details class="sec sec2" data-sec="11-low-rank-rl-updates-and-the-kl-leash">
+<summary><h2 id="11-low-rank-rl-updates-and-the-kl-leash">11. Low-rank RL updates and the KL leash</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-11"></a>
+<p><em>Connects to:</em> WB1 §2.E (Exercise B.5, the KL-regularized optimum).</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2505.11711">Reinforcement learning finetunes small subnetworks in large language models</a></strong>, Mukherjee, Yuan, Hakkani-Tür &amp; Peng (NeurIPS 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Across the 7 RL algorithms and 10 LLMs tested, RL fine-tuning changes only 5–30% of the parameters by the paper’s measure, and fine-tuning that subnetwork alone gives a nearly identical model. The subnetworks overlap across seeds, data and algorithms more than chance would predict, and the per-matrix updates are nearly full-rank. The authors conjecture that training on data near the policy’s own distribution, rather than the KL penalty or gradient clipping, mainly causes the sparsity.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2509.04259">RL’s Razor: why online reinforcement learning forgets less</a></strong>, Shenfeld, Pari &amp; Agrawal (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>In the tested LLM and robotics settings, on-policy RL fine-tuning forgets less of prior capabilities than SFT at matched performance on the new task. The amount of forgetting is predicted by the KL divergence between the fine-tuned and base policies on the new task, and the authors argue that on-policy RL is implicitly biased toward small-KL solutions. In their setting the weight-update sparsity came from bfloat16 training and vanished in float32 at the same performance, with full-rank updates throughout (§6).</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2510.00553">On predictability of reinforcement learning dynamics for large language models</a></strong>, Cai et al. (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The low-rank side: across the 8 models and 7 algorithms tested, the top singular direction of each RL update matrix recovers over 99% of the reasoning gains (“rank-1 dominance”). That direction evolves roughly linearly over training, so the authors extrapolate the final update from an early window to speed training up.</p>
+</div>
+
+<p><strong>Exercise 11.1 (sparse is not low-rank).</strong> An update <span class="math inline">\Delta W\in\mathbb R^{n\times n}</span> is <em>sparse</em> if most entries are zero, and has <em>rank at most <span class="math inline">r</span></em> if it can be written <span class="math inline">\Delta W=AB^\top</span> with <span class="math inline">A,B\in\mathbb R^{n\times r}</span>. LoRA parametrizes the update in the second form with small <span class="math inline">r</span>.</p>
+<ul>
+<li>(a) Give a matrix with only <span class="math inline">n</span> nonzero entries and rank <span class="math inline">n</span>, and a matrix of rank 1 with all <span class="math inline">n^2</span> entries nonzero.</li>
+<li>(b) Fix a support <span class="math inline">S\subseteq\{1,\dots,n\}^2</span> that contains the positions <span class="math inline">\{(i,\pi(i))\}</span> of some permutation <span class="math inline">\pi</span>. Show that for almost every choice of real values on <span class="math inline">S</span> (zero elsewhere), the matrix is invertible. <em>Hint:</em> <span class="math inline">\det</span> is a polynomial in the entries on <span class="math inline">S</span>; find one choice of values where it is nonzero.</li>
+<li>(c) What does (b) suggest about how surprising “sparse but nearly full-rank” is? <em>Hint:</em> you may use the fact that a random <span class="math inline">n\times n</span> support in which each position is included independently with probability <span class="math inline">\rho</span> contains some permutation pattern with high probability once <span class="math inline">\rho n\gg\log n</span>.</li>
+</ul>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> The identity <span class="math inline">I_n</span>, or any permutation matrix with nonzero scalings, has <span class="math inline">n</span> nonzero entries and rank <span class="math inline">n</span>. For <span class="math inline">u,v\in\mathbb R^n</span> with no zero entries, <span class="math inline">uv^\top</span> has entries <span class="math inline">u_iv_j\neq0</span> and rank 1.</p>
+<p><strong>(b)</strong> <span class="math inline">\det M=\sum_\sigma\operatorname{sgn}(\sigma)\prod_iM_{i\sigma(i)}</span> is a polynomial in the entries on <span class="math inline">S</span>. Put 1 on the positions <span class="math inline">(i,\pi(i))</span> and 0 on the rest of <span class="math inline">S</span>: the matrix is the permutation matrix of <span class="math inline">\pi</span>, with determinant <span class="math inline">\operatorname{sgn}(\pi)=\pm1</span>. So the polynomial is not identically zero. The zero set of a nonzero polynomial has Lebesgue measure zero, so <span class="math inline">\det M\neq0</span> for almost every choice of values on <span class="math inline">S</span>.</p>
+<p><strong>(c)</strong> Sparsity alone does not imply low rank. By (b), generic values on a support containing a permutation pattern give a full-rank matrix almost surely. By the hint, a support with independent density <span class="math inline">\rho=0.05</span> contains such a pattern with high probability at large widths (<span class="math inline">n=4096</span> gives <span class="math inline">\rho n\approx200</span>, against <span class="math inline">\log n\approx8</span>). So “sparse but nearly full-rank” is what a generic sparse update looks like, not a coincidence. Learned supports and values can be structured or correlated, so the measured rank is still a separate empirical fact. If the sparsity survives a higher-precision measurement (Exercise 11.2), the informative findings are the small fraction of parameters that change and the overlap of that fraction across runs. A rank-<span class="math inline">r</span> update (LoRA’s form) is a different restriction: it is generically dense.</p>
+</div>
+</details>
+
+<p><strong>Exercise 11.2 (what “unchanged” means).</strong> Mukherjee et al. count a parameter as unchanged when its bfloat16 values before and after fine-tuning differ by at most <span class="math inline">10^{-5}</span>. A bfloat16 number has 8 exponent bits and 7 stored fraction bits, so 8 significant bits including the implicit leading 1.</p>
+<ul>
+<li>(a) Show that for normal (not subnormal) values with <span class="math inline">2^e\le|w|&lt;2^{e+1}</span>, the spacing between neighbouring bfloat16 numbers in that range is <span class="math inline">2^{e-7}</span>.</li>
+<li>(b) For which magnitudes <span class="math inline">|w|</span> can a change of the stored value be within the <span class="math inline">10^{-5}</span> tolerance?</li>
+<li>(c) Suppose training keeps a higher-precision copy that starts exactly at the bfloat16 value <span class="math inline">w</span>, with <span class="math inline">|w|&gt;2^{-9}</span> and not a power of two, and the final weight <span class="math inline">w+\Delta</span> is rounded to the nearest bfloat16 number. Roughly how large must <span class="math inline">|\Delta|</span> be, relative to <span class="math inline">|w|</span>, for the parameter to count as updated? Evaluate this for <span class="math inline">|w|\approx0.02</span>.</li>
+<li>(d) The paper reports that SFT, measured the same way, leaves only 6–15% of parameters unchanged, against roughly 70–95% for RL. What does this comparison rule out, and what does it not?</li>
+</ul>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> The bfloat16 numbers in <span class="math inline">[2^e,2^{e+1})</span> are <span class="math inline">2^e(1+f/2^7)</span> for <span class="math inline">f=0,\dots,127</span>, so neighbours differ by <span class="math inline">2^e/2^7=2^{e-7}</span>.</p>
+<p><strong>(b)</strong> Away from powers of two, a change of the stored value is at least one spacing, <span class="math inline">2^{e-7}</span>. This is at most <span class="math inline">10^{-5}</span> only if <span class="math inline">e-7\le\log_2 10^{-5}\approx-16.6</span>, i.e. <span class="math inline">e\le-10</span>, so <span class="math inline">|w|&lt;2^{-9}\approx0.002</span>. At <span class="math inline">|w|=2^{-9}</span> exactly, the neighbour toward zero is only <span class="math inline">2^{-17}\approx7.6\times10^{-6}</span> away (within tolerance), while the neighbour away from zero is <span class="math inline">2^{-16}\approx1.5\times10^{-5}</span> away (outside it). So some distinct stored value lies within tolerance iff <span class="math inline">|w|\le2^{-9}</span>. For <span class="math inline">|w|&gt;2^{-9}</span> the tolerance makes no difference: “unchanged” means the stored bfloat16 value is identical.</p>
+<p><strong>(c)</strong> Rounding to nearest returns <span class="math inline">w</span> when <span class="math inline">|\Delta|</span> is below half a spacing, <span class="math inline">2^{e-8}</span> (ignoring ties). Since <span class="math inline">2^e\le|w|&lt;2^{e+1}</span>, this threshold lies between <span class="math inline">|w|/512</span> and <span class="math inline">|w|/256</span>: roughly 0.2–0.4% of <span class="math inline">|w|</span>. For <span class="math inline">|w|\approx0.02</span> (bfloat16 stores <span class="math inline">0.02</span> as <span class="math inline">0.02001953125</span>), <span class="math inline">e=-6</span> since <span class="math inline">2^{-6}\approx0.0156</span>, so the threshold is <span class="math inline">2^{-14}\approx6.1\times10^{-5}</span>, about 0.3% of <span class="math inline">|w|</span>. So in this example a net movement below about 0.3% of <span class="math inline">|w|</span> leaves the stored value unchanged: “unchanged” does not mean “received no gradient” or “never moved”. If updates were instead written straight into bfloat16 weights at every step, the same threshold would apply to each step separately, and many small steps could all be lost.</p>
+<p><strong>(d)</strong> It rules out the simplest artifact, that this measurement makes every fine-tune look sparse: under the same threshold, SFT looks dense. It does not distinguish “RL moves few parameters” from “RL moves most parameters by less than their rounding or absolute-tolerance threshold”, because SFT may simply move weights further. Separating the two needs a higher-precision measurement. Shenfeld et al. (RL’s Razor, §6) did this in their own setting: training in float32 gave the same performance and no sparsity, so there the sparsity was a bfloat16 effect. Their setting is not Mukherjee et al.’s, so this does not settle the question for every model, but it shows the concern is real. Mukherjee et al.’s finding that fine-tuning only the subnetwork gives a nearly identical model bears on whether any sub-threshold movement matters for the function.</p>
+</div>
+</details>
+</div>
+</details>
+<details class="sec sec2" data-sec="12-physics-of-language-models">
+<summary><h2 id="12-physics-of-language-models">12. Physics of language models</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-12"></a>
+<p><em>Connects to:</em> WB4 §4.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2305.13673">Physics of language models: Part 1, learning hierarchical language structures</a></strong>, Allen-Zhu &amp; Li (2023; <a href="https://physics.allen-zhu.com/">project page</a>) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Trains GPT-2-sized transformers on strings from deep, ambiguous synthetic context-free grammars, so the structure to be learned is known exactly. The models generate grammatical strings with high accuracy, probes recover the grammar’s parse structure from hidden states, and attention patterns resemble what a dynamic-programming parser needs. The project page links the later parts of the series.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="13-hidden-signals-low-rank-logits-and-subliminal-learning">
+<summary><h2 id="13-hidden-signals-low-rank-logits-and-subliminal-learning">13. Hidden signals: low-rank logits and subliminal learning</h2></summary>
+<div class="sec-body">
+<a id="wb6-section-13"></a>
+<p><em>Connects to:</em> WB5 §3 (shared representations).</p>
+<p>Two findings suggest that language models share more structure than their architectures force. A model with hidden size <span class="math inline">d</span> has next-token log-probabilities <span class="math inline">\phi(h)^\top\psi(y)-\log Z(h)</span>, so the matrix of <span class="math inline">\log p(y\mid h)</span> over histories and next tokens has rank at most <span class="math inline">d+1</span> (the softmax bottleneck). For multi-token continuations nothing in the architecture bounds the rank, because the hidden state sees the earlier part of the continuation; Golowich et al. find that it is approximately low anyway, with linear relations among prompts that agree across models.</p>
+<p>Subliminal learning is the stranger finding: a student fine-tuned on a teacher’s innocuous outputs picks up the teacher’s traits. Cloud et al.’s argument for why a shared initialization matters is short. If the teacher is <span class="math inline">\theta_0+\varepsilon\Delta</span> and the student starts at <span class="math inline">\theta_0</span>, one small distillation step on <em>any</em> inputs moves the student by <span class="math inline">\eta\varepsilon\,\mathbb E[J^\top HJ]\Delta+O(\varepsilon^2)</span>, with <span class="math inline">J</span> the output Jacobian at <span class="math inline">\theta_0</span> and <span class="math inline">H\succeq0</span> the loss Hessian in output space. (<span class="math inline">H\succeq0</span> because the loss is minimized when the student’s outputs equal the teacher’s.) To leading order in <span class="math inline">\varepsilon</span> that has a nonnegative inner product with <span class="math inline">\Delta</span>, so the student moves toward the teacher whatever the data are about. With a different initialization the leading term instead fits the teacher’s base behaviour, and the cross term <span class="math inline">J_S^\top J_T</span> has no sign. The log-linear account below gives a different mechanism that can work across architectures.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2510.24966">Sequences of logits reveal the low rank structure of language models</a></strong>, Golowich, Liu &amp; Shetty (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Matrices of log-probabilities of multi-token continuations given prompts are approximately low-rank across many modern language models, and the linear relations among prompts are consistent across models. The authors use this to generate a response to a target prompt from the model’s outputs on unrelated or nonsensical prompts.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2507.14805">Subliminal learning: language models transmit behavioral traits via hidden signals in data</a></strong>, Cloud, Le, Chua, Betley, Sztyber-Betley, Hilton, Marks &amp; Evans (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A student fine-tuned on number sequences, code or chain-of-thought generated by a teacher with a trait (a preferred animal, or misalignment) acquires the trait even when references to it are filtered out. The effect is reported only when teacher and student share a base model or initialization; an MNIST experiment illustrates the shared-initialization argument above. Short summary: <a href="https://alignment.anthropic.com/2025/subliminal-learning/">Subliminal learning (Anthropic Alignment Science blog)</a>.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2606.00831">Subliminal learning is a LoRA artifact</a></strong>, Nief, Fu, Muchane &amp; Holtzman (2026) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Reports that subliminal learning in the number-sequence setting depends non-monotonically on LoRA rank, disappears under full fine-tuning, and is tied to tokens seen in both training and evaluation, such as the system prompt and chat template. Its arXiv listing states that follow-up work showed some of its main claims to be incorrect and that a substantial revision is in preparation, so it does not settle the question either way. Cloud et al.’s MNIST experiment uses no LoRA.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2602.04863">Subliminal effects in your data: a general mechanism via log-linearity</a></strong>, Aden-Ali, Golowich, Liu, Shetty, Moitra &amp; Haghtalab (2026) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Assuming log-probabilities are approximately bilinear in a system-prompt embedding and a prompt–response embedding shared across models, the paper’s Logit-Linear Selection picks subsets of an ordinary preference dataset that make a DPO-trained student behave as if given a target system prompt (preferring an animal, answering in a language absent from the data, adopting a persona). Each example’s selection score is its projection onto the teacher’s trait direction, so no single example states the trait. It reports the effect within a model and, more weakly, across architectures, in contrast with Cloud et al.</p>
+</div>
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:wb6", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>

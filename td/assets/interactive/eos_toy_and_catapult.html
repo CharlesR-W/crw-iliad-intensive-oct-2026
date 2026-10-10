@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edge of Stability Toys</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb; --panel: #f3f2ee; --ink: #0b0b0b; --ink2: #52514e; --ink3: #8a8983;
+  --grid: #e3e2dc; --c1: #2a78d6; --c2: #eb6834; --c3: #1baf7a; --c4: #8b5cf6;
+  --warn: #b3261e; --accent-ui: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19; --panel: #242422; --ink: #ffffff; --ink2: #c3c2b7; --ink3: #8f8e86;
+    --grid: #2f2f2c; --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #a78bfa;
+    --warn: #ff8a80; --accent-ui: #3987e5;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19; --panel: #242422; --ink: #ffffff; --ink2: #c3c2b7; --ink3: #8f8e86;
+  --grid: #2f2f2c; --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #a78bfa;
+  --warn: #ff8a80; --accent-ui: #3987e5;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 980px; margin: 0 auto; padding: 24px 16px 40px; }
+h1 { font-size: 1.45rem; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 1.1rem; font-weight: 600; margin: 30px 0 4px; }
+.sub { color: var(--ink2); margin: 0 0 14px; font-size: 0.95rem; }
+.m { font-family: "STIX Two Math", "Cambria Math", Georgia, serif; font-style: italic; white-space: nowrap; }
+.fig { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 760px) { .fig { grid-template-columns: minmax(0, 1fr); } }
+canvas { width: 100%; display: block; background: var(--bg); }
+canvas.tall { aspect-ratio: 16 / 7.2; }
+canvas.short { aspect-ratio: 16 / 5.2; }
+@media (max-width: 760px) { canvas.tall { aspect-ratio: 16 / 10; } canvas.short { aspect-ratio: 16 / 8; } }
+.cap { font-size: 0.8rem; color: var(--ink2); margin: 0 0 10px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--ink2); margin: 2px 0 2px; }
+.legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 20px; height: 0; border-top: 2px solid; display: inline-block; }
+.sw.dash { border-top-style: dashed; }
+.controls { background: var(--panel); border-radius: 8px; padding: 12px 14px; }
+.ctl { margin: 0 0 12px; }
+.ctl label { display: flex; justify-content: space-between; font-size: 0.86rem; color: var(--ink2); gap: 8px; }
+.ctl label b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ctl input[type=range] { width: 100%; margin: 2px 0 0; accent-color: var(--accent-ui); }
+.row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 0.84rem; color: var(--ink2); }
+.row label { display: inline-flex; gap: 5px; align-items: center; }
+button { font: inherit; font-size: 0.8rem; padding: 3px 9px; border-radius: 5px; border: 1px solid var(--ink3); background: var(--bg); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--ink); }
+table.ro { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-top: 8px; font-variant-numeric: tabular-nums; }
+table.ro td { padding: 3px 0; border-top: 1px solid var(--grid); vertical-align: top; }
+table.ro td.num { text-align: right; white-space: nowrap; padding-left: 8px; }
+.status { font-size: 0.86rem; margin-top: 8px; padding: 6px 8px; border-radius: 6px; background: var(--bg); border: 1px solid var(--grid); }
+.status.bad { color: var(--warn); border-color: var(--warn); }
+.note { font-size: 0.84rem; color: var(--ink2); margin: 14px 0 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>Edge of stability: two solvable toys</h1>
+<p class="sub">Companion to Training Dynamics NB2 §2 (<code>td2_2_edge_of_stability</code>). Time is counted in steps <span class="m">k</span> here; the notebook's continuous time is <span class="m">t = kη</span>.</p>
+
+<h2>1. Self-stabilization (§2.2, §2.8)</h2>
+<p class="sub">Gradient descent on <span class="m">L(x, y) = ½ y x² + c y⁻⁵</span>, <span class="m">c = 62.5</span>. The coordinate <span class="m">y</span> is the curvature along <span class="m">x</span>, which is the sharpness <span class="m">S</span> near <span class="m">x = 0</span> (for <span class="m">y ≳ 2.6</span>); <span class="m">ℓ(y) = c y⁻⁵</span> pushes it up (progressive sharpening). Each step also adds noise of size 10⁻³ to <span class="m">x</span>, a floor for the unstable direction (in a real network: other directions, minibatch noise, round-off).</p>
+<div class="fig">
+  <div>
+    <canvas id="t_S" class="tall" aria-label="Sharpness versus step with the 2 over eta line"></canvas>
+    <div class="legend"><span><i class="sw" style="border-color:var(--c1)"></i>sharpness <span class="m">S = y<sub>k</sub></span></span><span><i class="sw dash" style="border-color:var(--c2)"></i><span class="m">2/η<sub>k</sub></span></span></div>
+    <canvas id="t_x" class="short" aria-label="Oscillating coordinate x versus step"></canvas>
+    <div class="legend"><span><i class="sw" style="border-color:var(--c3)"></i><span class="m">x<sub>k</sub></span> (flips sign every step at EoS)</span><span><i class="sw dash" style="border-color:var(--c4)"></i><span class="m">±σ</span>, central-flow amplitude</span></div>
+    <canvas id="t_L" class="short" aria-label="Loss versus step on a log scale"></canvas>
+    <div class="legend"><span><i class="sw" style="border-color:var(--c2)"></i>loss <span class="m">L(x<sub>k</sub>, y<sub>k</sub>)</span> (log scale)</span></div>
+  </div>
+  <div class="controls">
+    <div class="ctl"><label>learning rate η <b id="t_eta_v"></b></label><input type="range" id="t_eta" min="0.25" max="0.55" step="0.005" value="0.4"></div>
+    <div class="ctl"><label><span>initial sharpness <span class="m">y₀</span></span> <b id="t_y0_v"></b></label><input type="range" id="t_y0" min="3" max="9" step="0.1" value="3"></div>
+    <div class="ctl">
+      <div class="row"><label><input type="checkbox" id="t_ramp"> linear warmup <span class="m">η<sub>k</sub> = η·min(1, (k+1)/T)</span></label></div>
+      <label>warmup length T (steps) <b id="t_T_v"></b></label><input type="range" id="t_T" min="10" max="2000" step="10" value="400">
+    </div>
+    <div class="ctl"><div class="row"><label><input type="checkbox" id="t_noise" checked> noise floor on <span class="m">x</span></label></div></div>
+    <div class="row">presets: <button id="p_eos">EoS from below</button><button id="p_jump">sharp start, no warmup</button><button id="p_warm">sharp start, warmup</button></div>
+    <table class="ro">
+      <tr><td>mean of <span class="m">S</span>, last 1000 steps</td><td class="num" id="t_meanS"></td></tr>
+      <tr><td><span class="m">2/η</span> (final)</td><td class="num" id="t_two"></td></tr>
+      <tr><td>mean <span class="m">x²</span>, last 1000 steps</td><td class="num" id="t_x2"></td></tr>
+      <tr><td><span class="m">σ² = −2ℓ′/S′ = 10c(η/2)⁶</span></td><td class="num" id="t_s2"></td></tr>
+      <tr><td>peak loss</td><td class="num" id="t_peak"></td></tr>
+    </table>
+    <div class="status" id="t_status"></div>
+  </div>
+</div>
+
+<h2>2. The catapult (§2.7)</h2>
+<p class="sub">The exact maps of the width-<span class="m">n</span> model <span class="m">f = vᵀu/√n</span>, one input, target 0, <span class="m">L = ½f²</span>: <span class="m">f′ = f(1 − ηλ + η²f²/n)</span>, <span class="m">λ′ = λ + (ηf²/n)(ηλ − 4)</span>. Start at <span class="m">f₀ = 1</span>.</p>
+<div class="fig">
+  <div>
+    <canvas id="c_L" class="tall" aria-label="Loss versus step on a log scale"></canvas>
+    <div class="legend"><span><i class="sw" style="border-color:var(--c2)"></i>loss <span class="m">½f<sub>k</sub>²</span> (log scale)</span><span><i class="sw dash" style="border-color:var(--ink3)"></i><span class="m">½n</span> (catapult scale <span class="m">f² ~ n</span>)</span></div>
+    <canvas id="c_lam" class="short" aria-label="eta times lambda versus step"></canvas>
+    <div class="legend"><span><i class="sw" style="border-color:var(--c1)"></i><span class="m">ηλ<sub>k</sub></span></span><span><i class="sw dash" style="border-color:var(--c3)"></i>2 (stability edge)</span><span><i class="sw dash" style="border-color:var(--warn)"></i>4 (divergence edge in this model)</span></div>
+  </div>
+  <div class="controls">
+    <div class="ctl"><label><span><span class="m">ηλ₀</span></span> <b id="c_a_v"></b></label><input type="range" id="c_a" min="0.2" max="5" step="0.01" value="3"></div>
+    <div class="ctl"><label><span>width <span class="m">n</span></span> <b id="c_n_v"></b></label><input type="range" id="c_n" min="2" max="6" step="0.05" value="3"></div>
+    <div class="row">presets: <button data-a="1.5">lazy</button><button data-a="3">catapult</button><button data-a="4.2">divergent</button></div>
+    <table class="ro">
+      <tr><td>final <span class="m">ηλ</span></td><td class="num" id="c_fin"></td></tr>
+      <tr><td>peak loss (step)</td><td class="num" id="c_peak"></td></tr>
+      <tr><td>early-growth estimate of steps to the <span class="m">f² ~ n</span> scale, <span class="m">ln n / (2 ln(ηλ₀ − 1))</span> (ignores curvature feedback)</td><td class="num" id="c_tg"></td></tr>
+    </table>
+    <div class="status" id="c_status"></div>
+  </div>
+</div>
+<p class="note">Both panels iterate the maps exactly; nothing is fitted. A check script (<code>checks/eos_toy_and_catapult_check.py</code>) runs the simulation code below under Node and compares it with a Python implementation.</p>
+</main>
+
+<script id="sim">
+// ---- simulation code (pure functions; also run by the check script) ----
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1) >>> 0;
+    t = (t ^ (t + Math.imul(t ^ (t >>> 7), t | 61))) >>> 0;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function gaussians(K, seed) {
+  // Box-Muller, one normal per pair of uniforms (keeps the Python port simple)
+  const u = mulberry32(seed), out = new Float64Array(K);
+  for (let k = 0; k < K; k++) {
+    const u1 = 1 - u(), u2 = u();
+    out[k] = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+  }
+  return out;
+}
+const TOY_C = 62.5;
+function toyLoss(x, y) { return 0.5 * y * x * x + TOY_C / Math.pow(y, 5); }
+// GD on L = y x^2/2 + c y^-5, plus noise on x. Records the state *before* each step.
+function toyRun(p) {
+  const K = p.K, xs = new Float64Array(K).fill(NaN), ys = new Float64Array(K).fill(NaN), etas = new Float64Array(K);
+  const xi = gaussians(K, p.seed);
+  let x = p.x0, y = p.y0, diverged = false;
+  for (let k = 0; k < K; k++) {
+    const eta = p.ramp ? p.eta * Math.min(1, (k + 1) / p.T) : p.eta;
+    etas[k] = eta; xs[k] = x; ys[k] = y;
+    const xn = (1 - eta * y) * x + p.noise * xi[k];
+    const yn = y - eta * (0.5 * x * x - 5 * TOY_C / Math.pow(y, 6));
+    x = xn; y = yn;
+    if (!isFinite(x) || !isFinite(y) || y <= 0 || Math.abs(x) > 1e3) { diverged = true; break; }
+  }
+  return { xs, ys, etas, diverged };
+}
+// Catapult maps (Lewkowycz et al. 2020, eqs. 6-7), f0 given, a0 = eta*lambda0.
+function catapultRun(p) {
+  const K = p.K, f = new Float64Array(K + 1).fill(NaN), al = new Float64Array(K + 1).fill(NaN);
+  let ff = p.f0, a = p.a0, diverged = false;           // a = eta*lambda
+  const n = p.n, eta = p.eta;
+  for (let k = 0; k <= K; k++) {
+    f[k] = ff; al[k] = a;
+    if (k === K) break;
+    const b = eta * eta * ff * ff / n;                  // eta^2 f^2 / n
+    const fn = ff * (1 - a + b);
+    const an = a + b * (a - 4);                         // eta*(lambda' ) = a + eta*(eta f^2/n)(eta lambda - 4)
+    ff = fn; a = an;
+    if (!isFinite(ff) || Math.abs(ff) > 1e100) { diverged = true; f[k + 1] = NaN; break; }
+  }
+  return { f, al, diverged };
+}
+</script>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  // ---------- tiny line-chart helper ----------
+  function chart(cv, o) {
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const L = 46, R = 10, T = 8, B = 22, pw = W - L - R, ph = H - T - B;
+    const ylog = !!o.ylog;
+    const tr = (v) => ylog ? Math.log10(v) : v;
+    const [x0, x1] = o.xr, [y0r, y1r] = o.yr, y0 = tr(y0r), y1 = tr(y1r);
+    const X = (x) => L + (x - x0) / (x1 - x0) * pw;
+    const Y = (y) => T + (1 - (tr(y) - y0) / (y1 - y0)) * ph;
+    ctx.font = "11px -apple-system, Segoe UI, Roboto, sans-serif";
+    ctx.strokeStyle = css("--grid"); ctx.fillStyle = css("--ink3"); ctx.lineWidth = 1;
+    // y ticks
+    let yt = [];
+    if (ylog) { for (let e = Math.ceil(y0); e <= Math.floor(y1); e++) yt.push(Math.pow(10, e)); if (yt.length > 7) yt = yt.filter((_, i) => i % 2 === 0); }
+    else { const st = niceStep((y1 - y0) / 4); for (let v = Math.ceil(y0 / st) * st; v <= y1 + 1e-9; v += st) yt.push(v); }
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (const v of yt) { const yy = Y(v); ctx.beginPath(); ctx.moveTo(L, yy); ctx.lineTo(L + pw, yy); ctx.stroke(); ctx.fillText(fmtTick(v, ylog), L - 4, yy); }
+    const xs = niceStep((x1 - x0) / 5);
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (let v = Math.ceil(x0 / xs) * xs; v <= x1 + 1e-9; v += xs) { const xx = X(v); ctx.beginPath(); ctx.moveTo(xx, T); ctx.lineTo(xx, T + ph); ctx.stroke(); ctx.fillText(String(Math.round(v)), xx, T + ph + 4); }
+    if (o.xlabel) { ctx.textAlign = "right"; ctx.fillText(o.xlabel, L + pw, T + ph + 4 + 0); }
+    ctx.save(); ctx.beginPath(); ctx.rect(L, T, pw, ph); ctx.clip();
+    for (const s of o.series) {
+      ctx.strokeStyle = css(s.color); ctx.lineWidth = s.width || 1.6; ctx.setLineDash(s.dash ? [5, 4] : []);
+      ctx.beginPath(); let pen = false;
+      const n = s.y.length, stride = Math.max(1, Math.floor(n / (pw * 2)));
+      for (let i = 0; i < n; i += (s.noStride ? 1 : stride)) {
+        const xv = s.x ? s.x[i] : i, yv = s.y[i];
+        if (!isFinite(yv) || (ylog && yv <= 0)) { pen = false; continue; }
+        const yy = Math.max(-1e4, Math.min(1e4, Y(yv)));
+        if (pen) ctx.lineTo(X(xv), yy); else { ctx.moveTo(X(xv), yy); pen = true; }
+      }
+      ctx.stroke();
+    }
+    ctx.restore(); ctx.setLineDash([]);
+  }
+  function niceStep(r) { const p = Math.pow(10, Math.floor(Math.log10(r))), m = r / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+  function fmtTick(v, ylog) { if (ylog) { const e = Math.round(Math.log10(v)); return "1e" + e; } return Math.abs(v) < 1e-9 ? "0" : (Math.abs(v) >= 100 ? v.toFixed(0) : +v.toPrecision(3) + ""); }
+  function fmt(v, d = 3) { if (!isFinite(v)) return "—"; const a = Math.abs(v); return (a !== 0 && (a < 1e-3 || a >= 1e5)) ? v.toExponential(2) : v.toFixed(d); }
+
+  // ---------- panel 1: toy ----------
+  const K = 4000;
+  function drawToy() {
+    const eta = +$("t_eta").value, y0 = +$("t_y0").value, ramp = $("t_ramp").checked, T = +$("t_T").value, noise = $("t_noise").checked ? 1e-3 : 0;
+    $("t_eta_v").textContent = eta.toFixed(3); $("t_y0_v").textContent = y0.toFixed(1); $("t_T_v").textContent = T;
+    $("t_T").disabled = !ramp;
+    const r = toyRun({ K, eta, y0, x0: 1e-3, ramp, T, noise, seed: 1 });
+    const kk = Array.from({ length: K }, (_, i) => i);
+    const two = Array.from(r.etas, (e) => 2 / e);
+    const yMax = Math.max(9.5, y0 + 0.5);
+    chart($("t_S"), { xr: [0, K], yr: [0, yMax], series: [
+      { y: two, color: "--c2", dash: true },
+      { y: r.ys, color: "--c1", width: 1.3 }] });
+    const sigma = Math.sqrt(10 * TOY_C * Math.pow(eta / 2, 6));
+    let xm = 0.05; for (const v of r.xs) if (isFinite(v)) xm = Math.max(xm, Math.abs(v));
+    xm = Math.min(xm, 3);
+    chart($("t_x"), { xr: [0, K], yr: [-xm * 1.05, xm * 1.05], series: [
+      { y: r.xs, color: "--c3", width: 0.8, noStride: true },
+      { y: new Float64Array(K).fill(sigma), color: "--c4", dash: true },
+      { y: new Float64Array(K).fill(-sigma), color: "--c4", dash: true }] });
+    const Ls = Array.from(r.xs, (x, i) => toyLoss(x, r.ys[i]));
+    let lmax = 0, lmin = Infinity; for (const v of Ls) if (isFinite(v)) { lmax = Math.max(lmax, v); lmin = Math.min(lmin, v); }
+    chart($("t_L"), { xr: [0, K], ylog: true, yr: [Math.pow(10, Math.floor(Math.log10(Math.max(lmin, 1e-6)))), Math.pow(10, Math.ceil(Math.log10(Math.max(lmax, 1e-5))))], series: [{ y: Ls, color: "--c2", width: 1.2 }] });
+    // readouts
+    let s = 0, x2 = 0, c = 0;
+    for (let i = K - 1000; i < K; i++) if (isFinite(r.ys[i])) { s += r.ys[i]; x2 += r.xs[i] * r.xs[i]; c++; }
+    $("t_meanS").textContent = c ? fmt(s / c) : "—";
+    $("t_two").textContent = fmt(2 / eta);
+    $("t_x2").textContent = c ? fmt(x2 / c, 4) : "—";
+    $("t_s2").textContent = fmt(sigma * sigma, 4);
+    $("t_peak").textContent = fmt(lmax);
+    const st = $("t_status");
+    const meanS = c ? s / c : NaN, meanX2 = c ? x2 / c : NaN, s2 = sigma * sigma;
+    if (r.diverged) { st.className = "status bad"; st.textContent = "Diverged: the oscillation grew so large that its x² kick drove the sharpness through zero (or |x| passed 10³)."; }
+    else if (Math.abs(meanS - 2 / eta) < 0.02 * (2 / eta) && Math.abs(meanX2 - s2) < 0.2 * s2) { st.className = "status"; st.textContent = "At the edge of stability: over the last 1000 steps S averages 2/η and the mean x² matches σ²."; }
+    else { st.className = "status"; st.textContent = "Not at the edge equilibrium over the last 1000 steps: mean ηS = " + fmt(eta * meanS, 2) + ", mean x²/σ² = " + fmt(meanX2 / s2, 2) + ". Read the plots for what the run is doing."; }
+  }
+  ["t_eta", "t_y0", "t_T", "t_ramp", "t_noise"].forEach((id) => $(id).addEventListener("input", drawToy));
+  $("p_eos").onclick = () => { $("t_eta").value = 0.4; $("t_y0").value = 3; $("t_ramp").checked = false; drawToy(); };
+  $("p_jump").onclick = () => { $("t_eta").value = 0.4; $("t_y0").value = 8; $("t_ramp").checked = false; drawToy(); };
+  $("p_warm").onclick = () => { $("t_eta").value = 0.4; $("t_y0").value = 8; $("t_ramp").checked = true; $("t_T").value = 1600; drawToy(); };
+
+  // ---------- panel 2: catapult ----------
+  function drawCat() {
+    const a0 = +$("c_a").value, n = Math.round(Math.pow(10, +$("c_n").value)), eta = 1, KC = 150;
+    $("c_a_v").textContent = a0.toFixed(2); $("c_n_v").textContent = n.toLocaleString();
+    const r = catapultRun({ K: KC, f0: 1, a0, n, eta });
+    const Lc = Array.from(r.f, (v) => 0.5 * v * v);
+    let lmax = 0, kmax = 0; Lc.forEach((v, i) => { if (isFinite(v) && v > lmax) { lmax = v; kmax = i; } });
+    const top = Math.max(lmax, n) * 10;
+    chart($("c_L"), { xr: [0, KC], ylog: true, yr: [1e-12, Math.pow(10, Math.min(40, Math.ceil(Math.log10(top))))], series: [
+      { y: new Float64Array(KC + 1).fill(0.5 * n), color: "--ink3", dash: true, noStride: true },
+      { y: Lc, color: "--c2", noStride: true }] });
+    let amax = 4.5; for (const v of r.al) if (isFinite(v)) amax = Math.max(amax, Math.min(v, 12));
+    chart($("c_lam"), { xr: [0, KC], yr: [0, Math.ceil(amax + 0.5)], series: [
+      { y: new Float64Array(KC + 1).fill(2), color: "--c3", dash: true, noStride: true },
+      { y: new Float64Array(KC + 1).fill(4), color: "--warn", dash: true, noStride: true },
+      { y: r.al, color: "--c1", noStride: true }] });
+    let last = NaN; for (const v of r.al) if (isFinite(v)) last = v;
+    $("c_fin").textContent = r.diverged ? "diverged" : fmt(last);
+    $("c_peak").textContent = fmt(lmax) + " (k = " + kmax + ")";
+    $("c_tg").textContent = a0 > 2 ? fmt(Math.log(n) / (2 * Math.log(a0 - 1)), 1) : "—";
+    const st = $("c_status");
+    let lastF = NaN; for (const v of r.f) if (isFinite(v)) lastF = v;
+    const converged = !r.diverged && Math.abs(lastF) < 1e-6;
+    if (r.diverged) { st.className = "status bad"; st.textContent = "Divergent: ηλ > 4 makes the kernel update (ηλ − 4) positive, so curvature and loss grow together."; }
+    else if (!converged) { st.className = "status"; st.textContent = "Not converged within " + KC + " steps (near a phase boundary, ηλ₀ ≈ 2 or 4, convergence is very slow; at exactly 4 the curvature never moves)."; }
+    else if (lmax <= 0.5 * 1.0001 && a0 < 2) { st.className = "status"; st.textContent = "Lazy: |1 − ηλ| < 1, the loss decays geometrically and λ moves only by O(f₀²/n) (visibly more at small width)."; }
+    else if (lmax <= 0.5 * 1.0001) { st.className = "status"; st.textContent = "Converged without a spike: at small width the +η²f²/n term can keep the first multiplier below 1 in magnitude."; }
+    else { st.className = "status"; st.textContent = "Catapult: the loss grew to " + fmt(lmax, 1) + ", then λ fell below 2/η (to ηλ = " + fmt(last, 2) + ") and training converged in a flatter region."; }
+  }
+  ["c_a", "c_n"].forEach((id) => $(id).addEventListener("input", drawCat));
+  document.querySelectorAll("button[data-a]").forEach((b) => b.onclick = () => { $("c_a").value = b.dataset.a; drawCat(); });
+
+  function all() { drawToy(); drawCat(); }
+  window.addEventListener("resize", all);
+  if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", all);
+  all();
+})();
+</script>
+<script>
+// Embedded in a notebook page (iframe): report this page's height so the frame fits it.
+(function () {
+  if (window.parent === window) return;
+  var last = 0;
+  function report() {
+    var b = document.body, cs = getComputedStyle(b);
+    var h = Math.ceil(b.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+    if (Math.abs(h - last) < 2) return;
+    last = h; window.parent.postMessage({ type: "figure-height", height: h }, "*");
+  }
+  if (window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener("load", report); window.addEventListener("resize", report); report();
+  window.addEventListener("message", function (e) {  // the page asks again once it is listening
+    if (e.source === window.parent && e.data && e.data.type === "figure-height-request") { last = 0; report(); }
+  });
+})();
+</script>
+</body>
+</html>

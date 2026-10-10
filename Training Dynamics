@@ -1,0 +1,37 @@
+Training Dynamics
+
+Idea: two tracks - analytic-results track vs. using math to understand track.  I'll lecture briefly on both, and there'll be notebooks.
+
+# Deep Linear
+- Saxe
+- Morse-Bott complex
+- Witten complex analysis and concentration of harmonic forms - relation to Bayes posterior (maybe I'll write this up myself)
+- maybe some other stuff?  The current one writes about some saxe-y stuff idk about but i cant tell how fundamental it is vs specious
+
+
+- NTK learning dynamics
+- Momentum, distill article
+
+# Deriving Everything
+- SDEs for Gradient Descent
+  - is the taylor approximation even valid?
+- IGR
+- Optimizers - sgd to adam
+- EoS
+  - EoSS
+  - Central Flows
+  - RodFlow
+- Muon and Modular
+- dropout and geometric mean ensemble
+
+- layer cushion / noise robustness /basin size?
+
+# Little known but important empirical stuff
+- GGN/NTK
+  - spectrum
+  - relation to basin commitment
+
+# Moment bias, frequency bias
+- sliding down the stairs, why the moment thing doesnt get you far
+- geometric adaptive basis kadkhodaie
+- ??

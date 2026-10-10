@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmlkit_td.py (td2_8_further_readings); do not edit by hand">
+<title>Training Dynamics 2.8: further readings, and a map of the day</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --out-bg: #ffffff; --err: #b3261e;
+  --hl-kw: #8a3ea8; --hl-str: #2f7a2f; --hl-num: #a3570d; --hl-com: #7a7f86;
+  --hl-fn: #1f5f9e; --hl-bi: #0e7490;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    --out-bg: #1b1d22; --err: #f2948b;
+    --hl-kw: #d2a8ff; --hl-str: #8fd18f; --hl-num: #f0b072; --hl-com: #8b9199;
+    --hl-fn: #8ab8f0; --hl-bi: #67d0e0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  --out-bg: #1b1d22; --err: #f2948b;
+  --hl-kw: #d2a8ff; --hl-str: #8fd18f; --hl-num: #f0b072; --hl-com: #8b9199;
+  --hl-fn: #8ab8f0; --hl-bi: #67d0e0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- TD additions: run note, code cells, outputs, embedded figures ---- */
+/* KaTeX's hidden MathML is position:absolute; keep it inside scrolling tables and displays. */
+.katex, .table-wrap, .katex-display { position: relative; }
+.run-note {
+  font: 400 .86rem/1.5 var(--sans); color: var(--muted);
+  border: 1px solid var(--rule); border-radius: 6px; padding: .6rem .8rem; margin: 0 0 1.6em;
+}
+.cell { margin: 1.2em 0; }
+pre.code { font-size: .84rem; margin: 0; border-left: 3px solid var(--rule); border-radius: 0 6px 6px 0; }
+pre.code code { font-size: 1em; }
+.cell-stub pre.code { border-left-style: dashed; }
+.solution-body pre.code { background: var(--bg); }
+.output { margin: .35em 0 0; display: flex; flex-direction: column; gap: .4em; }
+.output pre {
+  margin: 0; font: 400 .8rem/1.45 var(--mono); background: var(--out-bg);
+  border: 1px solid var(--rule); border-radius: 6px; padding: .6em .9em; white-space: pre; overflow-x: auto;
+}
+.output pre.out-stderr { color: var(--muted); }
+.output pre.out-error { color: var(--err); }
+.output img.plot { display: block; background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 4px; }
+.solution-body .output { margin-bottom: 1em; }
+@media (max-width: 40rem) {
+  pre.code, .output pre { font-size: .74rem; }
+  .solution-body { padding-left: .7rem; padding-right: .7rem; }
+}
+.figure-frame { margin: 1em 0 1.4em; }
+.figure-frame iframe {
+  display: block; width: 100%; height: 80vh; min-height: 32rem; max-height: 62rem;
+  border: 1px solid var(--rule); border-radius: 6px; background: #fff;
+}
+.code .k, .code .kn, .code .kd, .code .kc, .code .kr, .code .ow { color: var(--hl-kw); }
+.code .s, .code .s1, .code .s2, .code .sa, .code .sd, .code .se, .code .si, .code .sb, .code .sh { color: var(--hl-str); }
+.code .m, .code .mi, .code .mf, .code .mh, .code .mo, .code .il { color: var(--hl-num); }
+.code .c, .code .c1, .code .cm, .code .ch, .code .cs { color: var(--hl-com); font-style: italic; }
+.code .nf, .code .nc, .code .nd { color: var(--hl-fn); }
+.code .nb, .code .bp { color: var(--hl-bi); }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- folded code ---- */
+article details.code { margin: 0; border-radius: 0; background: none; }
+article details.code > summary {
+  padding: .3rem .1rem; font: 500 .78rem/1.2 var(--sans); letter-spacing: .02em;
+  color: var(--muted); text-transform: none;
+}
+article details.code > summary:hover { color: var(--fg); }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, .katex-display, table, img.plot { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+  .figure-frame { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#1-dropout-as-a-geometric-mean-ensemble">1. Dropout as a geometric-mean ensemble</a></li>
+<li><a href="#2-layer-cushion-noise-robustness-and-basin-size">2. Layer cushion, noise robustness and basin size</a></li>
+<li><a href="#3-geometry-adaptive-harmonic-bases">3. Geometry-adaptive harmonic bases</a></li>
+<li><a href="#4-critical-periods-and-loss-of-plasticity">4. Critical periods and loss of plasticity</a></li>
+<li><a href="#5-fine-tuning-and-rl-update-dynamics">5. Fine-tuning and RL update dynamics</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 6 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="training-dynamics-28-further-readings-and-a-map-of-the-day">Training Dynamics 2.8: further readings, and a map of the day</h1>
+<p><strong>Training Dynamics, Iliad Intensive 2026</strong></p>
+<p class="run-note">To run the code, open <a href='td2_8_further_readings.ipynb'><code>td2_8_further_readings.ipynb</code></a> in Jupyter (CPU only; needs numpy). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
+
+<p>The day asks what gradient-based training actually does: which solutions it reaches, how fast, and how the knobs (learning rate, batch size, schedule, optimizer, width, normalization, weight decay) change that. Every notebook stands alone; take whatever interests you.</p>
+<p><strong>Map of the day.</strong></p>
+<ul>
+<li><a href="td1_linear_networks.html"><code>td1_linear_networks</code></a>: deep linear networks solved exactly: plateaus, depth, the landscape, lazy versus rich learning.</li>
+<li><a href="td2_1_flows.html"><code>td2_1_flows</code></a>: gradient descent follows a modified flow (backward error analysis), and when to trust it; momentum.</li>
+<li><a href="td2_2_edge_of_stability.html"><code>td2_2_edge_of_stability</code></a>: sharpness rises to the stability limit and stays there; catapults, warmup, schedules.</li>
+<li><a href="td2_3_sgd_sde.html"><code>td2_3_sgd_sde</code></a>: SGD as a stochastic differential equation; batch-size and learning-rate scaling rules.</li>
+<li><a href="td2_4_optimizer_geometry.html"><code>td2_4_optimizer_geometry</code></a>: optimizers as steepest descent under a norm: natural gradient, Adam, Muon, muP.</li>
+<li><a href="td2_5_normalization_weight_decay.html"><code>td2_5_normalization_weight_decay</code></a>: normalization, weight decay and the effective step size; loss spikes, clipping.</li>
+<li><a href="td2_6_curvature.html"><code>td2_6_curvature</code></a>: the Hessian’s Gauss–Newton part, bulk plus outliers, the tiny top subspace, when the basin is chosen.</li>
+<li><a href="td2_7_learned_first.html"><code>td2_7_learned_first</code></a>: what is learned first: low-order statistics, higher cumulants, spectral bias.</li>
+</ul>
+<p><strong>Suggested routes.</strong> <em>Less background:</em> <code>td1_linear_networks</code> <a href="td1_linear_networks.html#td1-s1">§1</a>, <a href="td1_linear_networks.html#td1-s4">§4</a> and <a href="td1_linear_networks.html#td1-s5">§5</a>, then <code>td2_1</code> → <code>td2_3</code>. <em>Practitioner:</em> <code>td2_3</code> → <code>td2_4</code> → <code>td2_5</code>. <em>More background:</em> skim <code>td1</code>, then <code>td2_2</code> and <code>td2_6</code>, where small-step theory breaks down.</p>
+<p><strong>Out of scope:</strong> whether SGD samples a Bayesian posterior (the Mysteries day’s <a href="../notebooks/02_statistical_learning.html#wb2-sgd-posterior">WB2 §8</a>, exercise 8.2), and infinite-width NTK theory (the Physics of Deep Learning day).</p>
+<p><strong>This notebook:</strong> five topics the day does not derive, each led by its paper. Four have an optional walkthrough with short exercises and a numerical check; run the code cells in order (seconds on a laptop CPU).</p>
+<ol type="1">
+<li><a href="#td28-dropout">Dropout as a geometric-mean ensemble</a>: Baldi &amp; Sadowski.</li>
+<li><a href="#td28-cushion">Layer cushion, noise robustness and basin size</a>: Arora, Ge, Neyshabur &amp; Zhang.</li>
+<li><a href="#td28-gahb">Geometry-adaptive harmonic bases</a>: Kadkhodaie, Guth, Simoncelli &amp; Mallat.</li>
+<li><a href="#td28-plasticity">Critical periods and loss of plasticity</a>: Dohare et al.; Achille, Rovere &amp; Soatto.</li>
+<li><a href="#td28-rl">Fine-tuning and RL update dynamics</a>: Mukherjee et al.; Zhu et al.</li>
+</ol>
+
+<div class="cell">
+<details class="code"><summary>Code (5 lines)</summary>
+<pre class="code"><code class="language-python"><span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></code></pre>
+</details>
+</div>
+
+<details class="sec sec2" data-sec="1-dropout-as-a-geometric-mean-ensemble">
+<summary><h2 id="1-dropout-as-a-geometric-mean-ensemble">1. Dropout as a geometric-mean ensemble</h2></summary>
+<div class="sec-body">
+<a id="td28-dropout"></a>
+<p>Dropout trains a randomly thinned subnetwork at each step; at test time it runs the full network once, with each weight scaled by its keep probability. Why does that one pass stand in for averaging all the subnetworks? For a logistic unit it is <em>exactly</em> their normalized geometric mean, which is close to their arithmetic mean.</p>
+<div class="reading">
+
+<p><strong><a href="https://proceedings.neurips.cc/paper_files/paper/2013/hash/71f6278d140af599e06ad9bf1ba03cb0-Abstract.html">Understanding dropout</a></strong>, Baldi &amp; Sadowski (NeurIPS 2013) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The exact geometric-mean identity for logistic units, bounds on its gap to the arithmetic mean, recursive approximations for deep sigmoidal networks, and, for a linear unit, dropout’s adaptive weight-decay term (largest at <span class="math inline">p=\tfrac12</span>). §3–4 are the averaging results.</p>
+</div>
+
+<p>Also: <a href="https://jmlr.org/papers/v15/srivastava14a.html">Srivastava et al., Dropout (JMLR 2014)</a>, the standard reference. Dropout as an adaptive <span class="math inline">L^2</span> penalty is derived in the Mysteries day’s <a href="../notebooks/02_statistical_learning.html#wb2-dropout">WB2 §4</a>, exercise 4.4.</p>
+<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough">
+<summary><h3 id="optional-annotated-derivations-and-walkthrough">Optional: annotated derivations and walkthrough</h3></summary>
+<div class="sec-body">
+<a id="td28-dropout-walkthrough"></a>
+<p><strong>Setup.</strong> One logistic unit, <span class="math inline">\sigma(x)=1/(1+e^{-x})</span>, with inputs <span class="math inline">I_i</span> and weights <span class="math inline">w_i</span>. Dropout gates each input with <span class="math inline">\delta_i\sim\mathrm{Bernoulli}(p_i)</span>, independently, so the input sum is <span class="math inline">S=\sum_i\delta_iw_iI_i</span> and the output is <span class="math inline">O=\sigma(S)</span>. Index the <span class="math inline">2^n</span> subnetworks by <span class="math inline">k</span>, with probabilities <span class="math inline">P_k</span>, sums <span class="math inline">S_k</span> and outputs <span class="math inline">O_k</span>. The arithmetic mean is <span class="math inline">E=\sum_kP_kO_k</span>; the weighted geometric means are <span class="math inline">G=\prod_kO_k^{P_k}</span> and <span class="math inline">G&#39;=\prod_k(1-O_k)^{P_k}</span>; the normalized weighted geometric mean is <span class="math inline">\mathrm{NWGM}=G/(G+G&#39;)</span>, a probability that treats the output and its complement symmetrically. The test-time rule computes <span class="math inline">\sigma\big(\sum_ip_iw_iI_i\big)=\sigma(\mathbb E S)</span>.</p>
+<p><strong>Exercise 1.1 — The averaging identity.</strong> Show that <span class="math inline">\mathrm{NWGM}=\sigma(\mathbb E S)</span> exactly, for any probabilities <span class="math inline">P_k</span> (they need not come from independent gates).</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>Divide numerator and denominator by <span class="math inline">G</span>, and use <span class="math inline">(1-\sigma(x))/\sigma(x)=e^{-x}</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Divide through by <span class="math inline">G</span>:</p>
+<p><span class="math display">
+\mathrm{NWGM}=\frac{1}{1+G&#39;/G}=\frac{1}{1+\prod_k\big(\tfrac{1-O_k}{O_k}\big)^{P_k}}.
+</span></p>
+<p>For the logistic function <span class="math inline">(1-\sigma(x))/\sigma(x)=e^{-x}</span>, so each factor is <span class="math inline">e^{-P_kS_k}</span>, and the product is <span class="math inline">\exp\big(-\sum_kP_kS_k\big)=e^{-\mathbb ES}</span>. Hence <span class="math inline">\mathrm{NWGM}=1/(1+e^{-\mathbb ES})=\sigma(\mathbb ES)</span>. Only <span class="math inline">\sum_kP_k=1</span> was used, so the identity holds for any distribution over subnetworks. With independent Bernoulli gates, <span class="math inline">\mathbb ES=\sum_ip_iw_iI_i</span>, which is what the weight-scaled network computes. The same argument works for a softmax output layer; the paper notes (citing its companion paper) that only constant and logistic functions satisfy <span class="math inline">\mathrm{NWGM}(f(S))=f(\mathbb ES)</span>.</p>
+</div>
+</details>
+
+<p><strong>Exercise 1.2 — How far is the geometric mean from the arithmetic one?</strong> Suppose the spread of <span class="math inline">S</span> across subnetworks is small: <span class="math inline">S=\mu+\varepsilon</span> with <span class="math inline">\mu=\mathbb ES</span>, <span class="math inline">\mathbb E\varepsilon=0</span> and <span class="math inline">\mathrm{Var}\,S=s^2</span> small. Write <span class="math inline">V=\mathrm{Var}\,O</span>. To leading order in <span class="math inline">s^2</span>, show that</p>
+<p><span class="math display">
+E-\mathrm{NWGM}\;\approx\;\tfrac12\sigma&#39;&#39;(\mu)\,s^2\;\approx\;\frac{V\,(1-2E)}{2E(1-E)}.
+</span></p>
+<p>So the gap is second order in the spread, and to this order vanishes at <span class="math inline">E=\tfrac12</span>.</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>Use Exercise 1.1 for the NWGM. Taylor-expand <span class="math inline">\mathbb E\,\sigma(\mu+\varepsilon)</span> to second order; for <span class="math inline">V</span>, first order is enough. The derivatives are <span class="math inline">\sigma&#39;=\sigma(1-\sigma)</span> and <span class="math inline">\sigma&#39;&#39;=\sigma(1-\sigma)(1-2\sigma)</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>By Exercise 1.1, <span class="math inline">\mathrm{NWGM}=\sigma(\mu)</span>. Expanding,</p>
+<p><span class="math display">
+E=\mathbb E\,\sigma(\mu+\varepsilon)=\sigma(\mu)+\sigma&#39;(\mu)\,\mathbb E\varepsilon+\tfrac12\sigma&#39;&#39;(\mu)\,\mathbb E\varepsilon^2+O(\mathbb E|\varepsilon|^3)
+=\sigma(\mu)+\tfrac12\sigma&#39;&#39;(\mu)s^2+\dots,
+</span></p>
+<p>so <span class="math inline">E-\mathrm{NWGM}\approx\tfrac12\sigma&#39;&#39;(\mu)s^2</span>. For the variance, <span class="math inline">O\approx\sigma(\mu)+\sigma&#39;(\mu)\varepsilon</span> gives <span class="math inline">V\approx\sigma&#39;(\mu)^2s^2=\sigma(\mu)^2(1-\sigma(\mu))^2s^2</span>. Eliminate <span class="math inline">s^2</span>:</p>
+<p><span class="math display">
+E-\mathrm{NWGM}\approx\tfrac12\,\sigma(1-\sigma)(1-2\sigma)\cdot\frac{V}{\sigma^2(1-\sigma)^2}
+=\frac{V(1-2\sigma)}{2\sigma(1-\sigma)},
+</span></p>
+<p>and replacing <span class="math inline">\sigma(\mu)</span> by <span class="math inline">E</span> changes this only at higher order.</p>
+</div>
+</details>
+
+<p><strong>Numerical check.</strong> Exact enumeration of all <span class="math inline">2^{12}</span> subnetworks of a 12-input unit. The last column is the paper’s own second-order estimate of the gap, its eq. (20), <span class="math inline">V(1-2E)/(1-2V)</span>; in this small-spread regime it is smaller than the exact gap by about the factor <span class="math inline">1/(2E(1-E))\ge2</span>. The paper’s conclusion, that the NWGM is close to <span class="math inline">E</span>, is unaffected.</p>
+
+<div class="cell">
+<details class="code"><summary>Code (26 lines)</summary>
+<pre class="code"><code class="language-python"><span class="n">sigma</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s</span><span class="p">))</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">masks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="n">n</span><span class="p">)))</span>   <span class="c1"># all 2**12 subnetworks</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">means</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="c1"># Arithmetic mean E, variance V, NWGM and sigma(E[S]) over every dropout mask, exactly.</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">masks</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>        <span class="c1"># probability of each mask</span>
+    <span class="n">S</span> <span class="o">=</span> <span class="n">masks</span> <span class="o">@</span> <span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="n">bias</span>                                 <span class="c1"># input sum of each subnetwork</span>
+    <span class="n">O</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">P</span> <span class="o">@</span> <span class="n">O</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">P</span> <span class="o">@</span> <span class="p">(</span><span class="n">O</span> <span class="o">-</span> <span class="n">E</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">G</span><span class="p">,</span> <span class="n">Gc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">P</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">O</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">P</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">O</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">E</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">G</span> <span class="o">/</span> <span class="p">(</span><span class="n">G</span> <span class="o">+</span> <span class="n">Gc</span><span class="p">),</span> <span class="n">sigma</span><span class="p">(</span><span class="n">P</span> <span class="o">@</span> <span class="n">S</span><span class="p">)</span>
+
+
+<span class="c1"># Exercise 1.1: the identity is exact, even with large weights and unequal keep probabilities.</span>
+<span class="n">E</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">nwgm</span><span class="p">,</span> <span class="n">sig_ES</span> <span class="o">=</span> <span class="n">means</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;NWGM = </span><span class="si">{</span><span class="n">nwgm</span><span class="si">:</span><span class="s2">.12f</span><span class="si">}</span><span class="s2">   sigma(E[S]) = </span><span class="si">{</span><span class="n">sig_ES</span><span class="si">:</span><span class="s2">.12f</span><span class="si">}</span><span class="s2">   arithmetic mean E = </span><span class="si">{</span><span class="n">E</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Exercise 1.2: small weights (small spread), with a bias to move E away from 1/2.</span>
+<span class="n">w</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot; bias      E      E - NWGM    V(1-2E)/(2E(1-E))   B-S eq.(20) V(1-2E)/(1-2V)&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]:</span>
+    <span class="n">E</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">nwgm</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">means</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">b</span><span class="si">:</span><span class="s2">5.1f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">E</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">E</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">nwgm</span><span class="si">:</span><span class="s2">+.3e</span><span class="si">}</span><span class="s2">   </span><span class="si">{</span><span class="n">V</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">E</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">E</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">E</span><span class="p">))</span><span class="si">:</span><span class="s2">+.3e</span><span class="si">}</span><span class="s2">          </span><span class="si">{</span><span class="n">V</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">E</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">V</span><span class="p">)</span><span class="si">:</span><span class="s2">+.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></code></pre>
+</details>
+<div class="output">
+<pre class="out-stdout">NWGM = 0.289411894326   sigma(E[S]) = 0.289411894326   arithmetic mean E = 0.319655
+
+ bias      E      E - NWGM    V(1-2E)/(2E(1-E))   B-S eq.(20) V(1-2E)/(1-2V)
+  0.0  0.4210  +6.489e-04   +6.439e-04          +3.152e-04
+  1.0  0.6622  -1.222e-03   -1.216e-03          -5.457e-04
+  2.0  0.8412  -1.534e-03   -1.540e-03          -4.120e-04
+  3.0  0.9349  -8.902e-04   -9.012e-04          -1.098e-04</pre>
+</div>
+</div>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="2-layer-cushion-noise-robustness-and-basin-size">
+<summary><h2 id="2-layer-cushion-noise-robustness-and-basin-size">2. Layer cushion, noise robustness and basin size</h2></summary>
+<div class="sec-body">
+<a id="td28-cushion"></a>
+<p>In what precise sense is a trained network robust to noise, and does training make it so? Arora et al. measure how strongly noise injected at one layer is attenuated by the layers above it, <em>on the training data</em>. Their key quantity, the layer cushion, is small at random initialization and grows during training, most in the higher layers.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1802.05296">Stronger generalization bounds for deep nets via a compression approach</a></strong>, Arora, Ge, Neyshabur &amp; Zhang (ICML 2018) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Defines noise sensitivity, layer cushion and related noise-stability properties, uses them to compress trained networks and bound the compressed network’s generalization error, and measures the cushion growing during training. §3 has the definitions; §6 the measurements.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1703.11008">Computing nonvacuous generalization bounds for deep (stochastic) neural networks with many more parameters than training data</a></strong>, Dziugaite &amp; Roy (UAI 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The weight-noise version: optimize a PAC-Bayes bound over a Gaussian centred near the SGD solution, getting nonvacuous bounds on binary MNIST; the weight noise the training loss tolerates is a (parametrization-dependent) proxy for basin size.</p>
+</div>
+
+<p>This is a quantitative replacement for “flat minima generalize”, whose raw flatness depends on how the network is parametrized (<a href="td2_4_optimizer_geometry.html#td24-2"><code>td2_4</code> §4.2</a>; the Mysteries day’s <a href="../notebooks/02_statistical_learning.html#wb2-flatness">WB2 §4</a>, under “Why flatness could matter, and why sharpness needs a metric”). A network that attenuates injected noise can be compressed a lot, since compression error acts like injected noise, and the compressed network gets a generalization bound the authors report as orders of magnitude better than parameter counting. <a href="td2_6_curvature.html#td26-5"><code>td2_6</code> §6.5</a> covers when the basin is chosen.</p>
+<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-2">
+<summary><h3 id="optional-annotated-derivations-and-walkthrough-2">Optional: annotated derivations and walkthrough</h3></summary>
+<div class="sec-body">
+<a id="td28-cushion-walkthrough"></a>
+<p><strong>Notation.</strong> Layer <span class="math inline">i</span> computes <span class="math inline">x^i=A_i\phi(x^{i-1})</span>, with weight matrix <span class="math inline">A_i</span>, elementwise activation <span class="math inline">\phi</span> (ReLU in the paper) and input <span class="math inline">x^0</span>. <span class="math inline">\lVert A\rVert_F</span> is the Frobenius norm, <span class="math inline">\lVert A\rVert_2</span> the spectral norm, and <span class="math inline">\eta\sim\mathcal N(0,I)</span> a standard Gaussian noise vector (not a learning rate here), so <span class="math inline">\mathbb E[\eta\eta^\top]=I</span>.</p>
+<p><strong>Definitions</strong> (from the paper). The <em>noise sensitivity</em> of a map <span class="math inline">M</span> at input <span class="math inline">x</span> is the expected squared noise-to-signal ratio of the output under isotropic input noise scaled by <span class="math inline">\lVert x\rVert</span>:</p>
+<p><span class="math display">
+\psi(M,x)=\mathbb E_{\eta\sim\mathcal N(0,I)}\frac{\lVert M(x+\eta\lVert x\rVert)-M(x)\rVert^2}{\lVert M(x)\rVert^2}.
+</span></p>
+<p>The <em>layer cushion</em> <span class="math inline">\mu_i</span> is the largest <span class="math inline">\mu</span> such that <span class="math inline">\mu\lVert A_i\rVert_F\lVert\phi(x^{i-1})\rVert\le\lVert A_i\phi(x^{i-1})\rVert</span> for every training input. The <em>stable rank</em> of <span class="math inline">A</span> is <span class="math inline">\lVert A\rVert_F^2/\lVert A\rVert_2^2</span>.</p>
+<p><strong>Exercise 2.1 — Cushion is inverse noise sensitivity.</strong></p>
+<ol type="1">
+<li>For a linear map <span class="math inline">M</span>, show <span class="math inline">\psi(M,x)=\lVert M\rVert_F^2\lVert x\rVert^2/\lVert Mx\rVert^2</span>. Conclude that <span class="math inline">1/\mu_i^2</span> is the largest noise sensitivity of <span class="math inline">A_i</span> over the training inputs, that <span class="math inline">\psi</span> is at least the stable rank, and so <span class="math inline">\mu_i\le1/\sqrt{\text{stable rank}}</span>. When is the bound attained?</li>
+<li>Take <span class="math inline">x\sim\mathcal N(0,I_h)</span> independent of <span class="math inline">A\in\mathbb R^{h&#39;\times h}</span>. Show <span class="math inline">\mathbb E\big[\lVert Ax\rVert^2/\lVert x\rVert^2\big]=\lVert A\rVert_F^2/h</span>, so a typical input has cushion about <span class="math inline">1/\sqrt h</span>. What must happen during training for the cushion to grow well above that?</li>
+</ol>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>1.</strong> <span class="math inline">M(x+\eta\lVert x\rVert)-Mx=\lVert x\rVert M\eta</span>, and <span class="math inline">\mathbb E\lVert M\eta\rVert^2=\mathbb E\,\mathrm{tr}(M\eta\eta^\top M^\top)=\mathrm{tr}(MM^\top)=\lVert M\rVert_F^2</span>. So <span class="math inline">\psi=\lVert M\rVert_F^2\lVert x\rVert^2/\lVert Mx\rVert^2</span>. The cushion condition reads <span class="math inline">\lVert A_i\phi\rVert^2/(\lVert A_i\rVert_F^2\lVert\phi\rVert^2)\ge\mu^2</span> for every training input, that is <span class="math inline">1/\psi(A_i,\phi)\ge\mu^2</span>, so the largest such <span class="math inline">\mu</span> has <span class="math inline">1/\mu_i^2=\max_x\psi(A_i,\phi(x^{i-1}))</span> (the paper’s Proposition 3.1 and the remark after its Definition 4). Since <span class="math inline">\lVert Mx\rVert\le\lVert M\rVert_2\lVert x\rVert</span>, <span class="math inline">\psi\ge\lVert M\rVert_F^2/\lVert M\rVert_2^2</span>, the stable rank, and hence <span class="math inline">\mu_i\le\lVert A_i\rVert_2/\lVert A_i\rVert_F</span>. Equality needs every training input to lie in the top right singular subspace of <span class="math inline">A_i</span>. A large cushion therefore needs both a spectrum dominated by a few singular values (low stable rank) and inputs aligned with those directions.</p>
+<p><strong>2.</strong> <span class="math inline">x/\lVert x\rVert</span> is uniform on the sphere, so <span class="math inline">\mathbb E\big[(x/\lVert x\rVert)(x/\lVert x\rVert)^\top\big]=I/h</span> and <span class="math inline">\mathbb E\big[\lVert Ax\rVert^2/\lVert x\rVert^2\big]=\mathrm{tr}(A^\top A)/h=\lVert A\rVert_F^2/h</span>. The typical cushion is about <span class="math inline">1/\sqrt h</span>; it concentrates there when <span class="math inline">A</span>’s stable rank is large, and for a very low-rank <span class="math inline">A</span> it fluctuates by order one around that value. For the cushion to grow well above <span class="math inline">1/\sqrt h</span>, training has to line up each layer’s inputs on the training data with that layer’s large singular directions: weights and the representations they act on must align. Noise spreads over all directions, while aligned signal passes preferentially. The paper’s measurements (VGG-19 on CIFAR-10) show this growth relative to a random network.</p>
+</div>
+</details>
+
+<p><strong>Numerical check</strong> of both parts, on a <span class="math inline">256\times256</span> layer with singular values <span class="math inline">1/k</span> and on a random Gaussian layer.</p>
+
+<div class="cell">
+<details class="code"><summary>Code (20 lines)</summary>
+<pre class="code"><code class="language-python"><span class="n">h</span> <span class="o">=</span> <span class="mi">256</span>
+<span class="n">cushion</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">M</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">M</span> <span class="o">@</span> <span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="c1"># 2.1(1): a layer with a decaying spectrum. Monte Carlo noise sensitivity against the formula,</span>
+<span class="c1"># then the bound 1/sqrt(stable rank) and inputs that attain it (along the top right singular vector).</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">qr</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">h</span><span class="p">)))</span>
+<span class="n">Vt</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">qr</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">h</span><span class="p">)))</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">h</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">@</span> <span class="n">Vt</span><span class="o">.</span><span class="n">T</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
+<span class="n">eta</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">4000</span><span class="p">))</span>
+<span class="n">psi_mc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span> <span class="o">@</span> <span class="p">(</span><span class="n">eta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span> <span class="o">@</span> <span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;noise sensitivity at a random x: Monte Carlo </span><span class="si">{</span><span class="n">psi_mc</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">, formula </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;bound 1/sqrt(stable rank) = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">; cushion with inputs along the top &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;singular vector </span><span class="si">{</span><span class="n">cushion</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">Vt</span><span class="p">[:,</span><span class="w"> </span><span class="p">:</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, in the top-5 subspace </span><span class="si">{</span><span class="n">cushion</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">Vt</span><span class="p">[:,</span><span class="w"> </span><span class="p">:</span><span class="mi">5</span><span class="p">]</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">1000</span><span class="p">)))</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;random inputs </span><span class="si">{</span><span class="n">cushion</span><span class="p">(</span><span class="n">B</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 2.1(2): a random layer (large stable rank) with random inputs: cushion about 1/sqrt(h).</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;random layer, random inputs: min cushion </span><span class="si">{</span><span class="n">cushion</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, mean </span><span class="si">{</span><span class="n">cushion</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, 1/sqrt(h) = </span><span class="si">{</span><span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></code></pre>
+</details>
+<div class="output">
+<pre class="out-stdout">noise sensitivity at a random x: Monte Carlo 142, formula 142
+bound 1/sqrt(stable rank) = 0.781; cushion with inputs along the top singular vector 0.781, in the top-5 subspace 0.172, random inputs 0.022
+random layer, random inputs: min cushion 0.053, mean 0.062, 1/sqrt(h) = 0.062</pre>
+</div>
+</div>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="3-geometry-adaptive-harmonic-bases">
+<summary><h2 id="3-geometry-adaptive-harmonic-bases">3. Geometry-adaptive harmonic bases</h2></summary>
+<div class="sec-body">
+<a id="td28-gahb"></a>
+<p>What function does a trained image denoiser, the network inside a diffusion model, compute once it has enough data to stop memorizing? Locally, it shrinks the noisy image along an image-dependent basis of harmonics that oscillate along contours and in smooth regions, and these bases appear even on data for which they are suboptimal. It is an inductive-bias result like the spectral bias of <a href="td2_7_learned_first.html#td27-3"><code>td2_7</code> §7.3</a>, read off from the network’s Jacobian.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2310.02557">Generalization in diffusion models arises from geometry-adaptive harmonic representations</a></strong>, Kadkhodaie, Guth, Simoncelli &amp; Mallat (ICLR 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Denoisers trained on disjoint halves of a face dataset memorize when data are few and converge to nearly the same score when data are many (about <span class="math inline">10^5</span> images); the Jacobian-eigenvector analysis then shows near-optimal, geometry-adaptive shrinkage, which persists on data where it is suboptimal. §2 for the transition, §3 for the analysis.</p>
+</div>
+
+<p>Also: <a href="https://arxiv.org/abs/1906.05478">Mohan et al., bias-free denoising CNNs (ICLR 2020)</a> (why the Jacobian reading works); <a href="https://arxiv.org/abs/2412.20292">Kamb &amp; Ganguli, an analytic theory of creativity (2024)</a> (locality and equivariance alone predict trained diffusion models’ outputs); <a href="https://arxiv.org/abs/2402.04362">Belrose et al., statistics of increasing complexity (2024)</a> (<code>td2_7</code>’s “low-order statistics first”, measured on real networks).</p>
+<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-3">
+<summary><h3 id="optional-annotated-derivations-and-walkthrough-3">Optional: annotated derivations and walkthrough</h3></summary>
+<div class="sec-body">
+<a id="td28-gahb-walkthrough"></a>
+<p><strong>The optimal denoiser.</strong> A clean image <span class="math inline">x\in\mathbb R^d</span> is observed as <span class="math inline">y=x+\sigma z</span>, with <span class="math inline">z\sim\mathcal N(0,I)</span> and noise level <span class="math inline">\sigma</span>. Write <span class="math inline">p_\sigma</span> for the density of <span class="math inline">y</span>, and <span class="math inline">\nabla f(y)</span> for the Jacobian of a map <span class="math inline">f</span> at <span class="math inline">y</span>. The MSE-optimal denoiser is <span class="math inline">f^\star(y)=\mathbb E[x\mid y]=y+\sigma^2\nabla\log p_\sigma(y)</span> (the Miyasawa or Tweedie identity, which is why a denoiser gives the score). Its Jacobian is <span class="math inline">\nabla f^\star(y)=\sigma^{-2}\,\mathrm{Cov}[x\mid y]</span>, symmetric and positive semidefinite, and the optimal error is <span class="math inline">\mathrm{MSE}=\mathbb E\,\mathrm{tr}\,\mathrm{Cov}[x\mid y]=\sigma^2\,\mathbb E\,\mathrm{tr}\,\nabla f^\star(y)</span>. Exercise 3.1 checks the last two for Gaussian data.</p>
+<p><strong>What a bias-free network computes.</strong> The paper’s denoisers are ReLU networks with no additive biases, so they are positively homogeneous and <span class="math inline">f(y)=\nabla f(y)\,y</span> wherever <span class="math inline">f</span> is differentiable. Idealizing the Jacobian as symmetric positive semidefinite (approximately true for trained networks), with <span class="math inline">\nabla f(y)=\sum_k\lambda_k(y)e_k(y)e_k(y)^\top</span>,</p>
+<p><span class="math display">
+f(y)=\sum_k\lambda_k(y)\,\langle y,e_k(y)\rangle\,e_k(y):
+</span></p>
+<p>shrinkage by factors <span class="math inline">\lambda_k(y)</span> along a basis <span class="math inline">e_k(y)</span>, both of which can depend on <span class="math inline">y</span>. The exercise works out the case where they cannot.</p>
+<p><strong>Exercise 3.1 — The Gaussian case: shrinkage in a fixed basis.</strong> Let <span class="math inline">x\sim\mathcal N(0,\Sigma)</span> in <span class="math inline">\mathbb R^d</span>, with eigendecomposition <span class="math inline">\Sigma=\sum_k\lambda_kv_kv_k^\top</span>, observed as <span class="math inline">y=x+\sigma z</span>. Here <span class="math inline">\lambda_k</span> are the data variances, not the shrinkage factors <span class="math inline">\lambda_k(y)</span>.</p>
+<ol type="1">
+<li>Show <span class="math inline">f^\star(y)=\Sigma(\Sigma+\sigma^2I)^{-1}y</span>. What are the basis and the shrinkage factors, and do they depend on <span class="math inline">y</span>?</li>
+<li>Check <span class="math inline">\nabla f^\star=\sigma^{-2}\mathrm{Cov}[x\mid y]</span> directly.</li>
+<li>Show <span class="math inline">\mathrm{MSE}=\sigma^2\sum_k\lambda_k/(\lambda_k+\sigma^2)</span>. Read <span class="math inline">\mathrm{tr}\,\nabla f^\star</span> as an effective number of dimensions kept, and compare the MSE with <span class="math inline">d\sigma^2</span>, the error of returning <span class="math inline">y</span> unchanged.</li>
+</ol>
+<details class="hint"><summary>Hint</summary>
+
+<p>For jointly Gaussian <span class="math inline">(x,y)</span>, <span class="math inline">\mathbb E[x\mid y]=\mathrm{Cov}(x,y)\,\mathrm{Cov}(y)^{-1}y</span> and <span class="math inline">\mathrm{Cov}[x\mid y]=\mathrm{Cov}(x)-\mathrm{Cov}(x,y)\mathrm{Cov}(y)^{-1}\mathrm{Cov}(y,x)</span>. Here <span class="math inline">\mathrm{Cov}(x,y)=\Sigma</span> and <span class="math inline">\mathrm{Cov}(y)=\Sigma+\sigma^2I</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>1.</strong> With <span class="math inline">\mathrm{Cov}(x,y)=\Sigma</span> and <span class="math inline">\mathrm{Cov}(y)=\Sigma+\sigma^2I</span>, <span class="math inline">f^\star(y)=\Sigma(\Sigma+\sigma^2I)^{-1}y</span>. In the eigenbasis of <span class="math inline">\Sigma</span>,</p>
+<p><span class="math display">
+f^\star(y)=\sum_k\frac{\lambda_k}{\lambda_k+\sigma^2}\,\langle y,v_k\rangle\,v_k:
+</span></p>
+<p>shrinkage in the fixed basis <span class="math inline">v_k</span> (the data’s principal components), with factors <span class="math inline">\lambda_k/(\lambda_k+\sigma^2)</span> that keep high-variance directions and suppress those below the noise level. Neither depends on <span class="math inline">y</span>: the Gaussian denoiser is linear. This is Wiener filtering; for stationary images with periodic boundaries the <span class="math inline">v_k</span> are Fourier modes.</p>
+<p><strong>2.</strong> <span class="math inline">\mathrm{Cov}[x\mid y]=\Sigma-\Sigma(\Sigma+\sigma^2I)^{-1}\Sigma
+=\Sigma(\Sigma+\sigma^2I)^{-1}\big[(\Sigma+\sigma^2I)-\Sigma\big]
+=\sigma^2\,\Sigma(\Sigma+\sigma^2I)^{-1}</span> (all these matrices commute). Dividing by <span class="math inline">\sigma^2</span> gives <span class="math inline">\Sigma(\Sigma+\sigma^2I)^{-1}=\nabla f^\star</span>.</p>
+<p><strong>3.</strong> <span class="math inline">\mathrm{MSE}=\mathrm{tr}\,\mathrm{Cov}[x\mid y]=\sigma^2\sum_k\lambda_k/(\lambda_k+\sigma^2)=\sigma^2\,\mathrm{tr}\,\nabla f^\star</span>. Each factor is between 0 and 1, roughly 1 for <span class="math inline">\lambda_k\gg\sigma^2</span> and 0 for <span class="math inline">\lambda_k\ll\sigma^2</span>, so <span class="math inline">\mathrm{tr}\,\nabla f^\star</span> counts the directions whose signal exceeds the noise, each costing about <span class="math inline">\sigma^2</span>. Returning <span class="math inline">y</span> costs <span class="math inline">d\sigma^2</span>, and <span class="math inline">\mathrm{MSE}/(d\sigma^2)=\mathrm{tr}\,\nabla f^\star/d</span>. A small error therefore needs <span class="math inline">\mathrm{tr}\,\nabla f^\star\ll d</span>: few effective dimensions kept (the paper’s eq. (10) argument).</p>
+<p>The paper’s point is the contrast: for the Gaussian the best basis is fixed, while a trained network’s basis <span class="math inline">e_k(y)</span> moves with the image, following its edges and smooth regions.</p>
+</div>
+</details>
+
+<p><strong>Numerical check</strong> by Monte Carlo, on 64-dimensional Gaussian data with variances <span class="math inline">1/k^2</span> and noise level <span class="math inline">\sigma=0.1</span>.</p>
+
+<div class="cell">
+<details class="code"><summary>Code (13 lines)</summary>
+<pre class="code"><code class="language-python"><span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span> <span class="mf">0.1</span>
+<span class="n">lam</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>                       <span class="c1"># a decaying prior spectrum</span>
+<span class="n">Q</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">qr</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">)))</span>
+<span class="n">Sigma</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">lam</span><span class="p">)</span> <span class="o">@</span> <span class="n">Q</span><span class="o">.</span><span class="n">T</span>
+<span class="n">J</span> <span class="o">=</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span> <span class="o">+</span> <span class="n">s</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>     <span class="c1"># the optimal (linear) denoiser and its Jacobian</span>
+
+<span class="n">Xs</span> <span class="o">=</span> <span class="p">(</span><span class="n">Q</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">lam</span><span class="p">))</span> <span class="o">@</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mi">100_000</span><span class="p">))</span>   <span class="c1"># clean samples</span>
+<span class="n">Ys</span> <span class="o">=</span> <span class="n">Xs</span> <span class="o">+</span> <span class="n">s</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">Xs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>                  <span class="c1"># noisy observations</span>
+<span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">J</span> <span class="o">@</span> <span class="n">Ys</span> <span class="o">-</span> <span class="n">Xs</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Monte Carlo MSE </span><span class="si">{</span><span class="n">mse</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">   sigma^2 tr J </span><span class="si">{</span><span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">   &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;returning y: d sigma^2 = </span><span class="si">{</span><span class="n">d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">   effective dimension tr J = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">J</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;shrinkage factors along the top 6 principal directions:&quot;</span><span class="p">,</span>
+      <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvalsh</span><span class="p">(</span><span class="n">J</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="mi">6</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span></code></pre>
+</details>
+<div class="output">
+<pre class="out-stdout">Monte Carlo MSE 0.1367   sigma^2 tr J 0.1367   returning y: d sigma^2 = 0.64   effective dimension tr J = 13.7 of 64
+shrinkage factors along the top 6 principal directions: [0.99  0.962 0.917 0.862 0.8   0.735]</pre>
+</div>
+</div>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="4-critical-periods-and-loss-of-plasticity">
+<summary><h2 id="4-critical-periods-and-loss-of-plasticity">4. Critical periods and loss of plasticity</h2></summary>
+<div class="sec-body">
+<a id="td28-plasticity"></a>
+<p>Does it matter <em>when</em> a network sees something? Yes. A deficit early in training, such as blurred images for the first epochs, lowers final accuracy in a way later training does not repair (a <em>critical period</em>), and a network trained on a long sequence of tasks gradually loses the ability to learn new ones (<em>loss of plasticity</em>). Early training builds something later training cannot easily undo.</p>
+<div class="reading">
+
+<p><strong><a href="https://doi.org/10.1038/s41586-024-07711-7">Loss of plasticity in deep continual learning</a></strong>, Dohare, Hernandez-Garcia, Lan, Rahman, Mahmood &amp; Sutton (Nature 2024; preprint <a href="https://arxiv.org/abs/2306.13812">arXiv:2306.13812</a>) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>On continual ImageNet variants and in RL, standard networks steadily lose the ability to learn, across architectures and optimizers; “continual backprop”, which keeps reinitializing a few little-used units, maintains plasticity.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1711.08856">Critical learning periods in deep networks</a></strong>, Achille, Rovere &amp; Soatto (ICLR 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Early blur leaves a permanent deficit, while deficits that keep low-level statistics (vertical flips) do not; the Fisher information of the weights rises fast early in training and then falls.</p>
+</div>
+
+<p>Two hooks to this day: critical periods already appear in deep linear networks, where the mode equations of <a href="td1_linear_networks.html#td1-s1"><code>td1_linear_networks</code> §1</a> make them tractable (Kleinman et al.), and plasticity loss is tied to changes in loss-landscape curvature (Lyle et al.; <a href="td2_6_curvature.html"><code>td2_6</code></a>). The Mysteries day lists critical periods among its strange facts in <a href="../notebooks/06_mysteries_myriad.html#wb6-section-4">WB6 §4</a>.</p>
+<p>Also: <a href="https://arxiv.org/abs/2308.12221">Kleinman, Achille &amp; Soatto, critical periods in deep linear networks (ICLR 2024)</a>; <a href="https://arxiv.org/abs/2303.01486">Lyle et al., understanding plasticity (ICML 2023)</a> (plasticity loss tracks curvature, often without saturated units); <a href="https://arxiv.org/abs/1910.08475">Ash &amp; Adams, on warm-starting (NeurIPS 2020)</a> (the everyday version, and “shrink and perturb”).</p>
+</div>
+</details>
+<details class="sec sec2" data-sec="5-fine-tuning-and-rl-update-dynamics">
+<summary><h2 id="5-fine-tuning-and-rl-update-dynamics">5. Fine-tuning and RL update dynamics</h2></summary>
+<div class="sec-body">
+<a id="td28-rl"></a>
+<p>Post-training moves a pretrained model a small distance; in which directions? Measured in weights, RL fine-tuning of language models changes few parameters (as counted in bfloat16), yet each update matrix has full numerical rank, is dominated by one singular direction, and avoids the pretrained matrices’ “principal weights”, where supervised fine-tuning (SFT) does not.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2505.11711">Reinforcement learning finetunes small subnetworks in large language models</a></strong>, Mukherjee, Yuan, Hakkani-Tür &amp; Peng (NeurIPS 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Across seven RL algorithms and ten models, RL changes only 5–30% of parameters (counting bfloat16 changes up to <span class="math inline">10^{-5}</span> as none); the changed set is consistent across seeds and algorithms, fine-tuning it alone reproduces the full result, and each matrix’s update has nearly full numerical rank.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2511.08567">The path not taken: RLVR provably learns off the principals</a></strong>, Zhu et al. (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>RL with verifiable rewards (RLVR) lands less often than chance on the <em>principal weights</em> (the largest entries of a low-rank SVD reconstruction of each pretrained matrix, a proxy for high curvature) and barely changes the singular spectrum, while SFT does the opposite. The “provably” refers to bounds for small, KL-constrained steps.</p>
+</div>
+
+<p>The question this day adds, from <a href="td2_6_curvature.html#td26-4"><code>td2_6</code> §6.4</a>: how does the update sit relative to the curvature (the Hessian or Gauss–Newton eigenbasis)? None of these papers measures that directly at language-model scale, and Exercise 5.2 shows why a weight-matrix proxy for it needs care. The Mysteries day’s <a href="../notebooks/06_mysteries_myriad.html#wb6-section-11">WB6 §11</a> reads Mukherjee et al. and Shenfeld et al. as a pair, including what “unchanged” means in bfloat16.</p>
+<p>Also: <a href="https://arxiv.org/abs/2510.00553">Cai et al., predictability of RL dynamics (2025)</a> (the top singular component of each update recovers about 99% of the accuracy); <a href="https://thinkingmachines.ai/blog/lora/">Schulman and Thinking Machines Lab, LoRA without regret (2025)</a> (rank-1 LoRA suffices for policy-gradient RL); <a href="https://arxiv.org/abs/2509.04259">Shenfeld, Pari &amp; Agrawal, RL’s Razor (2025)</a> (forgetting tracks the KL divergence to the base model); <a href="https://arxiv.org/abs/2210.05643">Malladi et al., a kernel view of fine-tuning (ICML 2023)</a> (prompt-based fine-tuning as kernel regression with the pretrained tangent kernel); <a href="https://charlesr-w.github.io/crw-blog/Some-Interesting-Papers-on-RLVR/">CRW, some interesting papers on RLVR (blog, 2026)</a> (a short, informal survey of these papers and more).</p>
+<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-4">
+<summary><h3 id="optional-annotated-derivations-and-walkthrough-4">Optional: annotated derivations and walkthrough</h3></summary>
+<div class="sec-body">
+<a id="td28-rl-walkthrough"></a>
+<p><strong>Notation.</strong> <span class="math inline">\Delta W</span> is the change in one weight matrix from fine-tuning. Its <em>numerical rank</em> counts singular values above a small tolerance; its <em>stable rank</em> is <span class="math inline">\lVert\Delta W\rVert_F^2/\lVert\Delta W\rVert_2^2</span> (Frobenius over spectral norm, squared). Cai et al. keep only the top singular component of each update, rescaled to the update’s norm, and recover about 99% of the trained model’s accuracy.</p>
+<p><strong>Exercise 5.1 — Full rank and dominated by one direction.</strong> Let <span class="math inline">\Delta W=uv^\top+\epsilon N</span> with unit vectors <span class="math inline">u,v\in\mathbb R^n</span>, a dense Gaussian <span class="math inline">N</span> with entries of variance <span class="math inline">1/n</span>, and small <span class="math inline">\epsilon</span>. What are its rank, numerical rank and stable rank? Which of these do Mukherjee et al. and Cai et al. measure?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Almost surely every singular value of <span class="math inline">\Delta W</span> is nonzero, so its rank is <span class="math inline">n</span>, and its numerical rank is also <span class="math inline">n</span> unless <span class="math inline">\epsilon</span> is tiny. But <span class="math inline">\lVert\epsilon N\rVert_F^2\approx\epsilon^2n</span> and <span class="math inline">\lVert\epsilon N\rVert_2\approx2\epsilon</span>, so the top singular value is about 1 and the rest are at most about <span class="math inline">2\epsilon</span>. The stable rank is about <span class="math inline">1+\epsilon^2n</span>, close to 1 when <span class="math inline">\epsilon\ll1/\sqrt n</span>. Mukherjee et al. report numerical rank (full); Cai et al. measure how much of the accuracy the top singular direction alone recovers (about 99%). Both can be true of the same update.</p>
+</div>
+</details>
+
+<p><strong>Numerical check</strong> of Exercise 5.1, plus the measurement issue behind the sparsity numbers: a dense update much smaller than the bfloat16 spacing of the weights is mostly invisible when both checkpoints are rounded to bfloat16. Shenfeld et al. found that in their setting the sparsity came from bfloat16 and vanished in float32, at the same performance.</p>
+
+<div class="cell">
+<details class="code"><summary>Code (19 lines)</summary>
+<pre class="code"><code class="language-python"><span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">512</span><span class="p">),</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">512</span><span class="p">)</span>
+<span class="n">dW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">u</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">u</span><span class="p">),</span> <span class="n">v</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.02</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">512</span><span class="p">)</span>
+<span class="n">sv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">dW</span><span class="p">,</span> <span class="n">compute_uv</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rank-1 plus small dense noise: numerical rank </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span><span class="p">(</span><span class="n">dW</span><span class="p">)</span><span class="si">}</span><span class="s2"> of 512, &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;stable rank </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">sv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, top direction&#39;s share of ||dW||_F^2 </span><span class="si">{</span><span class="n">sv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">sv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">to_bf16</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="c1"># Round finite float32 values to the nearest bfloat16 (ties to even); return as float32.</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mh">0x7FFF</span> <span class="o">+</span> <span class="p">((</span><span class="n">b</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+
+<span class="n">W0</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">scale</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">]:</span>
+    <span class="n">W1</span> <span class="o">=</span> <span class="n">W0</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>   <span class="c1"># a dense update: every entry moves</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dense update of size </span><span class="si">{</span><span class="n">scale</span><span class="si">:</span><span class="s2">.0e</span><span class="si">}</span><span class="s2">: entries unchanged after rounding both to bfloat16 &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">to_bf16</span><span class="p">(</span><span class="n">W0</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">to_bf16</span><span class="p">(</span><span class="n">W1</span><span class="p">))</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">, in float32 </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">W0</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">W1</span><span class="p">)</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></code></pre>
+</details>
+<div class="output">
+<pre class="out-stdout">rank-1 plus small dense noise: numerical rank 512 of 512, stable rank 1.20, top direction&#x27;s share of ||dW||_F^2 83%
+
+dense update of size 1e-06: entries unchanged after rounding both to bfloat16 97%, in float32 0%
+dense update of size 1e-05: entries unchanged after rounding both to bfloat16 80%, in float32 0%
+dense update of size 1e-04: entries unchanged after rounding both to bfloat16 30%, in float32 0%</pre>
+</div>
+</div>
+
+<p><strong>Exercise 5.2 — Principal directions are not curvature directions.</strong> Take a single linear layer <span class="math inline">f(x)=Wx</span> with loss <span class="math inline">L(W)=\tfrac12\mathbb E\lVert Wx-y\rVert^2</span> and input second moment <span class="math inline">\Sigma_x=\mathbb E[xx^\top]</span>.</p>
+<ol type="1">
+<li>Show that <span class="math inline">L(W+\Delta W)=L(W)+\langle\nabla L,\Delta W\rangle+\tfrac12\mathrm{tr}(\Delta W\,\Sigma_x\Delta W^\top)</span> exactly. What are the eigen-directions of this curvature, and their eigenvalues?</li>
+<li>Let <span class="math inline">W=\sum_i s_iu_iv_i^\top</span> be the SVD. Give a case where every highest-curvature update is orthogonal (in the Frobenius inner product) to <span class="math inline">W</span>’s top singular direction <span class="math inline">u_1v_1^\top</span>. When are “along <span class="math inline">W</span>’s principal directions” and “along high curvature” close to the same thing?</li>
+</ol>
+<details class="hint"><summary>Hint</summary>
+
+<p>For part 2, <span class="math inline">\langle ab^\top,u_1v_1^\top\rangle_F=(a\cdot u_1)(b\cdot v_1)</span>. Compare the condition you need with the <a href="#td28-cushion">layer cushion of §2</a>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>1.</strong> With residual <span class="math inline">r=Wx-y</span>, <span class="math inline">\tfrac12\mathbb E\lVert r+\Delta Wx\rVert^2=L(W)+\mathbb E\langle r,\Delta Wx\rangle+\tfrac12\mathbb E\lVert\Delta Wx\rVert^2</span>, and <span class="math inline">\mathbb E\lVert\Delta Wx\rVert^2=\mathbb E\,\mathrm{tr}(\Delta Wxx^\top\Delta W^\top)=\mathrm{tr}(\Delta W\Sigma_x\Delta W^\top)</span>. There are no higher terms because the loss is quadratic in <span class="math inline">W</span>. The curvature acts as <span class="math inline">\Delta W\mapsto\Delta W\Sigma_x</span> (on <span class="math inline">\mathrm{vec}\,\Delta W</span> it is <span class="math inline">\Sigma_x\otimes I</span>). Its eigen-directions are <span class="math inline">\Delta W=ac_k^\top</span> for any output vector <span class="math inline">a</span> and eigenvector <span class="math inline">c_k</span> of <span class="math inline">\Sigma_x</span>, with eigenvalue <span class="math inline">\lambda_k(\Sigma_x)</span>: the curvature of an update depends only on how its right factor meets the input distribution, not on <span class="math inline">W</span>.</p>
+<p><strong>2.</strong> The highest-curvature updates are <span class="math inline">ac_1^\top</span>. Their overlap with <span class="math inline">u_1v_1^\top</span> is <span class="math inline">(a\cdot u_1)(c_1\cdot v_1)</span>, zero for every <span class="math inline">a</span> when the top input direction <span class="math inline">c_1</span> is orthogonal to <span class="math inline">W</span>’s top right singular vector <span class="math inline">v_1</span>. For example, <span class="math inline">W=\mathrm{diag}(1,0.1)</span> and <span class="math inline">\Sigma_x=\mathrm{diag}(0.1,1)</span>: the principal direction is <span class="math inline">e_1e_1^\top</span>, every highest-curvature update is <span class="math inline">ae_2^\top</span>, and an update along <span class="math inline">u_1v_1^\top</span> has low curvature. The two notions agree when <span class="math inline">W</span>’s top right singular vectors line up with the top eigenvectors of <span class="math inline">\Sigma_x</span>. A large layer cushion (§2) suggests such alignment but does not establish it: the cushion is a worst case over individual training inputs, while <span class="math inline">\Sigma_x</span> weights them by frequency.</p>
+<p>For a hidden layer the curvature also has a left factor. In the Kronecker-factored approximation of <a href="https://arxiv.org/abs/1503.05671">Martens and Grosse</a>, the layer’s Fisher block is approximately <span class="math inline">\mathbb E[aa^\top]\otimes\mathbb E[gg^\top]</span>, with <span class="math inline">a</span> the layer’s input and <span class="math inline">g</span> the gradient with respect to its preactivations, computed with targets sampled from the model’s own predictive distribution (with training labels one gets the empirical Fisher, which can differ). For squared error and softmax cross-entropy this Fisher equals the Gauss–Newton matrix. So whether a weight matrix’s principal directions are its curvature directions is an empirical question about the trained network, and a proxy like Zhu et al.’s principal weights has to be argued for rather than assumed.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:td2_8_further_readings", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Embedded figures: fit the frame to the figure's height when the figure reports it
+  // (postMessage {type: "figure-height", height}) or when it is same-origin (served over http).
+  var frames = Array.prototype.slice.call(document.querySelectorAll(".figure-frame iframe"));
+  function fit(f, h) { if (h > 100) { f.style.height = Math.ceil(h) + 2 + "px"; f.style.maxHeight = "none"; f.style.minHeight = "0"; } }
+  window.addEventListener("message", function (e) {
+    var d = e.data;
+    if (!d || d.type !== "figure-height") return;
+    frames.forEach(function (f) { if (f.contentWindow === e.source) fit(f, d.height); });
+  });
+  function ask(f) { try { f.contentWindow.postMessage({ type: "figure-height-request" }, "*"); } catch (err) {} }
+  frames.forEach(function (f) {
+    ask(f);
+    f.addEventListener("load", function () {
+      ask(f);
+      try { var b = f.contentDocument && f.contentDocument.body, cs = b && getComputedStyle(b);
+            if (b) fit(f, b.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom)); }
+      catch (err) { /* cross-origin (file://): keep the default height, the figure scrolls */ }
+    });
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>

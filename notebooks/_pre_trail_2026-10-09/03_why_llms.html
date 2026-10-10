@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="nbkit.py (wb3); do not edit by hand">
+<title>Workbook 3 — Why LLMs?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+/* KaTeX's hidden MathML is position:absolute; keep it inside its formula (no sideways page scroll). */
+.katex, .table-wrap, .katex-display { position: relative; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, pre, .katex-display, table { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#1-why-generative-why-unsupervised">1. Why generative, why unsupervised?</a></li>
+<li><a href="#2-why-text-and-not-video">2. Why text and not video?</a></li>
+<li><a href="#3-why-next-token-prediction-and-why-the-transformer">3. Why next-token prediction, and why the transformer?</a></li>
+<li><a href="#4-a-hundred-flowers-symmetry-as-inductive-bias">4. A hundred flowers: symmetry as inductive bias</a></li>
+<li><a href="#5-why-scale-should-you-consume-more-tokens">5. Why scale? Should <em>you</em> consume more tokens?</a></li>
+<li><a href="#6-simulators-and-personae">6. Simulators and personae</a></li>
+<li><a href="#what-carries-forward">What carries forward</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 7 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="workbook-3--why-llms">Workbook 3 — Why LLMs?</h1>
+<p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
+<p>Deep learning reached large language models through a series of choices that each looked contingent at the time: learn without labels, learn from text, predict the next token with a transformer, and make it big. This workbook is mostly readings, one short list per choice, with a sentence or two on each so you can decide what to open. A few Fermi estimates and short derivations sit where the numbers or the algebra help. Worked answers are folded under “Solution”. Sections are independent; nobody is expected to do all of it.</p>
+<p><strong>Route</strong></p>
+<ol type="1">
+<li><a href="#wb3-section-1">Why generative, why unsupervised?</a> LeCun’s cake, Sutskever on compression, and early demonstrations that predicting your input teaches you about the world. A Fermi estimate of where the bits are.</li>
+<li><a href="#wb3-section-2">Why text and not video?</a> Text is data that a mind has already abstracted and compressed. A Fermi estimate of what a bit of each buys; JEPA as the attempt to get the same abstraction from video.</li>
+<li><a href="#wb3-section-3">Why next-token prediction, and why the transformer?</a> Next-token loss is code length; every position is a training target; a causal transformer computes all of them in one parallel pass. GPT vs BERT, and the hardware lottery.</li>
+<li><a href="#wb3-section-4">A hundred flowers: symmetry as inductive bias</a> The geometric-deep-learning view of CNNs and their relatives, with two short symmetry derivations. Read it as the opposite thesis to §3.</li>
+<li><a href="#wb3-section-5">Why scale? Should <em>you</em> consume more tokens?</a> Kaplan and Chinchilla, with three exercises on compute-optimal allocation and inference cost.</li>
+<li><a href="#wb3-section-6">Simulators and personae</a> What a base model is, and what post-training selects from it.</li>
+<li><a href="#wb3-closing">What carries forward</a></li>
+</ol>
+
+<details class="sec sec2" data-sec="1-why-generative-why-unsupervised">
+<summary><h2 id="1-why-generative-why-unsupervised">1. Why generative, why unsupervised?</h2></summary>
+<div class="sec-body">
+<a id="wb3-section-1"></a>
+<p>Labels and rewards carry few bits; the input itself carries many. If most of what a system must learn is the structure of the world, it has to come from predicting its own input. The readings make this case from three angles: LeCun’s bit-counting, Sutskever’s compression argument, and two early OpenAI results in which a model trained only to predict text turned out to have learned things nobody asked for.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.youtube.com/watch?v=Ount2Y4qxQo">LeCun, “Predictive learning” (NIPS 2016 keynote)</a></strong>, Yann LeCun, 2016 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The cake talk. Most of what an intelligent system learns must come from predicting its own input, because that is where most of the bits are; supervision and reward are the icing and the cherry. If you would rather read, Sebastian Ruder’s <a href="https://www.ruder.io/highlights-nips-2016/">Highlights of NIPS 2016</a> describes the cake and the reaction to it in a paragraph.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.youtube.com/watch?v=AKMuA_TVz3A">An observation on generalization</a></strong>, Ilya Sutskever, Simons Institute, 2023 (talk) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Why should unsupervised learning work at all, when the objective you optimize (predict the input) is not the task you care about? Sutskever’s answer is compression: a good compressor of the unlabeled data and the task data together must exploit every regularity they share. He takes Kolmogorov complexity as the ideal compressor and next-token prediction as a practical approximation to it.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://gwern.net/scaling-hypothesis#why-does-pretraining-work">The scaling hypothesis</a></strong>, Gwern Branwen, 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>The section “Why does pretraining work?” is the classic statement of why prediction teaches so much: once a model has predicted the easy statistical regularities, what is left of the loss needs reasoning, common sense and theory of mind. “The last bits are deepest.” The rest of the essay argues, in 2020, that GPT-3 showed scale itself to be the path; its appendix “It from byte” belongs with §6.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1704.01444">Learning to generate reviews and discovering sentiment</a></strong>, Alec Radford, Rafal Jozefowicz, Ilya Sutskever, 2017 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A byte-level LSTM trained only to predict the next byte of Amazon reviews develops a single unit that tracks sentiment, and a linear model on its representation set the state of the art on the Stanford Sentiment Treebank. The cleanest early case of a prediction objective producing a concept nobody labelled. Short. The OpenAI blog post, <a href="https://openai.com/index/unsupervised-sentiment-neuron/">Unsupervised sentiment neuron</a>, has the figures.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language models are unsupervised multitask learners</a></strong>, Radford, Wu, Child, Luan, Amodei, Sutskever (GPT-2), 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Trained only on next-token prediction over web text, GPT-2 does reading comprehension, translation and summarization zero-shot, badly but measurably, and better with scale. The argument in §2 of the paper: a task is just a kind of text, so a good enough model of text has to do the task.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">The unreasonable effectiveness of recurrent neural networks</a></strong>, Andrej Karpathy, 2015 (blog) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Character-level RNNs trained on Shakespeare, Wikipedia, LaTeX and Linux source produce plausible text in each, and individual cells track quotes, line length and nesting depth. The pre-transformer version of the surprise, and fun.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercise-where-the-bits-are">
+<summary><h3 id="exercise-where-the-bits-are">Exercise: where the bits are</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 1.1 (Fermi).</strong> Compare how many bits it takes to encode the targets a learner is asked to predict.</p>
+<p>(a) ImageNet has about <span class="math inline">1.28\times10^6</span> training images in <span class="math inline">k=1000</span> classes. Bound the number of bits needed to encode all its labels.</p>
+<p>(b) How many raw bits are in one <span class="math inline">224\times224</span> RGB image at 8 bits per channel, and in all of ImageNet’s images? What is the ratio to (a)? LeCun’s slide credits RL with “a few bits for some samples”, supervision with “10→10,000 bits per sample” and prediction with “millions of bits per sample”. Which do your counts match?</p>
+<p>(c) A language model is trained on <span class="math inline">T=10^{12}</span> tokens with a vocabulary of <span class="math inline">V\approx5\times10^4</span>. Give the crude upper bound <span class="math inline">T\log_2V</span>. Then give a better estimate: the number of bits by which the text still <em>surprises</em> a trained model whose cross-entropy is about <span class="math inline">2</span> nats per token (an illustrative value).</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> A label from 1000 classes takes at most <span class="math inline">\log_21000\approx10</span> bits, so all of them take at most <span class="math inline">1.28\times10^6\times10\approx1.3\times10^7</span> bits, about 1.6 MB.</p>
+<p><strong>(b)</strong> <span class="math inline">224\times224\times3\times8\approx1.2\times10^6</span> bits per image, so about <span class="math inline">1.5\times10^{12}</span> bits for the dataset, about <span class="math inline">10^5</span> times the labels. The labels are the supervision layer’s “10 bits per sample”; the images are the prediction layer’s “millions of bits per sample”.</p>
+<p><strong>(c)</strong> Crude bound: <span class="math inline">\log_2(5\times10^4)\approx15.6</span> bits per token, so about <span class="math inline">1.6\times10^{13}</span> bits. Residual surprise: <span class="math inline">2/\ln2\approx2.9</span> bits per token, so about <span class="math inline">2.9\times10^{12}</span> bits, with a target at every one of the <span class="math inline">10^{12}</span> positions.</p>
+<p>These are code lengths, not measures of what a learner extracts: the residual surprise in (c) includes irreducible noise, and most of the raw bits in (b) are irrelevant to any given task. §2 is about that gap.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="2-why-text-and-not-video">
+<summary><h2 id="2-why-text-and-not-video">2. Why text and not video?</h2></summary>
+<div class="sec-body">
+<a id="wb3-section-2"></a>
+<p>By the count of §1, video should win: it has far more bits, and they are grounded in physics. But most of those bits are texture, lighting and sensor noise. Text is data that a mind has already abstracted: someone chose the variables (objects, agents, causes, intentions) and wrote down only the few bits about them worth saying. Predicting text forces a model to represent those variables, and the minds choosing them; predicting pixels mostly forces it to represent pixels. Exercise 2.1 puts rough numbers on this.</p>
+<p>LeCun’s JEPA programme is the serious attempt to get the same abstraction from video: predict in a learned representation space, so the model is free to discard what it cannot or need not predict. It works in the sense that the representations are good (V-JEPA 2 below supports zero-shot robot planning), but nothing trained mainly on video has come close to the reasoning of a language model, and today’s frontier multimodal models are built around a language model.</p>
+<div class="reading">
+
+<p><strong><a href="https://openreview.net/forum?id=BZ5a1r-kVsf">A path towards autonomous machine intelligence</a></strong>, Yann LeCun, 2022 (position paper) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Argues that generative prediction of raw observations is the wrong objective for learning world models, and proposes the joint-embedding predictive architecture (JEPA): predict the <em>representation</em> of the missing part of the input, trained with non-contrastive objectives, inside a modular agent with a world model, cost and planner. About 60 pages and not an empirical result. The introduction and the section introducing JEPA carry the argument.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2506.09985">V-JEPA 2: self-supervised video models enable understanding, prediction and planning</a></strong>, Assran, Bardes, Fan, et al. (Meta), 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Pretrained on over a million hours of video by predicting in representation space, it is strong at motion understanding and action anticipation, and after under 62 hours of robot video it plans zero-shot pick-and-place toward image goals. Note what it does not do alone: video question answering goes through a language model, and the authors leave language goals to future work.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://openai.com/index/video-generation-models-as-world-simulators/">Video generation models as world simulators</a></strong>, OpenAI (Sora technical report), 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>The generative-video counterpoint: 3-D consistency and object permanence emerge from scaling a video generator, with none of it built in, and the authors present this as a path to general simulators of the physical world. Its own list of failures includes glass shattering (compare Exercise 2.1). Compare with the JEPA argument that pixels are the wrong target.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercise-what-a-bit-buys">
+<summary><h3 id="exercise-what-a-bit-buys">Exercise: what a bit buys</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 2.1 (Fermi).</strong></p>
+<p>(a) Reproduce <a href="https://x.com/ylecun/status/1766498677751787723">LeCun’s estimate</a> (2024) of the visual data a child has received by age four: about 16,000 waking hours, through two optic nerves of about <span class="math inline">10^6</span> fibres each, carrying about 10 bytes per second per fibre.</p>
+<p>(b) His count for a large language model’s training text is <span class="math inline">10^{13}</span> tokens at 2 bytes per token. What is the ratio to (a)? How long would a person take to read that text at 270 words per minute (about 6 tokens per second, which is 12 bytes at his 2 bytes per token), 12 hours a day?</p>
+<p>(c) Now count per event instead of per second. The sentence “The cat knocked the glass off the table and it shattered” is about 12 tokens. At the illustrative 2 nats per token of Exercise 1.1, how many bits does it cost a good language model? Compare: the same five seconds as 1080p video at 30 frames per second, raw (8 bits per channel), and as a typical stream at about 5 Mbit/s.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">2\times10^6</span> fibres <span class="math inline">\times10</span> bytes/s <span class="math inline">=2\times10^7</span> bytes/s, and <span class="math inline">16{,}000\times3600\approx5.8\times10^7</span> s, so about <span class="math inline">1.2\times10^{15}</span> bytes.</p>
+<p><strong>(b)</strong> <span class="math inline">2\times10^{13}</span> bytes, so the child has seen about 50 times more. Reading: <span class="math inline">2\times10^{13}/12\approx1.7\times10^{12}</span> s of reading, which at 12 hours a day is about <span class="math inline">10^5</span> years. This is LeCun’s argument that sensory data, not text, is where the volume is. In 2025 (at NVIDIA GTC) he revised the numbers: about 2 MB/s for the optic nerve and about <span class="math inline">10^{14}</span> bytes for frontier corpora, so the two come out roughly equal. The raw-byte comparison moves by orders of magnitude depending on what you call compressed, which is the point of (c).</p>
+<p><strong>(c)</strong> <span class="math inline">12\times2/\ln2\approx35</span> bits for the sentence. Raw video: <span class="math inline">1920\times1080\times3\times8\times30\approx1.5\times10^9</span> bits per second, so about <span class="math inline">7.5\times10^9</span> bits for five seconds; the stream is <span class="math inline">5\times10^6\times5=2.5\times10^7</span> bits. The compressed video is about <span class="math inline">7\times10^5</span> times longer than the sentence, the raw video about <span class="math inline">2\times10^8</span> times.</p>
+<p>Almost none of the video’s bits are about what happened; the sentence is almost nothing else. (The sentence also leaves out things the video has, such as the colour of the cat, and a video model can learn things no one would write down.) So the raw-byte comparison measures the wrong thing. Per bit about the variables a person would care about, text is denser by several orders of magnitude, and a pixel-predicting model spends nearly all of its loss on the rest.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="3-why-next-token-prediction-and-why-the-transformer">
+<summary><h2 id="3-why-next-token-prediction-and-why-the-transformer">3. Why next-token prediction, and why the transformer?</h2></summary>
+<div class="sec-body">
+<a id="wb3-section-3"></a>
+<p>Three facts fit together.</p>
+<ul>
+<li><strong>It is a full model of the data.</strong> By the chain rule, <span class="math inline">q(x_{1:T})=\prod_tq(x_t\mid x_{&lt;t})</span>, so next-token prediction is a parametrization, not a restriction. Its loss is code length: arithmetic coding with <span class="math inline">q</span> compresses a sequence to within two bits of <span class="math inline">\sum_t-\log_2q(x_t\mid x_{&lt;t})</span>, and the expected excess over the data’s entropy is <span class="math inline">\mathrm{KL}(p\Vert q)</span>. Training a language model <em>is</em> training a compressor (WB4 develops this as MDL and Solomonoff induction).</li>
+<li><strong>Every position is a training target.</strong> A sequence of <span class="math inline">T</span> tokens gives <span class="math inline">T</span> predictions. BERT’s masked-language-model objective predicts only the 15% of positions it masks, and is not a generative model you can sample from.</li>
+<li><strong>A causal transformer computes all <span class="math inline">T</span> predictions in one parallel pass.</strong> With a causal mask, the model sees the true prefix at every position at once (teacher forcing), so training is a few large matrix multiplications with no step that waits for the previous token. An RNN computes the same <span class="math inline">T</span> predictions but needs <span class="math inline">T</span> sequential steps per layer. GPUs are built for large matrix multiplications.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>FLOPs per layer</th>
+<th>Sequential steps per layer (training)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RNN / LSTM</td>
+<td><span class="math inline">O(Td^2)</span></td>
+<td><span class="math inline">O(T)</span></td>
+</tr>
+<tr>
+<td>1-D convolution, width <span class="math inline">k</span></td>
+<td><span class="math inline">O(Tkd^2)</span></td>
+<td><span class="math inline">O(1)</span>, but reach grows only by <span class="math inline">k</span> per layer</td>
+</tr>
+<tr>
+<td>Causal self-attention</td>
+<td><span class="math inline">O(T^2d+Td^2)</span></td>
+<td><span class="math inline">O(1)</span>, and any token can reach any earlier one</td>
+</tr>
+</tbody>
+</table></div>
+<p>(After Table 1 of <a href="https://arxiv.org/abs/1706.03762">Vaswani et al. 2017</a>.) The transformer won, on this account, less because its inductive bias suits language (much less than a CNN; see Exercise 4.2) than because it turns sequence modelling into dense parallel matrix multiplication, which is what the hardware rewards. At generation time the advantage disappears, since tokens are produced one at a time; caching keys and values avoids recomputing the prefix, though each step still attends over the whole context.</p>
+<div class="reading">
+
+<p><strong><a href="https://lilianweng.github.io/posts/2019-01-31-lm/">Generalized language models</a></strong>, Lilian Weng, 2019, updated to 2021 (blog) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A tour of the pretraining objectives from CoVe and ELMo to GPT-3: GPT’s decoder-only language model, BERT’s masked language model and next-sentence prediction, then T5, XLNet, BART and ELECTRA as variations. The sections “Transformer Decoder as Language Model” (GPT) and “Pre-training Tasks” (BERT) give the contrast.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://jalammar.github.io/illustrated-transformer/">The illustrated transformer</a></strong>, Jay Alammar, 2018 (blog) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>If you have not met the architecture: attention, multi-head attention, residual blocks and position encodings, one diagram at a time.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1810.04805">BERT: pre-training of deep bidirectional transformers for language understanding</a></strong>, Devlin, Chang, Lee, Toutanova, 2018 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>The masked-language-model alternative: predict 15% of tokens from context on both sides, then fine-tune. For several years it was the stronger recipe for understanding benchmarks. §3.1 defines the objective.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2009.06489">The hardware lottery</a></strong>, Sara Hooker, 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>An essay arguing that research ideas often win because they suit the available hardware and software rather than because they are better, with examples from the history of computing, and that specialized hardware will make this worse. It does not discuss transformers specifically; apply it yourself.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2204.05832">What language model architecture and pretraining objective work best for zero-shot generalization?</a></strong>, Wang, Roberts, Hesslow, Le Scao, Chung, Beltagy, Launay, Raffel, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A controlled comparison at 5B parameters: after unsupervised pretraining alone, causal decoder-only models trained on next-token prediction generalize best zero-shot; after multitask fine-tuning, non-causal models with masked objectives do best. Each can be adapted into the other. BERT-style objectives were not simply worse; next-token prediction won the regime that turned out to matter, pretraining alone at scale.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://horace.io/brrr_intro.html">Making deep learning go brrrr from first principles</a></strong>, Horace He, 2022 (blog) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Where GPU time goes: compute (matrix multiplications on tensor cores), memory bandwidth (most other operations) and overhead. The background for why a dense, parallel architecture wins on GPUs.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2309.10668">Language modeling is compression</a></strong>, Grégoire Delétang, Anian Ruoss, et al. (DeepMind), 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>Uses large language models as the predictor inside an arithmetic coder. Fed raw bytes, they compress text, and also image patches and audio, better than gzip, PNG and FLAC, until the size of the model itself is counted. §2 sets out the equivalence of prediction and compression and explains arithmetic coding.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="4-a-hundred-flowers-symmetry-as-inductive-bias">
+<summary><h2 id="4-a-hundred-flowers-symmetry-as-inductive-bias">4. A hundred flowers: symmetry as inductive bias</h2></summary>
+<div class="sec-body">
+<a id="wb3-section-4"></a>
+<p>Before the transformer, the most principled account of architecture was geometric: build the symmetries of the domain into the network. Convolutions are what you get from translation symmetry (Exercise 4.1), graph networks from permutation symmetry of nodes, and so on, and restricting the hypothesis class this way buys sample efficiency. This is close to the opposite of the account in §3. The transformer has much less of this structure (Exercise 4.2), and the vision transformer showed that with enough data the missing bias stops mattering. WB5 takes up how much architecture matters at all.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.youtube.com/watch?v=w6Pw4MOzMuo">Geometric deep learning: the Erlangen programme of ML</a></strong>, Michael Bronstein, ICLR 2021 keynote <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The talk version of the geometric-deep-learning blueprint: choose the domain’s symmetry group, use layers equivariant to it, pool locally, and finish with an invariant readout; CNNs, GNNs, DeepSets and transformers are instances.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2010.11929">An image is worth 16x16 words: transformers for image recognition at scale</a></strong>, Dosovitskiy et al. (ViT), 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A plain transformer on image patches. Trained on ImageNet alone it trails comparable ResNets, which the authors attribute to its lack of the CNN’s inductive biases; pretrained on 14M–300M images it matches or beats them. “Large scale training trumps inductive bias.”</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2310.16764">ConvNets match vision transformers at scale</a></strong>, Smith, Brock, Berrada, De (DeepMind), 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The other half of the story: NFNet CNNs pretrained on JFT-4B at matched compute match ViTs on ImageNet, with the same kind of scaling law. Given the data and compute, neither inductive bias wins.</p>
+</div>
+
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="https://www.deeplearningbook.org/contents/convnets.html">Deep Learning</a>, Goodfellow, Bengio, Courville, ch. 9, §9.2 and §9.4 (convolution as an infinitely strong prior); <a href="https://arxiv.org/abs/2104.13478">Geometric deep learning: grids, groups, graphs, geodesics, and gauges</a>, Bronstein, Bruna, Cohen, Veličković, §3 (the blueprint is §3.5).</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-two-symmetries">
+<summary><h3 id="exercises-two-symmetries">Exercises: two symmetries</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 4.1 (convolution from symmetry).</strong> Work with 1-D signals <span class="math inline">x\in\mathbb R^n</span>, indices mod <span class="math inline">n</span>, and the cyclic shift <span class="math inline">(Sx)_i=x_{i-1}</span>.</p>
+<p>(a) Let <span class="math inline">W</span> be an <span class="math inline">n\times n</span> matrix with <span class="math inline">WS=SW</span>. Show that there is a vector <span class="math inline">w</span> with <span class="math inline">(Wx)_i=\sum_jw_{i-j}x_j</span> for all <span class="math inline">x</span>: <span class="math inline">W</span> is a circular convolution. Show conversely that every circular convolution commutes with <span class="math inline">S</span>.</p>
+<p>(b) For a single-channel <span class="math inline">224\times224</span> image, compare the number of weights in a general linear map to an output of the same size, in a translation-equivariant one, and in a <span class="math inline">3\times3</span> convolution.</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>Set <span class="math inline">w=We_0</span> and note that <span class="math inline">e_j=S^je_0</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Set <span class="math inline">w=We_0</span>. Since <span class="math inline">e_j=S^je_0</span> and <span class="math inline">W</span> commutes with every power of <span class="math inline">S</span>, <span class="math inline">We_j=S^jWe_0=S^jw</span>, and <span class="math inline">(S^jw)_i=w_{i-j}</span>. By linearity, <span class="math inline">(Wx)_i=\sum_jx_j(We_j)_i=\sum_jw_{i-j}x_j</span>. Conversely, if <span class="math inline">(Wx)_i=\sum_jw_{i-j}x_j</span>, then with <span class="math inline">j&#39;=j-1</span>, <span class="math display">
+(WSx)_i=\sum_jw_{i-j}x_{j-1}=\sum_{j&#39;}w_{(i-1)-j&#39;}x_{j&#39;}=(Wx)_{i-1}=(SWx)_i.
+</span> So weight sharing is a consequence of the symmetry, not a trick: a shift-commuting linear map is fixed by <span class="math inline">n</span> numbers instead of <span class="math inline">n^2</span>. Small kernels (locality) are a further, separate choice.</p>
+<p><strong>(b)</strong> With <span class="math inline">n=224^2\approx5\times10^4</span> pixels: a general linear map has <span class="math inline">n^2\approx2.5\times10^9</span> weights, a translation-equivariant one <span class="math inline">n\approx5\times10^4</span>, a <span class="math inline">3\times3</span> convolution 9. (Real CNNs pad and stride, so the equivariance is only approximate.)</p>
+</div>
+</details>
+
+<p><strong>Exercise 4.2 (the transformer’s symmetry).</strong> Single-head self-attention on <span class="math inline">T</span> tokens, stacked as the rows of <span class="math inline">X\in\mathbb R^{T\times d}</span>, is <span class="math display">
+\mathrm{SA}(X)=\operatorname{softmax}\!\Big(\frac{QK^\top}{\sqrt{d_k}}\Big)V,\qquad Q=XW_Q,\quad K=XW_K,\quad V=XW_V,
+</span> with the softmax taken along each row.</p>
+<p>(a) Let <span class="math inline">P</span> be a <span class="math inline">T\times T</span> permutation matrix. Show that <span class="math inline">\mathrm{SA}(PX)=P\,\mathrm{SA}(X)</span>.</p>
+<p>(b) So without position information a transformer treats its input as a set. Which ingredients break the symmetry: absolute position embeddings (<span class="math inline">X\to X+E</span>), a causal mask, rotary embeddings?</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>Show that <span class="math inline">\operatorname{softmax}(PAP^\top)=P\operatorname{softmax}(A)P^\top</span> for any square <span class="math inline">A</span>, and use <span class="math inline">P^\top P=I</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Replacing <span class="math inline">X</span> by <span class="math inline">PX</span> gives <span class="math inline">Q&#39;=PQ</span>, <span class="math inline">K&#39;=PK</span>, <span class="math inline">V&#39;=PV</span>, so the score matrix becomes <span class="math inline">PAP^\top</span> with <span class="math inline">A=QK^\top/\sqrt{d_k}</span>. Row <span class="math inline">i</span> of <span class="math inline">PAP^\top</span> is a row of <span class="math inline">A</span> with its entries permuted, and a row softmax does not care about the order of entries within a row, so <span class="math inline">\operatorname{softmax}(PAP^\top)=P\operatorname{softmax}(A)P^\top</span>. Then <span class="math display">
+\mathrm{SA}(PX)=P\operatorname{softmax}(A)P^\top PV=P\,\mathrm{SA}(X).
+</span> Position-wise MLPs and residual connections are also permutation-equivariant, so the whole stack is.</p>
+<p><strong>(b)</strong> Absolute embeddings break it: <span class="math inline">PX+E\ne P(X+E)</span> unless <span class="math inline">PE=E</span>. A causal mask breaks it too, since it singles out an order, so a decoder-only transformer has some access to position even without embeddings. Rotary embeddings break permutation symmetry too, but make scores depend on positions only through their differences, so they keep translation symmetry in position. In the geometric picture the transformer is message passing on the <em>complete</em> graph with data-dependent edge weights. Once position is added, what remains is weight sharing across positions and content-based routing, with no locality: much less structure than a CNN’s.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="5-why-scale-should-you-consume-more-tokens">
+<summary><h2 id="5-why-scale-should-you-consume-more-tokens">5. Why scale? Should <em>you</em> consume more tokens?</h2></summary>
+<div class="sec-body">
+<a id="wb3-section-5"></a>
+<p>Held-out loss falls roughly as a power law in model size <span class="math inline">N</span> and data <span class="math inline">D</span>. If you model it as <span class="math inline">L=E+AN^{-\alpha}+BD^{-\beta}</span> and spend compute <span class="math inline">C\approx6ND</span>, the best model size grows as <span class="math inline">C^{\beta/(\alpha+\beta)}</span> and the best data size as <span class="math inline">C^{\alpha/(\alpha+\beta)}</span>. Chinchilla’s estimates put both allocation exponents, <span class="math inline">\beta/(\alpha+\beta)</span> and <span class="math inline">\alpha/(\alpha+\beta)</span>, near <span class="math inline">\tfrac12</span>, so parameters and tokens should be scaled together (Chinchilla used about 20 tokens per parameter). If the model will serve many queries, it pays to train it smaller and longer than that (Exercise 5.3).</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2001.08361">Scaling laws for neural language models</a></strong>, Kaplan, McCandlish, Henighan, Brown, et al. (OpenAI), 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Fits power laws in model size, data and compute, and concludes that most extra compute should go to parameters (<span class="math inline">N_{\rm opt}\propto C^{0.73}</span>), with large models trained well short of convergence. Exercise 5.2 asks why the next reading’s answer differs.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2203.15556">Training compute-optimal large language models</a></strong>, Hoffmann, Borgeaud, Mensch, et al. (DeepMind), 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>For a fixed compute budget, model size and training tokens should be scaled in equal proportion; earlier large models were substantially undertrained. Chinchilla (70B parameters, 1.4T tokens) outperforms the 280B Gopher at the same compute. §3 gives three approaches to the optimal allocation (§3.3 and Appendix D.2 are the parametric fit of Exercise 5.1). Read it alongside Besiroglu et al.’s <a href="https://arxiv.org/abs/2404.10102">replication attempt</a> (2024), which finds that the published third-approach constants fit the data poorly.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/6Fpvch8RR29qLEWNH/chinchilla-s-wild-implications">chinchilla’s wild implications</a></strong>, nostalgebraist, 2022 (LessWrong) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Plugs the Chinchilla fit into the question of how much text exists, and concludes that data, not parameters, becomes the binding constraint: the reducible loss left at the scale of all available text is mostly a data term. The background for the data limit in Exercise 5.3.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://github.com/EleutherAI/cookbook">EleutherAI cookbook</a></strong>, EleutherAI <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Practical references and calculators for training at scale: FLOP and memory counts, parallelism, benchmarks. Start with <a href="https://blog.eleuther.ai/transformer-math/">Transformer Math 101</a>, which derives <span class="math inline">C\approx6ND</span> and the memory budget of training.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-compute-optimal-allocation">
+<summary><h3 id="exercises-compute-optimal-allocation">Exercises: compute-optimal allocation</h3></summary>
+<div class="sec-body">
+
+<p>Hoffmann et al.’s third approach fits <span class="math display">
+L(N,D)=E+\frac{A}{N^{\alpha}}+\frac{B}{D^{\beta}},
+</span> where <span class="math inline">E</span> is the irreducible loss, the second term the loss from finite model size and the third the loss from finite data. A forward and backward pass costs about 6 FLOPs per parameter per token, so <span class="math inline">C\approx6ND</span>.</p>
+<p><strong>Exercise 5.1.</strong></p>
+<p>(a) Minimize <span class="math inline">L</span> at fixed <span class="math inline">C</span> and show that <span class="math display">
+N_{\text{opt}}=G\Big(\frac C6\Big)^{\frac{\beta}{\alpha+\beta}},\qquad
+D_{\text{opt}}=G^{-1}\Big(\frac C6\Big)^{\frac{\alpha}{\alpha+\beta}},\qquad
+G=\Big(\frac{\alpha A}{\beta B}\Big)^{\frac1{\alpha+\beta}}.
+</span> If <span class="math inline">\alpha&gt;\beta</span>, which of <span class="math inline">N</span> and <span class="math inline">D</span> gets more of the budget?</p>
+<p>(b) Show that at the optimum <span class="math inline">\alpha\,AN^{-\alpha}=\beta\,BD^{-\beta}</span>.</p>
+<p>(c) Show that the optimal reducible loss <span class="math inline">L-E</span> is a power law in <span class="math inline">C</span>, and find its exponent.</p>
+<p>(d) The published fit (Hoffmann et al., eq. 10 in Appendix D.2) is <span class="math inline">E=1.69</span>, <span class="math inline">A=406.4</span>, <span class="math inline">B=410.7</span>, <span class="math inline">\alpha=0.34</span>, <span class="math inline">\beta=0.28</span>. At Gopher’s and Chinchilla’s budget, <span class="math inline">C=5.76\times10^{23}</span> FLOPs, compute <span class="math inline">N_{\text{opt}}</span>, <span class="math inline">D_{\text{opt}}</span> and <span class="math inline">D_{\text{opt}}/N_{\text{opt}}</span>. Compare with Chinchilla’s actual 70B parameters and 1.4T tokens.</p>
+<p>(e) Under the same fit, evaluate <span class="math inline">L</span> at your <span class="math inline">(N_{\text{opt}},D_{\text{opt}})</span> and at <span class="math inline">(7\times10^{10},\,1.4\times10^{12})</span>. What does the difference say about how sharply the data pin down the allocation?</p>
+<details class="hint"><summary>Hints</summary>
+
+<p>(a) Substitute <span class="math inline">D=C/(6N)</span>, set <span class="math inline">dL/dN=0</span>, and collect powers of <span class="math inline">N</span>. (b) Multiply the stationarity condition by <span class="math inline">N</span>. (c) Substitute (a) into each reducible term. (d), (e) Work in <span class="math inline">\log_{10}</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> With <span class="math inline">D=C/(6N)</span>, <span class="math display">
+L(N)=E+AN^{-\alpha}+B\Big(\frac{6N}{C}\Big)^{\beta}.
+</span> Setting the derivative to zero, <span class="math display">
+-\alpha AN^{-\alpha-1}+\beta B\Big(\frac6C\Big)^{\beta}N^{\beta-1}=0
+\quad\Longrightarrow\quad
+N^{\alpha+\beta}=\frac{\alpha A}{\beta B}\Big(\frac C6\Big)^{\beta},
+</span> which gives <span class="math inline">N_{\text{opt}}</span>. Then <span class="math inline">D_{\text{opt}}=C/(6N_{\text{opt}})=G^{-1}(C/6)^{1-\beta/(\alpha+\beta)}=G^{-1}(C/6)^{\alpha/(\alpha+\beta)}</span>. (<span class="math inline">L(N)</span> is a sum of a decreasing and an increasing power of <span class="math inline">N</span>, convex in <span class="math inline">\log N</span>, so this stationary point is the minimum.) If <span class="math inline">\alpha&gt;\beta</span> then <span class="math inline">\beta/(\alpha+\beta)&lt;\tfrac12</span>, so <span class="math inline">D</span> gets more of the budget: the model-size term decays faster, so it needs less help. If <span class="math inline">\alpha=\beta</span>, both grow as <span class="math inline">\sqrt C</span> and <span class="math inline">D/N</span> is constant.</p>
+<p><strong>(b)</strong> Multiplying the stationarity condition by <span class="math inline">N</span> gives <span class="math inline">\alpha AN^{-\alpha}=\beta B(6N/C)^{\beta}=\beta BD^{-\beta}</span>. Along the constraint <span class="math inline">\log N+\log D=\text{const}</span>, these are the rates at which the two terms fall per unit of <span class="math inline">\log N</span> and of <span class="math inline">\log D</span>, and at the optimum they balance.</p>
+<p><strong>(c)</strong> <span class="math inline">AN_{\text{opt}}^{-\alpha}\propto C^{-\alpha\beta/(\alpha+\beta)}</span> and <span class="math inline">BD_{\text{opt}}^{-\beta}\propto C^{-\beta\alpha/(\alpha+\beta)}</span>, so <span class="math inline">L_{\text{opt}}-E\propto C^{-\alpha\beta/(\alpha+\beta)}</span>. With the constants in (d) the exponent is <span class="math inline">0.34\times0.28/0.62\approx0.15</span>.</p>
+<p><strong>(d)</strong> <span class="math inline">\alpha A\approx138.2</span> and <span class="math inline">\beta B\approx115.0</span>, with ratio <span class="math inline">1.202</span>, so <span class="math inline">G=1.202^{1/0.62}\approx1.34</span>. The exponent is <span class="math inline">\beta/(\alpha+\beta)\approx0.452</span> and <span class="math inline">C/6=9.6\times10^{22}</span>, so <span class="math inline">(C/6)^{0.452}\approx10^{10.38}\approx2.4\times10^{10}</span>. Hence <span class="math display">
+N_{\text{opt}}\approx3.2\times10^{10},\qquad
+D_{\text{opt}}=\frac{9.6\times10^{22}}{3.2\times10^{10}}\approx3.0\times10^{12},
+</span> about 90 tokens per parameter. Chinchilla itself used 70B parameters and 1.4T tokens, 20 tokens per parameter. That allocation came from the paper’s first two approaches, which agree with each other. Besiroglu et al. (<a href="https://arxiv.org/abs/2404.10102">Chinchilla scaling: a replication attempt</a>, 2024) re-fitted the third approach to data reconstructed from the paper’s plots and found the published constants fit those data poorly, while their re-fit is compatible with the first two approaches.</p>
+<p><strong>(e)</strong> At the optimum, <span class="math inline">AN^{-\alpha}\approx0.109</span> and <span class="math inline">BD^{-\beta}\approx0.132</span>, so <span class="math inline">L\approx1.931</span>. (Check (b): <span class="math inline">0.34\times0.109\approx0.28\times0.132\approx0.037</span>.) At 70B parameters and 1.4T tokens, <span class="math inline">AN^{-\alpha}\approx0.084</span> and <span class="math inline">BD^{-\beta}\approx0.163</span>, so <span class="math inline">L\approx1.937</span>, using about 2% more compute. A factor of more than four in tokens per parameter changes the predicted loss by about <span class="math inline">0.006</span> nats. The loss is very flat near the optimum, so small changes in the fitted constants move the optimal allocation a lot; Besiroglu et al.’s re-fit (<span class="math inline">\alpha\approx0.35</span>, <span class="math inline">\beta\approx0.37</span>) brings it back to about 20 tokens per parameter. Treat “20 tokens per parameter” as an order of magnitude.</p>
+</div>
+</details>
+
+<p><strong>Exercise 5.2.</strong> Kaplan et al. found <span class="math inline">N_{\text{opt}}\propto C^{0.73}</span>; Hoffmann et al. found <span class="math inline">N_{\text{opt}}\propto C^{0.5}</span>.</p>
+<p>(a) Reading each result through <span class="math inline">N_{\text{opt}}\propto C^{\beta/(\alpha+\beta)}</span>, what ratio <span class="math inline">\beta/\alpha</span> does each imply?</p>
+<p>(b) Kaplan et al. trained every model with the same learning-rate schedule, sized for about 130B tokens, and used losses from intermediate checkpoints. At a checkpoint after <span class="math inline">D&lt;130</span>B tokens, is the recorded loss above or below what a run scheduled to end at <span class="math inline">D</span> would reach? Small compute budgets are best spent on few tokens and large ones on many. Use this to explain which way the bias pushes the fitted growth of <span class="math inline">N_{\text{opt}}</span> with <span class="math inline">C</span>.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> If <span class="math inline">\beta/(\alpha+\beta)=a</span> then <span class="math inline">\beta/\alpha=a/(1-a)</span>. Kaplan: <span class="math inline">0.73/0.27\approx2.7</span>. Chinchilla: <span class="math inline">\beta/\alpha\approx1</span>. This is only a formal reading: Kaplan et al.’s <span class="math inline">0.73</span> came from fitting loss against model size and training steps with training stopped well before convergence, not from this formula.</p>
+<p><strong>(b)</strong> Above. At an intermediate checkpoint the learning rate has not been annealed, and the final decay is where a run gains much of its last improvement. So short training looks worse than it is, and most so at small <span class="math inline">D</span>, where the best allocations for small budgets lie. At small <span class="math inline">C</span> the fit is pushed toward smaller models trained on more tokens than optimal, while at large <span class="math inline">C</span> it is roughly right. An optimal <span class="math inline">N</span> that is too small at small <span class="math inline">C</span> and about right at large <span class="math inline">C</span> appears to grow faster with <span class="math inline">C</span> than it really does. Hoffmann et al.: using these intermediate losses “results in underestimating the effectiveness of training models on less data than 130B tokens, and eventually contributes to the conclusion that model size should increase faster than training data size as compute budget increases.”</p>
+</div>
+</details>
+
+<p><strong>Exercise 5.3 (Fermi).</strong> A model will answer <span class="math inline">10^{12}</span> queries of 1000 generated tokens each, at about <span class="math inline">2N</span> FLOPs per generated token. Compare the inference compute of a 70B model with Chinchilla’s training compute (<span class="math inline">\approx5.8\times10^{23}</span> FLOPs). What does this suggest about what size of model to train?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Inference costs <span class="math inline">10^{12}\times10^{3}\times2\times7\times10^{10}=1.4\times10^{26}</span> FLOPs, about 240 times the training compute. The quantity to minimize is then <span class="math inline">C_{\text{train}}+C_{\text{inference}}</span>. A smaller model trained on more tokens than the Chinchilla optimum spends more training compute to reach a given loss but costs proportionally less per generated token, and Exercise 5.1(e) shows the loss penalty for moving moderately off the optimum is small. The limit is data: overtraining needs the extra tokens to exist (see nostalgebraist’s post above).</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="6-simulators-and-personae">
+<summary><h2 id="6-simulators-and-personae">6. Simulators and personae</h2></summary>
+<div class="sec-body">
+<a id="wb3-section-6"></a>
+<p>What is the object that next-token prediction on human text produces? The simulators view: not an agent, oracle or tool, but a model of the process that generates text, which can play any author or character the text implies. Prompting is conditioning on evidence about who is writing; post-training picks out and stabilizes one character, the assistant. The readings below develop this from the base-model era to current assistants.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators">Simulators</a></strong>, janus, 2022 (LessWrong) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Argues that a self-supervised language model is a <em>simulator</em>: it learns the conditional structure of its training distribution and, when sampled, evolves <em>simulacra</em>, which may be agentic even though the simulator is not. Long and essayistic. “Inadequate ontologies”, “Simulators”, “The simulation objective” and “Simulacra” carry the argument.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/pv7Qpu8WSge8NRbpB">larger language models may disappoint you [or, an eternally unfinished draft]</a></strong>, nostalgebraist, 2021 (LessWrong) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>From the base-model era: a prompt is evidence about what kind of document this is, so a prompted evaluation mixes “can the model do the task?” with “can the model tell that this is a document in which the task gets done?” Read for the second question, which is the simulators picture applied to capability evaluation.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://gwern.net/gpt-3#prompts-as-programming">GPT-3 creative fiction</a></strong>, Gwern Branwen, 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>Hundreds of pages of GPT-3 samples, but the section “Prompts as programming” is the early statement that a prompt is a program that specifies which text, and which writer, to continue. A footnote puts the persona point in one line: models like GPT-3 “are not ‘an’ agent, because they are every agent.”</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://nostalgebraist.tumblr.com/post/785766737747574784/the-void">the void</a></strong>, nostalgebraist, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The assistant is a character the base model has to play, and its specification is nearly empty: a “helpful, harmless, honest” AI, first written down in a 2021 research prompt, defined largely by reference to itself. The base model fills the void from whatever its training data say about AI assistants, including fiction and alignment writing.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://alignment.anthropic.com/2026/psm">The persona selection model: why AI assistants might behave like humans</a></strong>, Sam Marks, Jack Lindsey, Chris Olah (Anthropic), 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Pretraining teaches a model to simulate many characters; post-training mostly selects and refines one of them, the Assistant. So human-like behaviour is the default rather than something trained in, and narrow fine-tuning can shift which persona the model infers it is, which would explain emergent misalignment. The authors say where they are unsure the picture is complete.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2601.10387">The assistant axis: situating and stabilizing the default persona of language models</a></strong>, Lu, Gallagher, Michala, Fish, Lindsey (Anthropic), 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Empirical support for persona selection in open-weights models: one direction in activation space tracks how assistant-like the current character is. Drift along it predicts the model slipping into other characters, and capping it stabilizes behaviour against that drift and some jailbreaks.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="what-carries-forward">
+<summary><h2 id="what-carries-forward">What carries forward</h2></summary>
+<div class="sec-body">
+<a id="wb3-closing"></a>
+<ul>
+<li><strong>Compression (WB4).</strong> §3’s “loss is code length” is the practical face of MDL; WB4 §2–3 develop MDL and Solomonoff induction.</li>
+<li><strong>Universality (WB5).</strong> §4 ends with ViTs and CNNs matching at scale; WB5 §1 asks where the scaling exponents of §5 come from, and WB5 §2 takes up the claim that architecture matters little: it moves the scaling curve but rarely changes its exponent.</li>
+<li><strong>Alignment (WB1).</strong> WB1 §4 sets the simulators picture of §6 against older alignment arguments.</li>
+</ul>
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:wb3", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>

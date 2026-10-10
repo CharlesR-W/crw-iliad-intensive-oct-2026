@@ -1,0 +1,10 @@
+# local tooling / caches
+.claude/
+__pycache__/
+*.pyc
+_exec_cache/
+.ipynb_checkpoints/
+
+# superseded backups
+td/_pre_streamline_2026-10-09/
+td/_old_ipynb/

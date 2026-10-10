@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spectral Filters and Exponents</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb;
+  --panel: #ffffff;
+  --ink: #111110;
+  --ink-2: #52514e;
+  --ink-3: #8a8984;
+  --rule: #e4e3df;
+  --grid: #efeeea;
+  --ridge: #2a78d6;      /* panel A, ridge */
+  --gf: #eb6834;         /* panel A, gradient flow */
+  --diff: #8a8984;
+  --de: #4a3aa7;         /* panel B, deterministic equivalent */
+  --heur: #128a60;       /* panel B, heuristic */
+  --ghost: #a9a8a2;
+  --tick: #52514e;
+  --warn: #9a5b00;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+    --rule: #34332f; --grid: #2a2a28;
+    --ridge: #3987e5; --gf: #d95926; --diff: #8f8e87; --de: #9085e9; --heur: #199e70;
+    --ghost: #6b6a64; --tick: #c3c2b7; --warn: #e0a24a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+  --rule: #34332f; --grid: #2a2a28;
+  --ridge: #3987e5; --gf: #d95926; --diff: #8f8e87; --de: #9085e9; --heur: #199e70;
+  --ghost: #6b6a64; --tick: #c3c2b7; --warn: #e0a24a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 940px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 1.45rem; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01em; }
+.sub { color: var(--ink-2); margin: 0 0 20px; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 14px 10px; margin: 0 0 18px; }
+.panel h2 { font-size: 1.02rem; font-weight: 620; margin: 0 0 2px; }
+.panel .src { color: var(--ink-3); font-size: 0.82rem; margin: 0 0 10px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; margin: 0 0 8px; font-size: 0.88rem; }
+.ctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ctl label { white-space: nowrap; color: var(--ink-2); }
+.ctl input[type=range] { width: 150px; max-width: 42vw; accent-color: var(--ink-2); }
+.ctl output { font-variant-numeric: tabular-nums; min-width: 5.2em; color: var(--ink); }
+button { font: inherit; font-size: 0.84rem; padding: 4px 10px; border-radius: 6px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--ink-3); }
+.plot { position: relative; width: 100%; }
+.plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.plot svg text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 8px; font-size: 0.78rem; line-height: 1.35; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap; display: none; font-variant-numeric: tabular-nums; }
+.readout { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 4px 18px; font-size: 0.86rem; color: var(--ink-2); margin: 6px 0 2px; }
+.readout b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.tag { display: inline-block; font-size: 0.72rem; border: 1px solid var(--rule); border-radius: 4px; padding: 0 5px; color: var(--ink-2); margin-left: 4px; vertical-align: 1px; }
+.note { font-size: 0.82rem; color: var(--warn); min-height: 1.2em; margin-top: 4px; }
+.swatch { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 4px; }
+.swatch.dash { border-top-style: dashed; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.82rem; color: var(--ink-2); margin: 2px 0 4px; }
+figcaption { font-family: Georgia, "Iowan Old Style", serif; font-size: 0.97rem; line-height: 1.55; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 12px; }
+figcaption b { color: var(--ink); }
+figure { margin: 0; }
+details { font-size: 0.84rem; color: var(--ink-2); margin-top: 10px; }
+details code { font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<main>
+<h1>Spectral filters, and where a scaling exponent comes from</h1>
+<p class="sub">Regularization and early stopping keep strong directions and kill weak ones (A). Count how many directions survive at sample size <i>n</i>, and the slope of the learning curve is set by the spectrum (B).</p>
+
+<figure>
+<!-- ================= PANEL A ================= -->
+<section class="panel" id="panelA">
+  <h2>A. Ridge and stopped gradient flow as filters on the eigenvalues</h2>
+  <p class="src">WB2 §4. Loss (1/2n)‖Xβ−y‖², eigen-decomposition XᵀX = V diag(s<sub>k</sub>²) Vᵀ, fit β̂ = Σ<sub>k</sub> φ<sub>k</sub> β̂<sup>OLS</sup><sub>k</sub> v<sub>k</sub>. Both curves are exact formulas.</p>
+  <div class="controls">
+    <div class="ctl"><label for="lam">ridge λ</label><input id="lam" type="range" min="-6" max="0" step="0.05" value="-3"><output id="lamOut"></output></div>
+    <div class="ctl"><label for="tt">stop time t</label><input id="tt" type="range" min="0" max="6" step="0.05" value="3"><output id="tOut"></output></div>
+    <button id="matchHalf" title="set t = ln 2 / λ so both filters equal 1/2 at the same eigenvalue">match half-points (t = ln2/λ)</button>
+    <button id="matchInv" title="the naive identification nλ ↔ n/t">t = 1/λ</button>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="border-color:var(--ridge)"></span>ridge φ = s²/(s²+nλ)</span>
+    <span><span class="swatch dash" style="border-color:var(--gf)"></span>gradient flow from 0, stopped at t: φ = 1 − e<sup>−s²t/n</sup></span>
+    <span><span class="swatch" style="border-color:var(--tick);height:8px;width:0;border-top:none;border-left:1.5px solid var(--tick)"></span>power-law eigenvalues s<sub>k</sub>²/n = k<sup>−α</sup> (α from panel B)</span>
+  </div>
+  <div class="plot" id="plotA"><svg id="svgA"></svg><div class="tip" id="tipA"></div></div>
+  <div class="readout" id="readA"></div>
+</section>
+
+<!-- ================= PANEL B ================= -->
+<section class="panel" id="panelB">
+  <h2>B. Test loss vs n for ridge on a power-law spectrum</h2>
+  <p class="src">WB5 §1. Gaussian features with covariance eigenvalues λ<sub>k</sub> = k<sup>−α</sup>; target y = Σ β<sub>k</sub>x<sub>k</sub> + ε, with per-mode signal power c<sub>k</sub>² = λ<sub>k</sub>β<sub>k</sub>² ∝ k<sup>−α′</sup> (normalized Σc<sub>k</sub>² = 1), so the unresolved tail Σ<sub>k&gt;K</sub> c<sub>k</sub>² ≈ K<sup>−(α′−1)</sup>/((α′−1)ζ(α′)); noise variance σ². Infinite number of features.</p>
+  <div class="controls">
+    <div class="ctl"><label for="al">spectrum α</label><input id="al" type="range" min="1.1" max="3" step="0.05" value="1.5"><output id="alOut"></output></div>
+    <div class="ctl"><label for="ap">target α′</label><input id="ap" type="range" min="1.1" max="5" step="0.05" value="2"><output id="apOut"></output></div>
+    <div class="ctl"><label for="sg">noise σ²</label><input id="sg" type="range" min="-7" max="-0.5" step="0.25" value="-7"><output id="sgOut"></output></div>
+    <button id="generic" title="isotropic β: c_k² = λ_k β_k² ∝ k^-α">generic target (α′ = α)</button>
+    <label style="font-size:0.86rem;color:var(--ink-2);white-space:nowrap"><input type="checkbox" id="showRL"> show ridgeless (λ→0⁺)</label>
+  </div>
+  <div class="legend">
+    <span><span class="swatch" style="border-color:var(--de)"></span>deterministic equivalent, ridge at optimal λ</span>
+    <span><span class="swatch dash" style="border-color:var(--heur)"></span>heuristic: resolve the top K ≤ n modes</span>
+    <span id="legRL" style="display:none"><span class="swatch" style="border-color:var(--ghost)"></span>deterministic equivalent, ridgeless</span>
+    <span id="legMC"><span style="color:var(--de)">○</span> Monte Carlo ridge (p = 5·10⁴ features, 16 draws; ±1 s.e.)</span>
+    <span><span class="swatch" style="border-color:var(--ink-3);border-top-style:dotted"></span>slope −(predicted exponent)</span>
+  </div>
+  <div class="plot" id="plotB"><svg id="svgB"></svg><div class="tip" id="tipB"></div></div>
+  <div class="readout" id="readB"></div>
+  <div class="note" id="noteB"></div>
+</section>
+
+<figcaption>
+<b>What to look at.</b> In A, press “match half-points”: the two filters now cross ½ at the same eigenvalue, yet gradient flow is sharper. In the weak tail both are linear in s² (ridge ≈ s²/nλ, flow ≈ s²t/n, lower by the factor ln 2), so ridge passes about 1/ln2 ≈ 1.44 times more of each weak direction. In the strong directions ridge still shrinks by about nλ/s², while flow’s shrinkage e<sup>−s²t/n</sup> vanishes exponentially. The difference strip shows exactly where they disagree (at most about 0.14 when matched). The naive matching t = 1/λ leaves them offset by a factor ln 2. The effective degrees of freedom Σφ<sub>k</sub> counts how many of the power-law eigenvalues (ticks) survive. In B, that count is the whole story to first order: with n samples about the top n modes are resolved (fewer once noise forces regularization), so the excess loss is the unresolved tail, ∝ n<sup>−(α′−1)</sup> without noise and ∝ n<sup>−(α′−1)/α′</sup> at large n with noise and optimal λ. The deterministic-equivalent approximation (checked against Monte Carlo) has the same slope as the heuristic but a different prefactor. When α′−1 &gt; 2α, ridge saturates at exponent 2α and the heuristic is wrong. At the boundary α′−1 = 2α, logarithmic corrections accompany the power law. <b>What it does not show.</b> This is a linear model (ridge/kernel regression) with a spectrum we chose. The exponent comes from the data spectrum and the target’s alignment with it (α′, not α, unless the target is generic). It explains the <i>form</i> of a learning curve, not what a network learns or why real data has this spectrum; a different mechanism, such as discrete quanta, can produce the same curve (cf. “Power laws are not enough”). Panel A’s ticks are idealized: they treat the empirical eigenvalues s<sub>k</sub>²/n as equal to the population ones.
+</figcaption>
+
+<details>
+<summary>Formulas and checks</summary>
+<p><b>A.</b> Ridge minimizes (1/2n)‖Xβ−y‖² + (λ/2)‖β‖², so β̂ = (XᵀX+nλI)⁻¹Xᵀy. Gradient flow dβ/dt = −(1/n)Xᵀ(Xβ−y) from β(0)=0 gives φ<sub>k</sub>(t) = 1−e<sup>−s<sub>k</sub>²t/n</sup>. Half-points: ridge at s²/n = λ, flow at s²/n = ln2/t. df = Σ<sub>k</sub>φ<sub>k</sub> is summed over k = 1…∞ with s<sub>k</sub>²/n = k<sup>−α</sup>.</p>
+<p><b>B.</b> Ridge with the same nλ convention, population features. Effective regularization κ solves κ(1 − df₁/n) = λ, with df₁ = Σλ<sub>k</sub>/(λ<sub>k</sub>+κ) and df₂ = Σλ<sub>k</sub>²/(λ<sub>k</sub>+κ)². Excess test loss E = (κ²Σc<sub>k</sub>²/(λ<sub>k</sub>+κ)² + σ²)/(1 − df₂/n) − σ² (Hastie–Montanari–Rosset–Tibshirani; Bach 2023; Simon et al. “eigenlearning”). λ is optimized numerically over λ ≥ 0. Heuristic: E<sub>heur</sub> = min<sub>K≤n</sub>[Σ<sub>k&gt;K</sub>c<sub>k</sub>² + σ²K/n]. Predicted exponent: s = min(α′−1, 2α) without noise, and s/(s+1) with noise.</p>
+<p>Checks (<code>checks/spectral_filters_check.py</code>): the filter formulas match direct linear algebra and small-step GD to within 1e-6. The DE matches Monte Carlo ridge to within 1–7% for n = 16…800 at several settings. The DE’s slopes over n ∈ [10⁴,10⁵] match the predicted exponents (1.000, 2.000, 0.500, and 3.000 in the saturated case α=1.5, α′=5, where the heuristic says 4). This page recomputes reference values on load and logs the comparison to the console.</p>
+</details>
+</figure>
+</main>
+
+<script id="mathlib">
+// ===== numerical core (also loaded by node for the cross-check) =====
+const LN2 = Math.LN2;
+// Hurwitz-type tail: sum_{k=N}^inf k^-a  (N >= 1), Euler–Maclaurin after direct terms
+function tailFrom(a, N) {
+  let s = 0, k = N;
+  while (k < 12) { s += Math.pow(k, -a); k++; }
+  const M = k;
+  s += Math.pow(M, 1 - a) / (a - 1) + 0.5 * Math.pow(M, -a)
+     + a * Math.pow(M, -a - 1) / 12
+     - a * (a + 1) * (a + 2) * Math.pow(M, -a - 3) / 720;
+  return s;
+}
+function zeta(a) { return tailFrom(a, 1); }
+
+// Spectrum sums over k = 1..inf: exact for k<=K0, log-quadrature to Xmax, analytic tail beyond.
+const K0 = 1000, NQ = 500, XMAX = 1e10;
+function makeSpectrum(alpha, ap) {
+  const Z = zeta(ap);
+  const N = K0 + NQ;
+  const lk = new Float64Array(N), ck = new Float64Array(N), w = new Float64Array(N);
+  for (let k = 1; k <= K0; k++) { lk[k-1] = Math.pow(k, -alpha); ck[k-1] = Math.pow(k, -ap) / Z; w[k-1] = 1; }
+  const u0 = Math.log(K0 + 0.5), u1 = Math.log(XMAX), du = (u1 - u0) / (NQ - 1);
+  for (let i = 0; i < NQ; i++) {
+    const x = Math.exp(u0 + i * du);
+    lk[K0+i] = Math.pow(x, -alpha); ck[K0+i] = Math.pow(x, -ap) / Z;
+    w[K0+i] = du * x * ((i === 0 || i === NQ - 1) ? 0.5 : 1);
+  }
+  return { alpha, ap, Z, lk, ck, w, N,
+    t1: Math.pow(XMAX, 1 - alpha) / (alpha - 1),
+    t2: Math.pow(XMAX, 1 - 2 * alpha) / (2 * alpha - 1),
+    tB: Math.pow(XMAX, 1 - ap) / (ap - 1) / Z };
+}
+// df1, df2, bias numerator at effective regularization kappa
+function sums(S, kap) {
+  let d1 = 0, d2 = 0, B = 0;
+  const { lk, ck, w, N } = S;
+  for (let i = 0; i < N; i++) {
+    const den = lk[i] + kap, r = lk[i] / den;
+    d1 += w[i] * r; d2 += w[i] * r * r; B += w[i] * ck[i] / (den * den);
+  }
+  return [d1 + S.t1 / kap, d2 + S.t2 / (kap * kap), kap * kap * B + S.tB];
+}
+function riskAtKappa(S, kap, n, s2) {
+  const [d1, d2, B] = sums(S, kap);
+  return { E: (B + s2) / (1 - d2 / n) - s2, lam: kap * (1 - d1 / n) };
+}
+// kappa at lambda = 0 (df1 = n)
+function kappa0(S, n) {
+  let lo = Math.log(1e-40), hi = Math.log(1e3);
+  for (let it = 0; it < 80; it++) {
+    const m = 0.5 * (lo + hi);
+    if (sums(S, Math.exp(m))[0] > n) lo = m; else hi = m;
+  }
+  return Math.exp(0.5 * (lo + hi));
+}
+function ridgeless(S, n, s2) { return riskAtKappa(S, kappa0(S, n), n, s2).E; }
+// optimal lambda >= 0: scan kappa >= kappa0 in log space, then golden-section refine
+function optimalRidge(S, n, s2) {
+  const k0 = kappa0(S, n), L0 = Math.log(k0), G = 64, span = Math.log(1e9);
+  let best = Infinity, bi = 0; const vals = [];
+  for (let i = 0; i < G; i++) {
+    const v = riskAtKappa(S, Math.exp(L0 + span * i / (G - 1)), n, s2).E;
+    vals.push(v); if (v < best) { best = v; bi = i; }
+  }
+  let a = L0 + span * Math.max(0, bi - 1) / (G - 1), b = L0 + span * Math.min(G - 1, bi + 1) / (G - 1);
+  const g = (Math.sqrt(5) - 1) / 2;
+  let c = b - g * (b - a), d = a + g * (b - a);
+  let fc = riskAtKappa(S, Math.exp(c), n, s2).E, fd = riskAtKappa(S, Math.exp(d), n, s2).E;
+  for (let it = 0; it < 40; it++) {
+    if (fc < fd) { b = d; d = c; fd = fc; c = b - g * (b - a); fc = riskAtKappa(S, Math.exp(c), n, s2).E; }
+    else { a = c; c = d; fc = fd; d = a + g * (b - a); fd = riskAtKappa(S, Math.exp(d), n, s2).E; }
+  }
+  const r = riskAtKappa(S, Math.exp(0.5 * (a + b)), n, s2);
+  return r.E < best ? r : riskAtKappa(S, Math.exp(L0 + span * bi / (G - 1)), n, s2);
+}
+// heuristic: min over K<=n of tail(K) + s2 K / n
+function heuristic(S, n, s2) {
+  if (s2 === 0) return { E: tailFrom(S.ap, Math.floor(n) + 1) / S.Z, K: n };
+  let best = Infinity, bK = 0;
+  const M = 300;
+  for (let i = 0; i <= M; i++) {
+    const K = Math.max(0, Math.round(Math.pow(n, i / M)) - (i === 0 ? 1 : 0));
+    const v = (K === 0 ? 1 : tailFrom(S.ap, K + 1) / S.Z) + s2 * K / n;
+    if (v < best) { best = v; bK = K; }
+  }
+  return { E: best, K: bK };
+}
+// Panel A: effective degrees of freedom over spectrum s_k^2/n = k^-alpha
+function dofRidge(S, lam) { return sums(S, lam)[0]; }
+function dofGF(S, t) {
+  let d = 0;
+  for (let i = 0; i < S.N; i++) d += S.w[i] * -Math.expm1(-S.lk[i] * t);
+  return d + t * S.t1;
+}
+function predictedExponent(alpha, ap, s2) {
+  const s = Math.min(ap - 1, 2 * alpha);
+  return s2 > 0 ? s / (s + 1) : s;
+}
+if (typeof module !== "undefined") module.exports = { makeSpectrum, ridgeless, optimalRidge, heuristic, dofRidge, dofGF, predictedExponent, zeta, tailFrom };
+</script>
+
+<script>
+// ===== embedded data =====
+// Monte Carlo ridge (checks/spectral_filters_check.py, EMBED=1): [n, mean excess risk, s.e., lambda]
+const MC = [{"alpha":1.5,"ap":2.0,"sigma2":0.0,"p":50000,"rows":[[16,0.09853,0.0048,1e-10],[32,0.04874,0.0024,1e-10],[64,0.02708,0.00089,1e-10],[128,0.01316,0.00026,1e-10],[256,0.006678,0.00012,1e-10],[512,0.003413,3.5e-05,1e-10]]},{"alpha":1.5,"ap":2.0,"sigma2":0.01,"p":50000,"rows":[[16,0.1019,0.0067,1e-10],[32,0.063,0.0042,1e-10],[64,0.03038,0.001,1e-10],[128,0.02012,0.00097,5.62e-05],[256,0.01157,0.00023,0.000251],[512,0.007402,0.00016,0.000224]]}];
+// Python reference values (DE: ridgeless for sigma2=0, grid-optimal ridge for sigma2>0)
+const REF = {"1.5_2.0_0.0_10": {"de": 0.16050421690933475, "heur": 0.05785419464503466}, "1.5_2.0_0.0_100": {"de": 0.017600438512882614, "heur": 0.006048975982604929}, "1.5_2.0_0.0_1000": {"de": 0.00177603560691304, "heur": 0.0006076232396242629}, "1.5_2.0_0.0_10000": {"de": 0.00017775665095373454, "heur": 6.078967065121458e-05}, "1.5_2.0_0.01_10": {"de": 0.16480010089654043, "heur": 0.06785419464503466}, "1.5_2.0_0.01_100": {"de": 0.022525823280077767, "heur": 0.015544111841285036}, "1.5_2.0_0.01_1000": {"de": 0.004834309115963558, "heur": 0.004926232324980709}, "1.5_2.0_0.01_10000": {"de": 0.0013380350821986294, "heur": 0.0015589805790545519}};
+
+// ===== tiny SVG plotting helpers =====
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function txt(parent, x, y, s, attrs) {
+  const t = el("text", Object.assign({ x, y, "font-size": 11.5, fill: "var(--ink-2)" }, attrs || {}), parent);
+  t.textContent = s; return t;
+}
+function supNum(e) {  // 10^e as unicode
+  const m = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+  return "10" + String(e).split("").map(c => m[c]).join("");
+}
+function fmt(v, d = 3) {
+  if (v === 0) return "0";
+  const a = Math.abs(v);
+  if (a >= 1e4 || a < 1e-3) { const e = Math.floor(Math.log10(a)); return (v / Math.pow(10, e)).toFixed(d > 2 ? 2 : 1) + "·" + supNum(e); }
+  return Number(v.toPrecision(d)).toString();
+}
+function logScale(d0, d1, r0, r1) {
+  const l0 = Math.log10(d0), l1 = Math.log10(d1);
+  const f = v => r0 + (Math.log10(v) - l0) / (l1 - l0) * (r1 - r0);
+  f.inv = p => Math.pow(10, l0 + (p - r0) / (r1 - r0) * (l1 - l0));
+  return f;
+}
+function linScale(d0, d1, r0, r1) { const f = v => r0 + (v - d0) / (d1 - d0) * (r1 - r0); f.inv = p => d0 + (p - r0) / (r1 - r0) * (d1 - d0); return f; }
+function pathFrom(pts) { return pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(""); }
+function logTicks(g, sx, x0, x1, yTop, yBot, labels, every) {
+  for (let e = Math.ceil(Math.log10(x0)); e <= Math.floor(Math.log10(x1)); e++) {
+    const x = sx(Math.pow(10, e));
+    el("line", { x1: x, x2: x, y1: yTop, y2: yBot, stroke: "var(--grid)", "stroke-width": 1 }, g);
+    if (labels && (e % (every || 1) === 0)) txt(g, x, yBot + 15, supNum(e), { "text-anchor": "middle" });
+  }
+}
+
+// ===== state =====
+const $ = id => document.getElementById(id);
+const st = { lamL: -3, tL: 3, alpha: 1.5, ap: 2.0, sgL: -7, showRL: false };
+let SA = null, SB = null, cacheB = null;
+const sigma2 = () => (st.sgL <= -7 + 1e-9 ? 0 : Math.pow(10, st.sgL));
+
+// ===== Panel A =====
+function drawA() {
+  const svg = $("svgA"); svg.innerHTML = "";
+  const W = $("plotA").clientWidth, narrow = W < 560;
+  const H = narrow ? 330 : 360;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const m = { l: narrow ? 40 : 52, r: 14, t: 10 };
+  const hMain = H * 0.62, gap = 30, hDiff = H - hMain - gap - 38 - m.t;
+  const yM0 = m.t, yM1 = m.t + hMain, yD0 = yM1 + gap, yD1 = yD0 + hDiff;
+  const xlo = 1e-6, xhi = 10;
+  const sx = logScale(xlo, xhi, m.l, W - m.r), sy = linScale(0, 1, yM1, yM0), sd = linScale(-0.3, 0.3, yD1, yD0);
+  const lam = Math.pow(10, st.lamL), t = Math.pow(10, st.tL);
+  const g = el("g", {}, svg);
+  logTicks(g, sx, xlo, xhi, yM0, yM1, false);
+  logTicks(g, sx, xlo, xhi, yD0, yD1, true, narrow ? 2 : 1);
+  [0, 0.5, 1].forEach(v => { el("line", { x1: m.l, x2: W - m.r, y1: sy(v), y2: sy(v), stroke: v === 0.5 ? "var(--rule)" : "var(--grid)", "stroke-dasharray": v === 0.5 ? "3 3" : "" }, g); txt(g, m.l - 6, sy(v) + 4, String(v), { "text-anchor": "end" }); });
+  [-0.2, 0, 0.2].forEach(v => { el("line", { x1: m.l, x2: W - m.r, y1: sd(v), y2: sd(v), stroke: v === 0 ? "var(--ink-3)" : "var(--grid)", "stroke-width": v === 0 ? 1 : 1 }, g); txt(g, m.l - 6, sd(v) + 4, (v > 0 ? "+" : "") + v, { "text-anchor": "end" }); });
+  txt(g, 12, (yM0 + yM1) / 2, "filter factor φ", { transform: `rotate(-90 12 ${(yM0 + yM1) / 2})`, "text-anchor": "middle", fill: "var(--ink)" });
+  txt(g, 12, (yD0 + yD1) / 2, "ridge − flow", { transform: `rotate(-90 12 ${(yD0 + yD1) / 2})`, "text-anchor": "middle", "font-size": 10.5 });
+  txt(g, (m.l + W - m.r) / 2, H - 4, narrow ? "eigenvalue s²/n (log scale)" : "eigenvalue s²/n of XᵀX/n  (log scale; dimensionless if features are)", { "text-anchor": "middle", fill: "var(--ink)" });
+
+  // spectrum ticks
+  const tg = el("g", { opacity: 0.55 }, svg);
+  const kmax = Math.min(4000, Math.floor(Math.pow(xlo, -1 / st.alpha)));
+  for (let k = 1; k <= kmax; k++) { const x = sx(Math.pow(k, -st.alpha)); el("line", { x1: x, x2: x, y1: yM1, y2: yM1 - (k <= 10 ? 9 : 6), stroke: "var(--tick)", "stroke-width": k <= 10 ? 1.3 : 0.6, opacity: k <= 30 ? 1 : 0.35 }, tg); }
+  txt(svg, sx(1) + 4, yM1 - 12, "k=1", { "font-size": 10, fill: "var(--ink-3)" });
+  if (Math.pow(10, -st.alpha) > xlo) txt(svg, sx(Math.pow(10, -st.alpha)) + 4, yM1 - 12, "k=10", { "font-size": 10, fill: "var(--ink-3)" });
+
+  // curves
+  const N = 360, ptsR = [], ptsG = [], ptsD = [];
+  for (let i = 0; i <= N; i++) {
+    const x = Math.pow(10, Math.log10(xlo) + (Math.log10(xhi) - Math.log10(xlo)) * i / N);
+    const pr = x / (x + lam), pg = -Math.expm1(-x * t);
+    ptsR.push([sx(x), sy(pr)]); ptsG.push([sx(x), sy(pg)]); ptsD.push([sx(x), sd(Math.max(-0.3, Math.min(0.3, pr - pg)))]);
+  }
+  const area = "M" + sx(xlo) + "," + sd(0) + pathFrom(ptsD).replace(/^M/, "L") + "L" + sx(xhi) + "," + sd(0) + "Z";
+  el("path", { d: area, fill: "var(--diff)", opacity: 0.28 }, svg);
+  el("path", { d: pathFrom(ptsD), fill: "none", stroke: "var(--diff)", "stroke-width": 1.5 }, svg);
+  // half-point markers
+  const hx1 = lam, hx2 = LN2 / t;
+  [[hx1, "var(--ridge)", "λ"], [hx2, "var(--gf)", "ln2/t"]].forEach(([x, c, lab], j) => {
+    if (x < xlo || x > xhi) return;
+    el("line", { x1: sx(x), x2: sx(x), y1: yM0, y2: yD1, stroke: c, "stroke-dasharray": "2 3", "stroke-width": 1, opacity: 0.8 }, svg);
+    el("circle", { cx: sx(x), cy: sy(0.5), r: 4, fill: c, stroke: "var(--panel)", "stroke-width": 2 }, svg);
+    txt(svg, sx(x) + (j ? 5 : -5), yM0 + 12 + 14 * j, lab, { "text-anchor": j ? "start" : "end", fill: c, "font-size": 11 });
+  });
+  el("path", { d: pathFrom(ptsR), fill: "none", stroke: "var(--ridge)", "stroke-width": 2 }, svg);
+  el("path", { d: pathFrom(ptsG), fill: "none", stroke: "var(--gf)", "stroke-width": 2, "stroke-dasharray": "6 3" }, svg);
+  // direct labels at phi = 3/4: ridge to the right of its curve, flow to the left of its curve
+  const xR = 3 * lam, xG = Math.log(4) / t;
+  if (xR > xlo && xR < xhi / 3) txt(svg, sx(xR) + 8, sy(0.75) + 4, "ridge", { fill: "var(--ink-2)", "font-size": 11.5 });
+  if (xG > xlo * 30 && xG < xhi) txt(svg, sx(xG) - 8, sy(0.75) + 4, "gradient flow", { fill: "var(--ink-2)", "font-size": 11.5, "text-anchor": "end" });
+  // hover
+  const tip = $("tipA");
+  const hit = el("rect", { x: m.l, y: yM0, width: W - m.r - m.l, height: yD1 - yM0, fill: "transparent" }, svg);
+  const cross = el("line", { y1: yM0, y2: yD1, stroke: "var(--ink-3)", "stroke-width": 1, visibility: "hidden" }, svg);
+  hit.addEventListener("pointermove", ev => {
+    const r = svg.getBoundingClientRect(), px = ev.clientX - r.left;
+    const x = sx.inv(px), pr = x / (x + lam), pg = -Math.expm1(-x * t);
+    cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("visibility", "visible");
+    const k = Math.pow(x, -1 / st.alpha);
+    tip.innerHTML = `s²/n = ${fmt(x)} <span style="color:var(--ink-3)">(k ≈ ${k < 1e5 ? k.toFixed(k < 10 ? 1 : 0) : fmt(k)})</span><br><span style="color:var(--ridge)">●</span> ridge φ = ${pr.toFixed(3)}<br><span style="color:var(--gf)">●</span> flow φ = ${pg.toFixed(3)}<br>difference = ${(pr - pg >= 0 ? "+" : "") + (pr - pg).toFixed(3)}`;
+    tip.style.display = "block";
+    const tw = tip.offsetWidth;
+    tip.style.left = (px + 12 + tw > W ? px - tw - 12 : px + 12) + "px"; tip.style.top = (yM0 + 20) + "px";
+  });
+  hit.addEventListener("pointerleave", () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); });
+
+  // readouts
+  if (!SA || SA.alpha !== st.alpha) SA = makeSpectrum(st.alpha, 2.0);
+  const dR = dofRidge(SA, lam), dG = dofGF(SA, t);
+  let maxd = 0, at = 0;
+  for (let i = 0; i <= 600; i++) { const x = Math.pow(10, -8 + 10 * i / 600), d = x / (x + lam) + Math.expm1(-x * t); if (Math.abs(d) > Math.abs(maxd)) { maxd = d; at = x; } }
+  $("readA").innerHTML =
+    `<div>half-point ratio (ridge λ)/(flow ln2/t) = <b>${(lam * t / LN2).toFixed(2)}</b><span class="tag">λt = ${fmt(lam * t)}</span></div>` +
+    `<div>effective dof Σφ<sub>k</sub>: ridge <b>${dR.toFixed(1)}</b>, flow <b>${dG.toFixed(1)}</b> <span class="tag">exact sums, k=1…∞</span></div>` +
+    `<div>largest |ridge − flow| = <b>${Math.abs(maxd).toFixed(3)}</b> at s²/n ≈ ${fmt(at)}</div>`;
+}
+
+// ===== Panel B =====
+const NMIN = 10, NMAX = 1e5;
+function computeB() {
+  const s2 = sigma2();
+  const key = [st.alpha, st.ap, s2, st.showRL].join("|");
+  if (cacheB && cacheB.key === key) return cacheB;
+  SB = makeSpectrum(st.alpha, st.ap);
+  const ns = [];
+  for (let i = 0; i <= 40; i++) ns.push(Math.pow(10, 1 + 4 * i / 40));
+  const de = ns.map(n => optimalRidge(SB, n, s2));
+  const he = ns.map(n => heuristic(SB, n, s2));
+  const rl = st.showRL ? ns.map(n => ridgeless(SB, n, s2)) : null;
+  cacheB = { key, ns, de, he, rl, s2 };
+  return cacheB;
+}
+function fitSlope(ns, ys, lo, hi) {
+  let sx = 0, sy = 0, sxx = 0, sxy = 0, c = 0;
+  ns.forEach((n, i) => { if (n >= lo * 0.999 && n <= hi * 1.001) { const x = Math.log10(n), y = Math.log10(ys[i]); sx += x; sy += y; sxx += x * x; sxy += x * y; c++; } });
+  return (c * sxy - sx * sy) / (c * sxx - sx * sx);
+}
+function drawB() {
+  const C = computeB(), s2 = C.s2;
+  const svg = $("svgB"); svg.innerHTML = "";
+  const W = $("plotB").clientWidth, narrow = W < 560;
+  const H = narrow ? 320 : 360;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const m = { l: narrow ? 46 : 58, r: 14, t: 10, b: 38 };
+  const deE = C.de.map(d => d.E), heE = C.he.map(h => h.E);
+  let all = deE.concat(heE).concat(C.rl || []);
+  let ymin = Math.min(...all), ymax = Math.max(...all);
+  const ylo = Math.pow(10, Math.floor(Math.log10(ymin))), yhi = Math.pow(10, Math.ceil(Math.log10(Math.max(ymax, 1e-300))));
+  const sx = logScale(NMIN, NMAX, m.l, W - m.r), sy = logScale(ylo, yhi, H - m.b, m.t);
+  const g = el("g", {}, svg);
+  logTicks(g, sx, NMIN, NMAX, m.t, H - m.b, true);
+  const decades = Math.round(Math.log10(yhi / ylo)), every = decades > 8 ? 2 : 1;
+  for (let e = Math.log10(ylo); e <= Math.log10(yhi) + 1e-9; e++) {
+    const y = sy(Math.pow(10, e));
+    el("line", { x1: m.l, x2: W - m.r, y1: y, y2: y, stroke: "var(--grid)" }, g);
+    if (Math.round(e) % every === 0) txt(g, m.l - 6, y + 4, supNum(Math.round(e)), { "text-anchor": "end" });
+  }
+  txt(g, (m.l + W - m.r) / 2, H - 4, "number of samples n (log scale)", { "text-anchor": "middle", fill: "var(--ink)" });
+  txt(g, 12, (m.t + H - m.b) / 2, "excess test loss E − σ²", { transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})`, "text-anchor": "middle", fill: "var(--ink)" });
+
+  // noise crossover marker (heuristic): K* reaches n when n^(1-a') / zeta = s2
+  if (s2 > 0) {
+    const nx = Math.pow(s2 * SB.Z, -1 / (st.ap - 1));
+    if (nx > NMIN && nx < NMAX) {
+      el("line", { x1: sx(nx), x2: sx(nx), y1: m.t, y2: H - m.b, stroke: "var(--ink-3)", "stroke-dasharray": "2 4" }, svg);
+      txt(svg, sx(nx) + 4, m.t + 12, "noise starts to bind", { "font-size": 10.5, fill: "var(--ink-3)" });
+    }
+  }
+  // predicted-slope reference through the deterministic-equivalent curve at n = NMAX, spanning 2 decades
+  const pred = predictedExponent(st.alpha, st.ap, s2);
+  const yEnd = deE[deE.length - 1];
+  const nRef0 = NMAX / 100, yRef0 = yEnd * Math.pow(100, pred);
+  el("path", { d: `M${sx(nRef0)},${sy(yRef0 * 2.2)}L${sx(NMAX)},${sy(yEnd * 2.2)}`, stroke: "var(--ink-3)", "stroke-width": 1.5, "stroke-dasharray": "1 3", fill: "none" }, svg);
+  if (!narrow) txt(svg, sx(nRef0 * 3), sy(yRef0 * 2.2 / Math.pow(3, pred)) - 8, "slope −" + pred.toFixed(2), { "font-size": 10.5, fill: "var(--ink-3)" });
+
+  const P = ys => pathFrom(C.ns.map((n, i) => [sx(n), sy(Math.max(ys[i], ylo))]));
+  if (C.rl) el("path", { d: P(C.rl), fill: "none", stroke: "var(--ghost)", "stroke-width": 1.5 }, svg);
+  el("path", { d: P(heE), fill: "none", stroke: "var(--heur)", "stroke-width": 2, "stroke-dasharray": "6 3" }, svg);
+  el("path", { d: P(deE), fill: "none", stroke: "var(--de)", "stroke-width": 2 }, svg);
+  // direct labels
+  const i0 = 6;
+  txt(svg, sx(C.ns[i0]), sy(deE[i0]) - 8, "DE", { "font-size": 11, fill: "var(--ink-2)" });
+  txt(svg, sx(C.ns[i0]), sy(heE[i0]) + 15, "heuristic", { "font-size": 11, fill: "var(--ink-2)" });
+
+  // MC points
+  const mc = MC.find(d => Math.abs(d.alpha - st.alpha) < 1e-9 && Math.abs(d.ap - st.ap) < 1e-9 && (d.sigma2 === 0 ? s2 === 0 : Math.abs(Math.log10(Math.max(s2, 1e-300)) - Math.log10(d.sigma2)) < 1e-9));
+  $("legMC").style.display = mc ? "" : "none";
+  $("legRL").style.display = C.rl ? "" : "none";
+  if (mc) mc.rows.forEach(([n, v, se]) => {
+    el("line", { x1: sx(n), x2: sx(n), y1: sy(v + 2 * 0 + se), y2: sy(Math.max(v - se, ylo)), stroke: "var(--de)", "stroke-width": 1.5 }, svg);
+    el("circle", { cx: sx(n), cy: sy(v), r: 4.5, fill: "var(--panel)", stroke: "var(--de)", "stroke-width": 2 }, svg);
+  });
+
+  // hover
+  const tip = $("tipB");
+  const hit = el("rect", { x: m.l, y: m.t, width: W - m.r - m.l, height: H - m.b - m.t, fill: "transparent" }, svg);
+  const cross = el("line", { y1: m.t, y2: H - m.b, stroke: "var(--ink-3)", visibility: "hidden" }, svg);
+  hit.addEventListener("pointermove", ev => {
+    const r = svg.getBoundingClientRect(), px = ev.clientX - r.left;
+    let bi = 0, bd = Infinity; C.ns.forEach((n, i) => { const d = Math.abs(sx(n) - px); if (d < bd) { bd = d; bi = i; } });
+    const x = sx(C.ns[bi]);
+    cross.setAttribute("x1", x); cross.setAttribute("x2", x); cross.setAttribute("visibility", "visible");
+    const d = C.de[bi], h = C.he[bi];
+    tip.innerHTML = `n = ${fmt(C.ns[bi])}<br><span style="color:var(--de)">●</span> DE: ${fmt(d.E)} <span style="color:var(--ink-3)">(λ* = ${fmt(Math.max(d.lam, 0))})</span><br><span style="color:var(--heur)">●</span> heuristic: ${fmt(h.E)} <span style="color:var(--ink-3)">(K = ${fmt(h.K)})</span>` + (C.rl ? `<br>ridgeless: ${fmt(C.rl[bi])}` : "");
+    tip.style.display = "block";
+    const tw = tip.offsetWidth;
+    tip.style.left = (x + 12 + tw > W ? x - tw - 12 : x + 12) + "px"; tip.style.top = (m.t + 10) + "px";
+  });
+  hit.addEventListener("pointerleave", () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); });
+
+  // readouts
+  const sDE = fitSlope(C.ns, deE, 1e4, 1e5), sH = fitSlope(C.ns, heE, 1e4, 1e5);
+  const sat = st.ap - 1 > 2 * st.alpha;
+  const predTxt = s2 > 0 ? `s/(s+1), s = min(α′−1, 2α)` : `min(α′−1, 2α)`;
+  $("readB").innerHTML =
+    `<div>DE slope, n ∈ [10⁴,10⁵]: <b>−${(-sDE).toFixed(3)}</b><span class="tag">fit</span></div>` +
+    `<div>heuristic slope, same range: <b>−${(-sH).toFixed(3)}</b><span class="tag">heuristic</span></div>` +
+    `<div>predicted asymptotic exponent: <b>${pred.toFixed(3)}</b> <span style="color:var(--ink-3)">= ${predTxt}</span></div>`;
+  let note = "";
+  if (sat) note = `Saturated: α′−1 = ${(st.ap - 1).toFixed(2)} > 2α = ${(2 * st.alpha).toFixed(2)}. Ridge cannot exploit target smoothness beyond 2α, so the heuristic’s n^−(α′−1) is wrong here.`;
+  else if (s2 > 0 && Math.abs(sDE + pred) > 0.05) note = `Still crossing over: the large-n noisy exponent ${pred.toFixed(2)} is reached only beyond the right edge (noiseless exponent ${(Math.min(st.ap - 1, 2 * st.alpha)).toFixed(2)}).`;
+  $("noteB").textContent = note;
+}
+
+// ===== wiring =====
+function syncOutputs() {
+  $("lamOut").textContent = "λ = " + fmt(Math.pow(10, st.lamL));
+  $("tOut").textContent = "t = " + fmt(Math.pow(10, st.tL));
+  $("alOut").textContent = "α = " + st.alpha.toFixed(2);
+  $("apOut").textContent = "α′ = " + st.ap.toFixed(2);
+  $("sgOut").textContent = "σ² = " + (sigma2() === 0 ? "0" : fmt(sigma2()));
+}
+function redraw(which) { syncOutputs(); if (which !== "B") drawA(); if (which !== "A") drawB(); }
+$("lam").addEventListener("input", e => { st.lamL = +e.target.value; redraw("A"); });
+$("tt").addEventListener("input", e => { st.tL = +e.target.value; redraw("A"); });
+$("matchHalf").addEventListener("click", () => { st.tL = Math.log10(LN2) - st.lamL; $("tt").value = st.tL; redraw("A"); });
+$("matchInv").addEventListener("click", () => { st.tL = -st.lamL; $("tt").value = st.tL; redraw("A"); });
+$("al").addEventListener("input", e => { st.alpha = +e.target.value; redraw(); });
+$("ap").addEventListener("input", e => { st.ap = +e.target.value; redraw("B"); });
+$("sg").addEventListener("input", e => { st.sgL = +e.target.value; redraw("B"); });
+$("showRL").addEventListener("change", e => { st.showRL = e.target.checked; redraw("B"); });
+$("generic").addEventListener("click", () => { st.ap = st.alpha; $("ap").value = st.ap; redraw("B"); });
+let rt, lastW = [0, 0];
+const ro = new ResizeObserver(() => { const w = [$("plotA").clientWidth, $("plotB").clientWidth]; if (w[0] === lastW[0] && w[1] === lastW[1]) return; lastW = w; clearTimeout(rt); rt = setTimeout(() => redraw(), 60); });
+ro.observe($("plotA")); ro.observe($("plotB"));
+redraw();
+
+// ===== self-test against the Python reference (console) =====
+(function selfTest() {
+  const rows = [];
+  for (const key in REF) {
+    const [a, ap, s2, n] = key.split("_").map(Number);
+    const S = makeSpectrum(a, ap);
+    const de = s2 === 0 ? ridgeless(S, n, 0) : optimalRidge(S, n, s2).E;
+    const he = heuristic(S, n, s2).E;
+    rows.push({ key, de_js: de, de_py: REF[key].de, rel_de: Math.abs(de / REF[key].de - 1), heur_js: he, heur_py: REF[key].heur, rel_heur: Math.abs(he / REF[key].heur - 1) });
+  }
+  const worst = Math.max(...rows.map(r => Math.max(r.rel_de, r.rel_heur)));
+  console.log("[spectral_filters self-test] worst relative error vs Python:", worst.toExponential(2));
+  if (console.table) console.table(rows);
+})();
+</script>
+</body>
+</html>

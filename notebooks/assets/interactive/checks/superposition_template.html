@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Superposition Toy Model</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb;
+  --panel: #f4f3f0;
+  --ink: #1b1b1a;
+  --ink-2: #52514e;
+  --ink-3: #85847f;
+  --rule: #dcdbd6;
+  --grid: #e8e7e3;
+  --f1: #2a78d6;          /* feature 1 */
+  --f2: #eb6834;          /* feature 2 */
+  --sup: #4a3aa7;         /* superposition */
+  --fillA: #d6e6fa;       /* only feature 1 kept */
+  --fillB: #fbdccd;       /* only feature 2 kept */
+  --fillC: #dcd8f3;       /* superposition */
+  --handle: #1b1b1a;
+  --accent: #4a3aa7;
+  --r1: #104281; --r2: #1c5cab; --r3: #2a78d6; --r4: #5598e7; --r5: #86b6ef; --r6: #b7d3f6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19; --panel: #232321; --ink: #f4f3ef; --ink-2: #c3c2b7; --ink-3: #8d8c85;
+    --rule: #3b3b38; --grid: #2c2c2a;
+    --f1: #3987e5; --f2: #d95926; --sup: #9085e9;
+    --fillA: #1d3654; --fillB: #4a2a1c; --fillC: #2f2a55;
+    --handle: #f4f3ef; --accent: #9085e9;
+    --r1: #cde2fb; --r2: #9ec5f4; --r3: #6da7ec; --r4: #3987e5; --r5: #256abf; --r6: #184f95;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19; --panel: #232321; --ink: #f4f3ef; --ink-2: #c3c2b7; --ink-3: #8d8c85;
+  --rule: #3b3b38; --grid: #2c2c2a;
+  --f1: #3987e5; --f2: #d95926; --sup: #9085e9;
+  --fillA: #1d3654; --fillB: #4a2a1c; --fillC: #2f2a55;
+  --handle: #f4f3ef; --accent: #9085e9;
+  --r1: #cde2fb; --r2: #9ec5f4; --r3: #6da7ec; --r4: #3987e5; --r5: #256abf; --r6: #184f95;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; padding: 24px 16px 48px; }
+main { max-width: 900px; margin: 0 auto; }
+h1 { font-size: 1.45rem; margin: 0 0 4px; font-weight: 650; letter-spacing: -0.01em; }
+h2 { font-size: 1.1rem; margin: 0 0 2px; font-weight: 620; }
+.lede { color: var(--ink-2); margin: 0 0 20px; }
+.lede code, .cap code { font-size: 0.92em; }
+figure { margin: 0 0 36px; padding: 0; }
+.panel { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+.plotbox { flex: 1 1 400px; min-width: 0; max-width: 470px; }
+.side { flex: 1 1 300px; min-width: 0; }
+svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: none; }
+svg text { fill: var(--ink-2); font-size: 11px; font-family: inherit; }
+svg .axlab { fill: var(--ink); font-size: 12px; }
+svg .reglab { font-size: 12px; font-weight: 600; fill: var(--ink); }
+.sub { color: var(--ink-2); font-size: 0.9rem; margin: 0 0 12px; }
+figcaption.cap { color: var(--ink-2); font-size: 0.9rem; margin-top: 14px; border-top: 1px solid var(--rule); padding-top: 10px; }
+figcaption.cap b { color: var(--ink); font-weight: 600; }
+.card { background: var(--panel); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; }
+.card h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); margin: 0 0 6px; font-weight: 600; }
+.mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 0.85rem; }
+.winner { font-weight: 600; }
+.tag { display: inline-block; font-size: 0.72rem; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--rule); color: var(--ink-3); margin-left: 6px; vertical-align: 1px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.82rem; color: var(--ink-2); margin: 6px 0 0; }
+.sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; border: 1px solid var(--rule); }
+.ln { display: inline-block; width: 18px; height: 0; vertical-align: 3px; margin-right: 5px; border-top: 2px solid var(--ink); }
+.ln.dash { border-top-style: dashed; }
+.ctl { margin: 0 0 12px; }
+.ctl label { display: flex; justify-content: space-between; font-size: 0.88rem; color: var(--ink); }
+.ctl label span { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+button { font: inherit; font-size: 0.85rem; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+:root[data-theme="dark"] button.primary { color: #111; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) button.primary { color: #111; } }
+button:disabled { opacity: 0.5; cursor: default; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+input[type=number] { width: 70px; font: inherit; font-size: 0.85rem; background: var(--bg); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; padding: 3px 6px; }
+table.ft { border-collapse: collapse; width: 100%; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+table.ft th, table.ft td { text-align: right; padding: 2px 6px; border-bottom: 1px solid var(--rule); }
+table.ft th { color: var(--ink-3); font-weight: 600; }
+table.ft td:first-child, table.ft th:first-child { text-align: left; }
+.status { font-size: 0.85rem; color: var(--ink-2); min-height: 1.4em; }
+.chk { font-size: 0.82rem; color: var(--ink-2); }
+.bars { width: 100%; }
+@media (max-width: 520px) { body { padding: 16px 16px 40px; } h1 { font-size: 1.25rem; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Superposition in a toy autoencoder</h1>
+<p class="lede">The toy model of Elhage et al., <a href="https://transformer-circuits.pub/2022/toy_model/index.html">"Toy Models of Superposition"</a> (2022), in their notation:
+features <i>x</i> ∈ ℝ<sup><i>n</i></sup>, each <i>x<sub>i</sub></i> = 0 with probability <i>S</i> (the sparsity) and otherwise ~ Uniform[0,1];
+reconstruction <i>x</i>′ = ReLU(<i>W</i><sup>⊤</sup><i>W x</i> + <i>b</i>) with <i>W</i> ∈ ℝ<sup><i>m</i>×<i>n</i></sup>;
+loss <i>L</i> = 𝔼 Σ<sub><i>i</i></sub> <i>I<sub>i</sub></i>(<i>x<sub>i</sub></i> − <i>x</i>′<sub><i>i</i></sub>)².
+Column <i>W<sub>i</sub></i> ∈ ℝ<sup><i>m</i></sup> is where feature <i>i</i> is stored.</p>
+
+<!-- ===================== PANEL 1 ===================== -->
+<figure id="fig1">
+<h2>1 · Two features, one dimension: when does superposition win?</h2>
+<p class="sub"><i>n</i> = 2, <i>m</i> = 1, importances <i>I</i> = (1, <i>r</i>). Drag the dot. Background: which candidate has the lowest <b>exact</b> expected loss.</p>
+<div class="panel">
+  <div class="plotbox">
+    <svg id="phase" viewBox="0 0 460 420" role="img" aria-label="Phase diagram: density on x (log), relative importance of feature 2 on y (log)"></svg>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--fillA)"></span>feature 2 ignored</span>
+      <span><span class="sw" style="background:var(--fillB)"></span>feature 1 ignored</span>
+      <span><span class="sw" style="background:var(--fillC)"></span>antipodal superposition</span>
+      <span><span class="ln"></span>exact boundary</span>
+      <span><span class="ln dash"></span>closed form, <i>b</i>=0, <i>w</i>=±1</span>
+    </div>
+    <div class="legend"><label class="chk"><input type="checkbox" id="showTrained" checked> show trained models (Adam, best of 6 inits; ring = phase reached by training, ✕ = disagrees with theory)</label></div>
+  </div>
+  <div class="side">
+    <div class="card">
+      <h3>Point</h3>
+      <div class="mono" id="ptRead"></div>
+      <div id="ptWinner" class="winner" style="margin-top:4px"></div>
+    </div>
+    <div class="card">
+      <h3>Winning solution: columns of <i>W</i> on the one hidden axis</h3>
+      <svg id="line1d" viewBox="0 0 300 74" aria-label="W columns on the hidden dimension"></svg>
+      <div class="mono" id="solRead"></div>
+    </div>
+    <div class="card">
+      <h3>Expected loss of each candidate <span class="tag">exact</span></h3>
+      <svg id="lbars" class="bars" viewBox="0 0 300 96" aria-label="Loss of each candidate solution"></svg>
+    </div>
+  </div>
+</div>
+<figcaption class="cap">
+<b>What to look at.</b> Candidates: dedicate the dimension to one feature (<i>W</i> = [1, 0], bias <i>b</i><sub>2</sub> = 𝔼<i>x</i><sub>2</sub>; loss <i>r</i>(<i>p</i>/3 − <i>p</i>²/4) with density <i>p</i> = 1−<i>S</i>), or store both antipodally (<i>W</i> = [<i>a</i>, −<i>c</i>]). With <i>a</i> = <i>c</i> = 1, <i>b</i> = 0 the antipodal loss is exactly (1+<i>r</i>)<i>p</i>²/6: interference costs only when <i>both</i> features fire (probability <i>p</i>²), and the ReLU erases the negative interference when only one fires. Comparing gives the dashed boundary <i>p</i>* = (<i>r</i>/3)/((1+<i>r</i>)/6 + <i>r</i>/4) for <i>r</i> ≤ 1. The solid boundary optimises <i>a</i>, <i>c</i>, <i>b</i><sub>1</sub>, <i>b</i><sub>2</sub> (closed-form expectations, numerical minimisation); for <i>r</i> far from 1 the optimum has |<i>w</i><sub>2</sub>| &lt; |<i>w</i><sub>1</sub>|, and Adam-trained models (dots) agree with it in 151 of 153 cells. Sparse features get superposed even when they matter little; dense ones force a choice. Compare the paper's theoretical and empirical <i>n</i>=2, <i>m</i>=1 phase diagrams in "Superposition as a Phase Change".
+<br><b>Not shown.</b> Only these candidate families are compared (training finds no others here); near <i>p</i> = 1, <i>r</i> = 1 all three are within 0.1% and the label is not meaningful. This is a toy autoencoder with a ReLU readout, not a trained network.
+</figcaption>
+</figure>
+
+<!-- ===================== PANEL 2 ===================== -->
+<figure id="fig2">
+<h2>2 · Five features in two dimensions, trained in your browser</h2>
+<p class="sub"><i>m</i> = 2, importances <i>I<sub>i</sub></i> = <i>d</i><sup><i>i</i>−1</sup>. Arrows are the columns <i>W<sub>i</sub></i>, darker = more important. <span class="tag">simulation</span></p>
+<div class="panel">
+  <div class="plotbox">
+    <svg id="vec" viewBox="0 0 400 400" role="img" aria-label="Columns of W drawn as 2D vectors"></svg>
+  </div>
+  <div class="side">
+    <div class="ctl">
+      <label for="sS"><em style="font-style:normal">Sparsity <i>S</i></em> <span id="sSv"></span></label>
+      <input type="range" id="sS" min="0" max="100" step="1" value="52">
+      <div class="presets" id="sPre"></div>
+    </div>
+    <div class="ctl">
+      <label for="sD"><em style="font-style:normal">Importance decay <i>d</i></em> <span id="sDv"></span></label>
+      <input type="range" id="sD" min="0.5" max="1" step="0.01" value="0.9">
+    </div>
+    <div class="ctl row">
+      <span style="font-size:0.88rem">Features <i>n</i></span>
+      <button id="n5" class="nb">5</button><button id="n6" class="nb">6</button>
+      <span style="font-size:0.88rem;margin-left:8px">Seed</span>
+      <input type="number" id="seed" value="1" min="0" step="1">
+    </div>
+    <div class="ctl row">
+      <button id="train" class="primary">Train</button>
+      <button id="reset">Reset</button>
+      <span class="status" id="status"></span>
+    </div>
+    <table class="ft" id="ftab"></table>
+    <p class="status" id="summary" style="margin-top:8px"></p>
+  </div>
+</div>
+<figcaption class="cap">
+<b>What to look at.</b> Each run is Adam (lr 0.01, cosine decay) for 3000 steps on minibatches of 1024 freshly sampled sparse vectors, from a seeded random init, so a given (<i>S</i>, <i>d</i>, <i>n</i>, seed) always gives the same picture. At <i>S</i> = 0 only the <i>m</i> = 2 most important features get (orthogonal) dimensions and the rest are dropped, like a PCA. As <i>S</i> grows the model first stores pairs antipodally (a square, 4 features), then all five as a regular pentagon at 72°: more features than dimensions, read out cleanly by the ReLU with a negative bias because two features rarely fire together. Try other seeds near the transitions (e.g. <i>S</i> ≈ 0.9): training lands in different local optima.
+<br><b>Not shown.</b> This is a toy autoencoder with a ReLU readout and independent, uniformly distributed features. Whether real networks operate in this regime (many sparse features, few dimensions) is the empirical question; if they do, small input perturbations along the interference directions are a natural route to adversarial examples (WB6 §5).
+</figcaption>
+</figure>
+</main>
+
+<script id="data">/*DATA*/</script>
+<script id="core">
+// ===================== exact expected losses (n=2, m=1) =====================
+// Feature i read out as ReLU(al*x_i - be*x_j + b); E over x_i, x_j iid {0 w.p. 1-p, U[0,1] w.p. p}.
+const GL = (() => { // 12-point Gauss-Legendre on [-1,1]
+  const N = 12, x = [], w = [];
+  for (let i = 1; i <= N; i++) {
+    let z = Math.cos(Math.PI * (i - 0.25) / (N + 0.5)), pp;
+    for (let it = 0; it < 100; it++) {
+      let p1 = 1, p2 = 0;
+      for (let j = 1; j <= N; j++) { const p3 = p2; p2 = p1; p1 = ((2 * j - 1) * z * p2 - (j - 1) * p3) / j; }
+      pp = N * (z * p1 - p2) / (z * z - 1);
+      const z1 = z; z = z1 - p1 / pp; if (Math.abs(z - z1) < 1e-15) break;
+    }
+    x.push(z); w.push(2 / ((1 - z * z) * pp * pp));
+  }
+  return { x, w };
+})();
+function glInt(f, bps) {
+  const pts = [0, 1]; for (const t of bps) if (t > 0 && t < 1) pts.push(t);
+  pts.sort((a, b) => a - b);
+  let s = 0;
+  for (let k = 0; k + 1 < pts.length; k++) {
+    const lo = pts[k], hi = pts[k + 1]; if (hi - lo < 1e-15) continue;
+    const h = 0.5 * (hi - lo), m = 0.5 * (hi + lo);
+    for (let q = 0; q < GL.x.length; q++) s += h * GL.w[q] * f(h * GL.x[q] + m);
+  }
+  return s;
+}
+const relu = v => v > 0 ? v : 0;
+function E1(al, b) { return glInt(u => { const d = u - relu(al * u + b); return d * d; }, al ? [-b / al] : []); }
+function E2(be, b) {
+  if (b <= 0) return 0;
+  const t = be <= 0 ? 1 : Math.min(1, b / be);
+  return b * b * t - b * be * t * t + be * be * t * t * t / 3;
+}
+function E3(al, be, b) {
+  const f = u => {
+    const c = al * u + b;
+    const t = c <= 0 ? 0 : (be > 0 ? Math.min(1, c / be) : 1);
+    const d = u - c;
+    return d * d * t + d * be * t * t + be * be * t * t * t / 3 + (1 - t) * u * u;
+  };
+  return glInt(f, al ? [-b / al, (be - b) / al] : []);
+}
+function featLoss(p, al, be, b) {
+  const q = 1 - p;
+  return q * q * relu(b) ** 2 + p * q * (E1(al, b) + E2(be, b)) + p * p * E3(al, be, b);
+}
+const Vp = p => p / 3 - p * p / 4;           // variance of x_i: loss of an ignored feature (bias = E x_i)
+function antiLoss(th, p, r) {                 // W = [a, -c], a = e^th0, c = e^th1, b = th2, th3
+  const a = Math.exp(th[0]), c = Math.exp(th[1]);
+  return featLoss(p, a * a, a * c, th[2]) + r * featLoss(p, c * c, a * c, th[3]);
+}
+function pStarB0(r) { const k = Math.min(r, 1); return (k / 3) / ((1 + r) / 6 + k / 4); }
+function nelderMead(f, x0, maxIt = 6000, xtol = 1e-9, ftol = 1e-15) {
+  const n = x0.length; let S = [x0.slice()];
+  for (let i = 0; i < n; i++) { const y = x0.slice(); y[i] = y[i] !== 0 ? y[i] * 1.05 : 0.00025; S.push(y); }
+  let F = S.map(f);
+  for (let it = 0; it < maxIt; it++) {
+    const idx = F.map((v, i) => i).sort((a, b) => F[a] - F[b]); S = idx.map(i => S[i]); F = idx.map(i => F[i]);
+    let sz = 0; for (let i = 1; i <= n; i++) for (let j = 0; j < n; j++) sz = Math.max(sz, Math.abs(S[i][j] - S[0][j]));
+    if (sz < xtol && Math.abs(F[n] - F[0]) < ftol) break;
+    const cen = new Array(n).fill(0); for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) cen[j] += S[i][j] / n;
+    const pt = (t) => cen.map((c, j) => c + t * (S[n][j] - c));
+    const xr = pt(-1), fr = f(xr);
+    if (fr < F[0]) { const xe = pt(-2), fe = f(xe); if (fe < fr) { S[n] = xe; F[n] = fe; } else { S[n] = xr; F[n] = fr; } }
+    else if (fr < F[n - 1]) { S[n] = xr; F[n] = fr; }
+    else {
+      const xc = fr < F[n] ? pt(-0.5) : pt(0.5), fc = f(xc);
+      if (fc < Math.min(fr, F[n])) { S[n] = xc; F[n] = fc; }
+      else { for (let i = 1; i <= n; i++) { S[i] = S[i].map((v, j) => S[0][j] + 0.5 * (v - S[0][j])); F[i] = f(S[i]); } }
+    }
+  }
+  return { x: S[0], fun: F[0] };
+}
+// Phase table (from checks/superposition_check.py): antipodal local minimum for r <= 1 by continuation in p.
+const NP = 81, NR = 81;
+const pAt = j => Math.pow(10, -2 + 2 * j / (NP - 1));
+const rAt = i => Math.pow(10, -1 + 2 * i / (NR - 1));
+function tableLC(i, j) {            // full-r index i (0..80), p index j; returns {LC, th} or null
+  if (i <= 40) { const v = TABLE.LC[i][j]; if (v == null) return null; const a = TABLE.AC[i][j]; return { LC: v, th: [Math.log(a[0]), Math.log(a[1]), a[2], a[3]] }; }
+  const ih = 80 - i, v = TABLE.LC[ih][j]; if (v == null) return null; const a = TABLE.AC[ih][j];
+  return { LC: rAt(i) * v, th: [Math.log(a[1]), Math.log(a[0]), a[3], a[2]] };  // swap features
+}
+function cellPhase(i, j) {
+  const p = pAt(j), r = rAt(i), t = tableLC(i, j);
+  const L = { A: r * Vp(p), B: Vp(p) }; if (t) L.C = t.LC;
+  let best = 'A'; for (const k in L) if (L[k] < L[best]) best = k;
+  return best;
+}
+// Live solve at an arbitrary (p, r): warm start from nearest alive table cell in the same row (sparse side).
+function solvePoint(p, r) {
+  const i = Math.max(0, Math.min(80, Math.round((Math.log10(r) + 1) / 2 * 80)));
+  let j = Math.max(0, Math.min(80, Math.round((Math.log10(p) + 2) / 2 * 80)));
+  let t = null; for (let jj = j; jj >= 0 && !t; jj--) t = tableLC(i, jj);
+  const L = { A: r * Vp(p), B: Vp(p) }; let sol = null;
+  if (t) {
+    const res = nelderMead(th => antiLoss(th, p, r), t.th);
+    const a = Math.exp(res.x[0]), c = Math.exp(res.x[1]);
+    if (Math.min(a, c) / Math.max(a, c) >= 0.03) { L.C = res.fun; sol = { a, c, b1: res.x[2], b2: res.x[3] }; }
+  }
+  let best = 'A'; for (const k in L) if (L[k] < L[best]) best = k;
+  return { L, best, sol };
+}
+// ===================== in-browser training (panel 2) =====================
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function gauss(rng) { let u = 0; while (u === 0) u = rng(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rng()); }
+function makeModel(n, m, seed) {
+  const rng = mulberry32(seed * 7919 + 17), sd = Math.sqrt(2 / (m + n));   // Xavier-normal init, b = 0
+  const W = new Float64Array(m * n); for (let k = 0; k < W.length; k++) W[k] = sd * gauss(rng);
+  return { n, m, W, b: new Float64Array(n), mW: new Float64Array(m * n), vW: new Float64Array(m * n),
+           mb: new Float64Array(n), vb: new Float64Array(n), t: 0, rngData: mulberry32(seed * 104729 + 3) };
+}
+function trainSteps(M, k, cfg) {   // cfg: {p, I, B, T, lr}; returns mean batch loss over these steps
+  const { n, m, W, b } = M, { p, I, B, T, lr } = cfg, rng = M.rngData;
+  const gW = new Float64Array(m * n), gb = new Float64Array(n), x = new Float64Array(n), h = new Float64Array(m), g = new Float64Array(n);
+  let lsum = 0;
+  for (let s = 0; s < k && M.t < T; s++) {
+    gW.fill(0); gb.fill(0); let L = 0;
+    for (let bi = 0; bi < B; bi++) {
+      for (let i = 0; i < n; i++) x[i] = rng() < p ? rng() : 0;
+      for (let q = 0; q < m; q++) { let a = 0; for (let j = 0; j < n; j++) a += W[q * n + j] * x[j]; h[q] = a; }
+      for (let i = 0; i < n; i++) {
+        let y = b[i]; for (let q = 0; q < m; q++) y += W[q * n + i] * h[q];
+        const o = y > 0 ? y : 0, e = o - x[i]; L += I[i] * e * e;
+        g[i] = y > 0 ? 2 * I[i] * e / B : 0;
+      }
+      for (let i = 0; i < n; i++) { if (!g[i]) continue; gb[i] += g[i]; for (let q = 0; q < m; q++) gW[q * n + i] += g[i] * h[q]; }
+      for (let q = 0; q < m; q++) {
+        let dh = 0; for (let i = 0; i < n; i++) dh += W[q * n + i] * g[i];
+        if (dh) for (let j = 0; j < n; j++) if (x[j]) gW[q * n + j] += dh * x[j];
+      }
+    }
+    M.t++; const lrt = lr * 0.5 * (1 + Math.cos(Math.PI * (M.t - 1) / T));
+    const b1 = 0.9, b2 = 0.999, eps = 1e-8, c1 = 1 - Math.pow(b1, M.t), c2 = 1 - Math.pow(b2, M.t);
+    const upd = (P, G, Mm, Vv) => { for (let k2 = 0; k2 < P.length; k2++) { Mm[k2] = b1 * Mm[k2] + (1 - b1) * G[k2]; Vv[k2] = b2 * Vv[k2] + (1 - b2) * G[k2] * G[k2]; P[k2] -= lrt * (Mm[k2] / c1) / (Math.sqrt(Vv[k2] / c2) + eps); } };
+    upd(W, gW, M.mW, M.vW); upd(b, gb, M.mb, M.vb);
+    lsum += L / B;
+  }
+  return lsum / Math.max(1, k);
+}
+function trainAll(n, S, d, seed, T = 3000) {   // headless helper used by the self-test
+  const M = makeModel(n, 2, seed), I = Array.from({ length: n }, (_, i) => Math.pow(d, i));
+  const cfg = { p: 1 - S, I, B: 1024, T, lr: 0.01 };
+  while (M.t < T) trainSteps(M, 100, cfg);
+  return M;
+}
+if (typeof module !== 'undefined') module.exports = { featLoss, antiLoss, Vp, pStarB0, nelderMead, tableLC, cellPhase, solvePoint, trainAll, E1, E2, E3 };
+</script>
+<script id="ui">
+(() => {
+const NS = 'http://www.w3.org/2000/svg';
+const el = (tag, attrs = {}, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt = (v, d = 3) => Math.abs(v) < 1e-3 && v !== 0 ? v.toExponential(2) : v.toFixed(d);
+
+// ---------------- Panel 1: phase diagram ----------------
+const ph = document.getElementById('phase');
+const X0 = 54, X1 = 446, Y0 = 14, Y1 = 366;
+const xOf = p => X0 + (Math.log10(p) + 2) / 2 * (X1 - X0);
+const yOf = r => Y1 - (Math.log10(r) + 1) / 2 * (Y1 - Y0);
+const pOf = x => Math.pow(10, -2 + 2 * (x - X0) / (X1 - X0));
+const rOf = y => Math.pow(10, -1 + 2 * (Y1 - y) / (Y1 - Y0));
+const phases = []; for (let i = 0; i < NR; i++) { phases.push([]); for (let j = 0; j < NP; j++) phases[i].push(cellPhase(i, j)); }
+// exact boundary: per r row, where antipodal stops winning; interpolate the loss-difference sign change
+function boundaryP(i) {
+  const r = rAt(i); let last = -1;
+  for (let j = 0; j < NP; j++) if (phases[i][j] === 'C') last = j; else break;
+  if (last < 0) return null; if (last === NP - 1) return 1;
+  const diff = j => { const t = tableLC(i, j); return t ? t.LC - Math.min(r, 1) * Vp(pAt(j)) : null; };
+  const d0 = diff(last), d1 = diff(last + 1);
+  if (d1 == null || d1 <= d0) return pAt(last + 0.5 * 0) * Math.pow(10, 1 / 80); // collapse: end at cell edge
+  const f = d0 / (d0 - d1); return Math.pow(10, -2 + 2 * (last + f) / 80);
+}
+let showTrained = true;
+const bg = el('g', {}, ph), ov = el('g', {}, ph), trg = el('g', {}, ph), hand = el('g', {}, ph);
+function drawPhase() {
+  bg.innerHTML = ''; ov.innerHTML = '';
+  const fill = { A: css('--fillA'), B: css('--fillB'), C: css('--fillC') };
+  const cw = (X1 - X0) / (NP - 1), chh = (Y1 - Y0) / (NR - 1);
+  for (let i = 0; i < NR; i++) for (let j = 0; j < NP; j++) {
+    const x = X0 + (j - 0.5) * cw, y = Y1 - (i + 0.5) * chh;
+    const xa = Math.max(X0, x), xb = Math.min(X1, x + cw), ya = Math.max(Y0, y), yb = Math.min(Y1, y + chh);
+    el('rect', { x: xa, y: ya, width: xb - xa + 0.4, height: yb - ya + 0.4, fill: fill[phases[i][j]] }, bg);
+  }
+  // grid + axes
+  const gcol = css('--ink-3');
+  for (const p of [0.01, 0.03, 0.1, 0.3, 1]) { el('line', { x1: xOf(p), x2: xOf(p), y1: Y0, y2: Y1, stroke: gcol, 'stroke-opacity': 0.25 }, ov); const t = el('text', { x: xOf(p), y: Y1 + 15, 'text-anchor': 'middle' }, ov); t.textContent = p; }
+  for (const r of [0.1, 0.3, 1, 3, 10]) { el('line', { x1: X0, x2: X1, y1: yOf(r), y2: yOf(r), stroke: gcol, 'stroke-opacity': 0.25 }, ov); const t = el('text', { x: X0 - 6, y: yOf(r) + 4, 'text-anchor': 'end' }, ov); t.textContent = r; }
+  el('rect', { x: X0, y: Y0, width: X1 - X0, height: Y1 - Y0, fill: 'none', stroke: css('--rule') }, ov);
+  let t = el('text', { x: (X0 + X1) / 2, y: Y1 + 34, 'text-anchor': 'middle', class: 'axlab' }, ov); t.textContent = 'feature density 1 − S  (log scale)';
+  t = el('text', { x: 14, y: (Y0 + Y1) / 2, 'text-anchor': 'middle', class: 'axlab', transform: `rotate(-90 14 ${(Y0 + Y1) / 2})` }, ov); t.textContent = 'relative importance r = I₂ / I₁  (log)';
+  // exact boundary
+  const pts = []; for (let i = 0; i < NR; i++) { const pb = boundaryP(i); if (pb) pts.push([xOf(Math.min(1, pb)), yOf(rAt(i))]); }
+  el('path', { d: 'M' + pts.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join('L'), fill: 'none', stroke: css('--ink'), 'stroke-width': 2 }, ov);
+  el('line', { x1: xOf(boundaryP(39) || 1), x2: X1, y1: yOf(1), y2: yOf(1), stroke: css('--ink'), 'stroke-width': 1, 'stroke-opacity': 0.6 }, ov);
+  // closed-form b = 0 boundary
+  const dp = []; for (let k = 0; k <= 200; k++) { const r = Math.pow(10, -1 + 2 * k / 200); dp.push([xOf(pStarB0(r)), yOf(r)]); }
+  el('path', { d: 'M' + dp.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join('L'), fill: 'none', stroke: css('--ink'), 'stroke-width': 1.5, 'stroke-dasharray': '5 4' }, ov);
+  // region labels
+  const lab = (x, y, s, a = 'middle') => { const q = el('text', { x, y, 'text-anchor': a, class: 'reglab' }, ov); q.textContent = s; };
+  lab(xOf(0.05), yOf(1.25), 'superposition');
+  lab(xOf(0.62), yOf(0.17), 'feature 2 ignored');
+  lab(xOf(0.62), yOf(6.2), 'feature 1 ignored');
+  drawTrained();
+}
+function drawTrained() {
+  trg.innerHTML = ''; if (!showTrained) return;
+  const col = { A: css('--f1'), B: css('--f2'), C: css('--sup') };
+  for (const [j, i, got, pred] of TABLE.trained) {
+    const x = xOf(pAt(j)), y = yOf(rAt(i));
+    if (got === pred) el('circle', { cx: x, cy: y, r: 2.6, fill: 'none', stroke: col[got], 'stroke-width': 1.2, 'stroke-opacity': 0.85 }, trg);
+    else { el('path', { d: `M${x - 3.5},${y - 3.5}L${x + 3.5},${y + 3.5}M${x - 3.5},${y + 3.5}L${x + 3.5},${y - 3.5}`, stroke: css('--ink'), 'stroke-width': 1.6 }, trg); }
+  }
+}
+// handle
+let P = { p: 0.1, r: 0.5 };
+const hring = el('circle', { r: 9, fill: 'none', stroke: 'var(--bg)', 'stroke-width': 3 }, hand);
+const hdot = el('circle', { r: 7, fill: 'var(--handle)', stroke: 'var(--bg)', 'stroke-width': 2, style: 'cursor:grab' }, hand);
+const hhit = el('circle', { r: 20, fill: 'transparent', style: 'cursor:grab' }, hand);
+function svgPt(svg, ev) { const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal; return [(ev.clientX - r.left) / r.width * vb.width, (ev.clientY - r.top) / r.height * vb.height]; }
+let dragging = false, pending = false;
+function setFromXY(x, y) { x = Math.max(X0, Math.min(X1, x)); y = Math.max(Y0, Math.min(Y1, y)); P = { p: pOf(x), r: rOf(y) }; if (!pending) { pending = true; requestAnimationFrame(() => { pending = false; updatePoint(); }); } }
+ph.addEventListener('pointerdown', ev => { const [x, y] = svgPt(ph, ev); if (x < X0 - 10 || y > Y1 + 10) return; dragging = true; ph.setPointerCapture(ev.pointerId); setFromXY(x, y); });
+ph.addEventListener('pointermove', ev => { if (dragging) { const [x, y] = svgPt(ph, ev); setFromXY(x, y); } });
+ph.addEventListener('pointerup', () => dragging = false);
+ph.addEventListener('pointercancel', () => dragging = false);
+
+const names = { A: 'feature 2 ignored (W = [1, 0])', B: 'feature 1 ignored (W = [0, 1])', C: 'antipodal superposition' };
+function updatePoint() {
+  const { p, r } = P;
+  hand.setAttribute('transform', `translate(${xOf(p)},${yOf(r)})`);
+  [hring, hdot, hhit].forEach(c => { c.setAttribute('cx', 0); c.setAttribute('cy', 0); });
+  const R = solvePoint(p, r);
+  document.getElementById('ptRead').innerHTML = `density p = 1−S = ${p.toFixed(3)} &nbsp;(S = ${(1 - p).toFixed(3)})<br>r = I₂/I₁ = ${r.toFixed(3)}`;
+  document.getElementById('ptWinner').innerHTML = `Lowest loss: <span style="color:${R.best === 'A' ? 'var(--f1)' : R.best === 'B' ? 'var(--f2)' : 'var(--sup)'}">${names[R.best]}</span>`;
+  // solution
+  let w1, w2, b1, b2;
+  if (R.best === 'A') { w1 = 1; w2 = 0; b1 = 0; b2 = p / 2; }
+  else if (R.best === 'B') { w1 = 0; w2 = 1; b1 = p / 2; b2 = 0; }
+  else { w1 = R.sol.a; w2 = -R.sol.c; b1 = R.sol.b1; b2 = R.sol.b2; }
+  drawLine(w1, w2);
+  document.getElementById('solRead').innerHTML = `W = [${w1.toFixed(3)}, ${w2.toFixed(3)}]<br>b = [${fmt(b1, 4)}, ${fmt(b2, 4)}]` +
+    (R.best === 'C' ? `<br><span style="color:var(--ink-3)">|w₂|/|w₁| = ${(R.sol.c / R.sol.a).toFixed(3)}</span>` : '') +
+    (R.best !== 'C' && R.sol ? `<br><span style="color:var(--ink-3)">an antipodal local minimum exists here but is worse</span>` : '') +
+    (R.best !== 'C' && !R.sol ? `<br><span style="color:var(--ink-3)">no antipodal local minimum here (it collapses)</span>` : '');
+  drawBars(R);
+}
+const l1 = document.getElementById('line1d');
+function drawLine(w1, w2) {
+  l1.innerHTML = '';
+  const cx = 150, s = 105, y = 40;
+  el('line', { x1: cx - 1.3 * s, x2: cx + 1.3 * s, y1: y, y2: y, stroke: css('--rule'), 'stroke-width': 1.5 }, l1);
+  for (const v of [-1, 0, 1]) { el('line', { x1: cx + v * s, x2: cx + v * s, y1: y - 4, y2: y + 4, stroke: css('--ink-3') }, l1); const t = el('text', { x: cx + v * s, y: y + 18, 'text-anchor': 'middle' }, l1); t.textContent = v; }
+  const arrow = (w, col, dy, lab) => {
+    if (Math.abs(w) < 1e-3) { el('circle', { cx, cy: y + dy, r: 3, fill: col }, l1); const t = el('text', { x: cx + 8, y: y + dy + 4 }, l1); t.textContent = lab + ' = 0'; return; }
+    const xe = cx + w * s, sg = Math.sign(w);
+    el('line', { x1: cx, x2: xe - sg * 6, y1: y + dy, y2: y + dy, stroke: col, 'stroke-width': 3, 'stroke-linecap': 'round' }, l1);
+    el('path', { d: `M${xe},${y + dy}L${xe - sg * 9},${y + dy - 5}L${xe - sg * 9},${y + dy + 5}Z`, fill: col }, l1);
+    const t = el('text', { x: xe + sg * 6, y: y + dy + 4, 'text-anchor': sg > 0 ? 'start' : 'end' }, l1); t.textContent = lab;
+  };
+  arrow(w1, css('--f1'), -16, 'w₁'); arrow(w2, css('--f2'), -6, 'w₂');
+}
+const lb = document.getElementById('lbars');
+function drawBars(R) {
+  lb.innerHTML = '';
+  const rows = [['A', 'ignore f₂', css('--f1')], ['B', 'ignore f₁', css('--f2')], ['C', 'antipodal', css('--sup')]];
+  const mx = Math.max(...Object.values(R.L));
+  rows.forEach(([k, name, col], idx) => {
+    const y = 8 + idx * 30, x0 = 70, W = 160;
+    let t = el('text', { x: 0, y: y + 11 }, lb); t.textContent = name;
+    if (R.L[k] == null) { t = el('text', { x: x0, y: y + 11 }, lb); t.textContent = 'no local minimum'; return; }
+    const w = Math.max(2, R.L[k] / mx * W);
+    el('rect', { x: x0, y, width: w, height: 14, rx: 3, fill: col, 'fill-opacity': k === R.best ? 1 : 0.35 }, lb);
+    t = el('text', { x: x0 + w + 6, y: y + 11 }, lb); t.textContent = R.L[k].toExponential(3) + (k === R.best ? '  ◀' : '');
+  });
+}
+document.getElementById('showTrained').addEventListener('change', e => { showTrained = e.target.checked; drawTrained(); });
+
+// ---------------- Panel 2: training ----------------
+const vec = document.getElementById('vec');
+const sS = document.getElementById('sS'), sD = document.getElementById('sD'), seedIn = document.getElementById('seed');
+const Sof = v => 1 - Math.pow(10, -2.5 * v / 100);        // slider -> S in [0, 0.9968]
+const vOfS = S => S <= 0 ? 0 : -Math.log10(1 - S) / 2.5 * 100;
+let nFeat = 5, model = null, running = false, rafId = 0;
+const presetBox = document.getElementById('sPre');
+for (const S of [0, 0.5, 0.8, 0.9, 0.95, 0.99]) { const b = document.createElement('button'); b.textContent = 'S=' + S; b.onclick = () => { sS.value = vOfS(S); syncLabels(); train(); }; presetBox.appendChild(b); }
+function syncLabels() {
+  document.getElementById('sSv').textContent = Sof(+sS.value).toFixed(3) + '  (density ' + (1 - Sof(+sS.value)).toPrecision(2) + ')';
+  document.getElementById('sDv').textContent = (+sD.value).toFixed(2);
+  document.getElementById('n5').classList.toggle('primary', nFeat === 5);
+  document.getElementById('n6').classList.toggle('primary', nFeat === 6);
+}
+const rampVar = ['--r1', '--r2', '--r3', '--r4', '--r5', '--r6'];
+function drawVec() {
+  vec.innerHTML = '';
+  const c = 200, s = 140;
+  el('circle', { cx: c, cy: c, r: s, fill: 'none', stroke: css('--grid'), 'stroke-width': 1 }, vec);
+  el('line', { x1: c - s - 20, x2: c + s + 20, y1: c, y2: c, stroke: css('--grid') }, vec);
+  el('line', { y1: c - s - 20, y2: c + s + 20, x1: c, x2: c, stroke: css('--grid') }, vec);
+  let t = el('text', { x: c + s * 0.72 + 4, y: c + s * 0.72 + 14 }, vec); t.textContent = '‖Wᵢ‖ = 1';
+  t = el('text', { x: 6, y: 394, class: 'axlab' }, vec); t.textContent = 'hidden dims h₁ (→), h₂ (↑)';
+  if (!model) return;
+  const { n, W } = model;
+  for (let i = n - 1; i >= 0; i--) {
+    const wx = W[i], wy = W[n + i], L = Math.hypot(wx, wy), col = css(rampVar[i]);
+    const x = c + wx * s, y = c - wy * s;
+    if (L < 0.06) { el('circle', { cx: x, cy: y, r: 3.5, fill: col }, vec); }
+    else {
+      const ux = (x - c) / (L * s), uy = (y - c) / (L * s), hl = Math.min(11, L * s * 0.5);
+      el('line', { x1: c, y1: c, x2: x - ux * hl * 0.8, y2: y - uy * hl * 0.8, stroke: col, 'stroke-width': 3, 'stroke-linecap': 'round' }, vec);
+      el('path', { d: `M${x},${y}L${x - ux * hl - uy * hl * 0.5},${y - uy * hl + ux * hl * 0.5}L${x - ux * hl + uy * hl * 0.5},${y - uy * hl - ux * hl * 0.5}Z`, fill: col }, vec);
+    }
+    const lx = c + wx * s + (L > 0.06 ? wx / L * 13 : 8), ly = c - wy * s - (L > 0.06 ? wy / L * 13 : 8);
+    t = el('text', { x: lx, y: ly + 4, 'text-anchor': 'middle', style: 'font-weight:600;fill:var(--ink)' }, vec); t.textContent = i + 1;
+  }
+}
+function drawTable() {
+  const tb = document.getElementById('ftab'); const n = nFeat, d = +sD.value;
+  let h = '<tr><th>feature i</th><th>I<sub>i</sub></th><th>‖W<sub>i</sub>‖</th><th>b<sub>i</sub></th></tr>';
+  for (let i = 0; i < n; i++) {
+    const L = model ? Math.hypot(model.W[i], model.W[n + i]) : 0;
+    h += `<tr><td><span class="sw" style="background:var(${rampVar[i]})"></span>${i + 1}</td><td>${Math.pow(d, i).toFixed(3)}</td><td>${L.toFixed(2)}</td><td>${model ? model.b[i].toFixed(3) : '–'}</td></tr>`;
+  }
+  tb.innerHTML = h;
+}
+function summarize(loss) {
+  const n = model.n; const on = []; for (let i = 0; i < n; i++) { const L = Math.hypot(model.W[i], model.W[n + i]); if (L > 0.5) on.push(Math.atan2(model.W[n + i], model.W[i]) * 180 / Math.PI); }
+  on.sort((a, b) => a - b); const gaps = on.map((a, k) => ((k + 1 < on.length ? on[k + 1] : on[0] + 360) - a));
+  document.getElementById('summary').innerHTML = `${on.length} of ${n} features represented (‖W<sub>i</sub>‖ &gt; 0.5)` + (on.length > 1 ? `; angles between neighbours: ${gaps.map(g => g.toFixed(0) + '°').join(', ')}` : '') + (loss != null ? `<br>final minibatch loss ${loss.toExponential(2)}` : '');
+}
+function reset() {
+  cancelAnimationFrame(rafId); running = false;
+  model = makeModel(nFeat, 2, Math.max(0, Math.floor(+seedIn.value || 0)));
+  drawVec(); drawTable(); document.getElementById('status').textContent = 'random init (step 0)'; document.getElementById('summary').textContent = '';
+  document.getElementById('train').disabled = false;
+}
+function train() {
+  reset(); running = true; document.getElementById('train').disabled = true;
+  const S = Sof(+sS.value), d = +sD.value, T = 3000;
+  const cfg = { p: 1 - S, I: Array.from({ length: nFeat }, (_, i) => Math.pow(d, i)), B: 1024, T, lr: 0.01 };
+  const t0 = performance.now(); let ema = null;
+  const tick = () => {
+    const f0 = performance.now(); let last;
+    while (performance.now() - f0 < 14 && model.t < T) { last = trainSteps(model, 20, cfg); ema = ema == null ? last : 0.8 * ema + 0.2 * last; }
+    drawVec(); drawTable();
+    document.getElementById('status').textContent = `step ${model.t} / ${T}`;
+    if (model.t < T) rafId = requestAnimationFrame(tick);
+    else { running = false; document.getElementById('train').disabled = false; document.getElementById('status').textContent = `done: ${T} steps in ${((performance.now() - t0) / 1000).toFixed(1)} s`; summarize(ema); }
+  };
+  rafId = requestAnimationFrame(tick);
+}
+sS.addEventListener('input', syncLabels); sD.addEventListener('input', () => { syncLabels(); drawTable(); });
+sS.addEventListener('change', train); sD.addEventListener('change', train); seedIn.addEventListener('change', train);
+document.getElementById('train').onclick = train; document.getElementById('reset').onclick = reset;
+document.getElementById('n5').onclick = () => { nFeat = 5; syncLabels(); train(); };
+document.getElementById('n6').onclick = () => { nFeat = 6; syncLabels(); train(); };
+
+function redrawAll() { drawPhase(); updatePoint(); drawVec(); drawTable(); }
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redrawAll);
+syncLabels(); drawPhase(); updatePoint(); train();
+})();
+</script>
+</body>
+</html>

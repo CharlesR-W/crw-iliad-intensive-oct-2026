@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steepest Descent Balls</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb; --panel: #ffffff; --ink: #111110; --ink-2: #52514e; --ink-3: #8a8984;
+  --rule: #e4e3df; --grid: #efeeea; --ghost: #a9a8a2;
+  --l2: #2a78d6; --linf: #eb6834; --l1: #1baf7a; --mah: #9b59c9; --grad: #111110;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+    --rule: #34332f; --grid: #2a2a28; --ghost: #6b6a64;
+    --l2: #4c95ec; --linf: #f07a48; --l1: #2cc48c; --mah: #b77fe0; --grad: #f4f4f2;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+  --rule: #34332f; --grid: #2a2a28; --ghost: #6b6a64;
+  --l2: #4c95ec; --linf: #f07a48; --l1: #2cc48c; --mah: #b77fe0; --grad: #f4f4f2;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 940px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 1.45rem; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01em; }
+.sub { color: var(--ink-2); margin: 0 0 18px; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 14px 10px; margin: 0 0 18px; }
+.layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 720px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.plot svg { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+.plot svg text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.hint { font-size: 0.8rem; color: var(--ink-3); margin: 6px 0 0; }
+.controls { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; font-size: 0.88rem; margin: 0 0 10px; }
+.ctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ctl label { white-space: nowrap; color: var(--ink-2); min-width: 8.2em; }
+.ctl input[type=range] { flex: 1; min-width: 60px; accent-color: var(--ink-2); }
+.ctl output { font-variant-numeric: tabular-nums; min-width: 3.6em; text-align: right; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.86rem; color: var(--ink-2); margin: 2px 0 8px; }
+.toggles label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 7px; overflow: hidden; margin: 0 0 10px; }
+.seg button { font: inherit; font-size: 0.84rem; padding: 4px 10px; border: 0; background: var(--bg); color: var(--ink-2); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; align-items: center; font-size: 0.84rem; color: var(--ink-2); }
+.presets button { font: inherit; font-size: 0.8rem; padding: 3px 8px; border-radius: 6px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); cursor: pointer; }
+.presets button:hover { border-color: var(--ink-3); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 0.82rem; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 3px 6px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { color: var(--ink-2); font-weight: 560; }
+td:first-child, th:first-child { text-align: left; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+.note { font-size: 0.8rem; color: var(--ink-3); min-height: 1.3em; margin: 6px 0 0; }
+@media (max-width: 480px) { table { font-size: 0.76rem; } th, td { padding: 3px 3px; } }
+figcaption { font-family: Georgia, "Iowan Old Style", serif; font-size: 0.97rem; line-height: 1.55; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 12px; }
+figcaption b { color: var(--ink); }
+figure { margin: 0; }
+code { font-size: 0.9em; }
+</style>
+</head>
+<body>
+<main>
+<h1>Steepest descent under four norms</h1>
+<p class="sub">To first order a step Δ changes the loss by ⟨g, Δ⟩. The steepest-descent step of size η is the point of the norm ball of radius η that lies furthest along −g. Change the ball and the direction changes: the Euclidean ball gives −g, the ℓ<sub>∞</sub> box gives −sign(g), the ℓ<sub>1</sub> diamond gives a single coordinate, and an ellipse (a Mahalanobis or Fisher norm) gives −M<sup>−1</sup>g.</p>
+
+<figure>
+<section class="panel">
+  <div class="layout">
+    <div class="plot">
+      <svg id="svg" viewBox="0 0 440 440" role="img" aria-label="Unit balls of four norms with the gradient and the steepest-descent direction for each">
+        <defs>
+          <marker id="ah-grad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--grad)"/></marker>
+          <marker id="ah-ghost" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ghost)"/></marker>
+          <marker id="ah-l2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--l2)"/></marker>
+          <marker id="ah-linf" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--linf)"/></marker>
+          <marker id="ah-l1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--l1)"/></marker>
+          <marker id="ah-mah" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--mah)"/></marker>
+          <clipPath id="clip"><rect x="0" y="0" width="440" height="440"/></clipPath>
+        </defs>
+        <g id="grid"></g>
+        <g id="layer" clip-path="url(#clip)"></g>
+      </svg>
+      <p class="hint">Drag the black arrow tip, or tap anywhere, to set the gradient g. Arrow keys nudge it when the plot has focus.</p>
+    </div>
+    <div>
+      <div class="seg" role="group" aria-label="Form of the step">
+        <button id="m-trust" aria-pressed="true">Trust region</button>
+        <button id="m-pen" aria-pressed="false">Squared penalty</button>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="kappa">Ellipse aspect</label><input id="kappa" type="range" min="1" max="6" step="0.05" value="4"><output id="kappa-o"></output></div>
+        <div class="ctl"><label for="phi">Ellipse angle</label><input id="phi" type="range" min="0" max="180" step="1" value="30"><output id="phi-o"></output></div>
+        <div class="ctl" id="eta-row"><label for="eta">Radius η</label><input id="eta" type="range" min="0.2" max="1.2" step="0.01" value="1"><output id="eta-o"></output></div>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="t-l2" checked><span class="dot" style="background:var(--l2)"></span>ℓ<sub>2</sub> (GD)</label>
+        <label><input type="checkbox" id="t-linf" checked><span class="dot" style="background:var(--linf)"></span>ℓ<sub>∞</sub> (sign descent)</label>
+        <label><input type="checkbox" id="t-l1" checked><span class="dot" style="background:var(--l1)"></span>ℓ<sub>1</sub> (coordinate descent)</label>
+        <label><input type="checkbox" id="t-mah" checked><span class="dot" style="background:var(--mah)"></span>Mahalanobis (natural gradient)</label>
+        <label><input type="checkbox" id="t-sup" checked>supporting lines (trust region)</label>
+      </div>
+      <div class="presets">Try:
+        <button data-g="1.0,0.15">nearly axis-aligned g</button>
+        <button data-g="0.75,0.75">diagonal g</button>
+        <button data-g="0.9,-0.02">g₂ ≈ 0</button>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>norm</th><th>‖g‖<sub>*</sub></th><th>step Δ</th><th>⟨g,Δ⟩</th><th>∠(Δ,−g)</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <p class="note" id="note"></p>
+    </div>
+  </div>
+</section>
+<figcaption>
+<b>How to read it.</b> The black arrow is the gradient g; the grey arrow is −g. Each coloured shape is the ball {Δ : ‖Δ‖ ≤ η} of one norm. In trust-region mode the dashed line through each coloured arrowhead is the supporting line ⟨g, Δ⟩ = −η‖g‖<sub>*</sub>, a level set of the linear function ⟨g, ·⟩ (the gradient acting as a covector): it is perpendicular to g and touches the ball at the steepest-descent step, so no other point of the ball gets further along −g. The table gives the dual norm ‖g‖<sub>*</sub> = max<sub>‖d‖≤1</sub> ⟨g, d⟩ and the first-order loss change of each step.
+<br><br>
+<b>Trust region vs squared penalty.</b> The trust-region step minimizes ⟨g,Δ⟩ subject to ‖Δ‖ ≤ η and always has length η in its own norm. The penalty step minimizes ⟨g,Δ⟩ + ‖Δ‖²/(2η); it points the same way but is η‖g‖<sub>*</sub> long, so it shrinks as the gradient does. In ℓ<sub>2</sub> the penalty step is plain gradient descent, −ηg; in the Mahalanobis norm it is −ηM<sup>−1</sup>g (natural gradient when M is the Fisher matrix); in ℓ<sub>∞</sub> it is −η‖g‖<sub>1</sub>sign(g).
+<br><br>
+<b>Where Muon fits.</b> Read the two coordinates as the diagonal entries of a 2×2 weight matrix diag(θ<sub>1</sub>, θ<sub>2</sub>). Its spectral norm is max(|θ<sub>1</sub>|, |θ<sub>2</sub>|), so the spectral-norm ball is the ℓ<sub>∞</sub> box, and the exact spectral steepest direction UV<sup>⊤</sup> = diag(sign g<sub>1</sub>, sign g<sub>2</sub>) is the sign-descent step. Where spectral steepest descent and sign descent differ (matrices with off-diagonal structure, §4.1.C), and where practical Muon differs from both (its approximate Newton–Schulz orthogonalization, §4.4), a 2D picture cannot show.
+<br><br>
+<b>Things to notice.</b> Rotate g slowly: the ℓ<sub>∞</sub> direction jumps between corners when a gradient component changes sign, and near that point the whole edge of the box is almost as good, which is why sign descent is sensitive to small gradient components. The Mahalanobis direction is pulled toward the long axis of the ellipse, the direction in which the norm counts steps as cheap; set the aspect to 1 and it coincides with ℓ<sub>2</sub>.
+</figcaption>
+</figure>
+</main>
+
+<script>
+// BEGIN MATH  (extracted and checked by checks/steepest_descent_balls_check.py)
+function mahalanobisM(kappa, phiDeg) {
+  // Ball {d : d^T M d <= 1} is an ellipse with semi-axes sqrt(kappa) (along angle phi) and 1/sqrt(kappa).
+  const p = phiDeg * Math.PI / 180, c = Math.cos(p), s = Math.sin(p);
+  const a = 1 / kappa, b = kappa;          // eigenvalues of M along (c,s) and (-s,c)
+  return [[a * c * c + b * s * s, (a - b) * c * s], [(a - b) * c * s, a * s * s + b * c * c]];
+}
+function solve2(M, g) {
+  const det = M[0][0] * M[1][1] - M[0][1] * M[1][0];
+  return [(M[1][1] * g[0] - M[0][1] * g[1]) / det, (-M[1][0] * g[0] + M[0][0] * g[1]) / det];
+}
+const NEAR = 0.02;   // relative tolerance for flagging a near tie
+// Unit-ball maximizer d* of <g,d> is returned negated: dir = -d*, so the trust-region step is eta*dir.
+// dual = ||g||_* = max_{||d||<=1} <g,d>. nearTie = true when g is within NEAR of a tie, where the
+// maximizer becomes a whole edge (exact tie) and nearby edge points are almost as good (near tie).
+function steepest(g, norm, M) {
+  const [g1, g2] = g;
+  if (norm === "l2") {
+    const r = Math.hypot(g1, g2);
+    return { dir: [-g1 / r, -g2 / r], dual: r, nearTie: false };
+  }
+  if (norm === "linf") {
+    const sg = x => (x > 0 ? 1 : x < 0 ? -1 : 0);
+    const scale = Math.max(Math.abs(g1), Math.abs(g2));
+    return { dir: [-sg(g1), -sg(g2)], dual: Math.abs(g1) + Math.abs(g2),
+             nearTie: Math.min(Math.abs(g1), Math.abs(g2)) <= NEAR * scale };
+  }
+  if (norm === "l1") {
+    const a1 = Math.abs(g1), a2 = Math.abs(g2);
+    const dir = a1 >= a2 ? [-Math.sign(g1), 0] : [0, -Math.sign(g2)];
+    return { dir, dual: Math.max(a1, a2), nearTie: Math.abs(a1 - a2) <= NEAR * Math.max(a1, a2) };
+  }
+  if (norm === "mah") {
+    const y = solve2(M, g), dual = Math.sqrt(g[0] * y[0] + g[1] * y[1]);
+    return { dir: [-y[0] / dual, -y[1] / dual], dual, nearTie: false };
+  }
+  throw new Error("unknown norm " + norm);
+}
+function step(g, norm, M, eta, mode) {
+  // mode "trust": argmin <g,D> s.t. ||D|| <= eta  ->  eta * dir
+  // mode "pen":   argmin <g,D> + ||D||^2/(2 eta)  ->  eta * ||g||_* * dir
+  const r = steepest(g, norm, M), k = mode === "pen" ? eta * r.dual : eta;
+  return { delta: [k * r.dir[0], k * r.dir[1]], dual: r.dual, nearTie: r.nearTie };
+}
+// END MATH
+
+const NORMS = [
+  { key: "l2", name: "ℓ₂ (GD)", color: "var(--l2)" },
+  { key: "linf", name: "ℓ∞ (sign)", color: "var(--linf)" },
+  { key: "l1", name: "ℓ₁ (coord.)", color: "var(--l1)" },
+  { key: "mah", name: "Mahal. (NG)", color: "var(--mah)" },
+];
+const W = 440, C = W / 2, U = 80;               // 1 unit = 80 px; view spans [-2.75, 2.75]
+const X = x => C + U * x, Y = y => C - U * y;    // math -> svg
+const state = { g: [1.25, 0.55], mode: "trust" };
+const $ = id => document.getElementById(id);
+const svg = $("svg"), layer = $("layer");
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  (parent || layer).appendChild(e); return e;
+}
+(function drawGrid() {
+  const g = $("grid");
+  for (let i = -2; i <= 2; i++) {
+    el("line", { x1: X(i), y1: 0, x2: X(i), y2: W, stroke: "var(--grid)", "stroke-width": 1 }, g);
+    el("line", { x1: 0, y1: Y(i), x2: W, y2: Y(i), stroke: "var(--grid)", "stroke-width": 1 }, g);
+  }
+  el("line", { x1: 0, y1: C, x2: W, y2: C, stroke: "var(--rule)", "stroke-width": 1.2 }, g);
+  el("line", { x1: C, y1: 0, x2: C, y2: W, stroke: "var(--rule)", "stroke-width": 1.2 }, g);
+  const t = el("text", { x: W - 6, y: C - 6, "text-anchor": "end", "font-size": 12, fill: "var(--ink-3)" }, g); t.textContent = "θ₁";
+  const t2 = el("text", { x: C + 6, y: 14, "font-size": 12, fill: "var(--ink-3)" }, g); t2.textContent = "θ₂";
+})();
+
+function ballPath(norm, M, r) {
+  if (norm === "l2") return null;
+  if (norm === "linf") return `M${X(-r)},${Y(-r)} L${X(r)},${Y(-r)} L${X(r)},${Y(r)} L${X(-r)},${Y(r)} Z`;
+  if (norm === "l1") return `M${X(r)},${Y(0)} L${X(0)},${Y(r)} L${X(-r)},${Y(0)} L${X(0)},${Y(-r)} Z`;
+  // ellipse boundary: d = r * L^{-T} u, sampled
+  const pts = [];
+  for (let i = 0; i <= 120; i++) {
+    const t = 2 * Math.PI * i / 120, u = [Math.cos(t), Math.sin(t)];
+    const q = u[0] * (M[0][0] * u[0] + M[0][1] * u[1]) + u[1] * (M[1][0] * u[0] + M[1][1] * u[1]);
+    const k = r / Math.sqrt(q);
+    pts.push(`${X(k * u[0]).toFixed(2)},${Y(k * u[1]).toFixed(2)}`);
+  }
+  return "M" + pts.join(" L") + " Z";
+}
+const fmt = x => (Math.abs(x) < 5e-4 ? "0.00" : x.toFixed(2));
+function render() {
+  layer.innerHTML = "";
+  const kappa = +$("kappa").value, phi = +$("phi").value, eta = +$("eta").value;
+  $("kappa-o").textContent = kappa.toFixed(2); $("phi-o").textContent = phi + "°"; $("eta-o").textContent = eta.toFixed(2);
+  const M = mahalanobisM(kappa, phi), g = state.g, mode = state.mode, showSup = $("t-sup").checked;
+  const gn = Math.hypot(g[0], g[1]);
+  const rows = [], notes = [];
+  for (const nm of NORMS) {
+    if (!$("t-" + nm.key).checked) continue;
+    const s = step(g, nm.key, M, eta, mode), d = s.delta;
+    // the ball of radius eta is drawn in both modes; in penalty mode the step has length eta*||g||_* in this norm
+    const r = eta;
+    if (nm.key === "l2") el("circle", { cx: C, cy: C, r: U * r, fill: "none", stroke: nm.color, "stroke-width": 1.6, opacity: 0.9 });
+    else el("path", { d: ballPath(nm.key, M, r), fill: "none", stroke: nm.color, "stroke-width": 1.6, opacity: 0.9 });
+    if (showSup && mode === "trust" && gn > 1e-9) {           // supporting line <g, D> = <g, d>, direction perpendicular to g
+      const t = [-g[1] / gn, g[0] / gn], L = 1.5;
+      el("line", { x1: X(d[0] - L * t[0]), y1: Y(d[1] - L * t[1]), x2: X(d[0] + L * t[0]), y2: Y(d[1] + L * t[1]),
+                   stroke: nm.color, "stroke-width": 1, "stroke-dasharray": "4 4", opacity: 0.75 });
+    }
+    el("line", { x1: C, y1: C, x2: X(d[0]), y2: Y(d[1]), stroke: nm.color, "stroke-width": 2.6, "marker-end": `url(#ah-${nm.key})` });
+    const dec = g[0] * d[0] + g[1] * d[1];
+    const ang = Math.acos(Math.max(-1, Math.min(1, -dec / (gn * Math.hypot(d[0], d[1]))))) * 180 / Math.PI;
+    rows.push(`<tr><td><span class="dot" style="background:${nm.color}"></span>${nm.name}</td><td>${s.dual.toFixed(3)}</td>` +
+              `<td>(${fmt(d[0])}, ${fmt(d[1])})</td><td>${dec.toFixed(3)}</td><td>${ang.toFixed(1)}°</td></tr>`);
+    if (s.nearTie) notes.push(nm.key === "linf"
+      ? "ℓ∞: one component of g is nearly 0, so the whole adjacent edge of the box is nearly optimal; when it is exactly 0, every point of that edge is a maximizer (sign(0) is ambiguous)."
+      : "ℓ₁: |g₁| ≈ |g₂|, so the whole adjacent edge of the diamond is nearly optimal; at an exact tie every point of it is a maximizer.");
+    if (Math.max(Math.abs(d[0]), Math.abs(d[1])) > 2.75) notes.push(nm.name + " step runs off the plot (see the table).");
+  }
+  // -g (ghost) and g
+  el("line", { x1: C, y1: C, x2: X(-g[0]), y2: Y(-g[1]), stroke: "var(--ghost)", "stroke-width": 1.6, "stroke-dasharray": "5 4", "marker-end": "url(#ah-ghost)" });
+  el("line", { x1: C, y1: C, x2: X(g[0]), y2: Y(g[1]), stroke: "var(--grad)", "stroke-width": 2.6, "marker-end": "url(#ah-grad)" });
+  el("circle", { cx: X(g[0]), cy: Y(g[1]), r: 11, fill: "var(--grad)", opacity: 0.12 });
+  const lab = el("text", { x: X(g[0]) + 10, y: Y(g[1]) - 10, "font-size": 14, "font-weight": 600, fill: "var(--grad)" }); lab.textContent = "g";
+  const lab2 = el("text", { x: X(-g[0]) - 22, y: Y(-g[1]) + 18, "font-size": 13, fill: "var(--ink-3)" }); lab2.textContent = "−g";
+  $("tbody").innerHTML = rows.join("");
+  $("note").textContent = notes.join(" ") + (mode === "pen" ? " Penalty mode: the balls stay at radius η and each step has length η‖g‖* in its own norm, so it ends outside its ball when ‖g‖* > 1 and inside when ‖g‖* < 1." : "");
+}
+
+function setFromEvent(ev) {
+  const pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+  let gx = (p.x - C) / U, gy = (C - p.y) / U;
+  const r = Math.hypot(gx, gy), rmax = 1.6;
+  if (r > rmax) { gx *= rmax / r; gy *= rmax / r; }
+  if (r < 0.05) return;
+  state.g = [gx, gy]; render();
+}
+let dragging = false;
+svg.setAttribute("tabindex", "0");
+svg.addEventListener("pointerdown", ev => { dragging = true; svg.setPointerCapture(ev.pointerId); setFromEvent(ev); });
+svg.addEventListener("pointermove", ev => { if (dragging) setFromEvent(ev); });
+svg.addEventListener("pointerup", () => { dragging = false; });
+svg.addEventListener("pointercancel", () => { dragging = false; });
+svg.addEventListener("keydown", ev => {
+  const k = { ArrowLeft: [-0.05, 0], ArrowRight: [0.05, 0], ArrowUp: [0, 0.05], ArrowDown: [0, -0.05] }[ev.key];
+  if (!k) return; ev.preventDefault();
+  const g = [state.g[0] + k[0], state.g[1] + k[1]];
+  if (Math.hypot(g[0], g[1]) <= 1.6 && Math.hypot(g[0], g[1]) >= 0.05) { state.g = g; render(); }
+});
+for (const id of ["kappa", "phi", "eta", "t-l2", "t-linf", "t-l1", "t-mah", "t-sup"]) $(id).addEventListener("input", render);
+function setMode(m) {
+  state.mode = m;
+  $("m-trust").setAttribute("aria-pressed", m === "trust"); $("m-pen").setAttribute("aria-pressed", m === "pen");
+  $("eta-row").querySelector("label").textContent = m === "trust" ? "Radius η" : "Step size η";
+  $("eta").value = m === "trust" ? 1 : 0.5;
+  render();
+}
+$("m-trust").addEventListener("click", () => setMode("trust"));
+$("m-pen").addEventListener("click", () => setMode("pen"));
+document.querySelectorAll(".presets button").forEach(b => b.addEventListener("click", () => {
+  state.g = b.dataset.g.split(",").map(Number); render();
+}));
+setMode("trust");
+</script>
+<script>
+// Embedded in a notebook page (iframe): report this page's height so the frame fits it.
+(function () {
+  if (window.parent === window) return;
+  var last = 0;
+  function report() {
+    var b = document.body, cs = getComputedStyle(b);
+    var h = Math.ceil(b.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+    if (Math.abs(h - last) < 2) return;
+    last = h; window.parent.postMessage({ type: "figure-height", height: h }, "*");
+  }
+  if (window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener("load", report); window.addEventListener("resize", report); report();
+  window.addEventListener("message", function (e) {  // the page asks again once it is listening
+    if (e.source === window.parent && e.data && e.data.type === "figure-height-request") { last = 0; report(); }
+  });
+})();
+</script>
+</body>
+</html>

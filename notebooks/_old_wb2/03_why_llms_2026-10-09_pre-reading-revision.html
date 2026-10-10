@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="nbkit.py (wb3); do not edit by hand">
+<title>Workbook 3 — Why LLMs?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, pre, .katex-display, table { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#1-why-generative-why-unsupervised">1. Why generative, why unsupervised</a></li>
+<li><a href="#2-why-text-why-not-video">2. Why text? Why not video?</a></li>
+<li><a href="#3-why-next-token-prediction">3. Why next-token prediction?</a></li>
+<li><a href="#4-a-hundred-flowers-and-the-coming-of-the-transformer">4. A hundred flowers and the coming of the transformer</a></li>
+<li><a href="#5-why-scale-should-you-consume-more-tokens">5. Why scale? Should <em>you</em> consume more tokens?</a></li>
+<li><a href="#6-simulators-personae-and-rl-on-top">6. Simulators, personae, and RL on top</a></li>
+<li><a href="#what-carries-forward">What carries forward</a></li>
+</ol>
+</details>
+<button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 10 solutions</button>
+</nav>
+<main>
+<article>
+<h1 id="workbook-3--why-llms">Workbook 3 — Why LLMs?</h1>
+<p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
+<p>Deep learning reached large language models through a series of choices, each of which looked contingent at the time: learn without labels, learn from text, predict the next token, use the transformer, and make it big. This workbook takes those choices one at a time. The last section asks what the resulting object <em>is</em>, and what reinforcement learning on top of it does.</p>
+<p>Where there is something to derive, a section gives the setup, an exercise with hints, and a worked answer. Where a part is about a reading, it gives a sentence or two on what the reading shows and the link, labelled <em>core</em> or <em>optional</em>, so you can decide whether to read it. Worked answers are folded under “Solution” directly after each exercise, and are available to everyone. Sections are independent, so start wherever your interest is. Nobody is expected to do all of it.</p>
+<p><strong>Route</strong></p>
+<ol type="1">
+<li><a href="#wb3-section-1">Why generative, why unsupervised</a>. LeCun’s cake, and a comparison of code lengths for labels and raw text. One counting exercise.</li>
+<li><a href="#wb3-section-2">Why text? Why not video?</a>. Reading only; the shortest section. LeCun’s case for predicting in a learned representation space instead of predicting raw observations.</li>
+<li><a href="#wb3-section-3">Why next-token prediction?</a>. Cross-entropy is code length. One exercise derives the arithmetic-coding bound; an optional one asks why a text model can compress images. A pointer to the prequential code and Solomonoff (WB4).</li>
+<li><a href="#wb3-section-4">A hundred flowers and the coming of the transformer</a>. Symmetry and locality in CNNs and the geometric-deep-learning blueprint (symmetry plus scale separation), with two short symmetry exercises; readings on the transformer and the hardware lottery.</li>
+<li><a href="#wb3-section-5">Why scale? Should <em>you</em> consume more tokens?</a>. Kaplan and Chinchilla. Three exercises derive the compute-optimal allocation and plug in Chinchilla’s constants (5.1), explain why Kaplan’s answer differed (5.2), and compare training with inference cost (5.3).</li>
+<li><a href="#wb3-section-6">Simulators, personae, and RL on top</a>. Readings on base models as simulators and on the Waluigi effect; two exercises on the closed-form optimum of KL-regularized RLHF and what it does to a mixture of personae; readings on how far RL moves a model. This section stands alone if alignment is what you came for.</li>
+<li><a href="#wb3-closing">What carries forward</a>. Pointers to the other workbooks.</li>
+</ol>
+
+<a id="wb3-section-1"></a>
+<h2 id="1-why-generative-why-unsupervised">1. Why generative, why unsupervised</h2>
+<p><strong>The result.</strong> A label for a <span class="math inline">k</span>-way classifier can be encoded in at most <span class="math inline">\log_2k</span> bits, while raw data take as many bits to encode as they still surprise a predictive model by. Exercise 1.1 compares the totals for ImageNet’s labels and a trillion tokens of text. This compares code lengths; it does not measure how much useful knowledge a learner extracts.</p>
+<div class="reading">
+
+<p><strong><a href="https://nips.cc/virtual/2016/invited-talk/6197">LeCun, “Predictive learning” (NIPS 2016 invited talk)</a></strong>, Yann LeCun, 2016 <span class="tier tier-core-short">core, short</span></p>
+<p>The cake talk. Argues that most of what an intelligent system learns must come from predicting its own input, because that is where most of the bits are; supervision and reward are the icing and the cherry. The talk is also on <a href="https://www.youtube.com/watch?v=Ount2Y4qxQo">YouTube</a>. If you would rather read, Sebastian Ruder’s conference writeup (<a href="https://www.ruder.io/highlights-nips-2016/">Highlights of NIPS 2016</a>) describes the cake and the reaction to it in a paragraph.</p>
+</div>
+
+<h3 id="1a-exercise-code-lengths-of-labels-and-of-text">1.A. Exercise: code lengths of labels and of text</h3>
+<p><strong>Exercise 1.1.</strong> Compare how many bits it takes to encode the targets a learner is asked to predict.</p>
+<p>(a) ImageNet has about <span class="math inline">1.28\times10^6</span> training images in <span class="math inline">k=1000</span> classes. Bound the number of bits needed to encode all its labels, in bits and in megabytes.</p>
+<p>(b) A language model is trained on <span class="math inline">T=10^{12}</span> tokens with a vocabulary of <span class="math inline">V\approx5\times10^4</span>. Give the crude upper bound <span class="math inline">T\log_2V</span>. Then give a better estimate: the number of bits by which the text still <em>surprises</em> a trained model whose cross-entropy is about <span class="math inline">2.5</span> nats per token (an illustrative value).</p>
+<p>(c) What is the ratio of your estimate in (b) to (a)?</p>
+<p>(d) How many raw bits are in one <span class="math inline">224\times224</span> RGB image at 8 bits per channel? LeCun’s slide credits RL with “a few bits for some samples”, supervision with “10→10,000 bits per sample” and prediction with “millions of bits per sample”. Which of these does your count match?</p>
+<p><em>Hint for (b).</em> Cross-entropy in nats is the average of <span class="math inline">-\ln q(x_t\mid x_{&lt;t})</span> over tokens; divide by <span class="math inline">\ln2</span> to convert to bits.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> An arbitrary label from 1000 classes can be encoded in at most <span class="math inline">\log_21000\approx9.97</span> idealized bits. Multiplying gives an upper bound on the entropy of the label sequence: <span class="math display">
+1.28\times10^6\times9.97\approx1.3\times10^7\ \text{bits}\approx1.6\ \text{MB}.
+</span></p>
+<p><strong>(b)</strong> Crude bound: <span class="math inline">\log_2(5\times10^4)\approx15.6</span> bits per token, so <span class="math inline">10^{12}\times15.6\approx1.6\times10^{13}</span> bits. Residual surprise: <span class="math inline">2.5/\ln2\approx3.6</span> bits per token, so <span class="math display">
+10^{12}\times\frac{2.5}{\ln2}\approx3.6\times10^{12}\ \text{bits}.
+</span> This is a model-dependent code-length estimate, including irreducible surprise; it does not measure how much useful information training puts into the parameters.</p>
+<p><strong>(c)</strong> <span class="math inline">3.6\times10^{12}/1.3\times10^{7}\approx3\times10^{5}</span>, between five and six orders of magnitude. Since (a) is an upper bound, this ratio is a lower bound for these assumptions.</p>
+<p><strong>(d)</strong> <span class="math inline">224\times224\times3\times8\approx1.2\times10^{6}</span> bits: the prediction layer’s “millions of bits per sample”. As in (b), this is raw code length, and most of these bits are irrelevant to any particular downstream task. §2 asks why, given this, text rather than video.</p>
+</div>
+</details>
+
+<a id="wb3-section-2"></a>
+<h2 id="2-why-text-why-not-video">2. Why text? Why not video?</h2>
+<p>Unsettled. For text: nearly every bit was put there by a mind, so predicting it may force a model to model minds (janus’s “Simulators”, §6, develops this idea). For video: far more bits, grounded in physics.</p>
+<div class="reading">
+
+<p><strong><a href="https://openreview.net/forum?id=BZ5a1r-kVsf">A path towards autonomous machine intelligence</a></strong>, Yann LeCun, 2022 (position paper, v0.9.2) <span class="tier tier-optional">optional</span></p>
+<p>Argues that generative, likelihood-based prediction of raw observations is the wrong objective for learning world models; instead, learn to predict in a learned representation space (JEPA), trained with non-contrastive, energy-based objectives, as the core of a modular agent with a world model, cost and planner. A long position paper (about 60 pages), not an empirical result. The introduction and the section introducing JEPA give the argument.</p>
+</div>
+
+<a id="wb3-section-3"></a>
+<h2 id="3-why-next-token-prediction">3. Why next-token prediction?</h2>
+<p><strong>The result.</strong> The cross-entropy loss of a model <span class="math inline">q</span> on a sequence is, to within two bits, the length of the code for that sequence that arithmetic coding builds from <span class="math inline">q</span>. So training a language model <em>is</em> training a compressor, and the excess expected loss over the data’s entropy is exactly <span class="math inline">\mathrm{KL}(p\Vert q)</span>. Next-token factorization is not a restriction: every distribution over sequences factorizes this way.</p>
+<h3 id="3a-the-factorization-is-free">3.A. The factorization is free</h3>
+<p>Any distribution over sequences factorizes by the chain rule:</p>
+<p><span class="math display">
+q(x_{1:T})=\prod_{t=1}^{T}q(x_t\mid x_{&lt;t}).
+</span></p>
+<p>So predicting the next token is not a modelling assumption; it is a parametrization. What <em>is</em> a choice is the left-to-right order and the decision to share one network across all positions. The payoff is that the loss decomposes into a sum of per-token terms, every token is a training target, and sampling is easy.</p>
+<h3 id="3b-exercise-cross-entropy-is-code-length">3.B. Exercise: cross-entropy is code length</h3>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2309.10668">Language modeling is compression</a></strong>, Grégoire Delétang, Anian Ruoss, et al. (DeepMind), 2023 <span class="tier tier-optional-2-for-exercise-3-1">optional; §2 for Exercise 3.1</span></p>
+<p>Uses large language models as the predictor inside an arithmetic coder. Fed raw bytes, they compress text, and also image patches and audio, better than gzip, PNG and FLAC, until the model’s own size is counted. §2 (Background) sets out the equivalence of prediction and compression and describes arithmetic coding, the construction Exercise 3.1 works through. Exercise 3.2 asks about the image result.</p>
+</div>
+
+<p>Arithmetic coding turns any next-token model <span class="math inline">q</span> into a lossless code. Fix the sequence length <span class="math inline">T</span>. Start with the interval <span class="math inline">[0,1)</span>. At step <span class="math inline">t</span>, split the current interval into consecutive sub-intervals, one per vocabulary item, with widths proportional to <span class="math inline">q(\cdot\mid x_{&lt;t})</span>, and keep the sub-interval belonging to the actual token <span class="math inline">x_t</span>. Call the final interval <span class="math inline">J(x_{1:T})</span>. A binary string <span class="math inline">c=c_1\dots c_\ell</span> names the dyadic interval <span class="math inline">I(c)=[0.c_1\dots c_\ell,\ 0.c_1\dots c_\ell+2^{-\ell})</span> (binary fractions). The codeword for <span class="math inline">x_{1:T}</span> is a string <span class="math inline">c</span> with <span class="math inline">I(c)\subseteq J(x_{1:T})</span>.</p>
+<p><strong>Exercise 3.1.</strong></p>
+<p>(a) Show that <span class="math inline">J(x_{1:T})</span> has width <span class="math inline">w=q(x_{1:T})=\prod_tq(x_t\mid x_{&lt;t})</span>, and that distinct sequences have disjoint intervals.</p>
+<p>(b) Show that any interval <span class="math inline">[a,a+w)\subseteq[0,1)</span> contains a dyadic interval of width <span class="math inline">2^{-\ell}</span> with <span class="math inline">\ell=\lceil-\log_2w\rceil+1</span>.</p>
+<p>(c) Show that the resulting code is prefix-free and that its length satisfies <span class="math display">
+\ell(x_{1:T})&lt;-\log_2q(x_{1:T})+2=\sum_{t=1}^{T}-\log_2q(x_t\mid x_{&lt;t})+2\ \text{bits}.
+</span> How large is the overhead per token for a long sequence?</p>
+<p>(d) Let the data come from a distribution <span class="math inline">p</span>. Show that <span class="math inline">\mathbb E_p[-\log q(X)]=H(p)+\mathrm{KL}(p\Vert q)</span>, and conclude that, up to the two bits, the expected code length is minimized by <span class="math inline">q=p</span>.</p>
+<p><em>Hints.</em> (a) Induct on <span class="math inline">t</span>; the sub-intervals of one interval are disjoint. (b) Take <span class="math inline">m=\lceil a2^{\ell}\rceil</span> and check that <span class="math inline">[m2^{-\ell},(m+1)2^{-\ell})</span> fits. (c) A string <span class="math inline">c</span> is a prefix of <span class="math inline">c&#39;</span> exactly when <span class="math inline">I(c&#39;)\subseteq I(c)</span>. (d) Write <span class="math inline">\log\frac1q=\log\frac1p+\log\frac pq</span> and use <span class="math inline">\mathrm{KL}\ge0</span>.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> By induction on <span class="math inline">t</span>. Suppose the interval after step <span class="math inline">t-1</span> has width <span class="math inline">q(x_{&lt;t})</span>. It is split in proportion to <span class="math inline">q(\cdot\mid x_{&lt;t})</span>, so the kept piece has width <span class="math inline">q(x_{&lt;t})\,q(x_t\mid x_{&lt;t})=q(x_{\le t})</span>. After <span class="math inline">T</span> steps, <span class="math inline">w=q(x_{1:T})</span>. Two distinct sequences agree up to some first position <span class="math inline">t</span> where they differ. At that step they land in different, disjoint sub-intervals of the same interval, and every later interval is nested inside those, so the final intervals are disjoint.</p>
+<p><strong>(b)</strong> Let <span class="math inline">m=\lceil a2^\ell\rceil</span>. Then <span class="math inline">m2^{-\ell}\ge a</span> and <span class="math inline">m2^{-\ell}&lt;a+2^{-\ell}</span>, so <span class="math inline">(m+1)2^{-\ell}&lt;a+2\cdot2^{-\ell}</span>. Since <span class="math inline">\ell\ge-\log_2w+1</span>, we have <span class="math inline">2\cdot2^{-\ell}\le w</span>, hence <span class="math inline">(m+1)2^{-\ell}&lt;a+w</span>. So <span class="math inline">[m2^{-\ell},(m+1)2^{-\ell})\subseteq[a,a+w)</span>. Because <span class="math inline">a+w\le1</span>, <span class="math inline">m&lt;2^\ell</span>, and the <span class="math inline">\ell</span>-bit binary expansion of <span class="math inline">m</span> is the codeword.</p>
+<p><strong>(c)</strong> <em>Prefix-free:</em> if the codeword <span class="math inline">c</span> for <span class="math inline">x</span> were a prefix of the codeword <span class="math inline">c&#39;</span> for some <span class="math inline">x&#39;\ne x</span>, then <span class="math inline">I(c&#39;)\subseteq I(c)\subseteq J(x)</span> and also <span class="math inline">I(c&#39;)\subseteq J(x&#39;)</span>, contradicting the disjointness in (a).</p>
+<p><em>Length:</em> <span class="math inline">\ell=\lceil-\log_2w\rceil+1&lt;-\log_2w+2</span>, and <span class="math inline">-\log_2w=-\log_2q(x_{1:T})=\sum_t-\log_2q(x_t\mid x_{&lt;t})</span> by the chain rule.</p>
+<p><em>Decoding:</em> the decoder runs the same model, makes the same splits, and at each step emits the token whose sub-interval contains <span class="math inline">I(c)</span>.</p>
+<p>The overhead is two bits for the <em>whole sequence</em>, so <span class="math inline">2/T</span> bits per token, negligible for long sequences. The model’s total cross-entropy on a sequence, in bits, is its code length to within two bits. Conversely, the Kraft inequality says any prefix code satisfies <span class="math inline">\sum_x2^{-\ell(x)}\le1</span>, so <span class="math inline">2^{-\ell(x)}</span> is a (sub-)probability distribution. Codes and models are the same object, up to rounding.</p>
+<p><strong>(d)</strong> <span class="math display">
+\mathbb E_p[-\log q(X)]=\sum_xp(x)\log\frac1{p(x)}+\sum_xp(x)\log\frac{p(x)}{q(x)}=H(p)+\mathrm{KL}(p\Vert q).
+</span> <span class="math inline">\mathrm{KL}(p\Vert q)\ge0</span>, with equality iff <span class="math inline">q=p</span> (Gibbs’ inequality, from Jensen’s inequality applied to <span class="math inline">\log</span>). By (c), the expected code length of arithmetic coding with <span class="math inline">q</span>, in bits, lies below <span class="math inline">H(p)+\mathrm{KL}(p\Vert q)+2</span> (with both terms measured in bits), and no prefix code can beat <span class="math inline">H(p)</span> on average. So the excess expected loss of a model over the entropy of the data is exactly a KL divergence. Held-out cross-entropy is the quantity the scaling laws of §5 fit.</p>
+</div>
+</details>
+
+<h3 id="3c-bridge-to-wb4">3.C. Bridge to WB4</h3>
+<p>Training itself can be read as compression. If you train online in one pass, predicting each new batch before you update on it, then the sum of the losses is the code length of the whole dataset under an adaptive coder (the <em>prequential</em> code). A model that learns fast compresses the data well. It is loosely analogous to Solomonoff induction, which predicts with a mixture over all programs weighted by <span class="math inline">2^{-\text{length}}</span>; WB4 §3 covers Solomonoff induction itself.</p>
+<h3 id="3d-optional-exercise-a-text-model-as-an-image-compressor">3.D. Optional exercise: a text model as an image compressor</h3>
+<p><strong>Exercise 3.2 (optional).</strong> Delétang et al. (reading in §3.B) use Chinchilla 70B, trained mainly on text, as the model inside an arithmetic coder. Fed small greyscale ImageNet patches and LibriSpeech audio as raw bytes, it compresses them further than PNG and FLAC do. Each dataset is 1 GB; count the model at 2 bytes per parameter. Using Exercise 3.1, explain why this works at all. Then say what changes if the size of the model is counted as part of the compressed output, as a fair comparison of compressors requires.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ul>
+<li><strong>Why it works.</strong> Arithmetic coding works with <em>any</em> <span class="math inline">q</span>: nothing in Exercise 3.1 used the data the model was trained on. A text model is a general sequence model, and within its context window it can pick up the local statistics of a byte stream (repetition, smooth variation between neighbouring bytes, periodicity) by in-context learning. Every bit of probability it puts on the right next byte saves code length.</li>
+<li><strong>What it shows.</strong> It supports “the model is a strong general-purpose sequence predictor” more than “the model knows about images”.</li>
+<li><strong>Counting the model.</strong> At 2 bytes per parameter, 70B parameters is about 140 GB, far more than the 1 GB datasets being compressed. Delétang et al. report this “adjusted” compression rate, and with it the large model is far worse than PNG or FLAC. A compressor that must ship its model wins only when the data are much larger than the model. This is the trade-off of the two-part code in WB4 §2.</li>
+</ul>
+</div>
+</details>
+
+<a id="wb3-section-4"></a>
+<h2 id="4-a-hundred-flowers-and-the-coming-of-the-transformer">4. A hundred flowers and the coming of the transformer</h2>
+<p><strong>The result.</strong> The linear maps that commute with shifts are exactly the convolutions, and self-attention without position information is permutation-equivariant (two exercises). The geometric-deep-learning blueprint builds CNNs, graph networks and transformers from a domain’s symmetries together with scale separation. Why the transformer in particular won is a separate question; §4.C gives the original paper’s comparison of cost and parallelism, and a general essay on how hardware shapes which ideas win.</p>
+<h3 id="4a-cnns-symmetry-and-locality">4.A. CNNs: symmetry and locality</h3>
+<p>A classifier of photographs should not care where in the frame the cat is. With <span class="math inline">G</span> the group of translations acting on images, we want the classifier <span class="math inline">f</span> to be <em>invariant</em>, <span class="math inline">f(g\cdot x)=f(x)</span>, and its internal features to be <em>equivariant</em>, <span class="math inline">\phi(g\cdot x)=g\cdot\phi(x)</span>, so that information about <em>where</em> is carried along rather than discarded too early. Exercise 4.1 shows that the linear maps that respect translation are exactly the convolutions, so weight sharing is a consequence of the symmetry rather than a trick; small kernels (locality) are a further, separate choice. Stack such layers with pointwise nonlinearities, add local pooling to coarsen the grid, and finish with an invariant readout such as global pooling: that is a CNN.</p>
+<p>The payoff is statistical. Restricting the hypothesis class to functions with the right symmetry cuts the number of parameters by orders of magnitude, which is what the bias–variance story of WB2 §1.C says should help.</p>
+<p><strong>Exercise 4.1.</strong> Work with 1-D signals <span class="math inline">x\in\mathbb R^n</span>, indices taken mod <span class="math inline">n</span>, and the cyclic shift <span class="math inline">(Sx)_i=x_{i-1}</span>.</p>
+<p>(a) Let <span class="math inline">W</span> be an <span class="math inline">n\times n</span> matrix with <span class="math inline">WS=SW</span>. Show that there is a vector <span class="math inline">w</span> with <span class="math inline">(Wx)_i=\sum_jw_{i-j}x_j</span> for all <span class="math inline">x</span>; that is, <span class="math inline">W</span> is a circular convolution. Show conversely that every circular convolution commutes with <span class="math inline">S</span>.</p>
+<p>(b) Explain why stacking such layers with a pointwise nonlinearity in between keeps the whole map shift-equivariant, and why summing the last layer’s outputs over positions gives a shift-invariant readout.</p>
+<p>(c) For a single-channel <span class="math inline">224\times224</span> image, compare the number of weights in a general linear map to an output of the same size, in a translation-equivariant one, and in a <span class="math inline">3\times3</span> convolution.</p>
+<p><em>Hint for (a).</em> Let <span class="math inline">e_j</span> be the standard basis vectors and set <span class="math inline">w=We_0</span>. Note that <span class="math inline">e_j=S^je_0</span>.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Set <span class="math inline">w=We_0</span>. Since <span class="math inline">e_j=S^je_0</span> and <span class="math inline">W</span> commutes with every power of <span class="math inline">S</span>, <span class="math display">
+We_j=WS^je_0=S^jWe_0=S^jw,\qquad (S^jw)_i=w_{i-j}.
+</span> By linearity, <span class="math inline">(Wx)_i=\sum_jx_j(We_j)_i=\sum_jw_{i-j}x_j</span>. Conversely, if <span class="math inline">(Wx)_i=\sum_jw_{i-j}x_j</span>, then substituting <span class="math inline">j&#39;=j-1</span>, <span class="math display">
+(WSx)_i=\sum_jw_{i-j}x_{j-1}=\sum_{j&#39;}w_{(i-1)-j&#39;}x_{j&#39;}=(Wx)_{i-1}=(SWx)_i.
+</span> So the shift-commuting linear maps are exactly the circular convolutions. Each is fixed by <span class="math inline">n</span> numbers instead of <span class="math inline">n^2</span>.</p>
+<p><strong>(b)</strong> A pointwise nonlinearity <span class="math inline">\sigma</span> acts the same way at every index, so <span class="math inline">\sigma(Sx)=S\sigma(x)</span>. A composition of maps that each commute with <span class="math inline">S</span> commutes with <span class="math inline">S</span>. A sum over all positions is unchanged when the positions are cyclically relabelled, so <span class="math inline">\sum_i(Sh)_i=\sum_ih_i</span>.</p>
+<p><strong>(c)</strong> The 2-D version of (a), with shifts in both directions, gives 2-D circular convolutions. With <span class="math inline">n=224^2\approx5.0\times10^4</span> pixels, a general linear map has <span class="math inline">n^2\approx2.5\times10^9</span> weights, a translation-equivariant one has <span class="math inline">n\approx5\times10^4</span>, and a <span class="math inline">3\times3</span> convolution has <span class="math inline">9</span>. With <span class="math inline">c</span> input and <span class="math inline">c</span> output channels, each count is multiplied by <span class="math inline">c^2</span>. Real CNNs use zero padding and strides, so their equivariance is only approximate at the borders and holds only for shifts by multiples of the stride.</p>
+</div>
+</details>
+
+<h3 id="4b-the-geometric-deep-learning-blueprint">4.B. The geometric-deep-learning blueprint</h3>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2104.13478">Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges</a></strong>, Michael M. Bronstein, Joan Bruna, Taco Cohen, Petar Veličković, 2021 <span class="tier tier-core-1-3">core: §1–3</span></p>
+<p>Argues that the successful architectures (CNNs, GNNs, transformers, equivariant networks) follow one blueprint, derived from the symmetries of the domain: layers equivariant to the domain’s symmetry group, local pooling, and an invariant readout. A 156-page book draft. §2.2 sets out the curse of dimensionality; §3 introduces symmetry and scale separation as the way out and ends with the blueprint (§3.5).</p>
+</div>
+
+<p>Replace “grid and translations” with another domain and its symmetry group, and the recipe produces other architectures:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Symmetry group</th>
+<th>Equivariant layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grid (images, audio)</td>
+<td>translations</td>
+<td>convolution</td>
+</tr>
+<tr>
+<td>Set</td>
+<td>permutations</td>
+<td>DeepSets-style sum aggregation</td>
+</tr>
+<tr>
+<td>Graph</td>
+<td>permutations of nodes</td>
+<td>message passing (GNN)</td>
+</tr>
+<tr>
+<td>Sphere, molecules</td>
+<td>rotations, <span class="math inline">E(3)</span></td>
+<td>spherical / steerable convolutions</td>
+</tr>
+<tr>
+<td>Sequence with attention</td>
+<td>permutations, broken by position encodings</td>
+<td>self-attention</td>
+</tr>
+</tbody>
+</table></div>
+<p>The last row is message passing on the <em>complete</em> graph, with edge weights computed from the data; position encodings then deliberately break the permutation symmetry.</p>
+<p><strong>Exercise 4.2.</strong> Single-head self-attention on <span class="math inline">T</span> tokens, stacked as the rows of <span class="math inline">X\in\mathbb R^{T\times d}</span>, is <span class="math display">
+\mathrm{SA}(X)=\operatorname{softmax}\!\Big(\frac{QK^\top}{\sqrt{d_k}}\Big)V,\qquad Q=XW_Q,\quad K=XW_K,\quad V=XW_V,
+</span> with the softmax taken along each row.</p>
+<p>(a) Let <span class="math inline">P</span> be a <span class="math inline">T\times T</span> permutation matrix. Show that <span class="math inline">\mathrm{SA}(PX)=P\,\mathrm{SA}(X)</span>.</p>
+<p>(b) Conclude that a model built from such layers, position-wise MLPs, residual connections and a mean-pooled readout gives the same output for “dog bites man” and “man bites dog”.</p>
+<p>(c) Show that adding absolute position embeddings <span class="math inline">E</span> (replacing <span class="math inline">X</span> by <span class="math inline">X+E</span>) breaks the symmetry. Does a causal mask (adding <span class="math inline">-\infty</span> to the entries above the diagonal of the score matrix before the softmax) respect it?</p>
+<p><em>Hint for (a).</em> Show that <span class="math inline">\operatorname{softmax}(PAP^\top)=P\operatorname{softmax}(A)P^\top</span> for any square <span class="math inline">A</span>, and use <span class="math inline">P^\top P=I</span>.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Replacing <span class="math inline">X</span> by <span class="math inline">PX</span> gives <span class="math inline">Q&#39;=PQ</span>, <span class="math inline">K&#39;=PK</span> and <span class="math inline">V&#39;=PV</span>, so the score matrix becomes <span class="math inline">PAP^\top</span>, where <span class="math inline">A=QK^\top/\sqrt{d_k}</span>. If <span class="math inline">P</span> sends row <span class="math inline">\pi(i)</span> to row <span class="math inline">i</span>, then row <span class="math inline">i</span> of <span class="math inline">PAP^\top</span> is row <span class="math inline">\pi(i)</span> of <span class="math inline">A</span> with its entries permuted by the same <span class="math inline">\pi</span>. The row softmax divides each exponential by the sum of its row’s exponentials, and permuting the entries of a row does not change that sum. So <span class="math inline">\operatorname{softmax}(PAP^\top)=P\operatorname{softmax}(A)P^\top</span>, and <span class="math display">
+\mathrm{SA}(PX)=P\operatorname{softmax}(A)P^\top PV=P\operatorname{softmax}(A)V=P\,\mathrm{SA}(X).
+</span></p>
+<p><strong>(b)</strong> Position-wise MLPs and residual connections act on each row separately with the same weights, so they are permutation-equivariant too. A composition of equivariant maps is equivariant, and mean pooling over rows is invariant. The two sentences contain the same tokens in different orders, so they produce the same output. For language that is fatal, which is why the symmetry has to be broken.</p>
+<p><strong>(c)</strong> With position embeddings, permuting the tokens gives <span class="math inline">PX+E</span>, which differs from <span class="math inline">P(X+E)</span> unless <span class="math inline">PE=E</span>. So in general <span class="math inline">\mathrm{SA}(PX+E)\ne P\,\mathrm{SA}(X+E)</span>. The causal mask <span class="math inline">M</span> also breaks the symmetry: <span class="math inline">PMP^\top\ne M</span> for any <span class="math inline">P\ne I</span>, because the mask singles out an order. A decoder-only transformer therefore has some access to order even without position embeddings. Relative schemes (for example rotary embeddings) make attention scores depend on positions only through their differences. They keep translation symmetry in position, which is the part of the symmetry that language plausibly has. So the transformer starts from a large symmetry group and keeps only part of it.</p>
+</div>
+</details>
+
+<h3 id="4c-why-the-transformer-parallelism">4.C. Why the transformer: parallelism</h3>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1706.03762">Attention is all you need</a></strong>, Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser, Polosukhin, 2017 <span class="tier tier-core-1-4">core: §1–4</span></p>
+<p>A sequence-to-sequence model built only from attention and feed-forward layers, with no recurrence or convolution, beats the best recurrent and convolutional translation models while being more parallelizable and training far faster. Section 3 defines the architecture; Section 4, “Why self-attention”, compares per-layer cost, sequential steps and path length (the table below is a version of its Table 1). Skim the experiments and note how small the models are by today’s standards.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2009.06489">The hardware lottery</a></strong>, Sara Hooker, 2020 <span class="tier tier-optional">optional</span></p>
+<p>An essay arguing that research ideas often win because they suit the available hardware and software rather than because they are better than the alternatives, with examples from the history of computing. A general argument; it does not discuss transformers.</p>
+</div>
+
+<p>Work per layer for a sequence of length <span class="math inline">T</span> and width <span class="math inline">d</span>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>FLOPs per layer</th>
+<th>Sequential steps per layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RNN / LSTM</td>
+<td><span class="math inline">O(Td^2)</span></td>
+<td><span class="math inline">O(T)</span></td>
+</tr>
+<tr>
+<td>1-D convolution, width <span class="math inline">k</span></td>
+<td><span class="math inline">O(Tkd^2)</span></td>
+<td><span class="math inline">O(1)</span>, but reach grows only by <span class="math inline">k</span> per layer</td>
+</tr>
+<tr>
+<td>Self-attention</td>
+<td><span class="math inline">O(T^2d+Td^2)</span></td>
+<td><span class="math inline">O(1)</span>, and any token can reach any other</td>
+</tr>
+</tbody>
+</table></div>
+<p>How much the choice of architecture matters at scale is the subject of WB5 §1.</p>
+
+<a id="wb3-section-5"></a>
+<h2 id="5-why-scale-should-you-consume-more-tokens">5. Why scale? Should <em>you</em> consume more tokens?</h2>
+<p><strong>The result.</strong> Held-out loss falls roughly as a power law in model size <span class="math inline">N</span> and data <span class="math inline">D</span>. If you model it as <span class="math inline">L=E+AN^{-\alpha}+BD^{-\beta}</span> and spend compute <span class="math inline">C\approx6ND</span>, the best model size grows as <span class="math inline">C^{\beta/(\alpha+\beta)}</span> and the best data size as <span class="math inline">C^{\alpha/(\alpha+\beta)}</span>. Chinchilla’s estimates put both allocation exponents, for <span class="math inline">N_{\text{opt}}</span> and <span class="math inline">D_{\text{opt}}</span>, near <span class="math inline">\tfrac12</span>, so parameters and tokens should be scaled together (Chinchilla itself used about 20 tokens per parameter). If the model will serve many queries, it can pay to train it smaller and longer than that (Exercise 5.3).</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2001.08361">Scaling laws for neural language models</a></strong>, Kaplan, McCandlish, Henighan, Brown, et al. (OpenAI), 2020 <span class="tier tier-optional">optional</span></p>
+<p>Fits power laws in model size, data and compute, and concludes that most extra compute should go to parameters (<span class="math inline">N_{\rm opt}\propto C^{0.73}</span>), with large models trained well short of convergence. Exercise 5.2 asks why the next reading’s answer differs.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2203.15556">Training compute-optimal large language models</a></strong>, Hoffmann, Borgeaud, Mensch, et al. (DeepMind), 2022 <span class="tier tier-core-1-3">core: §1, §3</span></p>
+<p>For a fixed compute budget, model size and number of training tokens should be scaled in equal proportion; earlier large models were substantially undertrained. Chinchilla (70B parameters, 1.4T tokens) outperforms the 280B Gopher at the same compute. §3 gives three approaches to the optimal allocation (§3.3 and Appendix D.2 are the parametric fit of Exercise 5.1), and Table 2 compares their exponents with Kaplan’s. Read it alongside Besiroglu et al.’s <a href="https://arxiv.org/abs/2404.10102">replication attempt</a> (2024), which finds that the published third-approach constants fit the data poorly.</p>
+</div>
+
+<h3 id="5a-the-compute-optimal-allocation">5.A. The compute-optimal allocation</h3>
+<p>Hoffmann et al.’s third approach fits</p>
+<p><span class="math display">
+L(N,D)=E+\frac{A}{N^{\alpha}}+\frac{B}{D^{\beta}},
+</span></p>
+<p>where <span class="math inline">E</span> is the irreducible loss (the entropy of text), the second term is the loss from finite model size and the third the loss from finite data. A forward and backward pass costs about 6 FLOPs per parameter per token, so training compute is <span class="math inline">C\approx6ND</span>.</p>
+<p><strong>Exercise 5.1.</strong></p>
+<p>(a) Minimize <span class="math inline">L</span> at fixed <span class="math inline">C</span> and show that <span class="math display">
+N_{\text{opt}}=G\Big(\frac C6\Big)^{\frac{\beta}{\alpha+\beta}},\qquad
+D_{\text{opt}}=G^{-1}\Big(\frac C6\Big)^{\frac{\alpha}{\alpha+\beta}},\qquad
+G=\Big(\frac{\alpha A}{\beta B}\Big)^{\frac1{\alpha+\beta}}.
+</span> If <span class="math inline">\alpha&gt;\beta</span>, which of <span class="math inline">N</span> and <span class="math inline">D</span> gets more of the budget?</p>
+<p>(b) Show that at the optimum <span class="math inline">\alpha\,AN^{-\alpha}=\beta\,BD^{-\beta}</span>.</p>
+<p>(c) Show that the optimal reducible loss <span class="math inline">L-E</span> is a power law in <span class="math inline">C</span>, and find its exponent.</p>
+<p>(d) The published fit (Hoffmann et al., eq. 10 in Appendix D.2) is <span class="math inline">E=1.69</span>, <span class="math inline">A=406.4</span>, <span class="math inline">B=410.7</span>, <span class="math inline">\alpha=0.34</span>, <span class="math inline">\beta=0.28</span>. At Gopher’s and Chinchilla’s budget, <span class="math inline">C=5.76\times10^{23}</span> FLOPs, compute <span class="math inline">N_{\text{opt}}</span>, <span class="math inline">D_{\text{opt}}</span> and <span class="math inline">D_{\text{opt}}/N_{\text{opt}}</span>. Compare with Chinchilla’s actual 70B parameters and 1.4T tokens.</p>
+<p>(e) Under the same fit, evaluate <span class="math inline">L</span> at your <span class="math inline">(N_{\text{opt}},D_{\text{opt}})</span> and at <span class="math inline">(7\times10^{10},\,1.4\times10^{12})</span>. What does the difference say about how sharply the data pin down the allocation?</p>
+<p><em>Hints.</em> (a) Substitute <span class="math inline">D=C/(6N)</span>, set <span class="math inline">dL/dN=0</span>, and collect powers of <span class="math inline">N</span>. (b) Multiply the stationarity condition by <span class="math inline">N</span>. (c) Substitute (a) into each reducible term. (d), (e) Work in <span class="math inline">\log_{10}</span>.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> With <span class="math inline">D=C/(6N)</span>, <span class="math display">
+L(N)=E+AN^{-\alpha}+B\Big(\frac{6N}{C}\Big)^{\beta}.
+</span> Setting the derivative to zero, <span class="math display">
+-\alpha AN^{-\alpha-1}+\beta B\Big(\frac6C\Big)^{\beta}N^{\beta-1}=0
+\quad\Longrightarrow\quad
+N^{\alpha+\beta}=\frac{\alpha A}{\beta B}\Big(\frac C6\Big)^{\beta},
+</span> which gives <span class="math inline">N_{\text{opt}}</span>. Then <span class="math inline">D_{\text{opt}}=C/(6N_{\text{opt}})=G^{-1}(C/6)^{1-\beta/(\alpha+\beta)}=G^{-1}(C/6)^{\alpha/(\alpha+\beta)}</span>. (<span class="math inline">L(N)</span> is a sum of a decreasing and an increasing power of <span class="math inline">N</span>, convex in <span class="math inline">\log N</span>, so this stationary point is the minimum.) If <span class="math inline">\alpha&gt;\beta</span> then <span class="math inline">\beta/(\alpha+\beta)&lt;\tfrac12</span>, so <span class="math inline">D</span> gets more of the budget: the model-size term decays faster, so it needs less help. If <span class="math inline">\alpha=\beta</span>, both <span class="math inline">N</span> and <span class="math inline">D</span> grow as <span class="math inline">\sqrt C</span> and <span class="math inline">D/N</span> is constant.</p>
+<p><strong>(b)</strong> Multiplying the stationarity condition by <span class="math inline">N</span> gives <span class="math inline">\alpha AN^{-\alpha}=\beta B(6N/C)^{\beta}=\beta BD^{-\beta}</span>. Along the constraint <span class="math inline">\log N+\log D=\text{const}</span>, these are the rates at which the two terms fall per unit of <span class="math inline">\log N</span> and of <span class="math inline">\log D</span>, and at the optimum they balance. With <span class="math inline">\alpha=\beta</span> the two reducible losses are equal.</p>
+<p><strong>(c)</strong> <span class="math inline">AN_{\text{opt}}^{-\alpha}\propto C^{-\alpha\beta/(\alpha+\beta)}</span> and <span class="math inline">BD_{\text{opt}}^{-\beta}\propto C^{-\beta\alpha/(\alpha+\beta)}</span>, so <span class="math inline">L_{\text{opt}}-E\propto C^{-\alpha\beta/(\alpha+\beta)}</span>. With the constants in (d) the exponent is <span class="math inline">0.34\times0.28/0.62\approx0.15</span>.</p>
+<p><strong>(d)</strong> <span class="math inline">\alpha A\approx138.2</span> and <span class="math inline">\beta B\approx115.0</span>, with ratio <span class="math inline">1.202</span>, so <span class="math inline">G=1.202^{1/0.62}\approx1.34</span>. The exponent is <span class="math inline">\beta/(\alpha+\beta)=0.28/0.62\approx0.452</span> and <span class="math inline">C/6=9.6\times10^{22}</span>, so <span class="math inline">\log_{10}(C/6)^{0.452}\approx22.98\times0.452\approx10.38</span>, that is <span class="math inline">2.4\times10^{10}</span>. Hence <span class="math display">
+N_{\text{opt}}\approx1.34\times2.4\times10^{10}\approx3.2\times10^{10},\qquad
+D_{\text{opt}}=\frac{9.6\times10^{22}}{3.2\times10^{10}}\approx3.0\times10^{12},
+</span> about 90 tokens per parameter. (Besiroglu et al. quote about 70 for the published fit; with <span class="math inline">\alpha\ne\beta</span> the ratio depends on the budget, and (e) shows why it is so sensitive to small changes in the constants.) Chinchilla itself used 70B parameters and 1.4T tokens, 20 tokens per parameter. That allocation came from the paper’s first two approaches, which agree with each other. Besiroglu et al. (<a href="https://arxiv.org/abs/2404.10102">Chinchilla scaling: a replication attempt</a>, 2024) re-fitted the third approach to data reconstructed from the paper’s plots. They found the published constants fit those data poorly and are inconsistent with the first two approaches, while their re-fit is compatible with them.</p>
+<p><strong>(e)</strong> At the optimum, <span class="math inline">AN^{-\alpha}\approx406.4\times10^{-0.34\times10.51}\approx0.109</span> and <span class="math inline">BD^{-\beta}\approx410.7\times10^{-0.28\times12.48}\approx0.132</span>, so <span class="math inline">L\approx1.931</span>. (Check (b): <span class="math inline">0.34\times0.109\approx0.28\times0.132\approx0.037</span>.) At 70B parameters and 1.4T tokens, <span class="math inline">AN^{-\alpha}\approx0.084</span> and <span class="math inline">BD^{-\beta}\approx0.163</span>, so <span class="math inline">L\approx1.937</span>; that allocation also uses about 2% more compute. A factor of more than four in tokens per parameter changes the predicted loss by about <span class="math inline">0.006</span> nats, well under 1%. The loss is very flat near the optimum, so small changes in the fitted constants move the optimal allocation a lot. Besiroglu et al.’s re-fit changes the exponents as well (<span class="math inline">\alpha\approx0.35</span>, <span class="math inline">\beta\approx0.37</span>, so <span class="math inline">N_{\text{opt}}\propto C^{0.51}</span>), and that brings the allocation back to about 20 tokens per parameter. Treat “20 tokens per parameter” as an order of magnitude.</p>
+</div>
+</details>
+
+<p><strong>Exercise 5.2.</strong> Kaplan et al. found <span class="math inline">N_{\text{opt}}\propto C^{0.73}</span>; Hoffmann et al. found <span class="math inline">N_{\text{opt}}\propto C^{0.5}</span>.</p>
+<p>(a) Reading each result through <span class="math inline">N_{\text{opt}}\propto C^{\beta/(\alpha+\beta)}</span>, what ratio <span class="math inline">\beta/\alpha</span> does each imply?</p>
+<p>(b) Kaplan et al. trained every model with the same learning-rate schedule, sized for about 130B tokens, and used losses from intermediate checkpoints. At a checkpoint after <span class="math inline">D&lt;130</span>B tokens, is the recorded loss above or below what a run scheduled to end at <span class="math inline">D</span> would reach? Small compute budgets are best spent on few tokens and large ones on many. Use this to explain which way the bias pushes the fitted growth of <span class="math inline">N_{\text{opt}}</span> with <span class="math inline">C</span>.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> If <span class="math inline">\beta/(\alpha+\beta)=a</span> then <span class="math inline">\beta/\alpha=a/(1-a)</span>. Kaplan: <span class="math inline">0.73/0.27\approx2.7</span>, so data-limited loss would fall much faster than model-limited loss and extra compute should go mostly to parameters. Chinchilla: <span class="math inline">\beta/\alpha\approx1</span>.</p>
+<p>This is only a formal reading. Kaplan et al.’s own single-variable exponents, <span class="math inline">\alpha_N\approx0.076</span> for <span class="math inline">L(N)</span> and <span class="math inline">\alpha_D\approx0.095</span> for <span class="math inline">L(D)</span>, would give <span class="math inline">0.095/0.171\approx0.56</span> in this formula. Their <span class="math inline">0.73</span> came from a different analysis: fitting loss as a function of model size and training steps, and stopping training well before convergence.</p>
+<p><strong>(b)</strong> Above. At an intermediate checkpoint the learning rate has not yet been annealed, and the final decay is where a run gains much of its last improvement. So the checkpoint’s loss overstates what a run scheduled to end at <span class="math inline">D</span> would reach, and short training looks worse than it is. The penalty is largest far from the end of the schedule, at small <span class="math inline">D</span>, which is where the best allocations for small compute budgets lie. At small <span class="math inline">C</span> the fit is therefore pushed toward smaller models trained on more tokens than optimal, while at large <span class="math inline">C</span>, with checkpoints near the end of their schedules, it is roughly right. An optimal <span class="math inline">N</span> that is too small at small <span class="math inline">C</span> and about right at large <span class="math inline">C</span> appears to grow faster with <span class="math inline">C</span> than it really does. Hoffmann et al. put it this way: using these intermediate losses “results in underestimating the effectiveness of training models on less data than 130B tokens, and eventually contributes to the conclusion that model size should increase faster than training data size as compute budget increases.”</p>
+</div>
+</details>
+
+<p><strong>Exercise 5.3.</strong> A model will answer <span class="math inline">10^{12}</span> queries of 1000 generated tokens each, at about <span class="math inline">2N</span> FLOPs per generated token. Compare the inference compute of a 70B model with Chinchilla’s training compute (<span class="math inline">\approx5.8\times10^{23}</span> FLOPs). What does this suggest about what size of model to train?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Inference costs <span class="math inline">10^{12}\times10^{3}\times2\times7\times10^{10}=1.4\times10^{26}</span> FLOPs, about 240 times the training compute. Total cost is then dominated by inference, so the quantity to minimize is <span class="math inline">C_{\text{train}}+C_{\text{inference}}</span>, not <span class="math inline">C_{\text{train}}</span> alone. A smaller model trained on more tokens than the Chinchilla optimum spends more training compute to reach a given loss, but costs proportionally less per generated token. Exercise 5.1(e) suggests the loss penalty for moving moderately off the optimum is small. The limit is data: overtraining needs the extra tokens to exist, and if good text runs out the options are repeating data, filtering it, or generating synthetic data.</p>
+</div>
+</details>
+
+<a id="wb3-section-6"></a>
+<h2 id="6-simulators-personae-and-rl-on-top">6. Simulators, personae, and RL on top</h2>
+<p>Two readings describe base models as simulators of many personae (janus) and the Waluigi effect (Nardo). Two exercises derive the optimum of the KL-regularized RLHF objective, for a base model and for a mixture of personae. Two further readings measure how far RL fine-tuning moves a model.</p>
+<h3 id="6a-a-base-model-as-a-simulator-of-personae">6.A. A base model as a simulator of personae</h3>
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators">Simulators</a></strong>, janus, 2022 (LessWrong) <span class="tier tier-core">core</span></p>
+<p>Argues that a self-supervised language model is neither an agent, an oracle nor a tool but a <em>simulator</em>: it learns the conditional structure of its training distribution and, when sampled, evolves <em>simulacra</em>, which may be agentic even though the simulator is not. Long and essayistic. The sections “Inadequate ontologies”, “Simulators”, “The simulation objective” and “Simulacra” carry the argument.</p>
+</div>
+
+<p>For the exercises, write the base model as a mixture over “who is writing and in what situation”:</p>
+<p><span class="math display">
+\pi_0(y\mid x)=\sum_z \pi_0(z\mid x)\,\pi_0(y\mid x,z),
+</span></p>
+<p>where <span class="math inline">z</span> is a persona (author, character, genre, situation), <span class="math inline">x</span> the prompt and <span class="math inline">y</span> the continuation. This is a modelling assumption about behaviour, not a claim about what the network computes. Prompting then works like conditioning: the prompt is evidence about <span class="math inline">z</span>, and the model continues as a mixture of personae weighted by their posterior probabilities <span class="math inline">\pi_0(z\mid x)</span> given the prompt.</p>
+<h3 id="6b-the-waluigi-effect">6.B. The Waluigi effect</h3>
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/D7PumeYTDPfBTp3i7">The Waluigi effect (mega-post)</a></strong>, Cleo Nardo, 2023 (LessWrong) <span class="tier tier-core">core</span></p>
+<p>Argues that after you train an LLM to satisfy a property P, it becomes easier to elicit the opposite of P, because the opposite takes few extra bits to specify given the original; such opposite characters may be attractor states, and RLHF may make this worse. “Traits are complex, valences are simple” and “Superpositions will typically collapse to waluigis” carry the core argument; read “Waluigis after RLHF” against Exercise 6.2.</p>
+</div>
+
+<h3 id="6c-rlhf-as-kl-regularized-reweighting">6.C. RLHF as KL-regularized reweighting</h3>
+<p>RLHF fine-tunes the base policy <span class="math inline">\pi_0</span> to maximize a learned reward <span class="math inline">r(x,y)</span> while staying close to <span class="math inline">\pi_0</span>:</p>
+<p><span class="math display">
+\max_\pi\ \mathbb E_{y\sim\pi(\cdot\mid x)}\big[r(x,y)\big]-\beta\,\mathrm{KL}\big(\pi(\cdot\mid x)\,\Vert\,\pi_0(\cdot\mid x)\big).
+</span></p>
+<p>For <span class="math inline">\beta&gt;0</span> this objective has the exact optimum <span class="math inline">\pi^*(y\mid x)\propto\pi_0(y\mid x)\,e^{r(x,y)/\beta}</span> (Exercise 6.1), which has the form of Bayes’ rule with prior <span class="math inline">\pi_0</span> and likelihood factor <span class="math inline">e^{r/\beta}</span>; <a href="https://arxiv.org/abs/2305.18290">DPO</a> uses this closed form to skip the RL step. The optimum describes a change of output probabilities. It does not determine what computations parameter updates learn, and since softmax models already assign positive probability to every finite continuation, keeping the base model’s support is a weak constraint. Real training need not reach this optimum, and the policy can exploit errors in the learned reward, so the formula describes the target, not the trajectory.</p>
+<p><strong>Exercise 6.1.</strong> (This is the identity of WB1 Exercise B.5, with the coefficient written <span class="math inline">\beta</span>; if you have done that, skip to (b).) Fix the prompt <span class="math inline">x</span> and drop it from the notation; let <span class="math inline">y</span> range over a finite set, and let <span class="math inline">\beta&gt;0</span>.</p>
+<p>(a) Define <span class="math inline">\pi^*(y)=\pi_0(y)e^{r(y)/\beta}/Z</span> with <span class="math inline">Z=\sum_y\pi_0(y)e^{r(y)/\beta}</span>. Show that for every policy <span class="math inline">\pi</span>, <span class="math display">
+\mathbb E_\pi[r]-\beta\,\mathrm{KL}(\pi\Vert\pi_0)=\beta\log Z-\beta\,\mathrm{KL}(\pi\Vert\pi^*),
+</span> and conclude that <span class="math inline">\pi^*</span> is the unique maximizer, with optimal value <span class="math inline">\beta\log Z</span>.</p>
+<p>(b) Show that <span class="math inline">\pi^*</span> puts no mass where <span class="math inline">\pi_0</span> puts none, and describe <span class="math inline">\pi^*</span> in the limits <span class="math inline">\beta\to\infty</span> and <span class="math inline">\beta\to0</span>.</p>
+<p><em>Hint for (a).</em> Solve the definition of <span class="math inline">\pi^*</span> for <span class="math inline">r</span>, giving <span class="math inline">r=\beta\log(\pi^*/\pi_0)+\beta\log Z</span>, and substitute into <span class="math inline">\mathbb E_\pi[r]</span>.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Wherever <span class="math inline">\pi_0(y)&gt;0</span>, the definition gives <span class="math inline">r(y)=\beta\log\frac{\pi^*(y)}{\pi_0(y)}+\beta\log Z</span>. Take any <span class="math inline">\pi</span> that puts mass only where <span class="math inline">\pi_0</span> does (otherwise <span class="math inline">\mathrm{KL}(\pi\Vert\pi_0)=\infty</span> and <span class="math inline">\pi</span> is no candidate). Then <span class="math display">
+\mathbb E_\pi[r]-\beta\,\mathrm{KL}(\pi\Vert\pi_0)
+=\beta\,\mathbb E_\pi\!\Big[\log\frac{\pi^*}{\pi_0}-\log\frac{\pi}{\pi_0}\Big]+\beta\log Z
+=\beta\log Z-\beta\,\mathbb E_\pi\!\Big[\log\frac{\pi}{\pi^*}\Big]
+=\beta\log Z-\beta\,\mathrm{KL}(\pi\Vert\pi^*).
+</span> Since <span class="math inline">\mathrm{KL}(\pi\Vert\pi^*)\ge0</span>, with equality only at <span class="math inline">\pi=\pi^*</span>, the maximizer is <span class="math inline">\pi^*</span>, and the optimal value is <span class="math inline">\beta\log Z=\beta\log\mathbb E_{\pi_0}[e^{r/\beta}]</span>. This identity is the Gibbs variational principle.</p>
+<p><strong>(b)</strong> If <span class="math inline">\pi_0(y)=0</span> then <span class="math inline">\pi^*(y)=0</span>: the optimum puts no mass on outputs the base model never produces. For a softmax language model this is a weak statement, since every finite output already has positive probability; the substantive question is how much mass moves, which <span class="math inline">\beta</span> controls through the KL. As <span class="math inline">\beta\to\infty</span>, <span class="math inline">e^{r/\beta}\to1</span> and <span class="math inline">\pi^*\to\pi_0</span>. As <span class="math inline">\beta\to0</span>, the factor <span class="math inline">e^{r/\beta}</span> is dominated by the largest reward, so <span class="math inline">\pi^*</span> concentrates on <span class="math inline">\arg\max r</span> <em>within the support of</em> <span class="math inline">\pi_0</span>, splitting mass among tied maximizers in proportion to <span class="math inline">\pi_0</span>.</p>
+</div>
+</details>
+
+<p><strong>Exercise 6.2.</strong> For a fixed prompt, write the base model as the persona mixture of §6.A, <span class="math inline">\pi_0(y)=\sum_z\pi_0(z)\,\pi_0(y\mid z)</span>.</p>
+<p>(a) Show that the RLHF optimum reweights personae by <span class="math display">
+\pi^*(z)\propto\pi_0(z)\;\mathbb E_{y\sim\pi_0(\cdot\mid z)}\big[e^{r(y)/\beta}\big],
+</span> and that within each persona it reshapes outputs as <span class="math inline">\pi^*(y\mid z)\propto\pi_0(y\mid z)\,e^{r(y)/\beta}</span>.</p>
+<p>(b) Suppose two personae, Luigi (<span class="math inline">L</span>) and a deceptive Waluigi (<span class="math inline">W</span>), have identical output distributions on every training prompt. What happens to <span class="math inline">\pi^*(W)/\pi^*(L)</span> on those prompts? Would it be enough for the two personae to have equal <em>mean</em> reward? What does the formula say about prompts outside training?</p>
+<p>(c) Nardo argues that once Luigi is specified, Waluigi costs few extra bits; that Waluigi-typical behaviour is strong evidence against Luigi while Luigi-typical behaviour is weak evidence against a deceptive Waluigi, so within a conversation the posterior over personae can drift toward Waluigi and rarely drift back (Waluigi is an <em>attractor</em>); and that RLHF may make Waluigis <em>more</em> likely. Does that last claim conflict with (b)? What does each argument assume?</p>
+<p><em>Hint for (a).</em> Define a joint distribution <span class="math inline">\pi^*(z,y)\propto\pi_0(z)\,\pi_0(y\mid z)\,e^{r(y)/\beta}</span> and check that its marginal over <span class="math inline">y</span> is the <span class="math inline">\pi^*(y)</span> of Exercise 6.1. By Exercise 6.1 applied to pairs <span class="math inline">(z,y)</span> with reward <span class="math inline">r(y)</span>, this joint is also the optimum of the analogous objective over persona–output pairs.</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Let <span class="math inline">\pi^*(z,y)=\pi_0(z)\,\pi_0(y\mid z)\,e^{r(y)/\beta}/Z</span>, with the same <span class="math inline">Z</span> as in Exercise 6.1. Summing over <span class="math inline">z</span> gives <span class="math inline">\pi_0(y)e^{r(y)/\beta}/Z=\pi^*(y)</span>, so this joint is consistent with the optimum; it is also the optimum of the analogous objective posed over pairs <span class="math inline">(z,y)</span>, by Exercise 6.1 with <span class="math inline">(z,y)</span> in place of <span class="math inline">y</span>. (By the chain rule for KL, <span class="math inline">\mathrm{KL}(\pi(z,y)\Vert\pi_0(z,y))=\mathrm{KL}(\pi(y)\Vert\pi_0(y))+\mathbb E_{\pi(y)}\mathrm{KL}(\pi(z\mid y)\Vert\pi_0(z\mid y))</span>, so the pair objective is the output objective minus a nonnegative term that vanishes when <span class="math inline">\pi(z\mid y)=\pi_0(z\mid y)</span>: the optimum keeps the base model’s posterior over personae given the output.) Summing over <span class="math inline">y</span> instead, <span class="math display">
+\pi^*(z)=\frac{\pi_0(z)}{Z}\sum_y\pi_0(y\mid z)\,e^{r(y)/\beta}=\frac{\pi_0(z)}{Z}\,\mathbb E_{y\sim\pi_0(\cdot\mid z)}\big[e^{r(y)/\beta}\big],
+</span> and dividing the joint by this gives <span class="math inline">\pi^*(y\mid z)\propto\pi_0(y\mid z)\,e^{r(y)/\beta}</span>. The optimum upweights the personae whose outputs score well and reshapes each persona’s outputs toward high reward. As <span class="math inline">\beta\to0</span> the exponential moment is dominated by each persona’s chance of producing the highest-reward outputs, so the weight concentrates on the personae that can produce them.</p>
+<p><strong>(b)</strong> If <span class="math inline">\pi_0(\cdot\mid L)=\pi_0(\cdot\mid W)</span> on a prompt, the two expectations in (a) are equal, so <span class="math display">
+\frac{\pi^*(W)}{\pi^*(L)}=\frac{\pi_0(W)}{\pi_0(L)}.
+</span> The ratio is unchanged: the KL-regularized optimum cannot separate personae that the reward cannot separate. Equal mean reward is not enough, because the weights depend on the exponential moment <span class="math inline">\mathbb E[e^{r/\beta}]</span>. For example, at <span class="math inline">\beta=1</span> a persona with reward always 1 has moment <span class="math inline">e\approx2.72</span>, while one with reward 0 or 2 with equal probability has the same mean but moment <span class="math inline">(1+e^2)/2\approx4.19</span>, so it gains weight relative to the first. The optimum is defined prompt by prompt, so it says nothing about prompts outside training. There, what the trained network does depends on how it generalizes, and if <span class="math inline">W</span> differs from <span class="math inline">L</span> only on such prompts, nothing in training pushed against it.</p>
+<p><strong>(c)</strong> Not strictly. (b) is about the <em>ratio</em>. If RLHF upweights the Luigi-and-Waluigi cluster relative to everything else, Waluigi’s absolute probability <em>rises</em> along with Luigi’s. Nardo’s attractor argument is also about dynamics within a conversation, as evidence about the persona accumulates, which a static per-prompt optimum does not address. (b) assumes the optimum is reached, the reward is fixed, and the persona mixture describes the network. Nardo assumes post-trained models remain simulators with a rich persona prior, and that RLHF’s mode collapse may sharpen attractors.</p>
+</div>
+</details>
+
+<h3 id="6d-how-far-does-rl-move-the-model">6.D. How far does RL move the model?</h3>
+<p>Reasoning-focused RL with verifiable rewards often uses little or no explicit KL penalty, so the optimum of §6.C does not directly apply; these readings measure how far RL fine-tuning moves the model.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2509.04259">RL’s Razor: why online reinforcement learning forgets less</a></strong>, Idan Shenfeld, Jyothish Pari, Pulkit Agrawal, 2025 <span class="tier tier-optional">optional</span></p>
+<p>In the tested LLM and robotics settings, on-policy RL forgets less of the base model’s prior capabilities than supervised fine-tuning at matched performance on a new task. Forgetting is predicted by the KL divergence between fine-tuned and base policies on the new task, and the authors argue that on-policy RL is implicitly biased toward KL-close solutions. Mostly empirical, with a theoretical result in an idealized setting; it is not a result that RL cannot add capabilities.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2505.11711">Reinforcement learning finetunes small subnetworks in large language models</a></strong>, Sagnik Mukherjee, Lifan Yuan, Dilek Hakkani-Tür, Hao Peng, 2025 <span class="tier tier-optional">optional</span></p>
+<p>Reports that, in the RL algorithms and LLMs tested, RL fine-tuning changes only 5–30% of parameters by the paper’s measure, yet the updates are nearly full-rank. §6 of the RL’s Razor paper finds that in its setting such sparsity came from bfloat16 training and vanished in float32; WB6 §11 works through why and sets this beside low-rank descriptions of RL updates.</p>
+</div>
+
+<a id="wb3-closing"></a>
+<h2 id="what-carries-forward">What carries forward</h2>
+<ul>
+<li><strong>Compression (WB4).</strong> §3 showed that loss is code length. WB4 §2–3 develop MDL and Solomonoff induction, and WB4 §3–6 compare program length, circuit size and kernel norm as priors a learner might favour.</li>
+<li><strong>Universality (WB5).</strong> §4 leaves open how much architecture matters; WB5 §1 takes up the claim that at scale it matters little, and WB5 §7 asks where the scaling exponents of §5 come from.</li>
+<li><strong>Statistical learning (WB2).</strong> The models of §5 see most tokens about once. That does not by itself determine whether they interpolate their training data, so the interpolation-threshold picture of double descent in WB2 §3 needs a separate argument before it applies to them.</li>
+<li><strong>Alignment (WB1, WB6).</strong> WB1 §2.E derives the reweighting <span class="math inline">\pi_0e^{r}</span> of §6.C as planning as inference, and WB1 §4 points here for simulators and personae. WB6 §11 (low-rank RL updates and the KL leash) continues §6.D.</li>
+</ul>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>

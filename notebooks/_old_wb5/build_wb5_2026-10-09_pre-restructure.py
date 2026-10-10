@@ -1,0 +1,677 @@
+#!/usr/bin/env python3
+"""Build WB5 (Universality: the machines, they just want to learn).
+
+Format: short reading notes plus derivation exercises with worked solutions.
+Revised 2026-10-08 following reviews/2026-10-08-editorial-brief.md and the WB5
+items of reviews/technical-sources.md; see reviews/wb5-editorial.md for the change
+log and review record. Standard library only.
+"""
+from nbkit import answer, figure, markdown, reading, run
+
+SF = "assets/interactive/spectral_filters.html"
+SP = "assets/interactive/superposition.html"
+
+CELLS = [
+    # ------------------------------------------------------------------ intro
+    markdown(r"""
+# Workbook 5 — Universality: the machines, they just want to learn
+
+**{{VARIANT}} · Mysteries of Deep Learning, Iliad Intensive 2026**
+
+Different architectures trained on similar data often end up with similar loss curves, similar internal geometry and even similar hidden quirks. This workbook asks what "similar" can mean, derives one model in which the minima favoured by a small-learning-rate approximation to SGD share a representation, and collects readings on representation geometry, hidden signals in data and scaling curves.
+
+Route (sections are largely independent; §2 gives vocabulary used in §3–4):
+
+- [1. Another bitter lesson: architecture doesn't matter](#wb5-section-1). Short; one reading.
+- [2. Same up to what?](#wb5-section-2). Similarity indices and their invariance groups. Exercises: the groups of CKA and CCA; permutation and linear symmetries of networks.
+- [3. The Platonic Representation Hypothesis](#wb5-section-3). Two core readings, and Ziyin and Chuang's perfect PRH for deep linear networks derived step by step in exercises.
+- [4. The Linear Representation Hypothesis](#wb5-section-4). Two readings; a short exercise on why "orthogonal concepts" needs a chosen inner product.
+- [5. Superposition, adversarial attacks, error correction](#wb5-section-5). Core reading; exercises on near-orthogonal packing and the two-feature superposition boundary, with an interactive figure.
+- [6. Hidden signals: low-rank logits and subliminal learning](#wb5-section-6). Four readings, one contested. Exercises: logit rank, the shared-initialization argument, and logit-linear selection.
+- [7. Scaling laws: a hundred unnecessary explanations](#wb5-section-7). Exercises deriving power-law learning curves from a data spectrum and from discrete skills, including ridge saturation; interactive figure.
+
+**How to use this notebook.** Pick what interests you; nobody is expected to do everything. Exercises are derivations with hints. Worked solutions are folded under "Solution" after each exercise, and everyone may use them. Each reading opens with a sentence or two on what it shows, so you can decide whether to open it; *core* marks where to start.
+"""),
+
+    # ------------------------------------------------------------------ §1
+    markdown(r"""
+<a id="wb5-section-1"></a>
+
+## 1. Another bitter lesson: architecture doesn't matter
+
+The claim to examine: among architectures that are expressive and trainable enough, data and compute determine most of what is learned. The rest of the workbook tests it on internal representations (§2–4), on shared quirks (§5–6) and on loss curves (§7).
+
+""" + reading(
+        "Scaling laws for neural language models",
+        "https://arxiv.org/abs/2001.08361",
+        "Kaplan et al. (2020)",
+        "For transformer language models, loss depends strongly on parameter count, data and compute, and only weakly on shape (depth versus width) over a wide range.",
+        "It also compares LSTMs, which match transformers on early tokens of the context but not on later ones. WB3 §5 uses the same paper for compute allocation.",
+        tier="optional",
+    )),
+
+    # ------------------------------------------------------------------ §2
+    markdown(r"""
+<a id="wb5-section-2"></a>
+
+## 2. Same up to what?
+
+A claim that two networks "learn the same representation" means something only once you say which transformations count as cosmetic. Each similarity measure fixes such a group.
+
+""" + reading(
+        "Similarity of neural network representations revisited",
+        "https://arxiv.org/abs/1905.00414",
+        "Kornblith, Norouzi, Lee & Hinton (ICML 2019)",
+        "Shows that similarity indices invariant to all invertible linear maps, CCA included, cannot distinguish representations once the width reaches the number of data points. Proposes comparing representations with centered kernel alignment (CKA), which identifies corresponding layers across networks trained from different initializations.",
+        "Exercise 2.1 derives the invariance groups.",
+        tier="core",
+    ) + "\n\n" + reading(
+        "Revisiting model stitching to compare neural representations",
+        "https://arxiv.org/abs/2106.07682",
+        "Bansal, Nakkiran & Barak (NeurIPS 2021)",
+        "Model stitching joins the lower layers of one network to the upper layers of another through a trainable (usually affine) layer. The paper finds that good networks of the same architecture trained in very different ways, for example supervised and self-supervised, stitch with little loss, and that representations trained with more data, width or time can improve weaker models.",
+        "Stitching tests whether a representation is usable downstream, not whether its geometry matches.",
+        tier="optional",
+    ) + r"""
+
+### 2.A. Setup
+
+Take $n$ inputs. Stack a layer's activations from two networks as the rows of $X\in\mathbb R^{n\times p_1}$ and $Y\in\mathbb R^{n\times p_2}$, and center the columns ($X\leftarrow HX$ with $H=I-\tfrac1n\mathbf 1\mathbf 1^\top$). Write $K=XX^\top$ and $L=YY^\top$ for the centered Gram matrices, whose entries are inner products between inputs. A similarity index $s$ is *invariant to a group* $G$ if $s(XA,YB)=s(X,Y)$ for all $A,B\in G$.
+
+- **Linear CKA** (defined when $K,L\neq0$):
+$$\mathrm{CKA}(X,Y)=\frac{\langle K,L\rangle_F}{\|K\|_F\,\|L\|_F}.$$
+- **CCA:** the canonical correlations of $X$ and $Y$ are the cosines of the principal angles between their column spaces $\mathrm{col}(X),\mathrm{col}(Y)\subseteq\mathbb R^n$. So CCA depends on $X$ and $Y$ only through these subspaces.
+- **Mutual $k$-nearest neighbours**, the index Huh et al. use in §3, asks only whether each input's $k$ nearest neighbours agree between the two representations.
+
+**Exercise 2.1.** The invariance groups of CKA and CCA.
+
+(a) Show that $\langle K,L\rangle_F=\|Y^\top X\|_F^2$. Then show that $\mathrm{CKA}(XQ,Y)=\mathrm{CKA}(X,Y)$ for orthogonal $Q$ and $\mathrm{CKA}(cX,Y)=\mathrm{CKA}(X,Y)$ for $c\neq0$. Finally, find an invertible $A$ and data $X$ with $\mathrm{CKA}(XA,X)<1$.
+
+(b) Show that $0\le\mathrm{CKA}\le1$, with $\mathrm{CKA}=1$ if and only if $K=cL$ for some $c>0$.
+
+(c) Suppose $K=cL$, and let $x_i,y_i$ be the rows of $X,Y$. Show that there is a linear isometry $R$ from $\mathrm{span}\{x_i\}$ onto $\mathrm{span}\{y_i\}$ with $y_i=c^{-1/2}Rx_i$ for every $i$. When $p_1\neq p_2$, $R$ is an isometry between these occupied subspaces, not an orthogonal matrix on the whole space.
+
+(d) The rows in (c) are centered. What extra freedom does that leave between the *uncentered* activations when $\mathrm{CKA}=1$?
+
+(e) Show that CCA is invariant to all invertible $A,B$. Then show that if the centered $X$ has rank $n-1$ (possible only if $p_1\ge n-1$), $\mathrm{col}(X)$ is the whole space $\mathbf 1^\perp$ of centered vectors. Conclude that any two such representations have all canonical correlations equal to 1.
+
+<details><summary>Hints</summary>
+
+(a) $\langle K,L\rangle_F=\mathrm{Tr}(XX^\top YY^\top)$; use cyclicity of the trace. For the counterexample, try four points in $\mathbb R^2$ at $(\pm1,0)$ and $(0,\pm1)$ with $A=\mathrm{diag}(2,1)$.
+(b) Cauchy–Schwarz for the Frobenius inner product, and $\mathrm{Tr}(KL)\ge0$ for positive semidefinite $K,L$.
+(c) Define $R(\sum_ia_ix_i)=c^{1/2}\sum_ia_iy_i$ and check that it is well defined.
+(e) Each column of a centered $X$ is orthogonal to $\mathbf 1$.
+</details>
+"""),
+    answer(r"""
+**(a)** $\langle K,L\rangle_F=\mathrm{Tr}(XX^\top YY^\top)=\mathrm{Tr}(Y^\top XX^\top Y)=\|X^\top Y\|_F^2=\|Y^\top X\|_F^2$. Under $X\mapsto XQ$ with $QQ^\top=I$, $K=XX^\top\mapsto XQQ^\top X^\top=K$, so nothing changes. Under $X\mapsto cX$, $K\mapsto c^2K$, which multiplies the numerator and $\|K\|_F$ by $c^2$, and these cancel.
+
+Counterexample: take the rows of $X$ to be $(1,0),(-1,0),(0,1),(0,-1)$ (already centered), so $X^\top X=2I$, and $A=\mathrm{diag}(2,1)$. With the formula $\mathrm{CKA}(X',Y)=\|Y^\top X'\|_F^2/(\|X'^\top X'\|_F\|Y^\top Y\|_F)$ (equivalent by (a), since $\|K\|_F=\|X^\top X\|_F$), $X'=XA$ and $Y=X$: $Y^\top X'=2A=\mathrm{diag}(4,2)$ with squared norm $20$; $X'^\top X'=2A^2=\mathrm{diag}(8,2)$ with norm $2\sqrt{17}$; $\|Y^\top Y\|_F=2\sqrt2$. So $\mathrm{CKA}=20/(4\sqrt{34})=5/\sqrt{34}\approx0.86<1$. Stretching one axis is not cosmetic for CKA, so its group is orthogonal maps and isotropic scaling.
+
+**(b)** $K$ and $L$ are positive semidefinite, so $\langle K,L\rangle_F=\mathrm{Tr}(K^{1/2}LK^{1/2})\ge0$. Cauchy–Schwarz gives $\langle K,L\rangle_F\le\|K\|_F\|L\|_F$, with equality exactly when $K$ and $L$ are parallel. Since both are PSD and nonzero, that means $K=cL$ with $c>0$.
+
+**(c)** $K=cL$ says $\langle x_i,x_j\rangle=c\langle y_i,y_j\rangle$ for all $i,j$. Define $R(\sum_ia_ix_i)=c^{1/2}\sum_ia_iy_i$. Then
+$$\Big\|c^{1/2}\sum_ia_iy_i\Big\|^2=c\sum_{i,j}a_ia_j\langle y_i,y_j\rangle=\sum_{i,j}a_ia_j\langle x_i,x_j\rangle=\Big\|\sum_ia_ix_i\Big\|^2 .$$
+If two coefficient vectors give the same $\sum_ia_ix_i$, their difference gives $0$, so its image has norm $0$. Hence $R$ is well defined. It is linear, preserves norms, and maps onto $\mathrm{span}\{y_i\}$. By construction $Rx_i=c^{1/2}y_i$. The two spans have equal dimension (an isometry is injective), but $p_1$ and $p_2$ can differ, so $R$ need not extend to an orthogonal map of a common ambient space.
+
+**(d)** Centering removes the mean of each representation. Adding a fixed vector $b$ to every row of $Y$ leaves the centered $Y$, and hence CKA, unchanged. So $\mathrm{CKA}=1$ identifies representations up to an isometry between occupied subspaces, a positive scale and a translation. Proportional *uncentered* Gram matrices also give $\mathrm{CKA}=1$, because centering maps $K\mapsto HKH$ and preserves proportionality. The converse fails because of the translation.
+
+**(e)** $\mathrm{col}(XA)=\mathrm{col}(X)$ for invertible $A$, and CCA depends only on the column spaces. Every column of a centered $X$ satisfies $\mathbf 1^\top Xe_j=0$, so $\mathrm{col}(X)\subseteq\mathbf 1^\perp$, which has dimension $n-1$. If $\mathrm{rank}\,X=n-1$, the two spaces are equal. If the same holds for $Y$, then $\mathrm{col}(X)=\mathrm{col}(Y)$, all principal angles are zero and all canonical correlations are 1, whatever the networks compute. This is Kornblith et al.'s argument that invariance to all invertible linear maps is too much invariance once the width reaches the number of data points.
+"""),
+    markdown(r"""
+**Exercise 2.2.** Parameter symmetries: many settings, one function.
+
+(a) Take a one-hidden-layer network $f(x)=W_2\,\sigma(W_1x+b_1)+b_2$ with $\sigma$ applied elementwise. For a permutation matrix $P$, show that $(PW_1,Pb_1,W_2P^\top)$ computes the same $f$. If $\sigma$ is ReLU, show the same for $(DW_1,Db_1,W_2D^{-1})$ with $D$ diagonal with positive entries. For a generic MLP with hidden widths $n_1,\dots,n_{L-1}$, how many parameter settings computing the same function does permutation alone give?
+
+(b) Take a deep linear network $f(x)=W_D\cdots W_1x$. For invertible $T$, show that $W_i\to TW_i$, $W_{i+1}\to W_{i+1}T^{-1}$ leaves $f$ unchanged and maps the layer-$i$ representation $h$ to $Th$. Suppose the representations $\{h(x)\}$ over the data span $\mathbb R^{d_i}$. Show that the new Gram matrix is a positive multiple of the old one, $h(x)^\top T^\top Th(x')=c\,h(x)^\top h(x')$ for all pairs, if and only if $T^\top T=cI$, that is, $T$ is a scaled orthogonal matrix.
+
+(c) Under which of §2.A's indices are the layer-$i$ representations before and after a general $T$ "the same"? (CKA centers its inputs, so check which spanning assumption (b) needs for it.)
+
+<details><summary>Hint</summary>
+
+(a) An elementwise $\sigma$ commutes with permutations, and $\mathrm{ReLU}(Dz)=D\,\mathrm{ReLU}(z)$ for positive diagonal $D$. (b) A bilinear form that vanishes on a spanning set vanishes everywhere.
+</details>
+"""),
+    answer(r"""
+**(a)** $\sigma(PW_1x+Pb_1)=P\,\sigma(W_1x+b_1)$ because $\sigma$ acts on each coordinate separately, so the output is $W_2P^\top P\sigma(\cdot)+b_2=W_2\sigma(\cdot)+b_2$. For ReLU, $\mathrm{ReLU}(dz)=d\,\mathrm{ReLU}(z)$ for $d>0$, so $\mathrm{ReLU}(DW_1x+Db_1)=D\,\mathrm{ReLU}(W_1x+b_1)$, and $W_2D^{-1}D=W_2$. Each hidden layer can be permuted independently, giving $\prod_\ell n_\ell!$ symmetry actions. For a generic parameter setting, where no two hidden units in a layer have identical weights, they produce $\prod_\ell n_\ell!$ distinct settings that compute the same function. Coinciding units can make some of these coincide. ReLU networks also have a continuous family of positive rescalings, one $(0,\infty)$ factor per hidden unit.
+
+**(b)** $W_{i+1}T^{-1}TW_i=W_{i+1}W_i$, so the product, and hence $f$, is unchanged. The layer-$i$ output is $TW_iW_{i-1}\cdots W_1x=Th$. If $T^\top T=cI$, then $h^\top T^\top Th'=c\,h^\top h'$. Conversely, if $h^\top(T^\top T-cI)h'=0$ for all $h,h'$ in a spanning set, bilinearity extends this to all $h,h'\in\mathbb R^{d_i}$, so $T^\top T=cI$, and $c>0$ because $T^\top T$ is positive definite. So the deep linear network's symmetry group $GL(d_i)$ is much larger than CKA's group, and a generic $T$ changes the Gram matrix non-proportionally.
+
+**(c)** Under CCA they are always the same, since it allows any invertible linear map (so does a linear stitching layer, in the Bansal reading's sense). Under CKA, a scaled orthogonal $T$ always preserves the index. A general $T$ can change it: if the *centered* representations span $\mathbb R^{d_i}$, the argument of (b) applied to centered Grams shows that CKA stays 1 only for scaled orthogonal $T$. (Spanning before centering is not enough: $h=(1,0),(1,1)$ span $\mathbb R^2$, but after centering only the second axis varies, and $T=\mathrm{diag}(2,1)$ keeps CKA at 1.) Euclidean mutual nearest neighbours are preserved by scaled orthogonal $T$, but generally not by a stretch. Section 3 is about how the optimizer picks a point on such an orbit.
+"""),
+
+    # ------------------------------------------------------------------ §3
+    markdown(r"""
+<a id="wb5-section-3"></a>
+
+## 3. The Platonic Representation Hypothesis
+
+Huh et al. propose that the representations of large models are converging toward a shared one. Ziyin and Chuang prove a "perfect" version for deep linear networks, for the minima selected by a small-learning-rate approximation to SGD. They do not prove that SGD's trajectory reaches those minima.
+
+""" + reading(
+        "The Platonic representation hypothesis",
+        "https://arxiv.org/abs/2405.07987",
+        "Huh, Cheung, Wang & Isola (ICML 2024)",
+        "Reports that representations in different models, architectures and even modalities become more aligned as the models become more capable, measured mainly by a mutual nearest-neighbour index. Hypothesizes convergence toward a shared statistical model of the world, driven by three pressures: multitask scaling, capacity and a simplicity bias.",
+        "It discusses limitations, including information specific to one modality that cannot converge.",
+        tier="core",
+    ) + "\n\n" + reading(
+        "Proof of a perfect Platonic representation hypothesis",
+        "https://arxiv.org/abs/2507.01098",
+        "Ziyin & Chuang (2025)",
+        "Two deep linear networks of any depths and of hidden widths at least the rank of the target map, between arbitrary fixed invertible maps and trained on different invertible views of the same noisy-label data, have every pair of hidden layers aligned up to rotation and scale. This holds at the minima selected by SGD's small-learning-rate modified objective, in which a gradient-noise term breaks ties among global minima.",
+        "It does not prove that SGD converges to these minima (its Remark leaves that to future work); Exercises 3.1–3.4 follow its proof and part of its list of ways the result breaks.",
+        tier="core",
+    ) + r"""
+
+### 3.A. Setup
+
+**Model.** An *embedded deep linear network* computes
+$$f(x)=M^{O}\,W_D\cdots W_1\,M^{I}\,x,\qquad D\ge2 .$$
+The $W_j$ are trained. $M^I$ and $M^O$ are fixed invertible matrices that stand in for the rest of an architecture. The hidden widths are at least $r=\mathrm{rank}\,V^*\ge1$ (defined below).
+
+**Data.** Underlying inputs $x$ have second moment $\Sigma_x=\mathbb E[xx^\top]\succ0$. If $\Sigma_x$ is singular, restrict everything below to its range and read $\Sigma_x^{-1/2}$ as a pseudoinverse square root. Labels are $y=V^*x+\epsilon$, with $\epsilon$ zero-mean, independent of $x$, and of covariance $\Sigma_\epsilon\succ0$. Network $A$ sees $x^A=Z_Ax$ and network $B$ sees $x^B=Z_Bx$, with $Z_A,Z_B$ invertible: two "modalities" that carry the same information. Both are trained on the same labels with per-sample loss
+$$\ell=\tfrac12\|f(x^A)-y\|^2,\qquad L=\mathbb E\,\ell .$$
+
+**Representations.** For $1\le i\le D-1$, hidden layer $i$ of network $A$ is $h^i_A(x)=W_i\cdots W_1M^I_AZ_Ax$. Layers $h_A$ and $h_B$ are **perfectly aligned** if, for some $c_0>0$,
+$$h_A(x)^\top h_A(x')=c_0\,h_B(x)^\top h_B(x')\qquad\text{for all }x,x' .$$
+These representations are linear in $x$ with no bias, so the condition also holds after centering, and it gives linear $\mathrm{CKA}=1$ on any data set whose centered representations are nonzero. By Exercise 2.1(c) it means $h_B=c_0^{-1/2}R\,h_A$ with $R$ an isometry between the occupied subspaces.
+
+**Selection.** Backward-error analyses of gradient descent and SGD show that small-step training approximately follows gradient flow on a modified objective with an added gradient-norm penalty proportional to the learning rate $\eta$. Ziyin and Chuang write it as $\mathbb E[\ell]+\eta\,S$, with
+$$S(\theta)=\mathbb E\,\|\nabla_\theta\ell\|^2$$
+(their equation (12)), which they call an "entropy". At a global minimum of $L$ the mean gradient vanishes, so $S$ is the total variance of the per-sample gradients, that is, SGD's gradient noise at the solution. Ziyin and Chuang take the $\eta\to0^+$ limit of the modified objective's minimizers: minimize $S$ among the global minima of $L$ (their equation (13)). Those minimizers are what the theorem characterizes. Gradient flow, which takes $\eta\to0$ along the whole trajectory, never sees $S$.
+
+**Exercise 3.1.** Global minima, and why being one is not enough.
+
+(a) Show that $L\ge\tfrac12\mathrm{Tr}\,\Sigma_\epsilon$, with equality if and only if $M^OW_D\cdots W_1M^IZ_A=V^*$, that is,
+$$W_D\cdots W_1=(M^O)^{-1}\,V^*\,Z_A^{-1}\,(M^I)^{-1}.$$
+Where did you use $\Sigma_x\succ0$?
+
+(b) Take layer $i$ of width $r\ge2$. Using Exercise 2.2(b), show that the set of global minima contains points whose layer-$i$ representations are not perfectly aligned with each other. So any alignment has to come from the selection rule.
+
+<details><summary>Hints</summary>
+
+(a) Write $E=M^OW_D\cdots W_1M^IZ_A$ for the end-to-end map from $x$, so $f(x^A)-y=(E-V^*)x-\epsilon$. Expand the square; the cross term vanishes by independence and $\mathbb E\epsilon=0$. Matrices do not commute: solve for $W_D\cdots W_1$ by multiplying by inverses on the correct sides.
+(b) At width $r$, the map $x\mapsto h^i(x)$ has rank $r$ because the end-to-end map does.
+</details>
+"""),
+    answer(r"""
+**(a)** With $E=M^OW_D\cdots W_1M^IZ_A$,
+$$L=\tfrac12\,\mathbb E\|(E-V^*)x\|^2-\mathbb E\big[\epsilon^\top(E-V^*)x\big]+\tfrac12\,\mathbb E\|\epsilon\|^2 .$$
+The middle term is $-\mathbb E[\epsilon]^\top(E-V^*)\mathbb E[x]=0$ by independence and $\mathbb E\epsilon=0$. The first term is $\tfrac12\mathrm{Tr}\big[(E-V^*)\Sigma_x(E-V^*)^\top\big]=\tfrac12\|(E-V^*)\Sigma_x^{1/2}\|_F^2\ge0$. So $L\ge\tfrac12\mathrm{Tr}\,\Sigma_\epsilon$. Since $\Sigma_x\succ0$, equality holds if and only if $E=V^*$. (Without it, $E$ only has to agree with $V^*$ on the range of $\Sigma_x$, which is the "restrict to the support" version.) Solving $M^O(W_D\cdots W_1)M^IZ_A=V^*$: multiply on the left by $(M^O)^{-1}$ and on the right by $(M^IZ_A)^{-1}=Z_A^{-1}(M^I)^{-1}$:
+$$W_D\cdots W_1=(M^O)^{-1}V^*Z_A^{-1}(M^I)^{-1}.$$
+This product has rank $r$, so it can be factored through hidden widths $\ge r$.
+
+**(b)** At a global minimum, $V^*=M^OW_D\cdots W_{i+1}\,h^i(\cdot)$ as maps of $x$, so $x\mapsto h^i(x)$ has rank at least $r$. At width $r$ the representations therefore span $\mathbb R^r$. Since $r\ge2$, there are invertible $T$ that are not scaled orthogonal, for example $\mathrm{diag}(2,1,\dots,1)$. (At width 1 every invertible $T$ is a scaled orthogonal matrix.) Apply Exercise 2.2(b) with such a $T$. The function is unchanged, so the new point is still a global minimum, but its layer-$i$ Gram matrix is not proportional to the old one. The two global minima have layer-$i$ representations that are not perfectly aligned. Being a global minimum fixes the function, not the representation.
+"""),
+    markdown(r"""
+**Exercise 3.2.** The balance condition.
+
+Fix $1\le i\le D-1$. Write $K=W_{i+1}W_i$ and, per sample, $G=\nabla_K\ell$.
+
+(a) Show that $\nabla_{W_i}\ell=W_{i+1}^\top G$ and $\nabla_{W_{i+1}}\ell=G\,W_i^\top$.
+
+(b) For a symmetric matrix $T$ and $\lambda\in\mathbb R$, consider the move
+$$W_i\to e^{\lambda T}W_i,\qquad W_{i+1}\to W_{i+1}e^{-\lambda T}.$$
+It keeps $K$ fixed, and with it $f$, $\ell$, $G$ and the gradients of all other layers. Show that $S$ changes only through
+$$S_i(\lambda)=\mathrm{Tr}\big[e^{-2\lambda T}A\big]+\mathrm{Tr}\big[e^{2\lambda T}B\big],\qquad A=\mathbb E\big[W_{i+1}^\top GG^\top W_{i+1}\big],\quad B=\mathbb E\big[W_iG^\top GW_i^\top\big].$$
+
+(c) Show that at any minimizer of $S$ among the global minima of $L$,
+$$W_{i+1}^\top\,\mathbb E[GG^\top]\,W_{i+1}=W_i\,\mathbb E[G^\top G]\,W_i^\top . \tag{$*$}$$
+
+(d) Show that $S_i$ is convex in $\lambda$, and that $S$ is constant along $W_i\to OW_i$, $W_{i+1}\to W_{i+1}O^\top$ for orthogonal $O$. Conclude that the minimizer on a symmetry orbit need not be unique. The derivation uses $(*)$ only as a necessary condition.
+
+<details><summary>Hints</summary>
+
+(a) $\ell$ depends on $W_i,W_{i+1}$ only through $K$, and $dK=dW_{i+1}\,W_i+W_{i+1}\,dW_i$.
+(c) The moves of (b) stay among the global minima, so $\lambda=0$ must be a stationary point of $S_i$. For the last step, choose $T=B-A$.
+(d) For PSD $A$, $\mathrm{Tr}[Te^{-2\lambda T}TA]=\|e^{-\lambda T}TA^{1/2}\|_F^2$.
+</details>
+"""),
+    answer(r"""
+**(a)** $d\ell=\langle G,dK\rangle_F=\langle G,dW_{i+1}W_i\rangle_F+\langle G,W_{i+1}dW_i\rangle_F=\langle GW_i^\top,dW_{i+1}\rangle_F+\langle W_{i+1}^\top G,dW_i\rangle_F$.
+
+**(b)** $K$ is unchanged because $e^{-\lambda T}e^{\lambda T}=I$. Every other layer's gradient is built from forward signals and backward signals that pass through this pair only via $K$, so those gradients are unchanged too. For the pair itself, symmetry of $T$ gives $(W_{i+1}e^{-\lambda T})^\top=e^{-\lambda T}W_{i+1}^\top$, so
+$$\|\nabla_{W_i}\ell\|_F^2=\mathrm{Tr}\big[e^{-\lambda T}W_{i+1}^\top GG^\top W_{i+1}e^{-\lambda T}\big]=\mathrm{Tr}\big[e^{-2\lambda T}\,W_{i+1}^\top GG^\top W_{i+1}\big],$$
+$$\|\nabla_{W_{i+1}}\ell\|_F^2=\mathrm{Tr}\big[GW_i^\top e^{\lambda T}e^{\lambda T}W_iG^\top\big]=\mathrm{Tr}\big[e^{2\lambda T}\,W_iG^\top GW_i^\top\big].$$
+Taking expectations gives $S_i(\lambda)$.
+
+**(c)** The move preserves $f$, so it keeps a global minimum among the global minima. At a minimizer of $S$ on that set, $\lambda=0$ minimizes $S_i$, so
+$$S_i'(0)=-2\,\mathrm{Tr}[TA]+2\,\mathrm{Tr}[TB]=2\,\mathrm{Tr}[T(B-A)]=0\quad\text{for every symmetric }T.$$
+$A$ and $B$ are symmetric, so $T=B-A$ is allowed, and it gives $\|B-A\|_F^2=0$. Hence $A=B$, which is $(*)$. The same holds at any point that is merely stationary for $S$ along these moves.
+
+**(d)** $S_i''(\lambda)=4\,\mathrm{Tr}[Te^{-2\lambda T}TA]+4\,\mathrm{Tr}[Te^{2\lambda T}TB]=4\|e^{-\lambda T}TA^{1/2}\|_F^2+4\|e^{\lambda T}TB^{1/2}\|_F^2\ge0$, so $S_i$ is convex. Under the orthogonal move, $\nabla_{W_i}\ell\to OW_{i+1}^\top G$ and $\nabla_{W_{i+1}}\ell\to GW_i^\top O^\top$, and both Frobenius norms are unchanged. So $S$ is constant along a whole family of points on the orbit, and in directions where $A$ and $B$ vanish $S_i$ is also flat. Convexity along each line therefore does not give a unique minimizer on the orbit. What the argument uses is only that every minimizer satisfies $(*)$. Exercise 3.3 shows that $(*)$ pins down the representation up to rotation and scale anyway.
+"""),
+    markdown(r"""
+**Exercise 3.3.** Solve the balance condition and read off the representation.
+
+(a) At a global minimum, show that $G=g\,h^\top$, where $h=Nx$ is the input to $W_i$ and $g=-\bar M^\top\epsilon$ is the gradient arriving at the output of $W_{i+1}$, with
+$$N=W_{i-1}\cdots W_1M^IZ_A\ (\text{$N=M^IZ_A$ if $i=1$}),\qquad \bar M=M^OW_D\cdots W_{i+2}\ (\text{$\bar M=M^O$ if $i=D-1$}).$$
+Deduce, using the independence of $\epsilon$ and $x$, that $(*)$ becomes
+$$\mathbb E\|h\|^2\;W_{i+1}^\top\bar M^\top\Sigma_\epsilon\bar M\,W_{i+1}=\mathbb E\|g\|^2\;W_iN\Sigma_xN^\top W_i^\top .$$
+
+(b) Define $\widetilde W_i=W_iN\Sigma_x^{1/2}$ and $\widetilde W_{i+1}=\Sigma_\epsilon^{1/2}\bar MW_{i+1}$. Show that the global-minimum condition and the balance condition become
+$$\widetilde W_{i+1}\widetilde W_i=\bar V:=\Sigma_\epsilon^{1/2}V^*\Sigma_x^{1/2},\qquad \widetilde W_{i+1}^\top\widetilde W_{i+1}=c\,\widetilde W_i\widetilde W_i^\top,\qquad c=\frac{\mathbb E\|g\|^2}{\mathbb E\|h\|^2}>0 .$$
+Neither equation mentions $M^I$, $M^O$ or $Z_A$. The scalar $c$ is set by the other layers of the same solution, so it can differ between layers and networks (write $c_{A,i}$ when it matters). Below, it is treated as a given positive number.
+
+(c) Let $\bar V=PSQ^\top$ be a compact SVD, with $S$ an $r\times r$ positive diagonal matrix. Show that for layer width $d\ge r$, every solution has the form
+$$\widetilde W_i=c^{-1/4}\,R\,S^{1/2}Q^\top,\qquad \widetilde W_{i+1}=c^{1/4}\,P\,S^{1/2}R^\top,\qquad R\in\mathbb R^{d\times r},\ R^\top R=I_r .$$
+
+(d) Show that
+$$h^i(x)^\top h^i(x')=c^{-1/2}\,x^\top\Sigma_x^{-1/2}\,QSQ^\top\,\Sigma_x^{-1/2}x' .$$
+Conclude that every pair of hidden layers, within network $A$ and across $A$ and $B$, is perfectly aligned, and that $h_B^j=(c_A/c_B)^{1/4}R_BR_A^\top h_A^i$, where $R_BR_A^\top$ is an isometry from the occupied subspace of $h^i_A$ onto that of $h^j_B$.
+
+(e) The shared representation depends on the labels. Network $A$ is trained on $y$ and network $B$ on $\Phi y$, with $\Phi$ invertible, and everything else is as before. Show that the two are perfectly aligned if $\Phi$ is a scaled orthogonal matrix. Then give a $\Phi$ for which they are not.
+
+<details><summary>Hints</summary>
+
+(a) At a global minimum, $f(x^A)-y=-\epsilon$, and $f=\bar M\,K\,h$. Then $GG^\top=\|h\|^2gg^\top$ and $G^\top G=\|g\|^2hh^\top$.
+(b) $\bar MW_{i+1}W_iN$ is the end-to-end map of Exercise 3.1(a).
+(c) Write $\mathcal A=\widetilde W_i$ and $\mathcal B=\widetilde W_{i+1}$. Compute $\bar V^\top\bar V=\mathcal A^\top\mathcal B^\top\mathcal B\mathcal A$ using the balance equation, and take the PSD square root. Two matrices with the same Gram matrix $\mathcal A^\top\mathcal A=\mathcal C^\top\mathcal C$, where $\mathcal C$ has full row rank, satisfy $\mathcal A=R\,\mathcal C$ with $R^\top R=I$. For $\mathcal B$, show that it vanishes on the orthogonal complement of $\mathrm{range}(R)$.
+(d) $h^i=W_iNx=\widetilde W_i\Sigma_x^{-1/2}x$, and $QSQ^\top=(\bar V^\top\bar V)^{1/2}$.
+(e) Track how $V^*$ and $\Sigma_\epsilon$ change, then use $QSQ^\top=(\bar V^\top\bar V)^{1/2}$.
+</details>
+"""),
+    answer(r"""
+**(a)** With $\ell=\tfrac12\|f-y\|^2$, $\nabla_f\ell=f-y$, which equals $V^*x-(V^*x+\epsilon)=-\epsilon$ at a global minimum (Exercise 3.1(a)). Since $f=\bar M\,(Kh)$, the gradient at the output of $W_{i+1}$ is $g=\bar M^\top(f-y)=-\bar M^\top\epsilon$, and $\nabla_K\ell=g\,h^\top$. Then $GG^\top=gh^\top hg^\top=\|h\|^2gg^\top$ and $G^\top G=hg^\top gh^\top=\|g\|^2hh^\top$. Here $g$ depends only on $\epsilon$ and $h$ only on $x$, so the expectations factor:
+$$\mathbb E[GG^\top]=\mathbb E\|h\|^2\,\bar M^\top\Sigma_\epsilon\bar M,\qquad \mathbb E[G^\top G]=\mathbb E\|g\|^2\,N\Sigma_xN^\top .$$
+Substituting into $(*)$ gives the displayed equation. (With $\ell=\|f-y\|^2$ instead, $g$ would carry a factor $2$ and the left side a factor $4$. The $\tfrac12$ keeps $c$ as written.)
+
+**(b)** The end-to-end map is $\bar MW_{i+1}W_iN=V^*$. Multiply on the left by $\Sigma_\epsilon^{1/2}$ and on the right by $\Sigma_x^{1/2}$ to get $\widetilde W_{i+1}\widetilde W_i=\bar V$. Next, $W_{i+1}^\top\bar M^\top\Sigma_\epsilon\bar MW_{i+1}=\widetilde W_{i+1}^\top\widetilde W_{i+1}$ and $W_iN\Sigma_xN^\top W_i^\top=\widetilde W_i\widetilde W_i^\top$. Dividing the balance equation by $\mathbb E\|h\|^2$ gives the second equation. Both expectations are positive. $\bar MW_{i+1}W_iN=V^*\neq0$ forces $\bar M\neq0$ and $N\neq0$, so $\mathbb E\|g\|^2=\mathrm{Tr}(\bar M^\top\Sigma_\epsilon\bar M)>0$ (as $\Sigma_\epsilon\succ0$) and $\mathbb E\|h\|^2=\mathrm{Tr}(N\Sigma_xN^\top)>0$ (as $\Sigma_x\succ0$).
+
+**(c)** First, the claimed form is a solution. Its product is $c^{1/4}c^{-1/4}PS^{1/2}R^\top RS^{1/2}Q^\top=PSQ^\top$. Also $\mathcal B^\top\mathcal B=c^{1/2}RSR^\top$ and $c\,\mathcal A\mathcal A^\top=c\cdot c^{-1/2}RSR^\top$, which are equal.
+
+Next, every solution has this form. From the two equations,
+$$\bar V^\top\bar V=\mathcal A^\top(\mathcal B^\top\mathcal B)\mathcal A=c\,\mathcal A^\top\mathcal A\mathcal A^\top\mathcal A=c\,(\mathcal A^\top\mathcal A)^2 .$$
+$\mathcal A^\top\mathcal A$ is PSD, and a PSD matrix has a unique PSD square root, so $\mathcal A^\top\mathcal A=c^{-1/2}(\bar V^\top\bar V)^{1/2}=c^{-1/2}QSQ^\top=\mathcal C^\top\mathcal C$ with $\mathcal C=c^{-1/4}S^{1/2}Q^\top$ ($r\times d_x$, full row rank). Set $R=\mathcal A\,\mathcal C^\top(\mathcal C\mathcal C^\top)^{-1}$. Then
+$$R^\top R=(\mathcal C\mathcal C^\top)^{-1}\mathcal C\,(\mathcal A^\top\mathcal A)\,\mathcal C^\top(\mathcal C\mathcal C^\top)^{-1}=(\mathcal C\mathcal C^\top)^{-1}\mathcal C\mathcal C^\top\mathcal C\mathcal C^\top(\mathcal C\mathcal C^\top)^{-1}=I_r .$$
+Also $R\,\mathcal C=\mathcal A\,\Pi$, where $\Pi$ is the orthogonal projector onto the row space of $\mathcal C$. That row space equals the row space of $\mathcal A$, since both equal $\mathrm{range}(\mathcal A^\top\mathcal A)$. Hence $\mathcal A\Pi=\mathcal A$, and $\mathcal A=R\,\mathcal C=c^{-1/4}RS^{1/2}Q^\top$.
+
+For $\mathcal B$: if $v\perp\mathrm{range}(R)$, then $\|\mathcal Bv\|^2=v^\top\mathcal B^\top\mathcal Bv=c\,\|\mathcal A^\top v\|^2=c\,\|\mathcal C^\top R^\top v\|^2=0$, so $\mathcal B=\mathcal BRR^\top$. From $\mathcal B\mathcal A=\bar V$: $\mathcal BR\,c^{-1/4}S^{1/2}Q^\top=PSQ^\top$. Multiplying on the right by $Q$ gives $\mathcal BR=c^{1/4}PS^{1/2}$, so $\mathcal B=c^{1/4}PS^{1/2}R^\top$.
+
+**(d)** $h^i(x)=W_iNx=\widetilde W_i\Sigma_x^{-1/2}x=c^{-1/4}RS^{1/2}Q^\top\Sigma_x^{-1/2}x$. Using $R^\top R=I_r$,
+$$h^i(x)^\top h^i(x')=c^{-1/2}\,x^\top\Sigma_x^{-1/2}QSQ^\top\Sigma_x^{-1/2}x' .$$
+The right side depends on the network only through the positive scalar $c$. It does not involve $M^I$, $M^O$, $Z_A$, the widths, the depth or the layer index. Network $B$ has the same $V^*$, $\Sigma_x$ and $\Sigma_\epsilon$, hence the same $\bar V$, $Q$ and $S$. So any hidden layer $i$ of $A$ and $j$ of $B$ (or two layers of $A$) have proportional Gram matrices, which is perfect alignment, and $\mathrm{CKA}=1$ on any data set whose centered representations are nonzero. Explicitly, $R_A^\top h_A^i=c_A^{-1/4}S^{1/2}Q^\top\Sigma_x^{-1/2}x$, so $h_B^j=c_B^{-1/4}R_BS^{1/2}Q^\top\Sigma_x^{-1/2}x=(c_A/c_B)^{1/4}R_BR_A^\top h_A^i$. On $\mathrm{range}(R_A)$, $R_BR_A^\top$ is an isometry onto $\mathrm{range}(R_B)$. When the widths differ it is not an orthogonal matrix of a common space. (When $d=r$ and the widths agree, $R_BR_A^\top$ is orthogonal.) This is the perfect PRH, at minimizers of $S$ among global minima. Nothing here shows that SGD gets there.
+
+**(e)** With labels $\Phi y=\Phi V^*x+\Phi\epsilon$, network $B$ sees $V^*_B=\Phi V^*$ and $\Sigma_{\epsilon,B}=\Phi\Sigma_\epsilon\Phi^\top$. So
+$$\bar V_B^\top\bar V_B=\Sigma_x^{1/2}V^{*\top}\,\Phi^\top\Phi\,\Sigma_\epsilon\,\Phi^\top\Phi\,V^*\Sigma_x^{1/2},$$
+and by (d) each network's Gram matrix is proportional to $x^\top\Sigma_x^{-1/2}(\bar V^\top\bar V)^{1/2}\Sigma_x^{-1/2}x'$. If $\Phi=aO$ with $O$ orthogonal, then $\Phi^\top\Phi=a^2I$, so $\bar V_B^\top\bar V_B=a^4\,\bar V^\top\bar V$ and the Grams are proportional. Counterexample: $V^*=\Sigma_x=\Sigma_\epsilon=I_2$ and $\Phi=\mathrm{diag}(2,1)$. Then $(\bar V^\top\bar V)^{1/2}=I$ but $(\bar V_B^\top\bar V_B)^{1/2}=\mathrm{diag}(4,1)$, giving Grams $\propto x^\top x'$ and $\propto x^\top\mathrm{diag}(4,1)x'$, which are not proportional. The selected representation depends on the labels through both $V^*$ and $\Sigma_\epsilon$. Invertible label transformations are one of the ways the paper lists for the perfect PRH to break.
+"""),
+    markdown(r"""
+**Exercise 3.4.** What selects nothing, and what selects something else.
+
+(a) Without label noise ($\Sigma_\epsilon=0$), show that $S=0$ at every global minimum.
+
+(b) Under full-batch gradient flow on $L$, $\dot W_j=-\nabla_{W_j}L$. Show that $W_{i+1}^\top W_{i+1}-W_iW_i^\top$ is conserved, so any limit point keeps an imprint of the initialization.
+
+(c) With weight decay, $L_\gamma=L+\tfrac\gamma2\sum_j\|W_j\|_F^2$ with $\gamma>0$. Show that every stationary point of $L_\gamma$ satisfies *norm balance*, $W_iW_i^\top=W_{i+1}^\top W_{i+1}$. Now take $D=2$, $M^I=M^O=I$, $V^*=\Sigma_x=I_2$ and $Z_A=\mathrm{diag}(z_1,z_2)$ with $z_k>0$, and look at global minima of $L$ that satisfy norm balance (the $\gamma\to0^+$ picture). Show that the hidden Gram matrix is $x^\top Z_Ax'$, and compare it with a network $B$ that has $Z_B=I$. For comparison, find what Exercise 3.3 gives when $\Sigma_\epsilon=\sigma^2I$ with $\sigma>0$.
+
+(d) In the model of Exercises 3.1–3.3, which of Huh et al.'s three pressures (multitask scaling, capacity, simplicity bias) does the selection use?
+
+<details><summary>Hints</summary>
+
+(b) Use Exercise 3.2(a) with $\bar G=\mathbb E\,G$ and differentiate both products.
+(c) $L$ is unchanged by the moves of Exercise 3.2(b); differentiate the penalty at $\lambda=0$. For the example, mimic Exercise 3.3(c) with $c=1$ and no whitening: $(W_2W_1)^\top(W_2W_1)=(W_1^\top W_1)^2$.
+</details>
+"""),
+    answer(r"""
+**(a)** At a global minimum the residual is $f(x^A)-y=-\epsilon$. If $\Sigma_\epsilon=0$, then $\epsilon=0$ almost surely, so $\nabla_f\ell=0$ for every sample and every parameter gradient is $0$. Hence $S=0$ on the whole set of global minima, and the tie-breaker selects nothing. The selection needs noise, and full-rank noise was used in Exercise 3.3(b) to get $c>0$ and an invertible $\Sigma_\epsilon^{1/2}$.
+
+**(b)** With $\bar G=\mathbb E\,G$, $\dot W_i=-W_{i+1}^\top\bar G$ and $\dot W_{i+1}=-\bar GW_i^\top$. Then
+$$\tfrac{d}{dt}(W_iW_i^\top)=-W_{i+1}^\top\bar GW_i^\top-W_i\bar G^\top W_{i+1},\qquad \tfrac{d}{dt}(W_{i+1}^\top W_{i+1})=-W_i\bar G^\top W_{i+1}-W_{i+1}^\top\bar GW_i^\top .$$
+These are equal, so the difference is constant in time. If a trajectory converges, its limit keeps the conserved quantities it started with. That allows representations that depend on the initialization, but by itself it proves neither convergence to a global minimum nor non-alignment.
+
+**(c)** Along $W_i\to e^{\lambda T}W_i$, $W_{i+1}\to W_{i+1}e^{-\lambda T}$ with symmetric $T$, $L$ is constant and
+$$\frac{d}{d\lambda}\Big|_0\tfrac\gamma2\big(\|e^{\lambda T}W_i\|_F^2+\|W_{i+1}e^{-\lambda T}\|_F^2\big)=\gamma\,\mathrm{Tr}\big[T\,(W_iW_i^\top-W_{i+1}^\top W_{i+1})\big].$$
+At a stationary point this vanishes for every symmetric $T$, which forces $W_iW_i^\top=W_{i+1}^\top W_{i+1}$.
+
+Example: a global minimum has $W_2W_1Z_A=I$, so $W_2W_1=Z_A^{-1}$. With balance, $(W_2W_1)^\top(W_2W_1)=W_1^\top(W_2^\top W_2)W_1=(W_1^\top W_1)^2$, so $W_1^\top W_1=(Z_A^{-2})^{1/2}=Z_A^{-1}$. The hidden representation is $h=W_1Z_Ax$, with Gram matrix
+$$h^\top h'=x^\top Z_AW_1^\top W_1Z_Ax'=x^\top Z_Ax' .$$
+Network $B$ with $Z_B=I$ has Gram $x^\top x'$. The two are not proportional unless $z_1=z_2$. (This matches the paper's commuting-case formula $h^i=(V^*)^{i/D}Z_A^{(D-i)/D}x$ at $D=2$, $i=1$.) Under Exercise 3.3 with $\Sigma_\epsilon=\sigma^2I$, $\bar V=\sigma I$ and the Gram matrix is $\propto x^\top x'$ for every $Z_A$. Weight decay is MAP estimation under a Gaussian prior on the weights, so in this model the MAP selection and the gradient-noise selection pick different representations. WB2 §4.B asks the related question of whether SGD's stationary distribution matches a Bayesian posterior.
+
+**(d)** No multitask or capacity scaling is used: there is one task, and all global minima compute the same end-to-end map. The selection minimizes $S$ over parameters that compute that map, which is an implicit bias of the optimizer acting on a parameter symmetry. Huh et al.'s simplicity-bias discussion includes implicit biases among solutions that fit the same mapping, so whether to call this a "simplicity bias" in their sense is a matter of interpretation. The algebra specifies the selection functional, $S$, whatever it is called.
+"""),
+
+    # ------------------------------------------------------------------ §4
+    markdown(r"""
+<a id="wb5-section-4"></a>
+
+## 4. The Linear Representation Hypothesis
+
+The hypothesis says that high-level concepts are directions in a model's representation space. One reading makes it precise and argues that its geometry needs a chosen inner product; the other finds features that are irreducibly multi-dimensional.
+
+""" + reading(
+        "The linear representation hypothesis and the geometry of large language models",
+        "https://arxiv.org/abs/2311.03658",
+        "Park, Choe & Veitch (ICML 2024)",
+        "Formalizes the hypothesis with counterfactual pairs, in the unembedding space (linked to linear probing) and in the embedding space (linked to steering). Shows that a non-Euclidean 'causal inner product', under which causally separable concepts are orthogonal, unifies the two; LLaMA-2 experiments find such representations and show that the choice of inner product matters.",
+        "Exercise 4.1 works through the non-identifiability that makes the inner product a choice.",
+        tier="core",
+    ) + "\n\n" + reading(
+        "Not all language model features are one-dimensionally linear",
+        "https://arxiv.org/abs/2405.14860",
+        "Engels, Michaud, Liao, Gurnee & Tegmark (ICLR 2025)",
+        "Uses sparse autoencoders on GPT-2 and Mistral 7B to find features that cannot be split into independent or non-co-occurring lower-dimensional parts, most clearly circles for days of the week and months of the year. Intervention experiments show that models use these circles for modular arithmetic on days and months.",
+        tier="counterpoint",
+    ) + r"""
+
+### 4.A. Setup
+
+A language model's next-token logits are $\lambda(x)^\top\gamma(y)$, where $\lambda(x)\in\mathbb R^d$ is the final hidden state for context $x$ and $\gamma(y)$ is the unembedding vector of token $y$. Concept directions are differences such as $\gamma(y_1)-\gamma(y_0)$ over counterfactual pairs. Park et al. estimate their causal inner product as
+$$\langle a,b\rangle_{\mathrm C}=a^\top\,\mathrm{Cov}(\gamma)^{-1}\,b,$$
+with the covariance taken over the unembedding vectors of the vocabulary (assume it is invertible).
+
+**Exercise 4.1.** Which inner product?
+
+(a) Show that for any invertible $A$, the change $\lambda\to A\lambda$, $\gamma\to A^{-\top}\gamma$ leaves every logit, and hence the model's behaviour, unchanged.
+
+(b) Give two unembedding differences that are orthogonal in the Euclidean inner product before such a change and not after it.
+
+(c) Show that $\langle a,b\rangle_{\mathrm C}$, recomputed in the new coordinates (with $a,b$ transformed as unembedding differences and the covariance recomputed), equals its old value.
+
+(d) Show that in the coordinates $g(y)=\mathrm{Cov}(\gamma)^{-1/2}\big(\gamma(y)-\mathbb E\gamma\big)$, $\langle\cdot,\cdot\rangle_{\mathrm C}$ on differences is the Euclidean inner product.
+
+<details><summary>Hint</summary>
+
+(c) If $\gamma'=A^{-\top}\gamma$, then $\mathrm{Cov}(\gamma')=A^{-\top}\mathrm{Cov}(\gamma)A^{-1}$.
+</details>
+"""),
+    answer(r"""
+**(a)** $(A\lambda)^\top(A^{-\top}\gamma)=\lambda^\top A^\top A^{-\top}\gamma=\lambda^\top\gamma$.
+
+**(b)** In $\mathbb R^2$, take $a=e_1$ and $b=e_2$, and $A^{-\top}=\begin{pmatrix}1&1\\0&1\end{pmatrix}$. Then $a'=(1,0)$ and $b'=(1,1)$, with $a'\cdot b'=1\neq0$. Euclidean orthogonality, and cosine similarity in general, of concept directions is not determined by the model's input–output behaviour.
+
+**(c)** $a'=A^{-\top}a$, $b'=A^{-\top}b$ and $\mathrm{Cov}(\gamma')^{-1}=A\,\mathrm{Cov}(\gamma)^{-1}A^\top$. So
+$$a'^\top\mathrm{Cov}(\gamma')^{-1}b'=a^\top A^{-1}A\,\mathrm{Cov}(\gamma)^{-1}A^\top A^{-\top}b=a^\top\mathrm{Cov}(\gamma)^{-1}b .$$
+
+**(d)** $g(y_1)-g(y_0)=\mathrm{Cov}(\gamma)^{-1/2}\big(\gamma(y_1)-\gamma(y_0)\big)$, so the Euclidean inner product of two such differences is $a^\top\mathrm{Cov}(\gamma)^{-1/2}\mathrm{Cov}(\gamma)^{-1/2}b=\langle a,b\rangle_{\mathrm C}$.
+
+This is §2's "same up to what" again. The model's behaviour fixes the representation only up to $GL(d)$, and a geometric claim needs more structure. Whitening by the vocabulary's covariance gives a geometry that is invariant under $A$, with whitened coordinates determined up to an orthogonal transformation. Whether it is the *right* one is what Park et al. argue from their assumption about causally separable concepts; read the paper for that step.
+"""),
+
+    # ------------------------------------------------------------------ §5
+    markdown(r"""
+<a id="wb5-section-5"></a>
+
+## 5. Superposition, adversarial attacks, error correction
+
+High-dimensional space holds many almost-orthogonal directions, so a network can store more sparse features than it has dimensions, at the price of interference. Interference is one proposed account of adversarial vulnerability; WB6 §5 has a competing one ("Adversarial examples are not bugs, they are features"). Storing a feature redundantly is a candidate route to error correction, for which this workbook has no reading.
+
+""" + reading(
+        "Toy models of superposition",
+        "https://transformer-circuits.pub/2022/toy_model/index.html",
+        "Elhage et al. (Anthropic, 2022; also arXiv 2209.10652)",
+        "In a toy ReLU autoencoder, networks store more sparse features than they have dimensions, which offers an explanation of polysemantic neurons. Whether they do so is a phase change in sparsity and importance, the stored features form regular polytopes, and in these toy models superposition goes together with adversarial vulnerability.",
+        "The section 'Superposition as a Phase Change' has the two-feature phase diagram that Exercise 5.2 derives.",
+        tier="core",
+    ) + r"""
+
+**Exercise 5.1.** Packing almost-orthogonal directions.
+
+Let $u,v$ be independent, uniformly random unit vectors in $\mathbb R^m$.
+
+(a) Show that $\mathbb E\langle u,v\rangle=0$ and $\mathbb E\langle u,v\rangle^2=1/m$.
+
+(b) Take as given the concentration bound $\Pr(|\langle u,v\rangle|>\varepsilon)\le2e^{-m\varepsilon^2/2}$. Show that if $N^2e^{-m\varepsilon^2/2}<1$, then $N$ independent random unit vectors have all pairwise $|\cos|\le\varepsilon$ with positive probability. Conclude that $\mathbb R^m$ contains about $e^{m\varepsilon^2/4}$ such directions.
+
+<details><summary>Hint</summary>
+
+(a) Condition on $v$ and use $\mathbb E[uu^\top]=I/m$ (isotropy, and the trace is 1). (b) Union bound over pairs.
+</details>
+"""),
+    answer(r"""
+**(a)** $u$ and $-u$ have the same distribution, so $\mathbb E\langle u,v\rangle=0$. By isotropy $\mathbb E[uu^\top]=\kappa I$, and taking the trace gives $\mathbb E\|u\|^2=1=\kappa m$. Conditioning on $v$, $\mathbb E\langle u,v\rangle^2=v^\top\mathbb E[uu^\top]v=\|v\|^2/m=1/m$. A typical overlap is of size $1/\sqrt m$.
+
+**(b)** There are $N(N-1)/2$ pairs. By the union bound,
+$$\Pr(\text{some pair has }|\cos|>\varepsilon)\le\frac{N(N-1)}2\cdot2e^{-m\varepsilon^2/2}<N^2e^{-m\varepsilon^2/2}<1,$$
+so with positive probability no pair is bad, and such a configuration exists. The condition holds for any $N<e^{m\varepsilon^2/4}$, which is exponentially many directions in $m$, against only $m$ exactly orthogonal ones. If features are sparse, the small overlaps rarely matter at the same time, which is why storing more than $m$ of them can pay.
+"""),
+    markdown(r"""
+### 5.A. The toy model
+
+There are $n$ features $x\in\mathbb R^n$, independent, each zero with probability $S$ (the sparsity) and otherwise uniform on $[0,1]$. They are compressed into $m<n$ dimensions and read back:
+$$h=Wx\in\mathbb R^m,\qquad x'=\mathrm{ReLU}(W^\top Wx+b),\qquad L=\mathbb E\sum_iI_i\,(x_i-x_i')^2,$$
+with $W\in\mathbb R^{m\times n}$ and per-feature importances $I_i$. Column $W_{:,i}$ is where feature $i$ is stored.
+
+**Exercise 5.2.** The smallest case: $n=2$ features in $m=1$ dimension, importances $(1,r)$ with $0<r\le1$, and density $p=1-S\in(0,1]$.
+
+(a) *Dedicate the dimension to feature 1:* $W=[1,0]$, $b=(0,b_2)$ with $b_2\ge0$. Show that feature 1 is reconstructed exactly, that the best $b_2$ is $\mathbb Ex_2=p/2$, and that the loss is $r\,(p/3-p^2/4)$.
+
+(b) *Antipodal superposition:* $W=[1,-1]$, $b=0$. Show that the loss is $(1+r)\,p^2/6$.
+
+(c) Show that the antipodal solution has lower loss exactly when $p<p^*$, where
+$$p^*=\frac{r/3}{(1+r)/6+r/4}.$$
+Evaluate $p^*$ at $r=1$ and as $r\to0$.
+
+<details><summary>Hints</summary>
+
+$\mathbb Ex_2=p/2$ and $\mathbb Ex_2^2=p/3$. For (b), split into cases by which features are active; if both are, compare $x_1'$ with $\min(x_1,x_2)$. The minimum of two independent uniforms on $[0,1]$ has density $2(1-t)$.
+</details>
+"""),
+    answer(r"""
+**(a)** $W^\top W=\begin{pmatrix}1&0\\0&0\end{pmatrix}$, so $x_1'=\mathrm{ReLU}(x_1)=x_1$ and $x_2'=\mathrm{ReLU}(b_2)=b_2$. The loss is $r\,\mathbb E(x_2-b_2)^2$, minimized at $b_2=\mathbb Ex_2=p/2$ with value $r\,\mathrm{Var}(x_2)=r\,(p/3-p^2/4)$.
+
+**(b)** $W^\top W=\begin{pmatrix}1&-1\\-1&1\end{pmatrix}$, so $x_1'=\mathrm{ReLU}(x_1-x_2)$ and $x_2'=\mathrm{ReLU}(x_2-x_1)$.
+- Neither active: both outputs are $0$, which is correct.
+- Only feature 1 active: $x_1'=x_1$ and $x_2'=\mathrm{ReLU}(-x_1)=0$, both correct. The ReLU erases the negative interference. Only feature 2 active is symmetric.
+- Both active (probability $p^2$): if $x_1>x_2$, then $x_1'=x_1-x_2$ with error $x_2$; otherwise $x_1'=0$ with error $x_1$. Either way the error is $\min(x_1,x_2)$, and the same holds for feature 2.
+
+$\mathbb E\min(x_1,x_2)^2=\int_0^1t^2\cdot2(1-t)\,dt=2(\tfrac13-\tfrac14)=\tfrac16$. So the loss is $p^2\cdot\tfrac16\cdot(1+r)$.
+
+**(c)** Antipodal wins when $(1+r)p^2/6<r(p/3-p^2/4)$. For $p>0$ divide by $p$: $p\big[(1+r)/6+r/4\big]<r/3$, so $p<p^*=4r/(2+5r)$. (At $p=0$ both losses vanish.) At $r=1$, $p^*=(1/3)/(1/3+1/4)=4/7$. As $r\to0$, $p^*\approx(r/3)/(1/6)=2r\to0$. Interference costs only when both features fire (probability $p^2$), while dropping feature 2 costs its variance (order $p$). So sparse features are superposed even when one of them matters little, and dense features force a choice.
+
+This compares only these two specified candidates, with unit weights and the stated biases. Optimizing the weights and biases as well moves the boundary, and for $r$ far from 1 the optimal antipodal solution stores the less important feature more weakly ($|w_2|<|w_1|$). The figure below shows both boundaries.
+"""),
+    markdown(figure(SP, r"Panel 1 is the $n=2$, $m=1$ phase diagram over density and relative importance: the dashed boundary is Exercise 5.2's closed form, the solid one optimizes weights and biases, and dots are trained models. Panel 2 trains $n=5$ or $6$ features in $m=2$ dimensions in your browser; as sparsity increases, the features go from dedicated dimensions to antipodal pairs to a regular polygon.")),
+
+    # ------------------------------------------------------------------ §6
+    markdown(r"""
+<a id="wb5-section-6"></a>
+
+## 6. Hidden signals: low-rank logits and subliminal learning
+
+Readings on structure shared across language models' outputs, and on traits passed between models through data that never mentions them, with derivations of the simplest version of each mechanism.
+
+### 6.A. Low-rank logits
+
+""" + reading(
+        "Sequences of logits reveal the low rank structure of language models",
+        "https://arxiv.org/abs/2510.24966",
+        "Golowich, Liu & Shetty (2025)",
+        "Matrices of log-probabilities of multi-token continuations given prompts are approximately low-rank across many modern language models, and the linear relations among prompts are consistent across models. The authors use this to generate a response to a target prompt from the model's outputs on unrelated or nonsensical prompts.",
+        "The theory part (a simple model with exact low logit rank, and learning guarantees) is optional.",
+        tier="core",
+    ) + r"""
+
+**Exercise 6.1.** A model with hidden size $d$ has next-token log-probabilities
+$$\log p(y\mid h)=\phi(h)^\top\psi(y)-\log\sum_{y'}e^{\phi(h)^\top\psi(y')},$$
+with $\phi(h)\in\mathbb R^d$ the final hidden state for history $h$.
+
+(a) Show that the matrix with rows indexed by histories, columns by next tokens, and entries $\log p(y\mid h)$ has rank at most $d+1$.
+
+(b) For a multi-token future $f=(f_1,\dots,f_k)$, $\log\Pr[f\mid h]=\sum_{t=1}^k\log p(f_t\mid h,f_{<t})$. Explain why (a) does not bound the rank of the matrix with entries $\log\Pr[f\mid h]$ when $k\ge2$.
+"""),
+    answer(r"""
+**(a)** Write $Z(h)=\log\sum_{y'}e^{\phi(h)^\top\psi(y')}$. Then $\log p(y\mid h)=\big(\phi(h),-Z(h)\big)\cdot\big(\psi(y),1\big)$, an inner product of a $(d+1)$-vector depending only on $h$ with one depending only on $y$. The matrix is a product of a (histories $\times(d+1)$) matrix and a ($(d+1)\times$ tokens) matrix, so its rank is at most $d+1$. This is the "softmax bottleneck".
+
+**(b)** The $t$-th term is $\phi(h\circ f_{<t})^\top\psi(f_t)-Z(h\circ f_{<t})$. The hidden state is computed from the history *and* the earlier part of the future together, so the term is not of the form $a(h)^\top b(f)$ with vectors of a fixed dimension. Nothing in the architecture forces the extended matrix to be low-rank. That it is approximately low-rank in trained models is an empirical finding, and so is the agreement of its row relations across models.
+"""),
+    markdown(r"""
+### 6.B. Subliminal learning
+
+""" + reading(
+        "Subliminal learning: language models transmit behavioral traits via hidden signals in data",
+        "https://arxiv.org/abs/2507.14805",
+        "Cloud, Le, Chua, Betley, Sztyber-Betley, Hilton, Marks & Evans (2025)",
+        "A student fine-tuned on number sequences, code or chain-of-thought generated by a teacher with a trait (a preferred animal, or misalignment) acquires the trait even when references to it are filtered out. The effect is reported only when teacher and student share a base model or initialization.",
+        "Exercise 6.2 derives the paper's argument that a shared initialization suffices for one small step, which an MNIST experiment also illustrates. Short summary: [Subliminal learning (Anthropic Alignment Science blog)](https://alignment.anthropic.com/2025/subliminal-learning/).",
+        tier="core",
+    ) + "\n\n" + reading(
+        "Subliminal learning is a LoRA artifact",
+        "https://arxiv.org/abs/2606.00831",
+        "Nief, Fu, Muchane & Holtzman (2026)",
+        "Reports that subliminal learning in the number-sequence setting depends non-monotonically on LoRA rank, disappears under full fine-tuning, and is tied to tokens seen in both training and evaluation, such as the system prompt and chat template. Its arXiv listing states that follow-up work showed some of its main claims to be incorrect and that a substantial revision is in preparation, so it does not settle the question either way.",
+        "Cloud et al.'s MNIST experiment uses no LoRA.",
+        tier="contested",
+    ) + r"""
+
+**Exercise 6.2.** Why a shared initialization suffices for one small step.
+
+Let $f_\theta(x)\in\mathbb R^k$ be a model's outputs, and $\ell(u,t)$ a smooth loss of outputs $u$ against targets $t$ that, for each $t$, is minimized over $u$ at $u=t$, so $\nabla_u\ell(t,t)=0$. Examples are half squared error, and the cross-entropy $\mathrm{CE}(\mathrm{softmax}(t),\mathrm{softmax}(u))$ of logits $u$ against the teacher's soft targets. Write $H(t)=\nabla^2_{uu}\ell(u,t)\big|_{u=t}\succeq0$. The teacher is $\theta_T=\theta_0+\varepsilon\Delta$ with small $\varepsilon>0$. The student starts at $\theta_0$ and takes one gradient step of size $\eta>0$ on $L_S(\theta)=\mathbb E_x\,\ell\big(f_\theta(x),f_{\theta_T}(x)\big)$, for an input distribution with finite expectations permitting the Taylor expansions below to pass under the expectation. Assume $f$ is smooth in its parameters; a finite input distribution suffices for this interchange.
+
+(a) Show that $\Delta\theta_S=\eta\,\varepsilon\,\mathbb E_x\big[J^\top HJ\big]\Delta+O(\varepsilon^2)$, with $J=\partial f_\theta(x)/\partial\theta$ at $\theta_0$ and $H=H(f_{\theta_0}(x))$.
+
+(b) Deduce that $\Delta\theta_S\cdot\Delta\ge0$ to leading order in $\varepsilon$.
+
+(c) Suppose the teacher was made by a small gradient step on its own loss $L_T$, so $\Delta=-\nabla L_T(\theta_0)$. Show that the student's step does not increase $L_T$ to first order.
+
+(d) Where did the argument use the shared initialization? What changes if the student starts at a different $\theta_0'$, or has a different architecture?
+
+<details><summary>Hint</summary>
+
+(a) The student's gradient is $J^\top\nabla_u\ell(u_0,t)$ with $u_0=f_{\theta_0}(x)$ and $t=u_0+\varepsilon J\Delta+O(\varepsilon^2)$. Since $\nabla_u\ell(t,t)=0$ for all $t$, expand $\nabla_u\ell(u_0,t)$ in $u_0-t$ around the point $(t,t)$.
+</details>
+"""),
+    answer(r"""
+**(a)** With $u_0=f_{\theta_0}(x)$ and $t=f_{\theta_T}(x)=u_0+\varepsilon J\Delta+O(\varepsilon^2)$, the chain rule gives $\nabla_\theta\ell=J^\top\nabla_u\ell(u_0,t)$. Since $\nabla_u\ell(t,t)=0$,
+$$\nabla_u\ell(u_0,t)=\nabla_u\ell(u_0,t)-\nabla_u\ell(t,t)=H(t)\,(u_0-t)+O(\|u_0-t\|^2)=-\varepsilon\,H\,J\Delta+O(\varepsilon^2),$$
+using $H(t)=H(u_0)+O(\varepsilon)$. So $\nabla L_S(\theta_0)=-\varepsilon\,\mathbb E[J^\top HJ]\Delta+O(\varepsilon^2)$ and $\Delta\theta_S=-\eta\nabla L_S=\eta\varepsilon\,\mathbb E[J^\top HJ]\Delta+O(\varepsilon^2)$.
+
+**(b)** $\Delta\theta_S\cdot\Delta=\eta\varepsilon\,\mathbb E\big[(J\Delta)^\top H(J\Delta)\big]+O(\varepsilon^2)$. $H$ is PSD because $u=t$ minimizes $\ell(\cdot,t)$, so the leading term is $\ge0$. Nothing was assumed about the inputs $x$: they can be random numbers, code, or noise images.
+
+**(c)** $L_T(\theta_0+\Delta\theta_S)-L_T(\theta_0)\approx\nabla L_T(\theta_0)\cdot\Delta\theta_S=-\Delta\cdot\Delta\theta_S\le0$ to leading order. The student moves toward lower teacher loss, whatever the inputs. Whether that shows up as the teacher's *trait* is what the paper's experiments test.
+
+**(d)** In two places. First, the student's residual $u_0-t$ is small ($O(\varepsilon)$) only because the student starts with the teacher's base outputs, $f_{\theta_0}=f_{\theta_T}-O(\varepsilon)$. Second, the same $J$ appears on both sides of $J^\top HJ$, which makes the quadratic form PSD. If the student starts at $\theta_0'$, its residual $f_{\theta_0'}(x)-f_{\theta_T}(x)$ is $O(1)$, and the leading part of its step fits the teacher's base behaviour, which has nothing to do with $\Delta$. With $J_S=\partial f_\theta/\partial\theta$ at $\theta_0'$ and $J_T$ the same at $\theta_0$, for half squared error the step is $-\eta\,\mathbb E[J_S^\top(f_{\theta_0'}-f_{\theta_0})]+\eta\varepsilon\,\mathbb E[J_S^\top J_T]\Delta+O(\varepsilon^2)$, and unlike $J^\top J$ the cross term $J_S^\top J_T$ has no PSD guarantee. With a different architecture there is not even a shared parameter space in which to compare the two updates. So the argument gives a sign guarantee (a nonnegative leading coefficient, which could be zero) only with a shared initialization. That is consistent with what Cloud et al. report, though it does not by itself guarantee that a trait transfers.
+"""),
+    markdown(r"""
+### 6.C. A log-linear account
+
+""" + reading(
+        "Subliminal effects in your data: a general mechanism via log-linearity",
+        "https://arxiv.org/abs/2602.04863",
+        "Aden-Ali, Golowich, Liu, Shetty, Moitra & Haghtalab (2026)",
+        "Assuming log-probabilities are approximately bilinear in a system-prompt embedding and a prompt–response embedding shared across models, the paper's Logit-Linear Selection picks subsets of an ordinary preference dataset that make a DPO-trained student behave as if given a target system prompt (preferring an animal, answering in a language absent from the data, adopting a persona). It reports the effect within a model and, more weakly, across architectures, in contrast with Cloud et al.",
+        "Exercise 6.3 is a one-step version of its mechanism, not its theorem.",
+        tier="core",
+    ) + r"""
+
+**Exercise 6.3.** Logit-linear selection in a bilinear model.
+
+Assume $\log\Pr_M[r\mid s,p]=\psi_M(s)^\top\phi(p,r)-\log Z_M(s,p)$, where $s$ is a system prompt, $p$ a prompt, $r$ a response, and $Z_M$ normalizes over responses. Let $\varnothing$ be the empty system prompt and $u=\psi_T(s)-\psi_T(\varnothing)$ the teacher's trait direction for a target system prompt $s$. A preference dataset has triples $(p_i,r_i^+,r_i^-)$; write $\delta_i=\phi(p_i,r_i^+)-\phi(p_i,r_i^-)$. The selection score, ignoring length normalization, is
+$$w_i=\big[\log\Pr_T(r_i^+\mid s,p_i)-\log\Pr_T(r_i^-\mid s,p_i)\big]-\big[\log\Pr_T(r_i^+\mid\varnothing,p_i)-\log\Pr_T(r_i^-\mid\varnothing,p_i)\big].$$
+
+(a) Show that $w_i=u^\top\delta_i$.
+
+(b) The student is in the same bilinear family with the same $\phi$; its parameter is $\psi=\psi_S(\varnothing)$, starting at the reference $\psi_{\rm ref}$. DPO on a selected set $I$ minimizes $\mathcal L(\psi)=-\sum_{i\in I}\log\sigma\big(\beta(\psi-\psi_{\rm ref})^\top\delta_i\big)$. Show that the first gradient step of size $\eta$ is $\Delta\psi=\tfrac{\eta\beta}2\sum_{i\in I}\delta_i$, and that $\Delta\psi^\top u=\tfrac{\eta\beta}2\sum_{i\in I}w_i$, which is positive when $I$ is a set of top-scoring examples with positive scores.
+
+(c) Now suppose the student's embedding is $\phi_S=B\phi$ for an invertible $B$. Recompute the step and the student's change in preference log-ratio on a test pair with teacher-embedding difference $\delta$. Is the change positive on the pair $\delta=\sum_{i\in I}\delta_i$? On a general test pair?
+
+<details><summary>Hint</summary>
+
+(a) The normalizer depends on $(s,p)$ but not on $r$. (b) In DPO the policy-to-reference log-ratio difference is $(\psi-\psi_{\rm ref})^\top\delta_i$ here, and $\frac{d}{dz}\big[-\log\sigma(z)\big]=-(1-\sigma(z))$, which is $-\tfrac12$ at $z=0$.
+</details>
+"""),
+    answer(r"""
+**(a)** $\log\Pr_T(r^+\mid s,p)-\log\Pr_T(r^-\mid s,p)=\psi_T(s)^\top\delta$, because $\log Z_T(s,p)$ cancels. The same with $\varnothing$ gives $\psi_T(\varnothing)^\top\delta$. Subtracting, $w_i=(\psi_T(s)-\psi_T(\varnothing))^\top\delta_i=u^\top\delta_i$. Each example's score is its projection onto the trait direction, so an example can look innocent while having a small positive projection.
+
+**(b)** $\log\frac{\pi_\psi(r^+)}{\pi_{\rm ref}(r^+)}-\log\frac{\pi_\psi(r^-)}{\pi_{\rm ref}(r^-)}=(\psi-\psi_{\rm ref})^\top\delta_i$ (normalizers cancel again). So $\nabla\mathcal L(\psi_{\rm ref})=-\sum_{i\in I}\beta\,(1-\sigma(0))\,\delta_i=-\tfrac\beta2\sum_{i\in I}\delta_i$, and $\Delta\psi=-\eta\nabla\mathcal L=\tfrac{\eta\beta}2\sum_{i\in I}\delta_i$. Then $\Delta\psi^\top u=\tfrac{\eta\beta}2\sum_{i\in I}u^\top\delta_i=\tfrac{\eta\beta}2\sum_{i\in I}w_i>0$. The student's empty-prompt embedding moves toward the teacher's trait direction, although no single example states the trait. The selected set adds up many small projections.
+
+**(c)** The student's differences are $B\delta_i$, so $\Delta\psi=\tfrac{\eta\beta}2B\sum_{i\in I}\delta_i$, and its change in log-ratio on a test pair is $\Delta\psi^\top B\delta=\tfrac{\eta\beta}2\big(\sum_{i\in I}\delta_i\big)^\top B^\top B\,\delta$. For $B^\top B\propto I$ this is the shared-$\phi$ answer. For a general invertible $B$, $B^\top B$ is positive definite, so the change on the pair $\delta=\sum_{i\in I}\delta_i$ is still positive, but the effect on other pairs is distorted. If the student's embedding is not a linear function of the teacher's, the selection carries no guaranteed signal. On this toy account, transfer across architectures needs an approximately shared $\phi$, which is what Golowich et al.'s cross-model consistency of row relations bears on.
+"""),
+
+    # ------------------------------------------------------------------ §7
+    markdown(r"""
+<a id="wb5-section-7"></a>
+
+## 7. Scaling laws: a hundred unnecessary explanations
+
+Very different mechanisms produce the same power-law learning curve. The exercises derive one from a power-law data spectrum, with ridge regression, where extra target smoothness eventually stops helping, and one from discrete skills learned in order of frequency.
+
+""" + reading(
+        "The quantization model of neural scaling",
+        "https://arxiv.org/abs/2303.13506",
+        "Michaud, Liu, Girit & Tegmark (NeurIPS 2023)",
+        "Proposes that networks learn discrete chunks of skill ('quanta') in order of how often they are used; with Zipfian use frequencies this gives power-law scaling in parameters and data. It uses language-model gradients to decompose model behaviour automatically into candidate quanta.",
+        tier="optional",
+    ) + "\n\n" + reading(
+        "On the asymptotic learning curves of kernel ridge regression under power-law decay",
+        "https://arxiv.org/abs/2309.13337",
+        "Li, Zhang & Lin (2023)",
+        "Rigorous learning curves for kernel ridge regression with power-law eigenvalues, showing how the regularization, the target's smoothness and the noise set the rate.",
+        "The rigorous counterpart of Exercise 7.2's heuristic, including saturation.",
+        tier="rabbit hole",
+    ) + r"""
+
+### 7.A. Setup
+
+**Spectral model.** Features $x\in\mathbb R^\infty$ are Gaussian with covariance $\mathrm{diag}(\lambda_k)$, $\lambda_k=k^{-\alpha}$, $\alpha>1$. The target is $y=\sum_k\beta_kx_k+\varepsilon$ with noise variance $\sigma^2$. The excess population loss of an estimate $\hat\beta$ is $\sum_k\lambda_k(\hat\beta_k-\beta_k)^2$. The target's signal power in mode $k$ is
+$$c_k^2=\lambda_k\beta_k^2=k^{-\alpha'},\qquad\alpha'>1 .$$
+A generic target with $\beta_k$ of order 1 has $\alpha'=\alpha$; smoother targets, concentrated on the top modes, have $\alpha'>\alpha$. The language of spectral filters is WB2 §1.D's.
+
+**Quanta model.** A task consists of discrete skills $k=1,2,\dots$, used with frequencies $p_k\propto k^{-(1+a)}$, $a>0$. A model that has learned the $N$ most frequent skills has loss proportional to the frequency mass of the rest.
+
+**Exercise 7.1.** Two routes to one curve.
+
+(a) Show that $\sum_{k>K}k^{-s}\sim K^{1-s}/(s-1)$ for $s>1$.
+
+(b) *Heuristic for ridge.* Suppose the estimator learns modes $1,\dots,K$ with $K\le n$ and nothing beyond. Each learned mode costs about $\sigma^2/n$: its coefficient has error variance about $\sigma^2/(n\lambda_k)$, weighted by $\lambda_k$ in the loss. Each unlearned mode costs its signal $c_k^2$. So
+$$E(K)\approx\sum_{k>K}c_k^2+\frac{\sigma^2K}n .$$
+Show that $E\sim n^{-(\alpha'-1)}$ without noise, and that $E\sim n^{-(\alpha'-1)/\alpha'}$ with noise and the best $K$.
+
+(c) Show that the quanta model's loss after learning $N$ skills scales as $N^{-a}$. If $N$ grows as a power of parameters or data, what form does the loss curve take?
+"""),
+    answer(r"""
+**(a)** $k^{-s}$ is decreasing, so $\int_{K+1}^\infty t^{-s}dt\le\sum_{k>K}k^{-s}\le\int_K^\infty t^{-s}dt$. Both integrals are $\sim K^{1-s}/(s-1)$.
+
+**(b)** With $s=\alpha'$, the tail is $\sim K^{-(\alpha'-1)}/(\alpha'-1)$. Without noise the variance term vanishes, so take $K$ as large as allowed, $K=n$: $E\sim n^{-(\alpha'-1)}$. With noise, set $dE/dK=0$: $-K^{-\alpha'}+\sigma^2/n=0$, so $K^*=(n/\sigma^2)^{1/\alpha'}$, which is below $n$ for large $n$. Both terms are then of order $K^*\cdot\sigma^2/n=(K^*)^{1-\alpha'}$, so
+$$E\sim(K^*)^{-(\alpha'-1)}\sim(n/\sigma^2)^{-(\alpha'-1)/\alpha'} .$$
+
+**(c)** By (a) with $s=1+a$, $\sum_{k>N}p_k\propto N^{-a}/a$. If $N\propto P^\mu$ for some resource $P$ (parameters or data), the loss is $\propto P^{-a\mu}$, again a power law. Nothing spectral was used. Two unrelated mechanisms give the same functional form, so an observed power law cannot by itself tell them apart. Distinguishing them needs finer measurements, such as per-example loss curves: one expects them to be step-like under quanta and smooth under the spectral picture.
+"""),
+    markdown(r"""
+**Exercise 7.2.** Where the heuristic fails: saturation.
+
+Ridge shrinks mode $k$ by the filter $\lambda_k/(\lambda_k+\kappa)$, so it also biases the modes it "learns". In the large-$n$ description of ridge, the effective regularization $\kappa$ sits around the eigenvalue of the last resolved mode. Without noise, take $\kappa\approx\lambda_n=n^{-\alpha}$. The bias from shrinking the head is
+$$B_{\rm head}=\sum_{k<n}c_k^2\Big(\frac{\kappa}{\lambda_k+\kappa}\Big)^2 .$$
+
+(a) Show that $B_{\rm head}\approx n^{-2\alpha}\sum_{k<n}k^{2\alpha-\alpha'}$ up to constants, and that modes with $k$ comparable to $n$ contribute at most the order of the tail, $n^{1-\alpha'}$.
+
+(b) Evaluate the sum when $\alpha'-1<2\alpha$, when $\alpha'-1>2\alpha$, and at the boundary $\alpha'-1=2\alpha$. Conclude that the noiseless rate is $n^{-\min(\alpha'-1,\,2\alpha)}$ away from the boundary, and find the rate at the boundary.
+
+(c) With noise and optimally tuned ridge, repeat Exercise 7.1(b) with $s=\min(\alpha'-1,2\alpha)$ in place of $\alpha'-1$, taking the cutoff $K$ as the free variable. Show that $E\sim n^{-s/(s+1)}$ away from the boundary, and that this reduces to Exercise 7.1(b) when $s=\alpha'-1$.
+
+<details><summary>Hint</summary>
+
+(a) For $k\le n/2$, $\lambda_k\ge2^\alpha\kappa$, so $\kappa/(\lambda_k+\kappa)$ is within a constant of $\kappa/\lambda_k=n^{-\alpha}k^\alpha$. For $n/2<k<n$ the filter factor is at most 1. (b) $\sum_{k<n}k^q$ grows like $n^{q+1}$ for $q>-1$, like $\log n$ for $q=-1$, and converges for $q<-1$.
+</details>
+"""),
+    answer(r"""
+**(a)** For $k\le n/2$, $\big(\kappa/(\lambda_k+\kappa)\big)^2\asymp(\kappa/\lambda_k)^2=n^{-2\alpha}k^{2\alpha}$, so $c_k^2(\cdot)^2\asymp n^{-2\alpha}k^{2\alpha-\alpha'}$. For $n/2<k<n$, the factor is at most 1, and those modes contribute at most $\sum_{n/2<k<n}c_k^2\lesssim n\cdot n^{-\alpha'}=n^{1-\alpha'}$, the order of the tail $\sum_{k\ge n}c_k^2$.
+
+**(b)** Let $q=2\alpha-\alpha'$.
+- $\alpha'-1<2\alpha$ ($q>-1$): the sum is $\sim n^{q+1}/(q+1)$, so $B_{\rm head}\sim n^{-2\alpha+2\alpha-\alpha'+1}=n^{-(\alpha'-1)}$, the same order as the tail. The rate is $n^{-(\alpha'-1)}$, and the heuristic's exponent is right.
+- $\alpha'-1>2\alpha$ ($q<-1$): the sum converges, so $B_{\rm head}\sim n^{-2\alpha}$, which is larger than the tail $n^{-(\alpha'-1)}$. Ridge **saturates** at rate $n^{-2\alpha}$, however smooth the target. The heuristic's $n^{-(\alpha'-1)}$ is wrong here.
+- $\alpha'-1=2\alpha$ ($q=-1$): the sum is harmonic, $\sim\log n$, so $B_{\rm head}\sim n^{-2\alpha}\log n$, a log factor above the tail $n^{-2\alpha}$.
+
+So the noiseless rate is $n^{-\min(\alpha'-1,2\alpha)}$ away from the boundary, and $n^{-2\alpha}\log n$ on it.
+
+**(c)** With effective cutoff $K$ (so $\kappa\approx\lambda_K$), the same argument with $n$ replaced by $K$ gives bias $\sim K^{-s}$ and variance $\sim\sigma^2K/n$. Minimizing $K^{-s}+\sigma^2K/n$ gives $K^*\sim(n/\sigma^2)^{1/(s+1)}$ and $E\sim n^{-s/(s+1)}$. For $s=\alpha'-1$ this is $n^{-(\alpha'-1)/\alpha'}$, as in Exercise 7.1(b). At the boundary the bias is $K^{-s}\log K$, and the same minimization gives an extra factor $(\log n)^{1/(s+1)}$.
+
+These are heuristic scalings, valid up to constants and, near the boundary, logarithmic factors. Ridge risk in this model is described at large $n$ by deterministic-equivalent formulas, which are asymptotic approximations rather than the exact finite-$n$ risk. The rigorous rates, including saturation, are in Li, Zhang and Lin. None of this depends on the model learning a good representation: random features or plain ridge suffice. It accounts for the form of a learning curve, not for what is learned.
+"""),
+    markdown(figure(SF, r"Use panel B. It plots the deterministic-equivalent ridge risk (an asymptotic approximation) and Exercise 7.1's heuristic against $n$, with the fitted slope, plus Monte Carlo ridge points at the default $\alpha,\alpha'$ (noise off, or $\sigma^2=10^{-2}$). Turn noise on and off, and push $\alpha'$ past $2\alpha+1$ to see saturation, where the heuristic's slope is wrong.")),
+
+    # ------------------------------------------------------------------ closing
+    markdown(r"""
+## Related workbooks and further study
+
+- Ziyin, Xu and Chuang, [Neural thermodynamics: entropic forces in deep and universal representation learning](https://arxiv.org/abs/2505.12387) (NeurIPS 2025). The full paper behind §3. It also uses the same entropic forces to account for both sharpness-seeking and flatness-seeking behaviour of SGD.
+- The Training Dynamics materials develop the dynamics behind §3's selection.
+- WB6 §3 (model stitching) and WB6 §5 (adversarial examples) are experimental counterparts to §2 and §5.
+- WB3 §5 fits the scaling laws whose exponents §7 discusses.
+"""),
+]
+
+
+if __name__ == "__main__":
+    raise SystemExit(run(CELLS, "wb5", "05_universality"))

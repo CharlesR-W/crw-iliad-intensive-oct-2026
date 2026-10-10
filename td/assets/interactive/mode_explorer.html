@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mode Explorer</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb; --panel: #ffffff; --ink: #111110; --ink-2: #52514e; --ink-3: #8a8984;
+  --rule: #e4e3df; --grid: #efeeea; --ghost: #a9a8a2;
+  --m1: #2a78d6; --m2: #eb6834; --m3: #1baf7a; --m4: #eda100; --m5: #e87ba4;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+    --rule: #34332f; --grid: #2a2a28; --ghost: #6b6a64;
+    --m1: #3987e5; --m2: #d95926; --m3: #199e70; --m4: #c98500; --m5: #d55181;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+  --rule: #34332f; --grid: #2a2a28; --ghost: #6b6a64;
+  --m1: #3987e5; --m2: #d95926; --m3: #199e70; --m4: #c98500; --m5: #d55181;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 940px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 1.45rem; font-weight: 650; margin: 0 0 4px; letter-spacing: -0.01em; }
+.sub { color: var(--ink-2); margin: 0 0 18px; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 14px 10px; margin: 0 0 18px; }
+.panel h2 { font-size: 1.02rem; font-weight: 620; margin: 0 0 2px; }
+.panel .src { color: var(--ink-3); font-size: 0.82rem; margin: 0 0 10px; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 6px 22px; margin: 0 0 10px; font-size: 0.88rem; }
+.ctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ctl label { white-space: nowrap; color: var(--ink-2); min-width: 7.5em; }
+.ctl input[type=range] { flex: 1; min-width: 80px; accent-color: var(--ink-2); }
+.ctl output { font-variant-numeric: tabular-nums; min-width: 4.6em; text-align: right; color: var(--ink); }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.86rem; color: var(--ink-2); margin: 2px 0 6px; }
+.toggles label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+button { font: inherit; font-size: 0.82rem; padding: 3px 9px; border-radius: 6px; border: 1px solid var(--rule); background: var(--bg); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--ink-3); }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; align-items: center; font-size: 0.84rem; color: var(--ink-2); }
+.plot { position: relative; width: 100%; }
+.plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.plot svg text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 4px 8px; font-size: 0.78rem; line-height: 1.35; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.08); white-space: nowrap; display: none; font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 0.82rem; color: var(--ink-2); margin: 2px 0 4px; }
+.swatch { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 4px; }
+.swatch.dash { border-top-style: dashed; }
+table { border-collapse: collapse; font-size: 0.84rem; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 3px 8px; border-bottom: 1px solid var(--rule); }
+th { color: var(--ink-2); font-weight: 560; }
+td:first-child, th:first-child { text-align: left; }
+.tablewrap { overflow-x: auto; }
+figcaption { font-family: Georgia, "Iowan Old Style", serif; font-size: 0.97rem; line-height: 1.55; color: var(--ink-2); border-top: 1px solid var(--rule); padding-top: 12px; }
+figcaption b { color: var(--ink); }
+figure { margin: 0; }
+details { font-size: 0.84rem; color: var(--ink-2); margin-top: 10px; }
+.dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; vertical-align: 0; }
+</style>
+</head>
+<body>
+<main>
+<h1>Mode explorer: Saxe dynamics with imbalance and depth</h1>
+<p class="sub">Each singular mode of the target Σ<sub>yx</sub> = Σ<sub>α</sub> s<sub>α</sub> u<sub>α</sub>v<sub>α</sub><sup>⊤</sup> evolves on its own under gradient flow from decoupled initial conditions. Small, balanced initialization gives sigmoids ordered by s, with plateaus. Large imbalance between layers (d ≫ s and a₀) removes the plateaus and makes every mode relax exponentially at a nearly common rate (close to d for two layers, larger for deeper ones); intermediate d gives a mix. For small a₀, extra depth lengthens the plateaus.</p>
+
+<figure>
+<section class="panel">
+  <div class="presets">Presets:
+    <button data-p="rich">rich (small balanced init)</button>
+    <button data-p="lazy">lazy (large imbalance)</button>
+    <button data-p="mixed">mixed (d between the s's)</button>
+    <button data-p="deep">deep (N = 4)</button>
+    <button data-p="bigbal">large balanced init (not lazy)</button>
+  </div>
+  <div class="controls">
+    <div class="ctl"><label for="s1">top value s₁</label><input id="s1" type="range" min="0.25" max="5" step="0.05" value="3"><output id="s1o"></output></div>
+    <div class="ctl"><label for="ratio">ratio s<sub>k+1</sub>/s<sub>k</sub></label><input id="ratio" type="range" min="0.1" max="0.95" step="0.01" value="0.5"><output id="ratioo"></output></div>
+    <div class="ctl"><label for="nm">number of modes</label><input id="nm" type="range" min="1" max="5" step="1" value="4"><output id="nmo"></output></div>
+    <div class="ctl"><label for="a0">initial a₀ (log₁₀)</label><input id="a0" type="range" min="-8" max="1" step="0.1" value="-3"><output id="a0o"></output></div>
+    <div class="ctl"><label for="dd">imbalance d</label><input id="dd" type="range" min="0" max="1" step="0.005" value="0"><output id="ddo"></output></div>
+    <div class="ctl"><label for="NN">depth N</label><input id="NN" type="range" min="1" max="6" step="1" value="2"><output id="NNo"></output></div>
+  </div>
+  <div class="toggles">
+    <label><input type="checkbox" id="norm"> plot a/s (normalized)</label>
+    <label><input type="checkbox" id="logt"> log time axis</label>
+    <label><input type="checkbox" id="shallow"> show shallow model (N = 1) dashed</label>
+  </div>
+
+  <h2>A. Mode strengths a<sub>α</sub>(t)</h2>
+  <p class="src">Time in units of τ = 1/η, so t/τ = η × (number of steps). Dotted lines: targets s<sub>α</sub>. Dots: half-times (a = s/2).</p>
+  <div class="legend" id="legend"></div>
+  <div class="plot" id="plotA"><div class="tip" id="tipA"></div></div>
+
+  <h2 style="margin-top:12px">B. Effective kernel k<sub>α</sub>(t), the rate in τȧ = k(s − a)</h2>
+  <p class="src">k<sub>α</sub> = Σ<sub>j</sub> Π<sub>i≠j</sub> w<sub>i</sub>² is the end-to-end NTK restricted to mode α. Flat means lazy (frozen kernel); growing by orders of magnitude means rich.</p>
+  <div class="plot" id="plotB"><div class="tip" id="tipB"></div></div>
+
+  <div class="tablewrap"><table id="tab"></table></div>
+</section>
+
+<figcaption><p style="margin:0">
+<b>The model.</b> (Depth and the kernel panel are explained in the notebook's §2 and §4.) For depth N, mode α is carried by one scalar per layer, w<sub>1</sub>,…,w<sub>N</sub>, with a = w<sub>1</sub>⋯w<sub>N</sub> and τẇ<sub>j</sub> = (Π<sub>i≠j</sub> w<sub>i</sub>)(s − a). The differences w<sub>j+1</sub>² − w<sub>j</sub>² are conserved; the slider sets them all equal to d (for N = 2 this is the notebook's d = c² − b²), so at N ≥ 3 a large d makes every layer but the first large. Only |d| matters for a(t), so d ≥ 0 here. N = 1 is the shallow model τȧ = s − a.</p>
+<p style="margin:8px 0 0"><b>Two layers.</b> The curves obey τȧ = √(4a² + d²)(s − a). The same equation holds, with d replaced by the mode invariant Δ (imbalance including misalignment, notebook §4.3), for a mode whose hidden-layer weights do not overlap other modes'; for wide random initializations it holds approximately, with Δ ≈ 2σ²h for Gaussian weights of variance σ² at width h.</p>
+<p style="margin:8px 0 0"><b>Closed forms.</b> With d = 0, a(t) = s e<sup>2st/τ</sup>/(e<sup>2st/τ</sup> − 1 + s/a<sub>0</sub>), with half-time (τ/2s) ln(s/a<sub>0</sub> − 1). For balanced N ≥ 3, τȧ = N a<sup>2−2/N</sup>(s − a), and the plateau grows like a<sub>0</sub><sup>−(1−2/N)</sup> instead of ln(1/a<sub>0</sub>).</p>
+<details><summary>How the curves are computed</summary>
+Adaptive fourth-order Runge–Kutta on the per-layer scalars, step ≈ 0.02 divided by the current rate. The table compares the numerical half-time with the N = 2 closed form when it applies. The check script <code>checks/mode_explorer_check.py</code> runs this page's math block in node and compares it with scipy and with the closed forms.
+</details>
+</figcaption>
+</figure>
+</main>
+
+<script id="mathlib">
+// Pure math, no DOM. Exported for checks/mode_explorer_check.py (via node).
+function dDisplay(x) { return x <= 0 ? 0 : Math.pow(10, -2 + 4.0 * x) - 0.01; } // slider [0,1] -> d in [0, ~100]
+function initLayers(N, a0, d) {
+  // positive w_1..w_N with w_{j+1}^2 - w_j^2 = d and prod w = a0
+  if (N === 1) return [a0];
+  const logProd = w1 => { let s = 0; for (let j = 0; j < N; j++) s += 0.5 * Math.log(w1 * w1 + j * d); return s; };
+  const target = Math.log(a0);
+  let lo = 0, hi = Math.max(1, Math.pow(a0, 1 / N)) * 4;
+  while (logProd(hi) < target) hi *= 2;
+  for (let it = 0; it < 200; it++) { const mid = 0.5 * (lo + hi); if (logProd(mid) < target) lo = mid; else hi = mid; }
+  const w1 = 0.5 * (lo + hi), w = [];
+  for (let j = 0; j < N; j++) w.push(Math.sqrt(w1 * w1 + j * d));
+  return w;
+}
+function prodExcept(w, j) { let p = 1; for (let i = 0; i < w.length; i++) if (i !== j) p *= w[i]; return p; }
+function amp(w) { let p = 1; for (const x of w) p *= x; return p; }
+function kernel(w) { let k = 0; for (let j = 0; j < w.length; j++) { const p = prodExcept(w, j); k += p * p; } return k; }
+function rhs(w, s) { const e = s - amp(w); return w.map((_, j) => prodExcept(w, j) * e); }
+function rk4(w, s, h) {
+  const add = (x, y, c) => x.map((v, i) => v + c * y[i]);
+  const k1 = rhs(w, s), k2 = rhs(add(w, k1, h / 2), s), k3 = rhs(add(w, k2, h / 2), s), k4 = rhs(add(w, k3, h), s);
+  return w.map((v, i) => v + h / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]));
+}
+// Integrate one mode until t >= Tmax or |a - s| < tol*s (after which a is held). Returns dense samples.
+function integrateMode(N, s, a0, d, Tmax, opts) {
+  opts = opts || {};
+  const c = opts.c || 0.02, tol = opts.tol === undefined ? 1e-4 : opts.tol;
+  let w = initLayers(N, a0, d), t = 0;
+  const T = [0], A = [amp(w)], K = [kernel(w)];
+  let done = false, guard = 0;
+  while (t < Tmax && guard++ < 2e6) {
+    const a = amp(w), k = kernel(w);
+    const rate = Math.max(k, Math.abs(k * (s - a) / Math.max(Math.abs(a), 1e-300)), 1e-12);
+    let h = c / rate;
+    if (opts.hmax) h = Math.min(h, opts.hmax);
+    if (t + h > Tmax) h = Tmax - t;
+    w = rk4(w, s, h); t += h;
+    T.push(t); A.push(amp(w)); K.push(kernel(w));
+    if (!done && Math.abs(amp(w) - s) < tol * s && !opts.full) { done = true; break; }
+  }
+  return { t: T, a: A, k: K, tEnd: t };
+}
+function interp(T, Y, t) {
+  if (t <= T[0]) return Y[0];
+  if (t >= T[T.length - 1]) return Y[Y.length - 1];
+  let lo = 0, hi = T.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (T[m] <= t) lo = m; else hi = m; }
+  const f = (t - T[lo]) / (T[hi] - T[lo]); return Y[lo] + f * (Y[hi] - Y[lo]);
+}
+function halfTime(res, s) {
+  // first time a crosses s/2 from below; null if a0 >= s/2
+  if (res.a[0] >= s / 2) return null;
+  for (let i = 1; i < res.t.length; i++) if (res.a[i] >= s / 2) {
+    const f = (s / 2 - res.a[i - 1]) / (res.a[i] - res.a[i - 1]); return res.t[i - 1] + f * (res.t[i] - res.t[i - 1]);
+  }
+  return null;
+}
+// Closed forms (N = 2)
+function logistic(t, s, a0) { const e = Math.exp(2 * s * t); return isFinite(e) ? s * e / (e - 1 + s / a0) : s; }
+function halfTimeBalanced(s, a0) { return a0 < s / 2 ? Math.log(s / a0 - 1) / (2 * s) : null; }
+function tOfA(a, s, d, a0) {
+  const R = Math.sqrt(4 * s * s + d * d);
+  const F = x => Math.log((4 * s * x + d * d + R * Math.sqrt(4 * x * x + d * d)) / (2 * s - 2 * x)) / R;
+  return F(a) - F(a0);
+}
+if (typeof module !== "undefined") module.exports = { dDisplay, initLayers, amp, kernel, rhs, integrateMode, interp, halfTime, logistic, halfTimeBalanced, tOfA };
+</script>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const colors = () => [1, 2, 3, 4, 5].map(i => css("--m" + i));
+  const fmt = (x, p = 3) => x === null || !isFinite(x) ? "—" : (Math.abs(x) >= 1e4 || (Math.abs(x) < 1e-2 && x !== 0) ? x.toExponential(p - 1) : x.toPrecision(p));
+  const st = { s1: 3, ratio: 0.5, nm: 4, la0: -3, dx: 0, N: 2, norm: false, logt: false, shallow: false };
+  const presets = {
+    rich:   { s1: 3, ratio: 0.5, nm: 4, la0: -4, dx: 0, N: 2 },
+    lazy:   { s1: 3, ratio: 0.5, nm: 4, la0: -4, dx: 0.85, N: 2 },
+    mixed:  { s1: 4, ratio: 0.3, nm: 4, la0: -4, dx: 0.5, N: 2, norm: true },
+    deep:   { s1: 3, ratio: 0.5, nm: 4, la0: -2, dx: 0, N: 4 },
+    bigbal: { s1: 3, ratio: 0.5, nm: 4, la0: 0.9, dx: 0, N: 2 },
+  };
+  function readUI() {
+    st.s1 = +$("s1").value; st.ratio = +$("ratio").value; st.nm = +$("nm").value;
+    st.la0 = +$("a0").value; st.dx = +$("dd").value; st.N = +$("NN").value;
+    st.norm = $("norm").checked; st.logt = $("logt").checked; st.shallow = $("shallow").checked;
+  }
+  function writeUI() {
+    $("s1").value = st.s1; $("ratio").value = st.ratio; $("nm").value = st.nm; $("a0").value = st.la0; $("dd").value = st.dx; $("NN").value = st.N;
+  }
+  const L = (function () { const m = { exports: {} }; new Function("module", document.getElementById("mathlib").textContent)(m); return m.exports; })();
+
+  function compute() {
+    const s = []; for (let k = 0; k < st.nm; k++) s.push(st.s1 * Math.pow(st.ratio, k));
+    const a0 = Math.pow(10, st.la0), d = L.dDisplay(st.dx), N = st.N;
+    const CAP = 1e7;
+    let runs = s.map(sv => L.integrateMode(N, sv, a0, d, CAP));
+    runs.forEach(r => { r.capped = r.tEnd >= CAP * (1 - 1e-9); });
+    let T = Math.max(...runs.map(r => r.tEnd)) * 1.12;
+    if (!isFinite(T) || T <= 0) T = 1;
+    const sh = st.shallow ? s.map(sv => L.integrateMode(1, sv, a0, 0, T, { full: true })) : null;
+    return { s, a0, d, N, runs, T, sh };
+  }
+
+  function axes(svg, W, H, m, x, y, xt, yt, xl, yl) {
+    const ns = "http://www.w3.org/2000/svg", g = document.createElementNS(ns, "g");
+    let html = "";
+    for (const v of yt) html += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--grid)"/><text x="${m.l - 6}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--ink-2)">${v.label}</text>`;
+    for (const v of xt) html += `<line x1="${x(v)}" x2="${x(v)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--grid)"/><text x="${x(v)}" y="${H - m.b + 15}" text-anchor="middle" font-size="11" fill="var(--ink-2)">${v.label}</text>`;
+    html += `<line x1="${m.l}" x2="${W - m.r}" y1="${H - m.b}" y2="${H - m.b}" stroke="var(--ink-3)"/>`;
+    html += `<text x="${(m.l + W - m.r) / 2}" y="${H - 4}" text-anchor="middle" font-size="12" fill="var(--ink-2)">${xl}</text>`;
+    html += `<text transform="translate(12,${(m.t + H - m.b) / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--ink-2)">${yl}</text>`;
+    g.innerHTML = html; svg.appendChild(g);
+  }
+  function niceTicks(lo, hi, n) {
+    const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+    const step = [1, 2, 2.5, 5, 10].map(f => f * mag).find(v => v >= step0);
+    const out = []; for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9 * span; v += step) out.push(v);
+    return out;
+  }
+  function makeX(W, m, T) {
+    if (!st.logt) {
+      const x = t => m.l + (t / T) * (W - m.l - m.r);
+      const ticks = niceTicks(0, T, W < 600 ? 4 : 6).map(v => Object.assign(new Number(v), { label: fmt(v, 2) }));
+      return { x, ticks, t0: 0 };
+    }
+    const t0 = T * 1e-4, lx = t => Math.log10(Math.max(t, t0));
+    const x = t => m.l + (lx(t) - lx(t0)) / (lx(T) - lx(t0)) * (W - m.l - m.r);
+    const ticks = []; for (let e = Math.ceil(lx(t0)); e <= lx(T); e++) ticks.push(Object.assign(new Number(Math.pow(10, e)), { label: "10" + sup(e) }));
+    return { x, ticks, t0 };
+  }
+  const sup = e => String(e).split("").map(c => "⁰¹²³⁴⁵⁶⁷⁸⁹"["0123456789".indexOf(c)] || (c === "-" ? "⁻" : c)).join("");
+  function sampleGrid(T, t0, n) {
+    const g = [];
+    for (let i = 0; i <= n; i++) g.push(st.logt ? t0 * Math.pow(T / t0, i / n) : T * i / n);
+    if (st.logt) g.unshift(0);
+    return g;
+  }
+
+  function draw() {
+    readUI();
+    $("s1o").textContent = st.s1.toFixed(2); $("ratioo").textContent = st.ratio.toFixed(2); $("nmo").textContent = st.nm;
+    $("a0o").textContent = fmt(Math.pow(10, st.la0), 2); $("ddo").textContent = fmt(L.dDisplay(st.dx), 3); $("NNo").textContent = st.N === 1 ? "1 (shallow)" : st.N;
+    const R = compute(), col = colors();
+    // legend
+    $("legend").innerHTML = R.s.map((sv, i) => `<span><span class="swatch" style="border-color:${col[i]}"></span>s<sub>${i + 1}</sub> = ${fmt(sv, 3)}</span>`).join("") +
+      (st.shallow ? `<span><span class="swatch dash" style="border-color:var(--ink-3)"></span>shallow, same s</span>` : "");
+    drawA(R, col); drawB(R, col); table(R);
+  }
+
+  function drawA(R, col) {
+    const box = $("plotA"); box.querySelectorAll("svg").forEach(e => e.remove());
+    const W = Math.max(320, Math.round(box.clientWidth || 900)), H = W < 600 ? 250 : 330;
+    const m = { l: W < 600 ? 42 : 54, r: W < 600 ? 26 : 46, t: 10, b: 36 };
+    const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "mode strengths over time");
+    const X = makeX(W, m, R.T);
+    const ymax = st.norm ? Math.max(1.08, ...R.s.map(sv => 1.05 * R.a0 / sv)) : Math.max(...R.s, R.a0) * 1.08;
+    const y = v => H - m.b - (Math.min(Math.max(v, -0.05 * ymax), ymax) / ymax) * (H - m.t - m.b);
+    const yt = niceTicks(0, ymax, 5).map(v => Object.assign(new Number(v), { label: fmt(v, 2) }));
+    axes(svg, W, H, m, X.x, y, X.ticks, yt, "t / τ", st.norm ? "a / s" : "a");
+    const grid = sampleGrid(R.T, X.t0, 500);
+    let html = "";
+    R.s.forEach((sv, i) => {
+      const sc = st.norm ? 1 / sv : 1;
+      html += `<line x1="${m.l}" x2="${W - m.r}" y1="${y(sv * sc)}" y2="${y(sv * sc)}" stroke="${col[i]}" stroke-width="1" stroke-dasharray="1 4" opacity="0.8"/>`;
+      if (R.sh) html += `<path d="${grid.map((t, j) => (j ? "L" : "M") + X.x(t).toFixed(1) + "," + y(L.interp(R.sh[i].t, R.sh[i].a, t) * sc).toFixed(1)).join("")}" fill="none" stroke="${col[i]}" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.75"/>`;
+      const r = R.runs[i];
+      const gA = r.capped ? grid.filter(t => t <= r.tEnd) : grid;
+      html += `<path d="${gA.map((t, j) => (j ? "L" : "M") + X.x(t).toFixed(1) + "," + y(L.interp(r.t, r.a, t) * sc).toFixed(1)).join("")}" fill="none" stroke="${col[i]}" stroke-width="2" stroke-linejoin="round"/>`;
+      const th = L.halfTime(r, sv);
+      if (th !== null && th <= R.T && (!st.logt || th >= X.t0)) html += `<circle cx="${X.x(th)}" cy="${y(0.5 * sv * sc)}" r="4.5" fill="${col[i]}" stroke="var(--panel)" stroke-width="2"/>`;
+      html += `<text x="${W - m.r + 4}" y="${y(sv * sc) + 4}" font-size="11" fill="var(--ink-2)">s${["₁", "₂", "₃", "₄", "₅"][i]}</text>`;
+    });
+    const g = document.createElementNS(ns, "g"); g.innerHTML = html; svg.appendChild(g);
+    hover(svg, box, $("tipA"), W, H, m, X, R, (r, t, i) => `a${["₁", "₂", "₃", "₄", "₅"][i]} = ${fmt(L.interp(r.t, r.a, t), 3)}`);
+    box.appendChild(svg);
+  }
+
+  function drawB(R, col) {
+    const box = $("plotB"); box.querySelectorAll("svg").forEach(e => e.remove());
+    const W = Math.max(320, Math.round(box.clientWidth || 900)), H = W < 600 ? 190 : 230;
+    const m = { l: W < 600 ? 42 : 54, r: W < 600 ? 26 : 46, t: 10, b: 36 };
+    const ns = "http://www.w3.org/2000/svg", svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("role", "img"); svg.setAttribute("aria-label", "effective kernel over time");
+    const X = makeX(W, m, R.T), grid = sampleGrid(R.T, X.t0, 400);
+    let kmin = Infinity, kmax = 0;
+    R.runs.forEach(r => grid.forEach(t => { const k = L.interp(r.t, r.k, t); if (k > 0) { kmin = Math.min(kmin, k); kmax = Math.max(kmax, k); } }));
+    let lo = Math.floor(Math.log10(kmin)), hi = Math.ceil(Math.log10(kmax)); if (hi - lo < 2) { lo -= 1; hi += 1; }
+    if (hi - lo > 16) lo = hi - 16;
+    const y = k => H - m.b - (Math.log10(Math.max(k, Math.pow(10, lo))) - lo) / (hi - lo) * (H - m.t - m.b);
+    const step = Math.ceil((hi - lo) / 5), yt = [];
+    for (let e = lo; e <= hi; e += step) yt.push(Object.assign(new Number(Math.pow(10, e)), { label: "10" + sup(e) }));
+    axes(svg, W, H, m, X.x, y, X.ticks, yt, "t / τ", "k (log scale)");
+    let html = "";
+    R.runs.forEach((r, i) => {
+      const gK = r.capped ? grid.filter(t => t <= r.tEnd) : grid;
+      html += `<path d="${gK.map((t, j) => (j ? "L" : "M") + X.x(t).toFixed(1) + "," + y(L.interp(r.t, r.k, t)).toFixed(1)).join("")}" fill="none" stroke="${col[i]}" stroke-width="2"/>`;
+    });
+    const g = document.createElementNS(ns, "g"); g.innerHTML = html; svg.appendChild(g);
+    hover(svg, box, $("tipB"), W, H, m, X, R, (r, t, i) => `k${["₁", "₂", "₃", "₄", "₅"][i]} = ${fmt(L.interp(r.t, r.k, t), 3)}`);
+    box.appendChild(svg);
+  }
+
+  function hover(svg, box, tip, W, H, m, X, R, line) {
+    const ns = "http://www.w3.org/2000/svg";
+    const cross = document.createElementNS(ns, "line");
+    cross.setAttribute("y1", m.t); cross.setAttribute("y2", H - m.b); cross.setAttribute("stroke", "var(--ink-3)"); cross.setAttribute("stroke-dasharray", "3 3"); cross.style.display = "none";
+    svg.appendChild(cross);
+    const hit = document.createElementNS(ns, "rect");
+    hit.setAttribute("x", m.l); hit.setAttribute("y", m.t); hit.setAttribute("width", W - m.l - m.r); hit.setAttribute("height", H - m.t - m.b); hit.setAttribute("fill", "transparent");
+    svg.appendChild(hit);
+    const move = ev => {
+      const rect = svg.getBoundingClientRect(), px = (ev.clientX - rect.left) / rect.width * W;
+      const f = Math.min(Math.max((px - m.l) / (W - m.l - m.r), 0), 1);
+      const t = st.logt ? X.t0 * Math.pow(R.T / X.t0, f) : f * R.T;
+      cross.setAttribute("x1", X.x(t)); cross.setAttribute("x2", X.x(t)); cross.style.display = "";
+      tip.innerHTML = `t/τ = ${fmt(t, 3)}<br>` + R.runs.map((r, i) => line(r, t, i)).join("<br>");
+      tip.style.display = "block";
+      const bx = ev.clientX - box.getBoundingClientRect().left;
+      tip.style.left = Math.min(bx + 12, box.clientWidth - tip.offsetWidth - 4) + "px"; tip.style.top = "8px";
+    };
+    hit.addEventListener("pointermove", move); hit.addEventListener("pointerdown", move);
+    hit.addEventListener("pointerleave", () => { tip.style.display = "none"; cross.style.display = "none"; });
+  }
+
+  function table(R) {
+    const col = colors();
+    let h = `<tr><th>mode</th><th>s</th><th>half-time (numerical)</th><th>N=2 closed form</th><th>k(0)</th><th>k(end)</th><th>k(end)/k(0)</th></tr>`;
+    R.s.forEach((sv, i) => {
+      const r = R.runs[i], th = L.halfTime(r, sv);
+      let cf = null;
+      if (R.N === 2 && R.a0 < sv / 2) cf = R.d === 0 ? L.halfTimeBalanced(sv, R.a0) : L.tOfA(sv / 2, sv, R.d, R.a0);
+      const k0 = r.k[0], k1 = r.k[r.k.length - 1];
+      h += `<tr><td><span class="dot" style="background:${col[i]}"></span>${i + 1}${r.capped ? " (not converged by t = 10⁷τ)" : ""}</td><td>${fmt(sv)}</td><td>${fmt(th)}</td><td>${fmt(cf)}</td><td>${fmt(k0)}</td><td>${fmt(k1)}</td><td>${fmt(k1 / k0)}</td></tr>`;
+    });
+    $("tab").innerHTML = h;
+  }
+
+  document.querySelectorAll("input").forEach(e => e.addEventListener("input", draw));
+  document.querySelectorAll("button[data-p]").forEach(b => b.addEventListener("click", () => {
+    const pr = presets[b.dataset.p]; Object.assign(st, pr); writeUI(); $("norm").checked = !!pr.norm; draw(); }));
+  const q = new URLSearchParams(location.search);
+  for (const k of ["s1", "ratio", "nm", "la0", "dx", "N"]) if (q.has(k)) st[k] = +q.get(k);
+  writeUI();
+  if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  let rz = null; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(draw, 120); });
+  draw();
+})();
+</script>
+<script>
+// Embedded in a notebook page (iframe): report this page's height so the frame fits it.
+(function () {
+  if (window.parent === window) return;
+  var last = 0;
+  function report() {
+    var b = document.body, cs = getComputedStyle(b);
+    var h = Math.ceil(b.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+    if (Math.abs(h - last) < 2) return;
+    last = h; window.parent.postMessage({ type: "figure-height", height: h }, "*");
+  }
+  if (window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener("load", report); window.addEventListener("resize", report); report();
+  window.addEventListener("message", function (e) {  // the page asks again once it is listening
+    if (e.source === window.parent && e.data && e.data.type === "figure-height-request") { last = 0; report(); }
+  });
+})();
+</script>
+</body>
+</html>

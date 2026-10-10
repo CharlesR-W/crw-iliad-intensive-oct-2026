@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="nbkit.py (wb4); do not edit by hand">
+<title>Workbook 4 — Deep Learning as Program Synthesis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+/* KaTeX's hidden MathML is position:absolute; keep it inside its formula (no sideways page scroll). */
+.katex, .table-wrap, .katex-display { position: relative; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, pre, .katex-display, table { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#1-keystone-deep-learning-as-program-synthesis">1. Keystone: deep learning as program synthesis</a></li>
+<li><a href="#2-occam-two-ways">2. Occam, two ways</a></li>
+<li><a href="#3-solomonoff-and-its-limits">3. Solomonoff and its limits</a></li>
+<li><a href="#4-the-circuit-prior-and-sparse-parity">4. The circuit prior and sparse parity</a></li>
+<li><a href="#5-hierarchical-representations">5. Hierarchical representations</a></li>
+<li><a href="#6-the-accounts-side-by-side">6. The accounts side by side</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 8 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="workbook-4--deep-learning-as-program-synthesis">Workbook 4 — Deep Learning as Program Synthesis</h1>
+<p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
+<p>“Networks generalize because of their inductive bias” is true and explains nothing: every learner that generalizes has an inductive bias, and naming it is a curiosity stopper. This workbook follows one concrete proposal for what the bias is (a preference for simple, compositional programs) and the classical theory of simplicity it borrows from.</p>
+<ul>
+<li><a href="#wb4-keystone">1. Keystone: deep learning as program synthesis</a>. Furman’s hypothesis and the three paradoxes it would resolve.</li>
+<li><a href="#wb4-section-2">2. Occam, two ways</a>. Simplicity as prior volume versus description length.</li>
+<li><a href="#wb4-section-3">3. Solomonoff and its limits</a>. The ideal simplicity-prior learner and why no computable predictor matches it.</li>
+<li><a href="#wb4-section-4">4. The circuit prior and sparse parity</a>. A theorem that Bayesian MLPs prefer small circuits, and what a prior does not buy.</li>
+<li><a href="#wb4-section-5">5. Hierarchical representations</a>. Structure in the data rather than the learner.</li>
+<li><a href="#wb4-section-6">6. The accounts side by side</a>. One table.</li>
+</ul>
+<p>Exercises have folded solutions. Readings are scored for importance and length (legend under the contents).</p>
+
+<details class="sec sec2" data-sec="1-keystone-deep-learning-as-program-synthesis">
+<summary><h2 id="1-keystone-deep-learning-as-program-synthesis">1. Keystone: deep learning as program synthesis</h2></summary>
+<div class="sec-body">
+<a id="wb4-keystone"></a>
+<p>This is the most direct answer on offer to “why does deep learning work?”: it names the inductive bias, cites evidence for it, and says what is still unexplained.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/Dw8mskAvBX37MxvXo/deep-learning-as-program-synthesis-1">Deep learning as program synthesis</a></strong>, Zach Furman, January 2026 (LessWrong) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Argues that SGD performs a tractable form of program synthesis, a search for simple compositional programs analogous to (but far cheaper than) Solomonoff induction, and names the representation and search problems a formal version must solve. About 12k words; the last third (“The path forward”) is more speculative.</p>
+</div>
+
+<p><strong>The hypothesis.</strong> Furman’s <em>program synthesis hypothesis</em>: deep learning works because training searches for programs, meaning “solutions built by composing simple pieces, each operating on few inputs.” The architecture is a substrate, like an FPGA, and training configures a particular program in it. The direct evidence is mechanistic interpretability: when we can read a trained network, we tend to find algorithm-like circuits built from reusable parts. His two worked cases are grokking on modular addition, where test accuracy jumps from chance to near perfect as Fourier-feature circuits form, and InceptionV1, which builds car detectors from window, body and wheel detectors. He is explicit that this is a hypothesis: networks <em>can</em> learn such programs, not that they always do.</p>
+<p><strong>What it would explain, and what is left.</strong> A simplicity prior over programs would turn three paradoxes into expected outcomes. <em>Approximation</em>: the functions we care about are compositional, and compositional functions escape the curse of dimensionality. <em>Generalization</em>: the network that can memorize random labels finds a short program when one exists. <em>Convergence</em>: different seeds, architectures and even brains reach similar representations because there are few good programs to find. The open question is then how local gradient steps on continuous parameters do a search that is intractable by enumeration. Furman splits it into the <em>representation problem</em> (how a discrete program sits in parameter space) and the <em>search problem</em> (how SGD finds it), and points to singular learning theory as a route.</p>
+</div>
+</details>
+<details class="sec sec2" data-sec="2-occam-two-ways">
+<summary><h2 id="2-occam-two-ways">2. Occam, two ways</h2></summary>
+<div class="sec-body">
+<a id="wb4-section-2"></a>
+<p>“Simplicity” means two different things: Bayesian evidence penalizes the prior volume a model wastes on data that did not occur, while Kolmogorov complexity and MDL penalize description length; they agree at leading order for regular models and part elsewhere.</p>
+<p>For <span class="math inline">p</span> parameters and <span class="math inline">n</span> samples, both give a penalty of about <span class="math inline">\tfrac p2\ln n</span> (BIC, WB2). For singular models the volume penalty’s <span class="math inline">\tfrac p2</span> becomes the learning coefficient <span class="math inline">\lambda\le\tfrac p2</span> (the SLT day): the evidence measures the volume of near-optimal parameters, not the parameter count.</p>
+<div class="reading">
+
+<p><strong><a href="https://authors.library.caltech.edu/records/r7qgh-q6g10">Bayesian interpolation</a></strong>, David J. C. MacKay, 1992 (<em>Neural Computation</em> 4(3)) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Introduces the Occam factor: evidence is best-fit likelihood times posterior width over prior width, so a flexible model pays for every dataset it could have fit.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/math/0406077">A tutorial introduction to the minimum description length principle</a></strong>, Peter Grünwald, 2004 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The two-part code <span class="math inline">L(H)+L(D\mid H)</span>, why it recovers BIC, and why MDL fixes a computable code class in advance. Read §1–2; §2.4.2 is the two-part code for continuous parameters.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1805.08522">Deep learning generalizes because the parameter-function map is biased towards simple functions</a></strong>, Guillermo Valle-Pérez, Chico Q. Camargo and Ard A. Louis, ICLR 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Bridges the two notions: the prior volume that random parameters assign to a function is exponentially biased toward low (proxy) complexity, and a PAC-Bayes bound on that prior is non-vacuous on binarized MNIST.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-volume-versus-description-length">
+<summary><h3 id="exercises-volume-versus-description-length">Exercises: volume versus description length</h3></summary>
+<div class="sec-body">
+
+<p>These are the standard short arguments. Kolmogorov complexity is also uncomputable (the Berry-paradox argument) and can only be approximated from above; Rathmanner and Hutter §5.9 (section 3) covers this.</p>
+
+<p><strong>Exercise 2.1 (The Occam factor, exactly).</strong> A model’s <em>evidence</em> is <span class="math inline">Z=\int p(D\mid\theta)\,\pi(\theta)\,d\theta</span>. Data <span class="math inline">y_1,\dots,y_n</span> are i.i.d. <span class="math inline">\mathcal N(\theta,\sigma^2)</span> with <span class="math inline">\sigma</span> known, and the prior is <span class="math inline">\theta\sim\mathcal N(0,\tau^2)</span>. Write <span class="math inline">\bar y</span> for the sample mean and <span class="math inline">s^2=\sigma^2/n</span>.</p>
+<ol type="1">
+<li>Show that <span class="math inline">p(D\mid\theta)=p(D\mid\bar y)\,e^{-(\theta-\bar y)^2/2s^2}</span>, so the maximum-likelihood estimate is <span class="math inline">\hat\theta=\bar y</span>.</li>
+<li>Show that <span class="math inline">Z=p(D\mid\hat\theta)\cdot\sqrt{\dfrac{s^2}{\tau^2+s^2}}\,\exp\!\Big(-\dfrac{\bar y^2}{2(\tau^2+s^2)}\Big)</span>. The factor after <span class="math inline">p(D\mid\hat\theta)</span> is the <em>Occam factor</em>.</li>
+<li>Show that for large <span class="math inline">n</span>, <span class="math inline">-\ln Z=-\ln p(D\mid\hat\theta)+\tfrac12\ln n+\tfrac12\ln\dfrac{\tau^2}{\sigma^2}+\dfrac{\bar y^2}{2\tau^2}+o(1)</span>.</li>
+<li>Fix the data and let <span class="math inline">\tau\to\infty</span>. What happens to <span class="math inline">Z</span>, and why does this not mean the model fits worse?</li>
+</ol>
+<details class="hint"><summary>Hint</summary>
+
+<p>Expand <span class="math inline">\sum_i(y_i-\theta)^2</span> around <span class="math inline">\bar y</span>. For step 2, write <span class="math inline">e^{-(\theta-\bar y)^2/2s^2}=\sqrt{2\pi s^2}\;\mathcal N(\bar y;\theta,s^2)</span> and use that convolving <span class="math inline">\mathcal N(0,\tau^2)</span> with <span class="math inline">\mathcal N(0,s^2)</span> gives <span class="math inline">\mathcal N(0,\tau^2+s^2)</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>1.</strong> <span class="math inline">\sum_i(y_i-\theta)^2=\sum_i(y_i-\bar y)^2+n(\theta-\bar y)^2</span>, since the cross term contains <span class="math inline">\sum_i(y_i-\bar y)=0</span>. The first part, with the normalization, is <span class="math inline">p(D\mid\bar y)</span>; the second gives <span class="math inline">e^{-(\theta-\bar y)^2/2s^2}</span>, maximized at <span class="math inline">\theta=\bar y</span>.</p>
+<p><strong>2.</strong> <span class="math inline">Z=p(D\mid\bar y)\int\mathcal N(\theta;0,\tau^2)\,e^{-(\theta-\bar y)^2/2s^2}d\theta=p(D\mid\bar y)\sqrt{2\pi s^2}\;\mathcal N(\bar y;0,\tau^2+s^2)</span>, and <span class="math inline">\sqrt{2\pi s^2}\,(2\pi(\tau^2+s^2))^{-1/2}=\sqrt{s^2/(\tau^2+s^2)}</span>.</p>
+<p><strong>3.</strong> <span class="math inline">-\ln Z=-\ln p(D\mid\hat\theta)+\tfrac12\ln(1+\tau^2/s^2)+\bar y^2/2(\tau^2+s^2)</span>. With <span class="math inline">\tau^2/s^2=n\tau^2/\sigma^2</span> the middle term is <span class="math inline">\tfrac12\ln n+\tfrac12\ln(\tau^2/\sigma^2)+O(1/n)</span>, and the last tends to <span class="math inline">\bar y^2/2\tau^2</span>. The Occam factor is <span class="math inline">\approx\Delta_{\text{post}}/\Delta_\pi</span> with posterior width <span class="math inline">\Delta_{\text{post}}=\sqrt{2\pi}\,\sigma/\sqrt n</span> and effective prior width <span class="math inline">\Delta_\pi=1/\pi(\hat\theta)</span>. The <span class="math inline">\tfrac12\ln n</span> is BIC’s <span class="math inline">\tfrac p2\ln n</span> with <span class="math inline">p=1</span>: it comes from the posterior shrinking like <span class="math inline">1/\sqrt n</span>.</p>
+<p><strong>4.</strong> The Occam factor behaves like <span class="math inline">\sigma/(\tau\sqrt n)\to0</span>, so <span class="math inline">Z\to0</span> while <span class="math inline">p(D\mid\hat\theta)</span> is unchanged. The fit is as good as before; the model is penalized because a vague prior put almost all its mass on values the data ruled out. Evidence is sensitive to prior widths in a way that likelihood fits are not.</p>
+</div>
+</details>
+
+<p><strong>Exercise 2.2 (Kolmogorov complexity: three facts).</strong> Fix a universal prefix machine <span class="math inline">U</span>: its valid programs form a prefix-free set (no program is a proper prefix of another). The Kolmogorov complexity of a string <span class="math inline">x</span> is <span class="math inline">K_U(x)=\min\{|p|:U(p)=x\}</span>.</p>
+<p><strong>(a) Kraft.</strong> To a binary string <span class="math inline">p=p_1\dots p_k</span> assign the interval <span class="math inline">I_p=[0.p_1\dots p_k,\ 0.p_1\dots p_k+2^{-k})\subset[0,1)</span> (a binary fraction). Show that <span class="math inline">I_p\cap I_q=\varnothing</span> when neither of <span class="math inline">p,q</span> is a prefix of the other. Conclude <span class="math inline">\sum_{p\in P}2^{-|p|}\le1</span> for prefix-free <span class="math inline">P</span>, and hence <span class="math inline">\sum_x2^{-K_U(x)}\le1</span>: a short description and a high prior probability are the same thing in two units.</p>
+<p><strong>(b) Invariance.</strong> Universality means that for every prefix machine <span class="math inline">V</span> there is a string <span class="math inline">s_V</span> with <span class="math inline">U(s_Vp)=V(p)</span> for all <span class="math inline">p</span>. Prove <span class="math inline">K_U(x)\le K_V(x)+|s_V|</span>. Then, for a fixed string <span class="math inline">x^\star</span>, build a universal prefix machine <span class="math inline">V</span> with <span class="math inline">K_V(x^\star)=1</span>. What does this say about “the Kolmogorov complexity of this trained network”?</p>
+<p><strong>(c) Counting.</strong> Show that fewer than a <span class="math inline">2^{-c}</span> fraction of <span class="math inline">n</span>-bit strings have <span class="math inline">K(x)&lt;n-c</span>. Why does this make a preference for simplicity informative?</p>
+<details class="hint"><summary>Hints</summary>
+
+<p>(a) If neither string is a prefix of the other, they first differ at some position <span class="math inline">j</span>; see which half of a dyadic interval of length <span class="math inline">2^{-(j-1)}</span> each lies in. (b) Let <span class="math inline">V</span> reserve one very short program for <span class="math inline">x^\star</span> and otherwise defer to <span class="math inline">U</span>. (c) Count binary strings of length less than <span class="math inline">n-c</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Let <span class="math inline">p,q</span> first differ at position <span class="math inline">j</span>, with <span class="math inline">p_j=0</span>, <span class="math inline">q_j=1</span>, and common prefix <span class="math inline">a=0.p_1\dots p_{j-1}</span>. Then <span class="math inline">I_p\subset[a,a+2^{-j})</span> and <span class="math inline">I_q\subset[a+2^{-j},a+2^{-j+1})</span>, so they are disjoint. The intervals of a prefix-free set are disjoint subintervals of <span class="math inline">[0,1)</span> with lengths <span class="math inline">2^{-|p|}</span>, so their sum is at most 1. Distinct strings have distinct shortest programs, all in the prefix-free domain of <span class="math inline">U</span>, so <span class="math inline">\sum_x2^{-K_U(x)}\le1</span>. (Conversely, any lengths satisfying Kraft’s inequality are the lengths of some prefix code, which is why <span class="math inline">L=-\log_2P</span> converts freely between code lengths and priors.)</p>
+<p><strong>(b)</strong> If <span class="math inline">p</span> is a shortest <span class="math inline">V</span>-program for <span class="math inline">x</span>, then <span class="math inline">s_Vp</span> is a <span class="math inline">U</span>-program for <span class="math inline">x</span>, so <span class="math inline">K_U(x)\le K_V(x)+|s_V|</span>; swapping roles gives <span class="math inline">|K_U-K_V|\le c</span>. For the construction, set <span class="math inline">V(\texttt{0})=x^\star</span> and <span class="math inline">V(\texttt{1}p)=U(p)</span>. Its domain is prefix-free, it is universal (<span class="math inline">K_V(y)\le K_U(y)+1</span>), and <span class="math inline">K_V(x^\star)=1</span> however large <span class="math inline">K_U(x^\star)</span> is. So the invariance constant can exceed any single object’s complexity: for one finite object, such as a trained network, <span class="math inline">K</span> has no machine-independent value.</p>
+<p><strong>(c)</strong> There are <span class="math inline">2^{n-c}-1</span> binary strings shorter than <span class="math inline">n-c</span>, each the program for at most one output, so fewer than <span class="math inline">2^{n-c}</span> strings have <span class="math inline">K&lt;n-c</span>: a fraction below <span class="math inline">2^{-c}</span> of the <span class="math inline">2^n</span> strings. Fewer than one <span class="math inline">n</span>-bit string in a thousand compresses by 10 bits. Simple strings are rare, so a learner that bets on them is making a strong, falsifiable bet.</p>
+</div>
+</details>
+
+<p><strong>Exercise 2.3 (Why MDL states parameters to precision <span class="math inline">1/\sqrt n</span>).</strong> The MDL two-part code scores a hypothesis by <span class="math inline">L(H)+L(D\mid H)</span> bits, with <span class="math inline">L(D\mid H)=-\log_2p(D\mid H)</span>. Take one parameter <span class="math inline">\theta</span> in an interval of length <span class="math inline">\Delta_\pi</span>. Near the maximum-likelihood estimate, <span class="math inline">-\ln p(D\mid\theta)\approx-\ln p(D\mid\hat\theta)+\tfrac{nJ}{2}(\theta-\hat\theta)^2</span>, with <span class="math inline">J</span> the Fisher information per sample, known to sender and receiver along with <span class="math inline">n</span>. The code rounds <span class="math inline">\hat\theta</span> to the nearest point <span class="math inline">\theta_q</span> of a grid with spacing <span class="math inline">\delta</span>, sends its index (<span class="math inline">\log_2(\Delta_\pi/\delta)</span> bits), then sends the data using <span class="math inline">p(\cdot\mid\theta_q)</span>.</p>
+<ol type="1">
+<li>Taking <span class="math inline">\theta_q-\hat\theta</span> uniform on <span class="math inline">[-\delta/2,\delta/2]</span>, write the expected total length <span class="math inline">L(\delta)</span> in bits and minimize it.</li>
+<li>Show <span class="math inline">L(\delta^\ast)=-\log_2p(D\mid\hat\theta)+\tfrac12\log_2n+O(1)</span>. What does the <span class="math inline">O(1)</span> depend on?</li>
+<li>Why does the optimal <span class="math inline">\delta</span> shrink like <span class="math inline">1/\sqrt n</span>?</li>
+</ol>
+<details class="hint"><summary>Hint</summary>
+
+<p><span class="math inline">\mathbb E[(\theta_q-\hat\theta)^2]=\delta^2/12</span>. Divide nats by <span class="math inline">\ln2</span> to get bits.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>1.</strong> <span class="math inline">L(\delta)=\log_2(\Delta_\pi/\delta)-\log_2p(D\mid\hat\theta)+\dfrac{nJ\delta^2}{24\ln2}</span>. Setting <span class="math inline">dL/d\delta=0</span> gives <span class="math inline">\delta^\ast=\sqrt{12/(nJ)}</span>.</p>
+<p><strong>2.</strong> At <span class="math inline">\delta^\ast</span> the index costs <span class="math inline">\log_2\Delta_\pi+\tfrac12\log_2n+\tfrac12\log_2(J/12)</span> bits and the fit penalty is <span class="math inline">1/(2\ln2)\approx0.72</span> bits. The <span class="math inline">O(1)</span> is <span class="math inline">\log_2\Delta_\pi+\tfrac12\log_2(J/12)+1/(2\ln2)</span>: it depends on the parameter’s range and its Fisher information, and so on the coordinates chosen for <span class="math inline">\theta</span>. With <span class="math inline">p</span> parameters (Fisher matrix diagonal) the total is <span class="math inline">\tfrac p2\log_2n</span>, which is BIC in bits.</p>
+<p><strong>3.</strong> <span class="math inline">\delta^\ast\approx3.5/\sqrt{nJ}</span> is a few posterior standard deviations. Stating <span class="math inline">\theta</span> more precisely than the data can resolve costs bits and buys no fit; stating it less precisely costs fit. The <span class="math inline">\tfrac12\log_2n</span> is the code-length counterpart of the Occam factor <span class="math inline">\Delta_{\text{post}}/\Delta_\pi</span> in Exercise 2.1.</p>
+</div>
+</details>
+
+<p><strong>Exercise 2.4 (Make them disagree).</strong> Call a model <em>volume-simple</em> if its evidence <span class="math inline">Z=\int p(D\mid\theta)\pi(\theta)d\theta</span> is not much below its best-fit likelihood, i.e. its Occam factor (roughly posterior width over prior width) is not tiny. Call a hypothesis <em>description-simple</em> if it has a short program. Give:</p>
+<ol type="1">
+<li>a model that is short to describe but heavily Occam-penalized;</li>
+<li>a hypothesis that is short to describe but that Bayesian comparison over a reasonable model family will not favour;</li>
+<li>a model that a code which states every parameter separately (Exercise 2.3) calls expensive but whose evidence is barely penalized.</li>
+</ol>
+<details class="hint"><summary>Hint</summary>
+
+<p>(1) One parameter, a strange prior. (2) The digits of <span class="math inline">\pi</span>. (3) A singular model: many parameters, small learning coefficient <span class="math inline">\lambda</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ul>
+<li><strong>1.</strong> <span class="math inline">y=\theta x+\varepsilon</span> with <span class="math inline">\theta\sim\mathrm{Unif}[-10^{100},10^{100}]</span>. One line to state; but with <span class="math inline">\Delta_{\text{post}}\approx10^{-2}</span> the Occam factor is about <span class="math inline">10^{-102}</span>, roughly 340 bits. Volume cares about the prior’s spread, not the model’s description.</li>
+<li><strong>2.</strong> The first <span class="math inline">10^6</span> binary digits of <span class="math inline">\pi</span>. <span class="math inline">K</span> is at most a few thousand bits (a short program plus about 20 bits for the length). But i.i.d. and order-<span class="math inline">k</span> Markov models all see a fair coin, and the best evidence goes to the fair coin at about <span class="math inline">10^6</span> bits. Bayesian comparison only ranks the models you put in; Kolmogorov complexity ranks against every program.</li>
+<li><strong>3.</strong> A singular model with <span class="math inline">p</span> parameters and learning coefficient <span class="math inline">\lambda\ll p/2</span> pays about <span class="math inline">\lambda\ln n</span> nats in volume, while a code that quantizes every coordinate pays about <span class="math inline">\tfrac p2\ln n</span>. Degenerate directions cost the evidence nothing. A cleverer code that states only the non-degenerate directions closes some of the gap; the evidence does it automatically.</li>
+</ul>
+<p>So when a paper says “networks are biased toward simple functions,” ask which notion it means.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="3-solomonoff-and-its-limits">
+<summary><h2 id="3-solomonoff-and-its-limits">3. Solomonoff and its limits</h2></summary>
+<div class="sec-body">
+<a id="wb4-section-3"></a>
+<p>Solomonoff induction, the ideal that Furman’s hypothesis borrows from, is a Bayesian mixture over all programs weighted by <span class="math inline">2^{-\text{length}}</span>; its regret against any computable source is at most that source’s description length, but it is uncomputable, and no simple predictor approximates it.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1105.5721">A philosophical treatise of universal induction</a></strong>, Samuel Rathmanner and Marcus Hutter, 2011 (<em>Entropy</em> 13(6)) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>An accessible exposition of Solomonoff induction: Bayes mixtures and their bounds, Kolmogorov complexity, the universal prior, computable approximations and the philosophical objections. About 60 pages; for this workbook §4.7–4.9, §5.9, §6.5–8.1, §9 (MDL and approximations) and §10.2 (the reference-machine problem).</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/cs/0606070">Is there an elegant universal theory of prediction?</a></strong>, Shane Legg, 2006 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Every computable predictor is defeated by a sequence of about its own complexity, so predictors for all sequences up to complexity <span class="math inline">n</span> must themselves be about that complex; Exercise 3.2 follows it.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-what-solomonoff-guarantees-and-what-it-cannot">
+<summary><h3 id="exercises-what-solomonoff-guarantees-and-what-it-cannot">Exercises: what Solomonoff guarantees and what it cannot</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 3.1 (The regret bound).</strong> Take a countable class of semimeasures <span class="math inline">\nu</span> on binary sequences (probabilities <span class="math inline">\nu(x)</span> of prefixes <span class="math inline">x</span>, allowed to sum to less than 1) with weights <span class="math inline">w_\nu&gt;0</span>, <span class="math inline">\sum_\nu w_\nu\le1</span>, and form the mixture <span class="math inline">\xi=\sum_\nu w_\nu\nu</span>. It predicts with <span class="math inline">\xi(a\mid x)=\xi(xa)/\xi(x)</span>. Suppose the class contains a measure <span class="math inline">\mu</span> that generates the data. Solomonoff’s mixture is the case where the class is all lower-semicomputable semimeasures and <span class="math inline">w_\nu=2^{-K(\nu)}</span>.</p>
+<p><strong>(a)</strong> Show that <span class="math inline">\xi(x)\ge w_\mu\,\mu(x)</span> for every <span class="math inline">x</span>.</p>
+<p><strong>(b)</strong> Show that <span class="math inline">\prod_{t\le n}\xi(x_t\mid x_{&lt;t})=\xi(x_{1:n})/\xi(\epsilon)</span> (with <span class="math inline">\epsilon</span> the empty string), and conclude that the cumulative log-loss regret of <span class="math inline">\xi</span> against <span class="math inline">\mu</span> is at most <span class="math inline">\ln(1/w_\mu)</span> on every sequence and every <span class="math inline">n</span>. Specialize to <span class="math inline">w_\mu=2^{-K(\mu)}</span>.</p>
+<p><strong>(c)</strong> Evaluate the bound for an environment with a 1000-bit description. How does it compare with the cost of simply being told <span class="math inline">\mu</span>?</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>Write each conditional as a ratio and let the product telescope; <span class="math inline">\xi(\epsilon)\le1</span> and <span class="math inline">\mu(\epsilon)=1</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">\xi(x)</span> is a sum of non-negative terms, one of which is <span class="math inline">w_\mu\mu(x)</span>.</p>
+<p><strong>(b)</strong> The product telescopes to <span class="math inline">\xi(x_{1:n})/\xi(\epsilon)</span>, and likewise for <span class="math inline">\mu</span> with <span class="math inline">\mu(\epsilon)=1</span>. So the regret is</p>
+<p><span class="math display">
+R_n=\sum_{t\le n}\ln\frac{\mu(x_t\mid x_{&lt;t})}{\xi(x_t\mid x_{&lt;t})}=\ln\frac{\mu(x_{1:n})}{\xi(x_{1:n})}+\ln\xi(\epsilon)\le\ln\frac1{w_\mu},
+</span></p>
+<p>using <span class="math inline">\xi(\epsilon)\le1</span> and (a). With <span class="math inline">w_\mu=2^{-K(\mu)}</span> the bound is <span class="math inline">K(\mu)\ln2</span> nats, on every sequence: a worst-case guarantee, not an average. Taking expectations under <span class="math inline">\mu</span>, the per-step KL divergences between <span class="math inline">\mu</span>’s and <span class="math inline">\xi</span>’s predictions sum to at most <span class="math inline">K(\mu)\ln2</span> over all time, so the mixture’s predictions converge to the truth (Rathmanner and Hutter §8.1).</p>
+<p><strong>(c)</strong> <span class="math inline">1000\ln2\approx693</span> nats, exactly 1000 bits of total excess code length however long the sequence. The mixture pays no more, in total, than it would cost to be told the shortest description of <span class="math inline">\mu</span> up front. This is the MDL reading of Solomonoff induction. Note that the bound is generic to Bayes mixtures; Solomonoff’s contribution is the class (every computable source) and the weights (which make the price the truth’s description length).</p>
+</div>
+</details>
+
+<p><strong>Exercise 3.2 (Diagonalize a predictor).</strong> A <em>predictor</em> is a computable map <span class="math inline">p</span> from finite binary strings to <span class="math inline">\{0,1\}</span>. It <em>learns</em> an infinite sequence <span class="math inline">\omega=\omega_1\omega_2\dots</span> if <span class="math inline">p(\omega_{1:n})=\omega_{n+1}</span> for all large enough <span class="math inline">n</span>. Write <span class="math inline">K(\omega)</span> for the length of a shortest program that outputs <span class="math inline">\omega</span> bit by bit, and <span class="math inline">K(p)</span> for that of a shortest program computing <span class="math inline">p</span>.</p>
+<p><strong>(a)</strong> Given <span class="math inline">p</span>, construct a computable <span class="math inline">\omega</span> with <span class="math inline">p(\omega_{1:n})\ne\omega_{n+1}</span> for every <span class="math inline">n</span>, and show <span class="math inline">K(\omega)\le K(p)+c</span> for a constant <span class="math inline">c</span> independent of <span class="math inline">p</span>.</p>
+<p><strong>(b)</strong> Deduce that a predictor that learns every computable sequence with <span class="math inline">K\le n</span> has <span class="math inline">K(p)\ge n-c</span>.</p>
+<p><strong>(c)</strong> Apply (a) to a trained language model with greedy decoding. What sequence defeats it, and how complex is it? What is the analogue under log-loss?</p>
+<p><strong>(d)</strong> There is a single simple predictor that learns sequences of arbitrarily high complexity. Find one, and reconcile it with (b).</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>(a) Do the opposite of whatever <span class="math inline">p</span> predicts. (d) Sequences that are complicated only at the start.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> Set <span class="math inline">\omega_1=1-p(\epsilon)</span> and <span class="math inline">\omega_{n+1}=1-p(\omega_{1:n})</span>. A program for <span class="math inline">\omega</span> is a shortest program for <span class="math inline">p</span> plus a fixed wrapper that runs it and flips its outputs, so <span class="math inline">K(\omega)\le K(p)+c</span>, and <span class="math inline">p</span> is wrong at every step (Legg’s Lemma 3.3).</p>
+<p><strong>(b)</strong> By (a) some <span class="math inline">\omega&#39;</span> with <span class="math inline">K(\omega&#39;)\le K(p)+c</span> is not learned by <span class="math inline">p</span>, so <span class="math inline">K(\omega&#39;)&gt;n</span>, hence <span class="math inline">K(p)&gt;n-c</span> (Legg’s Theorem 4.3).</p>
+<p><strong>(c)</strong> At each step emit a token other than the model’s argmax. The model is always wrong, and the sequence is computable from the weights plus a constant-size wrapper, so its complexity is at most the model’s plus a constant. Under log-loss, emit the token the model rates least likely: its probability is at most <span class="math inline">1/V</span> for vocabulary size <span class="math inline">V</span>, so the model pays at least <span class="math inline">\ln V</span> nats per step. A claim that a fixed model is a universal predictor must therefore be distributional (“on the text that actually occurs”) or resource-bounded, not worst-case.</p>
+<p><strong>(d)</strong> “Always predict 0” learns every sequence <span class="math inline">x000\ldots</span>, and <span class="math inline">K(x000\ldots)</span> is as large as you like for incompressible <span class="math inline">x</span>. No conflict: a simple predictor can learn <em>some</em> complex sequences, but no simple predictor learns <em>all</em> simple ones (Legg’s Lemma 3.2).</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="4-the-circuit-prior-and-sparse-parity">
+<summary><h2 id="4-the-circuit-prior-and-sparse-parity">4. The circuit prior and sparse parity</h2></summary>
+<div class="sec-body">
+<a id="wb4-section-4"></a>
+<p>A theorem that Bayesian learning with wide fixed-depth MLPs has a small-circuit prior, and a toy problem (sparse parity) that separates what such a prior buys from what a fixed kernel can do, and from what gradient search actually achieves.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/SqDHeuycNkERurtSc/a-circuit-prior-in-nn-bayes">A circuit prior in NN-bayes</a></strong>, Kaarel Hänni and Dmitry Vaintrob, August 2026 (LessWrong post linking <a href="https://kaarelh.github.io/ai/nnbayes-generalization.pdf">talk slides</a>, Iliad 2026) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Under a strong-prior Gaussian scaling, the Bayesian posterior of an overparametrized fixed-depth MLP learns a Boolean target of fixed-depth circuit complexity <span class="math inline">C</span> from <span class="math inline">\mathrm{poly}(d,C)</span> samples at any width <span class="math inline">N\ge C</span>; slide 34 contrasts NNGP’s <span class="math inline">\sim d^k</span> for <span class="math inline">k</span>-sparse parity. Slides 10–12 are a warm-up (Solomonoff function induction), 15–17 the theorem; a full write-up is forthcoming.</p>
+</div>
+
+<p>Also: <a href="https://arxiv.org/abs/2607.05735">Width-robust learnability in mean-field Bayesian neural networks</a> (Vaintrob and Hänni 2026), the mean-field counterpart.</p>
+<details class="sec sec3" data-sec="exercises-sparse-parity">
+<summary><h3 id="exercises-sparse-parity">Exercises: sparse parity</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 4.1 (Counting learner versus kernel learner).</strong> Inputs <span class="math inline">x</span> are uniform on <span class="math inline">\{\pm1\}^d</span>. The target is the parity <span class="math inline">\chi_S(x)=\prod_{i\in S}x_i</span> for an unknown <span class="math inline">S\subseteq\{1,\dots,d\}</span> with <span class="math inline">|S|=k</span>; labels are noiseless. Write <span class="math inline">N=\binom dk</span> for the number of candidate targets.</p>
+<p><strong>(a) Short-description prior.</strong> The learner outputs any <span class="math inline">k</span>-sparse parity consistent with the <span class="math inline">n</span> training examples. Show that two distinct parities disagree on exactly half of all inputs. Deduce that with probability at least <span class="math inline">1-\delta</span> the only consistent parity is the target once <span class="math inline">n\ge\log_2N+\log_2(1/\delta)</span>, and that <span class="math inline">\log_2N\le k\log_2d</span>.</p>
+<p><strong>(b) Fixed kernel.</strong> Kernel ridge regression, minimum-norm kernel interpolation and the Gaussian-process posterior mean all output <span class="math inline">\hat f=\sum_{i\le n}\alpha_iK(x_i,\cdot)</span>, which lies in <span class="math inline">V=\mathrm{span}\{K(x_i,\cdot)\}</span>; <span class="math inline">V</span> depends on the inputs but not the labels. In <span class="math inline">L^2</span> of the uniform distribution, show <span class="math inline">\sum_{|S|=k}\lVert P_V\chi_S\rVert^2\le n</span> (<span class="math inline">P_V</span> the orthogonal projection onto <span class="math inline">V</span>), and deduce <span class="math inline">\mathbb E_S\lVert\hat f-\chi_S\rVert^2\ge1-n/N</span> for a uniformly random target.</p>
+<p><strong>(c)</strong> Put in <span class="math inline">d=100</span>, <span class="math inline">k=5</span>. What does each result say, and not say, about networks trained by SGD?</p>
+<details class="hint"><summary>Hints</summary>
+
+<p>(a) <span class="math inline">\chi_S\chi_T=\chi_{S\triangle T}</span>, and a non-constant parity has mean zero; then a union bound. (b) The <span class="math inline">\chi_S</span> are orthonormal. Expand <span class="math inline">\lVert P_V\chi_S\rVert^2</span> in an orthonormal basis of <span class="math inline">V</span> (at most <span class="math inline">n</span> vectors), swap sums, use Bessel’s inequality, and note <span class="math inline">\lVert\hat f-\chi_S\rVert^2\ge1-\lVert P_V\chi_S\rVert^2</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> For <span class="math inline">S\ne T</span>, <span class="math inline">\mathbb E_x[\chi_S\chi_T]=\mathbb E_x[\chi_{S\triangle T}]=0</span>, so they agree on exactly half the inputs, and a fixed wrong parity survives <span class="math inline">n</span> i.i.d. examples with probability <span class="math inline">2^{-n}</span>. A union bound over the <span class="math inline">N-1</span> wrong parities gives failure probability at most <span class="math inline">N2^{-n}\le\delta</span> once <span class="math inline">n\ge\log_2N+\log_2(1/\delta)</span>; and <span class="math inline">N\le d^k</span>. The sample cost is the number of bits needed to name <span class="math inline">S</span>: the Occam bound in miniature, and the shape of the slides’ Solomonoff warm-up.</p>
+<p><strong>(b)</strong> With <span class="math inline">e_1,\dots,e_r</span> (<span class="math inline">r\le n</span>) an orthonormal basis of <span class="math inline">V</span>,</p>
+<p><span class="math display">
+\sum_{|S|=k}\lVert P_V\chi_S\rVert^2=\sum_{j=1}^r\sum_{|S|=k}\langle e_j,\chi_S\rangle^2\le\sum_{j=1}^r\lVert e_j\rVert^2=r\le n
+</span></p>
+<p>by Bessel. Since <span class="math inline">\hat f\in V</span>, <span class="math inline">\lVert\hat f-\chi_S\rVert^2\ge1-\lVert P_V\chi_S\rVert^2</span>; averaging over <span class="math inline">S</span> gives <span class="math inline">1-n/N</span>. The predictor <span class="math inline">\hat f=0</span> already has error 1, so any fixed kernel needs <span class="math inline">n</span> of order <span class="math inline">\binom dk\approx d^k/k!</span> to do much better. (A posterior <em>sample</em> is the mean plus label-independent noise, which only adds error.)</p>
+<p><strong>(c)</strong> <span class="math inline">N=\binom{100}5\approx7.5\times10^7</span> and <span class="math inline">\log_2N\approx26.2</span>: about 33 samples for <span class="math inline">\delta=0.01</span> versus tens of millions for any fixed kernel. That is the gap between a description-length (or circuit) prior and the NNGP/NTK kernel prior. But (a) is information-theoretic: the learner enumerates <span class="math inline">N</span> candidates. Gradient methods are believed to need time growing like <span class="math inline">d^{\Omega(k)}</span> on this task (statistical-query lower bounds), though few samples suffice in principle. So the gap between (a) and SGD is about <em>search</em>, not the prior: Furman’s search problem.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="5-hierarchical-representations">
+<summary><h2 id="5-hierarchical-representations">5. Hierarchical representations</h2></summary>
+<div class="sec-body">
+<a id="wb4-section-5"></a>
+<p>A different answer puts the structure in the data: compositional targets are cheap for deep networks to approximate (Furman’s paradox of approximation), and in a solvable model the sample cost is set by when low-level correlations become detectable, not by a simplicity prior.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1611.00740">Why and when can deep, but not shallow, networks avoid the curse of dimensionality: a review</a></strong>, Tomaso Poggio, Hrushikesh Mhaskar, Lorenzo Rosasco, Brando Miranda and Qianli Liao, 2017 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A deep network matched to a binary tree of 2-variable functions approximates it with about <span class="math inline">(d-1)\varepsilon^{-2/r}</span> units, a shallow one needs <span class="math inline">\varepsilon^{-d/r}</span> (Theorems 1–2; <span class="math inline">r</span> is the smoothness). An existence result about approximation, not learning.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2307.02129">How deep neural networks learn compositional data: the Random Hierarchy Model</a></strong>, Francesco Cagnetta, Leonardo Petrini, Umberto M. Tomasini, Alessandro Favero and Matthieu Wyart, 2024 (<em>Phys. Rev. X</em> 14, 031001) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>On synthetic hierarchical grammars, deep networks need about <span class="math inline">n_cm^L</span> samples (polynomial in input dimension), shallow ones exponentially many; removing low-level feature–label correlations makes it exponentially hard for deep networks too. §I defines the model, §II the scaling, §III the correlation argument.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-where-does-simplicity-enter">
+<summary><h3 id="exercises-where-does-simplicity-enter">Exercises: where does simplicity enter?</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 5.1 (A length-prior learner on the Random Hierarchy Model).</strong> In the Random Hierarchy Model each level has <span class="math inline">v</span> symbols; each symbol at level <span class="math inline">\ell</span> is rewritten as a patch of <span class="math inline">s</span> symbols at level <span class="math inline">\ell-1</span>, with <span class="math inline">m</span> random but fixed alternative rewrites (“synonyms”), <span class="math inline">m\le v^{s-1}</span>. A class label (one of <span class="math inline">n_c</span>) is rewritten <span class="math inline">L</span> times, giving an input of length <span class="math inline">d=s^L</span>. Deep CNNs trained by gradient descent need about <span class="math inline">P^\ast\simeq n_cm^L</span> samples.</p>
+<p>Estimate how many samples an idealized learner with a program-length prior would need, and compare with <span class="math inline">P^\ast</span> as <span class="math inline">L</span> grows. What does the comparison suggest about what sets the observed <span class="math inline">P^\ast</span>?</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>Count the bits needed to write down all the rewrite rules. A Bayesian learner over programs needs a number of samples linear in the target’s description length, and each label carries at most <span class="math inline">\log_2n_c</span> bits.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ul>
+<li><strong>Description length.</strong> <span class="math inline">L</span> levels, about <span class="math inline">v</span> symbols each, <span class="math inline">m</span> rewrites of <span class="math inline">s</span> symbols at <span class="math inline">\log_2v</span> bits per symbol: about <span class="math inline">Lvms\log_2v</span> bits.</li>
+<li><strong>Samples.</strong> At most <span class="math inline">\log_2n_c</span> bits per label, so roughly <span class="math inline">Lvms\log_2v/\log_2n_c</span> samples: <em>linear</em> in <span class="math inline">L</span>, whereas <span class="math inline">P^\ast\simeq n_cm^L</span> is <em>exponential</em> in <span class="math inline">L</span> (though polynomial in <span class="math inline">d=s^L</span>).</li>
+<li><strong>Example.</strong> <span class="math inline">v=n_c=8</span>, <span class="math inline">m=4</span>, <span class="math inline">s=2</span>: at <span class="math inline">L=3</span>, about 192 versus 512; at <span class="math inline">L=6</span>, about 384 versus 32,768.</li>
+<li><strong>Reading.</strong> The idealized learner is far more sample-efficient but intractable. The network’s actual cost tracks when correlations become detectable, so <span class="math inline">P^\ast</span> reflects the search mechanism and the data’s statistics, not a program-length prior. The uncorrelated variant sharpens this: the rules are just as short, so the idealized learner is unaffected, but deep networks become exponential.</li>
+<li><strong>Caveat.</strong> A back-of-envelope estimate; unlabelled inputs also carry information about the rules, so the label-only count overstates what the idealized learner needs.</li>
+</ul>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="6-the-accounts-side-by-side">
+<summary><h2 id="6-the-accounts-side-by-side">6. The accounts side by side</h2></summary>
+<div class="sec-body">
+<a id="wb4-section-6"></a>
+<p>One table comparing the priors over functions met above on the two test problems.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>prior over functions</th>
+<th><span class="math inline">k</span>-sparse parity on <span class="math inline">\{\pm1\}^d</span></th>
+<th>correlated vs uncorrelated hierarchy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>program length, <span class="math inline">2^{-\ell(f)}</span> (sections 2–3, keystone)</td>
+<td><span class="math inline">\approx k\log_2d</span> samples, information-theoretic (Ex. 4.1a)</td>
+<td>equally short, so equally easy</td>
+</tr>
+<tr>
+<td>circuit size at fixed depth (Hänni–Vaintrob)</td>
+<td><span class="math inline">\mathrm{poly}(d,C)</span> samples, any width <span class="math inline">N\ge C</span></td>
+<td>not addressed</td>
+</tr>
+<tr>
+<td>kernel norm (NNGP, lazy/NTK)</td>
+<td><span class="math inline">\gtrsim\binom dk</span> samples for any fixed kernel (Ex. 4.1b)</td>
+<td>not addressed</td>
+</tr>
+<tr>
+<td><em>observed:</em> deep nets trained by gradient methods</td>
+<td>time believed <span class="math inline">d^{\Omega(k)}</span></td>
+<td>polynomial vs exponential in <span class="math inline">d</span> (Ex. 5.1)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Singular learning theory is not a fourth row: it describes posterior concentration in parameter space (section 2’s volume, done correctly for singular models); see the SLT day.</p>
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:wb4", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SGD Cloud vs Posterior</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb;
+  --panel: #f3f2ee;
+  --ink: #0b0b0b;
+  --ink2: #52514e;
+  --ink3: #8a8983;
+  --grid: #e3e2dc;
+  --contour: #d4d2ca;
+  --post: #2a78d6;      /* posterior: categorical slot 1 */
+  --sgd: #eb6834;       /* SGD stationary law: slot 2 */
+  --cloud: #1baf7a;     /* simulated cloud: slot 3 */
+  --band: rgba(235,104,52,0.10);
+  --warn: #b3261e;
+  --accent-ui: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19; --panel: #242422; --ink: #ffffff; --ink2: #c3c2b7; --ink3: #8f8e86;
+    --grid: #2f2f2c; --contour: #3b3a37;
+    --post: #3987e5; --sgd: #d95926; --cloud: #199e70; --band: rgba(217,89,38,0.16);
+    --warn: #ff8a80; --accent-ui: #3987e5;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19; --panel: #242422; --ink: #ffffff; --ink2: #c3c2b7; --ink3: #8f8e86;
+  --grid: #2f2f2c; --contour: #3b3a37;
+  --post: #3987e5; --sgd: #d95926; --cloud: #199e70; --band: rgba(217,89,38,0.16);
+  --warn: #ff8a80; --accent-ui: #3987e5;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { max-width: 960px; margin: 0 auto; padding: 24px 16px 40px; }
+h1 { font-size: 1.45rem; font-weight: 600; margin: 0 0 4px; letter-spacing: -0.01em; }
+.sub { color: var(--ink2); margin: 0 0 18px; font-size: 0.95rem; }
+.fig { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 760px) { .fig { grid-template-columns: minmax(0, 1fr); } }
+.plotwrap { position: relative; width: 100%; }
+canvas#plot { width: 100%; aspect-ratio: 1 / 1; display: block; background: var(--bg); touch-action: pan-y; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.82rem; color: var(--ink2); margin: 6px 0 0; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 22px; height: 0; border-top: 2px solid; display: inline-block; }
+.sw.dash { border-top-style: dashed; }
+.sw.dot { border-top-style: dotted; border-top-width: 3px; }
+.dotsw { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.controls { background: var(--panel); border-radius: 8px; padding: 12px 14px; }
+.ctl { margin: 0 0 10px; }
+.ctl label { display: flex; justify-content: space-between; font-size: 0.86rem; color: var(--ink2); gap: 8px; }
+.ctl label b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.ctl input[type=range] { width: 100%; margin: 2px 0 0; accent-color: var(--accent-ui); }
+.ticks { position: relative; height: 14px; font-size: 0.72rem; color: var(--ink3); margin: -2px 8px 0; }
+.ticks span { position: absolute; transform: translateX(-50%); }
+.row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: 0.84rem; color: var(--ink2); }
+button { font: inherit; font-size: 0.8rem; padding: 3px 9px; border-radius: 5px; border: 1px solid var(--ink3); background: var(--bg); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--ink); }
+table.ro { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin-top: 12px; font-variant-numeric: tabular-nums; }
+table.ro td, table.ro th { padding: 3px 4px; border-bottom: 1px solid var(--grid); text-align: left; vertical-align: top; }
+table.ro th { color: var(--ink2); font-weight: 500; }
+table.ro td.num { text-align: right; white-space: nowrap; }
+.tag { font-size: 0.7rem; color: var(--ink3); display: block; }
+.warn { color: var(--warn); font-size: 0.84rem; min-height: 1.2em; margin: 6px 0 0; }
+.panel2 { margin-top: 22px; }
+.panel2 h2 { font-size: 1rem; font-weight: 600; margin: 0 0 2px; }
+.panel2 p.s { margin: 0 0 6px; color: var(--ink2); font-size: 0.86rem; }
+svg#klchart { width: 100%; height: auto; display: block; overflow: visible; }
+svg text { fill: var(--ink2); font-size: 11px; font-family: inherit; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--grid); border-radius: 5px; padding: 3px 7px; font-size: 0.78rem; color: var(--ink); display: none; white-space: nowrap; }
+.caption { margin-top: 20px; font-size: 0.9rem; color: var(--ink2); border-top: 1px solid var(--grid); padding-top: 12px; }
+.caption p { margin: 0 0 8px; }
+code, .m { font-family: "STIX Two Math", "Cambria Math", Georgia, serif; font-style: normal; }
+</style>
+</head>
+<body>
+<main>
+<h1>SGD's stationary cloud vs. the posterior</h1>
+<p class="sub">WB2 §8–6.4. A 2-D quadratic basin <span class="m">L(θ) = ½ θ<sup>T</sup>Hθ</span>, <span class="m">H = diag(1, κ)</span>, gradient noise <span class="m">C = R<sub>φ</sub> H<sup>γ</sup> R<sub>φ</sub><sup>T</sup></span>. Is SGD's stationary covariance shaped like the posterior's?</p>
+
+<div class="fig">
+  <div>
+    <div class="plotwrap">
+      <canvas id="plot" aria-label="Loss contours with SGD stationary and posterior covariance ellipses"></canvas>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="border-color:var(--sgd)"></i>SGD, SDE (OU) law <span class="m">Σ</span></span>
+      <span><i class="sw dash" style="border-color:var(--sgd)"></i>SGD, discrete-time exact <span class="m">Σ<sub>η</sub></span></span>
+      <span><i class="sw" style="border-color:var(--post)"></i>posterior <span class="m">(T/n)H<sup>−1</sup></span></span>
+      <span><i class="dotsw" style="background:var(--cloud)"></i><i class="sw dot" style="border-color:var(--cloud)"></i>simulated SGD cloud, empirical cov.</span>
+    </div>
+    <p class="legend" style="margin-top:2px">All ellipses are 2σ (contain 86% of a 2-D Gaussian). Gray: loss contours. Axes equal-scaled; θ₁ is the flat direction (curvature 1), θ₂ the sharp one (curvature κ).</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <label><span>noise exponent γ (C ∝ H<sup>γ</sup>)</span> <b id="gv"></b></label>
+      <input type="range" id="gamma" min="-1" max="3" step="0.05" value="1">
+      <div class="ticks"><span style="left:0%">−1</span><span style="left:25%">0</span><span style="left:50%">1</span><span style="left:75%">2</span><span style="left:100%">3</span></div>
+      <div class="row">jump to: <button data-g="0">γ=0</button><button data-g="1">γ=1</button><button data-g="2">γ=2</button></div>
+    </div>
+    <div class="ctl">
+      <label>condition number κ <b id="kv"></b></label>
+      <input type="range" id="kappa" min="0" max="2" step="0.01" value="1">
+    </div>
+    <div class="ctl">
+      <label>learning rate η <b id="ev"></b></label>
+      <input type="range" id="eta" min="-3" max="0" step="0.01" value="-2">
+    </div>
+    <div class="ctl">
+      <label>batch size B <b id="bv"></b></label>
+      <input type="range" id="batch" min="0" max="8" step="1" value="3">
+    </div>
+    <div class="ctl">
+      <label>noise rotation φ (C's eigenbasis vs H's) <b id="pv"></b></label>
+      <input type="range" id="phi" min="0" max="90" step="1" value="0">
+    </div>
+    <div class="ctl">
+      <label>posterior temperature T (n = 1000) <b id="tv"></b></label>
+      <input type="range" id="temp" min="-3" max="6" step="0.01" value="0">
+      <div class="row"><label style="display:inline-flex;gap:5px;align-items:center;color:var(--ink2)"><input type="checkbox" id="autoT" checked> keep T = T* (match trace)</label></div>
+    </div>
+    <div class="row"><button id="reset">restart cloud</button><button id="pause">pause</button></div>
+    <div class="warn" id="warn"></div>
+
+    <table class="ro">
+      <tr><th>excess risk ½Tr(HΣ)</th><th></th></tr>
+      <tr><td>SGD, SDE <span class="tag">exact for OU: ηTr C / 4B</span></td><td class="num" id="r_sde"></td></tr>
+      <tr><td>SGD, discrete <span class="tag">exact discrete Lyapunov</span></td><td class="num" id="r_disc"></td></tr>
+      <tr><td>simulated cloud <span class="tag">Monte Carlo, 1500 chains</span></td><td class="num" id="r_mc"></td></tr>
+      <tr><td>posterior <span class="tag">T·p / 2n, p = 2</span></td><td class="num" id="r_post"></td></tr>
+      <tr><th>shape</th><th></th></tr>
+      <tr><td>KL* (SDE Σ ‖ best-T posterior) <span class="tag">nats; 0 iff same shape</span></td><td class="num" id="r_kl"></td></tr>
+      <tr><td>KL at current T</td><td class="num" id="r_klT"></td></tr>
+      <tr><td>T* = n·Tr(HΣ)/p</td><td class="num" id="r_tstar"></td></tr>
+      <tr><td>anisotropy of HΣ <span class="tag">eig ratio; posterior has 1</span></td><td class="num" id="r_aniso"></td></tr>
+      <tr><td>‖Σ<sub>η</sub> − Σ‖/‖Σ‖ <span class="tag">discrete vs SDE</span></td><td class="num" id="r_dd"></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="panel2">
+  <h2>Shape mismatch as a function of γ</h2>
+  <p class="s">KL* = min over T of KL(N(0,Σ) ‖ N(0,(T/n)H<sup>−1</sup>)) = ½[p log(Tr(HΣ)/p) − log det(HΣ)], at the current κ, φ (and η for the discrete curve). Click to set γ.</p>
+  <div class="plotwrap" id="klwrap">
+    <svg id="klchart" viewBox="0 0 900 220" preserveAspectRatio="xMidYMid meet" role="img" aria-label="KL star versus gamma"></svg>
+    <div class="tip" id="tip"></div>
+  </div>
+  <div class="legend">
+    <span><i class="sw" style="border-color:var(--sgd)"></i>SDE Σ</span>
+    <span><i class="sw dash" style="border-color:var(--sgd)"></i>discrete-time Σ<sub>η</sub></span>
+    <span><i class="dotsw" style="background:var(--band);outline:1px solid var(--ink3)"></i>1 ≤ γ ≤ 2: diagonal range reported by Zhang–Yang–Tu (2026)</span>
+  </div>
+</div>
+
+<div class="caption">
+  <p><b>What to look at.</b> Slide γ. At γ = 0 (isotropic noise, C ∝ I) the orange SGD ellipse has exactly the posterior's shape H<sup>−1</sup>: long along the flat direction. At γ = 1 (C ∝ H, the Fisher identity of WB2 §7) the SGD law is a circle, Σ = (η/2B)·I. At γ = 2 it is ∝ H: <i>more</i> spread along the sharp direction than the flat one, the opposite of the posterior. With φ = 0, Σ ∝ H<sup>γ−1</sup>; KL* is symmetric about γ = 0 in log-eigenvalue and vanishes only there. Rotating the noise (φ ≠ 0) tilts Σ, and then no temperature makes it match. The excess risk ½Tr(HΣ) = ηTr(C)/4B holds for any C, and choosing T = T* makes the posterior's excess risk T p/2n equal SGD's; this T* is also the KL-optimal temperature.</p>
+  <p><b>Exact vs. simulated.</b> The solid orange ellipse solves the continuous Lyapunov equation HΣ + ΣH = (η/B)C exactly. The dashed one solves the exact stationary equation of discrete SGD θ ← θ − η(Hθ + ξ), Cov ξ = C/B, namely Σ<sub>η</sub> = (I − ηH)Σ<sub>η</sub>(I − ηH) + η²C/B. They differ at O(ηκ): the discrete law is wider in the sharp direction and diverges at ηκ ≥ 2. The green cloud is a direct simulation of that discrete recursion (Gaussian ξ, 1500 independent chains started at θ = 0) and should converge onto the dashed ellipse.</p>
+  <p><b>Claim boundary.</b> This is a local, linear Ornstein–Uhlenbeck model near one minimum with a fixed, state-independent C and Gaussian noise. It does not show loss-dependent noise (e.g. C ∝ L·H, Mori et al.), which gives heavy-tailed stationary laws, nor non-quadratic basins, interpolation (C → 0, WB2 §8), momentum or adaptive optimizers. The 1 ≤ γ ≤ 2 band is Zhang–Yang–Tu's (arXiv 2602.05600) empirical finding for <i>diagonal</i> entries C<sub>ii</sub> ∝ H<sub>ii</sub><sup>γ</sup> in their setups; it is not a claim that C is exactly a power of H. "SGD is approximately Bayesian" in this model is the claim γ ≈ 0, or that the noise has been preconditioned by C<sup>−1</sup> (Mandt et al.).</p>
+</div>
+</main>
+
+<script id="mathcore">
+// ---- exact 2x2 formulas (mirrored in checks/sgd_stationary_vs_posterior_check.py) ----
+// symmetric 2x2 matrices stored as [a, b, d] = [[a,b],[b,d]]
+const M2 = {
+  rot(phi) { return [Math.cos(phi), Math.sin(phi)]; },
+  // C = c R diag(1, kappa^gamma) R^T
+  makeC(kappa, gamma, phi, c = 1) {
+    const co = Math.cos(phi), si = Math.sin(phi), l1 = c, l2 = c * Math.pow(kappa, gamma);
+    return [l1 * co * co + l2 * si * si, (l1 - l2) * co * si, l1 * si * si + l2 * co * co];
+  },
+  solve3(M, q) { // Cramer
+    const det = (A) => A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1]) - A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0]) + A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+    const D = det(M), out = [];
+    for (let j = 0; j < 3; j++) { const A = M.map((r, i) => r.map((v, k) => (k === j ? q[i] : v))); out.push(det(A) / D); }
+    return out;
+  },
+  // H S + S H = Q
+  lyapCont(H, Q) {
+    const [h11, h12, h22] = H;
+    return M2.solve3([[2 * h11, 2 * h12, 0], [h12, h11 + h22, h12], [0, 2 * h12, 2 * h22]], Q);
+  },
+  // S - A S A = Q, A symmetric
+  lyapDisc(A, Q) {
+    const [a11, a12, a22] = A;
+    const K = [[a11 * a11, 2 * a11 * a12, a12 * a12], [a11 * a12, a11 * a22 + a12 * a12, a12 * a22], [a12 * a12, 2 * a12 * a22, a22 * a22]];
+    return M2.solve3(K.map((r, i) => r.map((v, k) => (i === k ? 1 : 0) - v)), Q);
+  },
+  scale(S, s) { return S.map((v) => v * s); },
+  det(S) { return S[0] * S[2] - S[1] * S[1]; },
+  // product H S (general 2x2, row-major) and its trace/det
+  mulFull(A, B) { return [A[0] * B[0] + A[1] * B[1], A[0] * B[1] + A[1] * B[2], A[1] * B[0] + A[2] * B[1], A[1] * B[1] + A[2] * B[2]]; },
+  eig(S) { const m = (S[0] + S[2]) / 2, r = Math.hypot((S[0] - S[2]) / 2, S[1]); const th = 0.5 * Math.atan2(2 * S[1], S[0] - S[2]); return { l1: m + r, l2: m - r, th }; },
+  inv(S) { const d = M2.det(S); return [S[2] / d, -S[1] / d, S[0] / d]; },
+  chol(S) { const l11 = Math.sqrt(S[0]), l21 = S[1] / l11; return [l11, l21, Math.sqrt(Math.max(S[2] - l21 * l21, 0))]; },
+  klGauss(S0, S1) { const P = M2.mulFull(M2.inv(S1), S0); return 0.5 * (P[0] + P[3] - 2 + Math.log(M2.det(S1) / M2.det(S0))); },
+  // KL* over temperature, and T* (n data points, p = 2)
+  klStar(H, S, n) {
+    const P = M2.mulFull(H, S), tr = P[0] + P[3], dt = P[0] * P[3] - P[1] * P[2];
+    return { kl: 0.5 * (2 * Math.log(tr / 2) - Math.log(dt)), Tstar: n * tr / 2, trHS: tr, aniso: (() => { const m = tr / 2, r = Math.sqrt(Math.max(m * m - dt, 0)); return (m + r) / (m - r); })() };
+  },
+  model(kappa, gamma, phi, eta, B) {
+    const H = [1, 0, kappa], C = M2.makeC(kappa, gamma, phi);
+    const S = M2.lyapCont(H, M2.scale(C, eta / B));
+    const stable = eta * kappa < 2;
+    const Sd = stable ? M2.lyapDisc([1 - eta, 0, 1 - eta * kappa], M2.scale(C, eta * eta / B)) : null;
+    return { H, C, S, Sd, stable };
+  },
+};
+// self-test against numbers printed by the Python check
+(function selfTest() {
+  const m = M2.model(20, 2, Math.PI / 6, 0.05, 4);
+  const refS = [0.6296874999999998, -0.10284051669940208, 0.09382812500000001];
+  const refSd = [0.645833333333333, -0.1079825425343722, 0.18765625000000008];
+  const ks = M2.klStar(m.H, m.S, 1000);
+  const err = Math.max(...refS.map((v, i) => Math.abs(v - m.S[i]) / Math.abs(v)), ...refSd.map((v, i) => Math.abs(v - m.Sd[i]) / Math.abs(v)), Math.abs(ks.kl - 0.24080585807571317) / 0.2408, Math.abs(ks.Tstar - 1253.125) / 1253.125);
+  M2.selfTestErr = err;
+  (typeof console !== "undefined") && console.log("[sgd_stationary_vs_posterior] self-test max rel err vs Python:", err.toExponential(2), err < 1e-10 ? "PASS" : "FAIL");
+})();
+if (typeof module !== "undefined") module.exports = M2;
+</script>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const N_DATA = 1000, NCH = 1500, NDRAW = 700;
+  const st = { gamma: 1, kappa: 10, eta: 0.01, B: 8, phi: 0, T: 1, auto: true, paused: false };
+  let model = null, ks = null, view = { R: 1 };
+  // chains
+  const X = new Float64Array(NCH), Y = new Float64Array(NCH);
+  let emp = null, empN = 0, steps = 0;
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  function fmt(x, d = 3) {
+    if (!isFinite(x)) return "—";
+    const a = Math.abs(x);
+    if (a !== 0 && (a < 1e-3 || a >= 1e5)) return x.toExponential(d - 1).replace("e", "·10^").replace(/\^\+?(-?\d+)/, (m, e) => "^" + e).replace(/\^(-?\d+)/, (m, e) => sup(e));
+    return x.toPrecision(d);
+  }
+  function sup(s) { const map = { "-": "⁻", 0: "⁰", 1: "¹", 2: "²", 3: "³", 4: "⁴", 5: "⁵", 6: "⁶", 7: "⁷", 8: "⁸", 9: "⁹" }; return String(s).split("").map((c) => map[c] || c).join(""); }
+
+  function readControls() {
+    st.gamma = +$("gamma").value;
+    st.kappa = Math.pow(10, +$("kappa").value);
+    st.eta = Math.pow(10, +$("eta").value);
+    st.B = Math.pow(2, +$("batch").value);
+    st.phi = +$("phi").value * Math.PI / 180;
+    st.auto = $("autoT").checked;
+  }
+  function recompute(resetCloud) {
+    readControls();
+    model = M2.model(st.kappa, st.gamma, st.phi, st.eta, st.B);
+    ks = M2.klStar(model.H, model.S, N_DATA);
+    if (st.auto) { st.T = ks.Tstar; $("temp").value = Math.log10(st.T).toFixed(2); }
+    else st.T = Math.pow(10, +$("temp").value);
+    $("gv").textContent = st.gamma.toFixed(2);
+    $("kv").textContent = st.kappa.toPrecision(3);
+    $("ev").textContent = st.eta.toPrecision(2) + "   (ηκ = " + (st.eta * st.kappa).toPrecision(2) + ")";
+    $("bv").textContent = st.B + "   (η/B = " + fmt(st.eta / st.B, 2) + ")";
+    $("pv").textContent = Math.round(st.phi * 180 / Math.PI) + "°";
+    $("tv").textContent = fmt(st.T, 3);
+    // view: 2-sigma extents
+    const ext = (S) => (S ? 2 * Math.sqrt(M2.eig(S).l1) : 0);
+    const sg = Math.max(ext(model.S), ext(model.Sd));
+    const post = ext([st.T / N_DATA, 0, st.T / N_DATA / st.kappa]);
+    view.R = 1.15 * Math.max(sg, Math.min(post, 3 * sg));
+    view.postClipped = post > view.R;
+    $("warn").textContent = !model.stable
+      ? "ηκ ≥ 2: discrete SGD diverges along the sharp direction; no discrete stationary law. The SDE ellipse is still drawn."
+      : view.postClipped ? "Posterior ellipse at this T extends beyond the view." : "";
+    if (resetCloud) resetChains();
+    updateReadouts();
+    drawKL();
+  }
+  function resetChains() { X.fill(0); Y.fill(0); emp = null; empN = 0; steps = 0; }
+
+  function randn() { let u = 0; while (u === 0) u = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * Math.random()); }
+  function stepChains(nsteps) {
+    if (!model.stable) return;
+    const L = M2.chol(M2.scale(model.C, 1 / st.B)), e = st.eta, k = st.kappa;
+    for (let s = 0; s < nsteps; s++) {
+      for (let i = 0; i < NCH; i++) {
+        const z1 = randn(), z2 = randn();
+        const xi1 = L[0] * z1, xi2 = L[1] * z1 + L[2] * z2;
+        const x = X[i], y = Y[i];
+        X[i] = x - e * (x + xi1);
+        Y[i] = y - e * (k * y + xi2);
+      }
+    }
+    steps += nsteps;
+    // ensemble covariance, exponentially averaged over frames to cut MC noise
+    let sxx = 0, sxy = 0, syy = 0;
+    for (let i = 0; i < NCH; i++) { sxx += X[i] * X[i]; sxy += X[i] * Y[i]; syy += Y[i] * Y[i]; }
+    const cur = [sxx / NCH, sxy / NCH, syy / NCH];
+    empN++;
+    const a = Math.max(1 / empN, 0.06);
+    emp = emp ? emp.map((v, i) => (1 - a) * v + a * cur[i]) : cur;
+  }
+
+  // ---------- main plot ----------
+  const cv = $("plot"), ctx = cv.getContext("2d");
+  function sizeCanvas() {
+    const w = cv.clientWidth, dpr = window.devicePixelRatio || 1;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(w * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function niceStep(span) { const raw = span / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p; return p * (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10); }
+  function ellipse(S, k, color, dash, width, tf) {
+    const { l1, l2, th } = M2.eig(S);
+    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash);
+    ctx.beginPath();
+    for (let j = 0; j <= 120; j++) {
+      const t = 2 * Math.PI * j / 120, u = k * Math.sqrt(Math.max(l1, 0)) * Math.cos(t), v = k * Math.sqrt(Math.max(l2, 0)) * Math.sin(t);
+      const x = u * Math.cos(th) - v * Math.sin(th), y = u * Math.sin(th) + v * Math.cos(th);
+      const [px, py] = tf(x, y); j ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  function draw() {
+    const W = cv.clientWidth, H = W;
+    const padL = 46, padB = 34, padT = 10, padR = 10;
+    const pw = Math.min(W - padL - padR, H - padT - padB);
+    const ox = padL + pw / 2, oy = padT + pw / 2, sc = pw / (2 * view.R);
+    const tf = (x, y) => [ox + x * sc, oy - y * sc];
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = css("--bg"); ctx.fillRect(0, 0, W, H);
+    // clip region
+    ctx.save(); ctx.beginPath(); ctx.rect(padL, padT, pw, pw); ctx.clip();
+    // loss contours: 1/2 th^T H th = l, chosen so th1 half-axes are evenly spaced
+    ctx.strokeStyle = css("--contour"); ctx.lineWidth = 1; ctx.setLineDash([]);
+    for (let j = 1; j <= 8; j++) {
+      const a = view.R * j / 4, b = a / Math.sqrt(st.kappa);
+      ctx.beginPath(); ctx.ellipse(ox, oy, a * sc, b * sc, 0, 0, 2 * Math.PI); ctx.stroke();
+    }
+    // axes through origin
+    ctx.strokeStyle = css("--grid"); ctx.beginPath(); ctx.moveTo(padL, oy); ctx.lineTo(padL + pw, oy); ctx.moveTo(ox, padT); ctx.lineTo(ox, padT + pw); ctx.stroke();
+    // C's top eigenvector
+    if (Math.abs(st.gamma) > 1e-9) {
+      const e = M2.eig(model.C);
+      ctx.save(); ctx.strokeStyle = css("--ink3"); ctx.setLineDash([2, 4]); ctx.lineWidth = 1;
+      const L = view.R * 1.5, c = Math.cos(e.th), s = Math.sin(e.th);
+      ctx.beginPath(); let p = tf(-L * c, -L * s); ctx.moveTo(p[0], p[1]); p = tf(L * c, L * s); ctx.lineTo(p[0], p[1]); ctx.stroke(); ctx.restore();
+    }
+    // cloud
+    if (model.stable && steps > 0) {
+      ctx.fillStyle = css("--cloud"); ctx.globalAlpha = 0.45;
+      for (let i = 0; i < NDRAW; i++) { const [px, py] = tf(X[i], Y[i]); ctx.fillRect(px - 1.2, py - 1.2, 2.4, 2.4); }
+      ctx.globalAlpha = 1;
+      if (emp && emp[0] > 0 && M2.det(emp) > 0) ellipse(emp, 2, css("--cloud"), [2, 3], 2.5, tf);
+    }
+    ellipse([st.T / N_DATA, 0, st.T / N_DATA / st.kappa], 2, css("--post"), [], 2, tf);
+    if (model.Sd) ellipse(model.Sd, 2, css("--sgd"), [7, 5], 2, tf);
+    ellipse(model.S, 2, css("--sgd"), [], 2, tf);
+    ctx.restore();
+    // frame + ticks
+    ctx.strokeStyle = css("--grid"); ctx.lineWidth = 1; ctx.strokeRect(padL + 0.5, padT + 0.5, pw - 1, pw - 1);
+    ctx.fillStyle = css("--ink2"); ctx.font = "11px -apple-system, Segoe UI, Roboto, sans-serif";
+    const stp = niceStep(2 * view.R);
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (let v = -Math.floor(view.R / stp) * stp; v <= view.R + 1e-12; v += stp) {
+      const [px] = tf(v, 0); ctx.fillText(tickLabel(v, stp), px, padT + pw + 4);
+      ctx.fillRect(px, padT + pw - 4, 1, 4);
+    }
+    ctx.textAlign = "right"; ctx.textBaseline = "middle";
+    for (let v = -Math.floor(view.R / stp) * stp; v <= view.R + 1e-12; v += stp) {
+      const [, py] = tf(0, v); ctx.fillText(tickLabel(v, stp), padL - 4, py);
+      ctx.fillRect(padL, py, 4, 1);
+    }
+    ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillStyle = css("--ink2");
+    ctx.fillText("θ₁  (flat, curvature 1)", padL + pw / 2, H);
+    ctx.save(); ctx.translate(11, padT + pw / 2); ctx.rotate(-Math.PI / 2); ctx.textBaseline = "middle"; ctx.fillText("θ₂  (sharp, curvature κ)", 0, 0); ctx.restore();
+    // corner annotation
+    ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillStyle = css("--ink3");
+    ctx.fillText(model.stable ? "SGD steps: " + steps : "discrete SGD unstable", padL + 6, padT + 5);
+    if (Math.abs(st.gamma) > 1e-9) ctx.fillText("dotted line: C's top eigenvector", padL + 6, padT + 19);
+  }
+  function tickLabel(v, stp) { if (Math.abs(v) < stp * 1e-6) return "0"; const d = Math.max(0, -Math.floor(Math.log10(stp))); return (stp < 1e-3 || stp >= 1e4) ? v.toExponential(0) : v.toFixed(d); }
+
+  function updateReadouts() {
+    $("r_sde").textContent = fmt(0.5 * ks.trHS);
+    if (model.Sd) { const P = M2.mulFull(model.H, model.Sd); $("r_disc").textContent = fmt(0.5 * (P[0] + P[3])); }
+    else $("r_disc").textContent = "diverges";
+    $("r_post").textContent = fmt(st.T / N_DATA);
+    $("r_kl").textContent = fmt(Math.max(ks.kl, 0));
+    $("r_klT").textContent = fmt(M2.klGauss(model.S, [st.T / N_DATA, 0, st.T / N_DATA / st.kappa]));
+    $("r_tstar").textContent = fmt(ks.Tstar);
+    $("r_aniso").textContent = fmt(ks.aniso);
+    if (model.Sd) { const d = model.Sd.map((v, i) => v - model.S[i]); const nf = (S) => Math.sqrt(S[0] * S[0] + 2 * S[1] * S[1] + S[2] * S[2]); $("r_dd").textContent = (100 * nf(d) / nf(model.S)).toPrecision(2) + "%"; }
+    else $("r_dd").textContent = "—";
+    updateMC();
+  }
+  function updateMC() {
+    if (emp && model.stable) { const P = M2.mulFull(model.H, emp); $("r_mc").textContent = fmt(0.5 * (P[0] + P[3])) + (steps < 3 / st.eta ? " (burn-in)" : ""); }
+    else $("r_mc").textContent = "—";
+  }
+
+  // ---------- KL* vs gamma ----------
+  const svg = $("klchart"), NS = "http://www.w3.org/2000/svg";
+  let KW = 900; const KH = 220, kp = { l: 50, r: 14, t: 12, b: 34 };
+  const gx = (g) => kp.l + (g + 1) / 4 * (KW - kp.l - kp.r);
+  let klData = null, kmax = 1;
+  function el(tag, attrs, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; svg.appendChild(e); return e; }
+  function drawKL() {
+    KW = Math.max(340, Math.round($("klwrap").clientWidth || 900)); svg.setAttribute("viewBox", `0 0 ${KW} ${KH}`);
+    const gs = [], kc = [], kd = [];
+    for (let i = 0; i <= 160; i++) {
+      const g = -1 + 4 * i / 160, m = M2.model(st.kappa, g, st.phi, st.eta, st.B);
+      gs.push(g); kc.push(Math.max(M2.klStar(m.H, m.S, N_DATA).kl, 0)); kd.push(m.Sd ? Math.max(M2.klStar(m.H, m.Sd, N_DATA).kl, 0) : NaN);
+    }
+    klData = { gs, kc, kd };
+    kmax = Math.max(0.1, ...kc, ...kd.filter(isFinite)) * 1.08;
+    const gy = (k) => KH - kp.b - k / kmax * (KH - kp.t - kp.b);
+    svg.innerHTML = "";
+    el("rect", { x: gx(1), y: kp.t, width: gx(2) - gx(1), height: KH - kp.t - kp.b, fill: css("--band") });
+    const ys = niceStep(kmax);
+    for (let v = 0; v <= kmax; v += ys) { el("line", { x1: kp.l, x2: KW - kp.r, y1: gy(v), y2: gy(v), stroke: css("--grid") }); el("text", { x: kp.l - 6, y: gy(v) + 4, "text-anchor": "end" }, +v.toPrecision(3)); }
+    for (let g = -1; g <= 3; g++) el("text", { x: gx(g), y: KH - kp.b + 16, "text-anchor": "middle", style: g >= 0 && g <= 2 ? "font-weight:600" : "" }, g);
+    el("text", { x: (gx(-1) + gx(3)) / 2, y: KH - 2, "text-anchor": "middle" }, "noise exponent γ");
+    el("text", { x: 12, y: (KH - kp.b + kp.t) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(KH - kp.b + kp.t) / 2})` }, "KL* (nats)");
+    const path = (arr) => arr.map((k, i) => (isFinite(k) ? `${i && isFinite(arr[i - 1]) ? "L" : "M"}${gx(gs[i]).toFixed(1)},${gy(k).toFixed(1)}` : "")).join("");
+    el("path", { d: path(kd), fill: "none", stroke: css("--sgd"), "stroke-width": 2, "stroke-dasharray": "7 5" });
+    el("path", { d: path(kc), fill: "none", stroke: css("--sgd"), "stroke-width": 2 });
+    el("text", { x: gx(1.5), y: kp.t + 14, "text-anchor": "middle", style: "font-size:10px" }, "Zhang–Yang–Tu range");
+    const cur = Math.max(ks.kl, 0);
+    el("line", { x1: gx(st.gamma), x2: gx(st.gamma), y1: kp.t, y2: KH - kp.b, stroke: css("--ink3"), "stroke-dasharray": "2 3" });
+    el("circle", { cx: gx(st.gamma), cy: gy(cur), r: 5, fill: css("--sgd"), stroke: css("--bg"), "stroke-width": 2 });
+    drawKL.gy = gy;
+  }
+  const tip = $("tip");
+  function svgX(ev) { const r = svg.getBoundingClientRect(); return (ev.clientX - r.left) / r.width * KW; }
+  svg.addEventListener("mousemove", (ev) => {
+    const x = svgX(ev), g = Math.min(3, Math.max(-1, (x - kp.l) / (KW - kp.l - kp.r) * 4 - 1));
+    const i = Math.round((g + 1) / 4 * 160);
+    tip.style.display = "block";
+    const r = svg.getBoundingClientRect();
+    tip.textContent = `γ = ${klData.gs[i].toFixed(2)}: KL* = ${klData.kc[i].toFixed(3)} (SDE)` + (isFinite(klData.kd[i]) ? `, ${klData.kd[i].toFixed(3)} (discrete)` : "");
+    const left = Math.min(ev.clientX - r.left + 10, r.width - tip.offsetWidth - 4);
+    tip.style.left = Math.max(0, left) + "px"; tip.style.top = (ev.clientY - r.top - 30) + "px";
+  });
+  svg.addEventListener("mouseleave", () => (tip.style.display = "none"));
+  svg.addEventListener("click", (ev) => {
+    const x = svgX(ev), g = (x - kp.l) / (KW - kp.l - kp.r) * 4 - 1;
+    if (g >= -1.05 && g <= 3.05) { $("gamma").value = Math.min(3, Math.max(-1, Math.round(g * 20) / 20)); recompute(true); }
+  });
+
+  // ---------- wiring ----------
+  ["gamma", "kappa", "eta", "batch", "phi"].forEach((id) => $(id).addEventListener("input", () => recompute(true)));
+  $("temp").addEventListener("input", () => { $("autoT").checked = false; recompute(false); });
+  $("autoT").addEventListener("change", () => recompute(false));
+  document.querySelectorAll("button[data-g]").forEach((b) => b.addEventListener("click", () => { $("gamma").value = b.dataset.g; recompute(true); }));
+  $("reset").addEventListener("click", () => { resetChains(); updateMC(); });
+  $("pause").addEventListener("click", () => { st.paused = !st.paused; $("pause").textContent = st.paused ? "resume" : "pause"; });
+  window.addEventListener("resize", () => { sizeCanvas(); drawKL(); draw(); });
+  if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => { drawKL(); draw(); });
+
+  try {
+    const q = new URLSearchParams(location.search);
+    if (q.get("theme")) document.documentElement.setAttribute("data-theme", q.get("theme"));
+    if (q.has("gamma")) $("gamma").value = +q.get("gamma");
+    if (q.has("kappa")) $("kappa").value = Math.log10(+q.get("kappa"));
+    if (q.has("eta")) $("eta").value = Math.log10(+q.get("eta"));
+    if (q.has("B")) $("batch").value = Math.log2(+q.get("B"));
+    if (q.has("phi")) $("phi").value = +q.get("phi");
+  } catch (e) {}
+  sizeCanvas(); recompute(true);
+  // pre-run so a static screenshot already shows a converged cloud
+  stepChains(Math.min(Math.ceil(8 / st.eta), 4000));
+  updateMC(); draw();
+  let frame = 0;
+  function loop() {
+    if (!st.paused) {
+      stepChains(Math.min(40, Math.max(1, Math.ceil(1 / (40 * st.eta)))));
+      if (++frame % 6 === 0) updateMC();
+    }
+    draw();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

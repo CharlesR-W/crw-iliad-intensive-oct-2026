@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="nbkit.py (wb5); do not edit by hand">
+<title>Workbook 5 — Universality: the machines, they just want to learn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+/* KaTeX's hidden MathML is position:absolute; keep it inside its formula (no sideways page scroll). */
+.katex, .table-wrap, .katex-display { position: relative; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, pre, .katex-display, table { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#1-scaling-laws-a-hundred-unnecessary-explanations">1. Scaling laws: a hundred unnecessary explanations</a></li>
+<li><a href="#2-another-bitter-lesson-architecture-doesnt-matter-much">2. Another bitter lesson: architecture doesn’t matter (much)</a></li>
+<li><a href="#3-same-representation-cka-cca-and-the-platonic-and-linear-representation-hypotheses">3. Same representation? CKA, CCA, and the Platonic and linear representation hypotheses</a></li>
+<li><a href="#related-workbooks-and-further-study">Related workbooks and further study</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 5 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="workbook-5--universality-the-machines-they-just-want-to-learn">Workbook 5 — Universality: the machines, they just want to learn</h1>
+<p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
+<p>Different architectures trained on similar data end up with similar loss curves and, it seems, similar internal geometry. This workbook starts from the loss curves, asks how much architecture changes them, and then asks what “similar representations” can mean and why they might arise.</p>
+<p>Route (the sections are largely independent):</p>
+<ul>
+<li><a href="#wb5-section-1">1. Scaling laws: a hundred unnecessary explanations</a>. Exercises deriving power-law learning curves from a data spectrum and from discrete skills, including ridge saturation; interactive figure.</li>
+<li><a href="#wb5-section-2">2. Another bitter lesson: architecture doesn’t matter (much)</a>. Architectures move the scaling curve but rarely change its slope. One Fermi exercise on what a constant factor is worth; readings, with explainers for Mamba and JEPA.</li>
+<li><a href="#wb5-section-3">3. Same representation? CKA, CCA, and the Platonic and linear representation hypotheses</a>. What “same up to what” means for similarity indices, then the readings on representational convergence and linear concepts. Two short exercises.</li>
+</ul>
+<p>Superposition, adversarial examples, low-rank logits and subliminal learning are in WB6 (<a href="06_mysteries_myriad.html#wb6-section-5">§5</a> and <a href="06_mysteries_myriad.html#wb6-section-13">§13</a>).</p>
+<p><strong>How to use this notebook.</strong> Pick what interests you; nobody is expected to do everything. Exercises are derivations with hints. Worked solutions are folded under “Solution” after each exercise, and everyone may use them. Each reading opens with a sentence or two on what it shows, so you can decide whether to open it, and is scored for importance and length (the legend under the contents explains the scales).</p>
+
+<details class="sec sec2" data-sec="1-scaling-laws-a-hundred-unnecessary-explanations">
+<summary><h2 id="1-scaling-laws-a-hundred-unnecessary-explanations">1. Scaling laws: a hundred unnecessary explanations</h2></summary>
+<div class="sec-body">
+<a id="wb5-section-1"></a>
+<p>Held-out loss falls as a power law in parameters, data and compute over many orders of magnitude (WB3 §5 fits these curves and uses them to allocate compute). Very different mechanisms produce the same power-law learning curve. The exercises derive one from a power-law data spectrum, with ridge regression, where extra target smoothness eventually stops helping, and one from discrete skills learned in order of frequency.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2303.13506">The quantization model of neural scaling</a></strong>, Michaud, Liu, Girit &amp; Tegmark (NeurIPS 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Proposes that networks learn discrete chunks of skill (‘quanta’) in order of how often they are used; with Zipfian use frequencies this gives power-law scaling in parameters and data. It uses language-model gradients to decompose model behaviour automatically into candidate quanta.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2309.13337">On the asymptotic learning curves of kernel ridge regression under power-law decay</a></strong>, Li, Zhang &amp; Lin (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Rigorous learning curves for kernel ridge regression with power-law eigenvalues, showing how the regularization, the target’s smoothness and the noise set the rate. The rigorous counterpart of Exercise 1.2’s heuristic, including saturation.</p>
+</div>
+
+<details class="sec sec3" data-sec="1a-setup">
+<summary><h3 id="1a-setup">1.A. Setup</h3></summary>
+<div class="sec-body">
+
+<p><strong>Spectral model.</strong> Features <span class="math inline">x\in\mathbb R^\infty</span> are Gaussian with covariance <span class="math inline">\mathrm{diag}(\lambda_k)</span>, <span class="math inline">\lambda_k=k^{-\alpha}</span>, <span class="math inline">\alpha&gt;1</span>. The target is <span class="math inline">y=\sum_k\beta_kx_k+\varepsilon</span> with noise variance <span class="math inline">\sigma^2</span>. The excess population loss of an estimate <span class="math inline">\hat\beta</span> is <span class="math inline">\sum_k\lambda_k(\hat\beta_k-\beta_k)^2</span>. The target’s signal power in mode <span class="math inline">k</span> is <span class="math display">c_k^2=\lambda_k\beta_k^2=k^{-\alpha&#39;},\qquad\alpha&#39;&gt;1 .</span> A generic target with <span class="math inline">\beta_k</span> of order 1 has <span class="math inline">\alpha&#39;=\alpha</span>; smoother targets, concentrated on the top modes, have <span class="math inline">\alpha&#39;&gt;\alpha</span>. The language of spectral filters is WB2 §1.D’s.</p>
+<p><strong>Quanta model.</strong> A task consists of discrete skills <span class="math inline">k=1,2,\dots</span>, used with frequencies <span class="math inline">p_k\propto k^{-(1+a)}</span>, <span class="math inline">a&gt;0</span>. A model that has learned the <span class="math inline">N</span> most frequent skills has loss proportional to the frequency mass of the rest.</p>
+<p><strong>Exercise 1.1.</strong> Two routes to one curve.</p>
+<p>(a) Show that <span class="math inline">\sum_{k&gt;K}k^{-s}\sim K^{1-s}/(s-1)</span> for <span class="math inline">s&gt;1</span>.</p>
+<p>(b) <em>Heuristic for ridge.</em> Suppose the estimator learns modes <span class="math inline">1,\dots,K</span> with <span class="math inline">K\le n</span> and nothing beyond. Each learned mode costs about <span class="math inline">\sigma^2/n</span>: its coefficient has error variance about <span class="math inline">\sigma^2/(n\lambda_k)</span>, weighted by <span class="math inline">\lambda_k</span> in the loss. Each unlearned mode costs its signal <span class="math inline">c_k^2</span>. So <span class="math display">E(K)\approx\sum_{k&gt;K}c_k^2+\frac{\sigma^2K}n .</span> Show that <span class="math inline">E\sim n^{-(\alpha&#39;-1)}</span> without noise, and that <span class="math inline">E\sim n^{-(\alpha&#39;-1)/\alpha&#39;}</span> with noise and the best <span class="math inline">K</span>.</p>
+<p>(c) Show that the quanta model’s loss after learning <span class="math inline">N</span> skills scales as <span class="math inline">N^{-a}</span>. If <span class="math inline">N</span> grows as a power of parameters or data, what form does the loss curve take?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">k^{-s}</span> is decreasing, so <span class="math inline">\int_{K+1}^\infty t^{-s}dt\le\sum_{k&gt;K}k^{-s}\le\int_K^\infty t^{-s}dt</span>. Both integrals are <span class="math inline">\sim K^{1-s}/(s-1)</span>.</p>
+<p><strong>(b)</strong> With <span class="math inline">s=\alpha&#39;</span>, the tail is <span class="math inline">\sim K^{-(\alpha&#39;-1)}/(\alpha&#39;-1)</span>. Without noise the variance term vanishes, so take <span class="math inline">K</span> as large as allowed, <span class="math inline">K=n</span>: <span class="math inline">E\sim n^{-(\alpha&#39;-1)}</span>. With noise, set <span class="math inline">dE/dK=0</span>: <span class="math inline">-K^{-\alpha&#39;}+\sigma^2/n=0</span>, so <span class="math inline">K^*=(n/\sigma^2)^{1/\alpha&#39;}</span>, which is below <span class="math inline">n</span> for large <span class="math inline">n</span>. Both terms are then of order <span class="math inline">K^*\cdot\sigma^2/n=(K^*)^{1-\alpha&#39;}</span>, so <span class="math display">E\sim(K^*)^{-(\alpha&#39;-1)}\sim(n/\sigma^2)^{-(\alpha&#39;-1)/\alpha&#39;} .</span></p>
+<p><strong>(c)</strong> By (a) with <span class="math inline">s=1+a</span>, <span class="math inline">\sum_{k&gt;N}p_k\propto N^{-a}/a</span>. If <span class="math inline">N\propto P^\mu</span> for some resource <span class="math inline">P</span> (parameters or data), the loss is <span class="math inline">\propto P^{-a\mu}</span>, again a power law. Nothing spectral was used. Two unrelated mechanisms give the same functional form, so an observed power law cannot by itself tell them apart. Distinguishing them needs finer measurements, such as per-example loss curves: one expects them to be step-like under quanta and smooth under the spectral picture.</p>
+</div>
+</details>
+
+<p><strong>Exercise 1.2.</strong> Where the heuristic fails: saturation.</p>
+<p>Ridge shrinks mode <span class="math inline">k</span> by the filter <span class="math inline">\lambda_k/(\lambda_k+\kappa)</span>, so it also biases the modes it “learns”. In the large-<span class="math inline">n</span> description of ridge, the effective regularization <span class="math inline">\kappa</span> sits around the eigenvalue of the last resolved mode. Without noise, take <span class="math inline">\kappa\approx\lambda_n=n^{-\alpha}</span>. The bias from shrinking the head is <span class="math display">B_{\rm head}=\sum_{k&lt;n}c_k^2\Big(\frac{\kappa}{\lambda_k+\kappa}\Big)^2 .</span></p>
+<p>(a) Show that <span class="math inline">B_{\rm head}\approx n^{-2\alpha}\sum_{k&lt;n}k^{2\alpha-\alpha&#39;}</span> up to constants, and that modes with <span class="math inline">k</span> comparable to <span class="math inline">n</span> contribute at most the order of the tail, <span class="math inline">n^{1-\alpha&#39;}</span>.</p>
+<p>(b) Evaluate the sum when <span class="math inline">\alpha&#39;-1&lt;2\alpha</span>, when <span class="math inline">\alpha&#39;-1&gt;2\alpha</span>, and at the boundary <span class="math inline">\alpha&#39;-1=2\alpha</span>. Conclude that the noiseless rate is <span class="math inline">n^{-\min(\alpha&#39;-1,\,2\alpha)}</span> away from the boundary, and find the rate at the boundary.</p>
+<p>(c) With noise and optimally tuned ridge, repeat Exercise 1.1(b) with <span class="math inline">s=\min(\alpha&#39;-1,2\alpha)</span> in place of <span class="math inline">\alpha&#39;-1</span>, taking the cutoff <span class="math inline">K</span> as the free variable. Show that <span class="math inline">E\sim n^{-s/(s+1)}</span> away from the boundary, and that this reduces to Exercise 1.1(b) when <span class="math inline">s=\alpha&#39;-1</span>.</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>(a) For <span class="math inline">k\le n/2</span>, <span class="math inline">\lambda_k\ge2^\alpha\kappa</span>, so <span class="math inline">\kappa/(\lambda_k+\kappa)</span> is within a constant of <span class="math inline">\kappa/\lambda_k=n^{-\alpha}k^\alpha</span>. For <span class="math inline">n/2&lt;k&lt;n</span> the filter factor is at most 1. (b) <span class="math inline">\sum_{k&lt;n}k^q</span> grows like <span class="math inline">n^{q+1}</span> for <span class="math inline">q&gt;-1</span>, like <span class="math inline">\log n</span> for <span class="math inline">q=-1</span>, and converges for <span class="math inline">q&lt;-1</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> For <span class="math inline">k\le n/2</span>, <span class="math inline">\big(\kappa/(\lambda_k+\kappa)\big)^2\asymp(\kappa/\lambda_k)^2=n^{-2\alpha}k^{2\alpha}</span>, so <span class="math inline">c_k^2(\cdot)^2\asymp n^{-2\alpha}k^{2\alpha-\alpha&#39;}</span>. For <span class="math inline">n/2&lt;k&lt;n</span>, the factor is at most 1, and those modes contribute at most <span class="math inline">\sum_{n/2&lt;k&lt;n}c_k^2\lesssim n\cdot n^{-\alpha&#39;}=n^{1-\alpha&#39;}</span>, the order of the tail <span class="math inline">\sum_{k\ge n}c_k^2</span>.</p>
+<p><strong>(b)</strong> Let <span class="math inline">q=2\alpha-\alpha&#39;</span>.</p>
+<ul>
+<li><span class="math inline">\alpha&#39;-1&lt;2\alpha</span> (<span class="math inline">q&gt;-1</span>): the sum is <span class="math inline">\sim n^{q+1}/(q+1)</span>, so <span class="math inline">B_{\rm head}\sim n^{-2\alpha+2\alpha-\alpha&#39;+1}=n^{-(\alpha&#39;-1)}</span>, the same order as the tail. The rate is <span class="math inline">n^{-(\alpha&#39;-1)}</span>, and the heuristic’s exponent is right.</li>
+<li><span class="math inline">\alpha&#39;-1&gt;2\alpha</span> (<span class="math inline">q&lt;-1</span>): the sum converges, so <span class="math inline">B_{\rm head}\sim n^{-2\alpha}</span>, which is larger than the tail <span class="math inline">n^{-(\alpha&#39;-1)}</span>. Ridge <strong>saturates</strong> at rate <span class="math inline">n^{-2\alpha}</span>, however smooth the target. The heuristic’s <span class="math inline">n^{-(\alpha&#39;-1)}</span> is wrong here.</li>
+<li><span class="math inline">\alpha&#39;-1=2\alpha</span> (<span class="math inline">q=-1</span>): the sum is harmonic, <span class="math inline">\sim\log n</span>, so <span class="math inline">B_{\rm head}\sim n^{-2\alpha}\log n</span>, a log factor above the tail <span class="math inline">n^{-2\alpha}</span>.</li>
+</ul>
+<p>So the noiseless rate is <span class="math inline">n^{-\min(\alpha&#39;-1,2\alpha)}</span> away from the boundary, and <span class="math inline">n^{-2\alpha}\log n</span> on it.</p>
+<p><strong>(c)</strong> With effective cutoff <span class="math inline">K</span> (so <span class="math inline">\kappa\approx\lambda_K</span>), the same argument with <span class="math inline">n</span> replaced by <span class="math inline">K</span> gives bias <span class="math inline">\sim K^{-s}</span> and variance <span class="math inline">\sim\sigma^2K/n</span>. Minimizing <span class="math inline">K^{-s}+\sigma^2K/n</span> gives <span class="math inline">K^*\sim(n/\sigma^2)^{1/(s+1)}</span> and <span class="math inline">E\sim n^{-s/(s+1)}</span>. For <span class="math inline">s=\alpha&#39;-1</span> this is <span class="math inline">n^{-(\alpha&#39;-1)/\alpha&#39;}</span>, as in Exercise 1.1(b). At the boundary the bias is <span class="math inline">K^{-s}\log K</span>, and the same minimization gives an extra factor <span class="math inline">(\log n)^{1/(s+1)}</span>.</p>
+<p>These are heuristic scalings, valid up to constants and, near the boundary, logarithmic factors. Ridge risk in this model is described at large <span class="math inline">n</span> by deterministic-equivalent formulas, which are asymptotic approximations rather than the exact finite-<span class="math inline">n</span> risk. The rigorous rates, including saturation, are in Li, Zhang and Lin. None of this depends on the model learning a good representation: random features or plain ridge suffice. It accounts for the form of a learning curve, not for what is learned. In both models the exponent is set mainly by the data (the spectrum <span class="math inline">\alpha,\alpha&#39;</span>, or the skill frequencies <span class="math inline">a</span>), except where the learner’s own limits bind: ridge’s saturation at <span class="math inline">2\alpha</span>, or the rate <span class="math inline">\mu</span> at which the quanta model acquires skills. That is §2’s theme.</p>
+</div>
+</details>
+
+<p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/spectral_filters.html"><code>spectral_filters.html</code></a>. Use panel B. It plots the deterministic-equivalent ridge risk (an asymptotic approximation) and Exercise 1.1’s heuristic against <span class="math inline">n</span>, with the fitted slope, plus Monte Carlo ridge points at the default <span class="math inline">\alpha,\alpha&#39;</span> (noise off, or <span class="math inline">\sigma^2=10^{-2}</span>). Turn noise on and off, and push <span class="math inline">\alpha&#39;</span> past <span class="math inline">2\alpha+1</span> to see saturation, where the heuristic’s slope is wrong.</p>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="2-another-bitter-lesson-architecture-doesnt-matter-much">
+<summary><h2 id="2-another-bitter-lesson-architecture-doesnt-matter-much">2. Another bitter lesson: architecture doesn’t matter (much)</h2></summary>
+<div class="sec-body">
+<a id="wb5-section-2"></a>
+<p>Since 2017 there has been a long line of challengers to the transformer and refinements of it: state-space models such as Mamba, linear-attention and recurrent hybrids, mixtures of experts, the “Transformer++” recipe (rotary embeddings, SwiGLU, RMSNorm), and different objectives such as LeCun’s JEPA. Many of them are real improvements. This section is about how big they are and what shape they have. On log–log scaling plots (WB3 §5) they mostly move the curve over by a roughly constant factor in compute, and rarely change its slope. A constant factor of a few, or even ten, is worth a lot of money. It is not the roughly four orders of magnitude of training compute that separate GPT-2 from the frontier models of a few years later. That came mostly from spending more compute.</p>
+<p><strong>The evidence, briefly.</strong></p>
+<ul>
+<li>Hestness et al. fit learning curves against data size across translation, language modelling, image classification and speech. Their summary is that “model improvements only shift the error but do not appear to affect the power-law exponent.” For example, LSTMs and recurrent highway networks have almost identical exponents. They suspect the exponent is set by the structure of the problem domain, which is also what both models of §1 give.</li>
+<li>In the Mamba paper’s compute-scaling figure (perplexity against FLOPs on the Pile, 125M–1.3B parameters), the architectures fall on roughly parallel lines over about two decades of compute, which by Exercise 2.1(c) is too short to rule out a small slope difference. Mamba matches the Transformer++ recipe, and both sit below a GPT-3-style transformer by what reads off the plot as a few times in compute. (That multiplier is read off the plot; the paper does not state one.)</li>
+<li>Ho et al. estimate the compute-equivalent gain of the transformer itself at about <span class="math inline">7\times</span> (95% CI roughly <span class="math inline">3</span>–<span class="math inline">46\times</span>). That is about a fifth, on a log scale, of the roughly <span class="math inline">2\times10^4</span> total algorithmic progress they estimate for language modelling from 2014 to 2023 (a halving of required compute every 8 months or so; the total is an extrapolation, and it includes training recipes, data and compute allocation, not only architecture). They find that growth in compute contributed more still. Their model treats each innovation as a constant compute multiplier, so it could not detect a change in slope.</li>
+<li>In vision, NFNet CNNs match vision transformers at equal compute (WB3 §4).</li>
+</ul>
+<p><strong>Where it fails.</strong> “Same exponent” is an approximation, and the exceptions are instructive. Kaplan et al.’s LSTMs scale visibly worse than transformers with model size. The gap comes from later tokens in the context: LSTMs match transformers early in the context but cannot use long contexts. In effect the architecture changes which part of the data distribution is learnable at all, so it is not the same data spectrum. Tay et al. fit compute slopes for about ten architectures and find them genuinely different, with the vanilla transformer steepest. So the slope differences that have been measured mostly show alternatives scaling <em>worse</em>, and architectures that look good at small scale can fall behind. A defensible summary is that nobody has clearly beaten the transformer’s exponent on language, and that the measured improvements are constant factors of roughly one order of magnitude at most.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1712.00409">Deep learning scaling is predictable, empirically</a></strong>, Hestness et al. (2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Measures power-law learning curves in four domains and finds that architecture changes move the curve down without changing its exponent, which seems to be a property of the domain. Note that these are curves against training-set size, not compute.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2403.05812">Algorithmic progress in language models</a></strong>, Ho, Besiroglu, Erdil, Owen, Rahman, Guo, Atkinson, Thompson &amp; Sevilla (Epoch AI, 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Fits augmented scaling laws to 200+ language-model evaluations to separate the contributions of compute and algorithms. The source of the <span class="math inline">7    imes</span> transformer and 8-month halving figures above, with their caveats (context length was not controlled). <a href="https://epoch.ai/publications/algorithmic-progress-in-language-models">Epoch’s summary page</a>.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2312.00752">Mamba: linear-time sequence modeling with selective state spaces</a></strong>, Gu &amp; Dao (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A recurrent state-space model with input-dependent (‘selective’) dynamics that trains in parallel and matches a strong transformer recipe on language at the scales tested. Figure 4 is the scaling comparison discussed above. To understand the architecture first, read Grootendorst’s <a href="https://www.maartengrootendorst.com/blog/mamba/">A visual guide to Mamba and state space models</a>; for the mathematics of the S4 layer underneath it, Rush and Karamcheti’s <a href="https://srush.github.io/annotated-s4/">The annotated S4</a>.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://ai.meta.com/blog/yann-lecun-ai-model-i-jepa/">I-JEPA: the first AI model based on Yann LeCun’s vision for more human-like AI</a></strong>, Meta AI blog (2023; paper: <a href="https://arxiv.org/abs/2301.08243">Assran et al.</a>) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>An accessible introduction to joint-embedding predictive architectures, which predict the <em>representation</em> of a masked region rather than its pixels. JEPA changes the objective rather than the layers; WB3 §2 discusses the argument for it, and LeCun’s position paper.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2207.10551">Scaling laws vs model architectures: how does inductive bias influence scaling?</a></strong>, Tay et al. (2022) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Fits compute-scaling slopes for about ten architectures (Switch, Performer, MLP-Mixer, ALBERT and others) and finds them distinct, with the vanilla transformer steepest; models that do well at one scale need not at another. Fits use few points per architecture.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2001.08361">Scaling laws for neural language models</a></strong>, Kaplan et al. (2020) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Loss depends strongly on parameters, data and compute, and only weakly on shape: the aspect ratio can vary by a factor of 40 at little cost. Figure 7 is the LSTM comparison above. WB3 §5 uses the same paper for compute allocation.</p>
+</div>
+
+<p><strong>Exercise 2.1 (Fermi).</strong> What a constant factor is worth. Write the reducible loss as <span class="math inline">R(C)=A\,C^{-\alpha}</span>. Take <span class="math inline">\alpha\approx0.05</span>, Kaplan et al.’s exponent for loss against compute, and redo (a) with <span class="math inline">\alpha\approx0.15</span>, roughly what the Chinchilla fit (WB3 §5) gives for the reducible part at compute-optimal allocation: <span class="math inline">\alpha\beta/(\alpha+\beta)</span> with their <span class="math inline">0.34</span> and <span class="math inline">0.28</span>. Kaplan’s fit has no irreducible term, so <span class="math inline">0.05</span> is the exponent of the whole loss.</p>
+<p>(a) Architecture B has <span class="math inline">R_B(C)=(A/m)\,C^{-\alpha}</span> with <span class="math inline">m&gt;1</span>: the same exponent, a better constant. Show that B at compute <span class="math inline">C</span> matches A at compute <span class="math inline">m^{1/\alpha}C</span> for every <span class="math inline">C</span>. What reduction of reducible loss corresponds to the transformer’s <span class="math inline">7\times</span>? To four orders of magnitude of compute?</p>
+<p>(b) Architecture B instead has a slightly better exponent: <span class="math inline">R_B(C)=A\,C^{-(\alpha+\delta)}</span>, with <span class="math inline">C</span> measured in units of the compute at which the two curves cross. Show that B’s compute multiplier at compute <span class="math inline">C</span> is <span class="math inline">C^{\delta/\alpha}</span>. With <span class="math inline">\delta=0.005</span> (a 10% better exponent), what is the multiplier three and ten orders of magnitude past the crossing?</p>
+<p>(c) An architecture paper typically spans two or three decades of compute. Why does that make “a constant-factor gain” and “a better exponent” hard to tell apart, and which way would a small-scale advantage from a helpful inductive bias tend to mislead?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">R_A(kC)=A\,k^{-\alpha}C^{-\alpha}</span> equals <span class="math inline">R_B(C)=(A/m)C^{-\alpha}</span> when <span class="math inline">k^{-\alpha}=1/m</span>, that is <span class="math inline">k=m^{1/\alpha}</span>, independently of <span class="math inline">C</span>. So on log–log axes B’s curve is A’s shifted left by <span class="math inline">\log m/\alpha</span>. Conversely <span class="math inline">m=k^{\alpha}</span>. For <span class="math inline">k=7</span>: <span class="math inline">m=7^{0.05}=e^{0.05\ln7}\approx1.10</span>, a 10% lower reducible loss at every scale. For <span class="math inline">k=10^4</span>: <span class="math inline">m=10^{0.2}\approx1.58</span>, a 37% lower reducible loss at every scale. Because <span class="math inline">\alpha</span> is small, a modest-looking loss improvement is a large compute multiplier. With <span class="math inline">\alpha=0.15</span>: <span class="math inline">7^{0.15}\approx1.34</span>, a 25% reduction, and <span class="math inline">10^{0.6}\approx4</span>, a 75% reduction. Either way, four orders of magnitude would need a constant-factor improvement much larger than any architecture change has delivered.</p>
+<p><strong>(b)</strong> B at compute <span class="math inline">C</span> reaches <span class="math inline">A\,C^{-(\alpha+\delta)}</span>. A reaches this at <span class="math inline">C_A</span> with <span class="math inline">C_A^{-\alpha}=C^{-(\alpha+\delta)}</span>, so <span class="math inline">C_A=C^{1+\delta/\alpha}</span> and the multiplier is <span class="math inline">C_A/C=C^{\delta/\alpha}</span>. With <span class="math inline">\delta/\alpha=0.1</span>: <span class="math inline">10^{0.3}\approx2</span> three decades past the crossing, and <span class="math inline">10^{1}=10</span> ten decades past it. A better exponent wins without bound eventually, but slowly. Over the range that has actually been explored, its effect is about the size of a constant factor.</p>
+<p><strong>(c)</strong> Over two or three decades, a 10% exponent difference changes the multiplier by a factor of about two, which is comparable to fitting noise and to the effect of tuning one architecture better than another. A constant factor and a small slope difference therefore produce nearly the same plot. An inductive bias that suits the data helps most when data or compute is scarce (WB3 §4), so it shows up as an advantage at small scale that then shrinks: the curves converge, so the better-looking architecture has the <em>shallower</em> slope. Tay et al.’s finding that alternatives look good small and fall behind at scale is this pattern. Extrapolating a small-scale win is the mistake the bitter lesson warns against.</p>
+</div>
+</details>
+</div>
+</details>
+<details class="sec sec2" data-sec="3-same-representation-cka-cca-and-the-platonic-and-linear-representation-hypotheses">
+<summary><h2 id="3-same-representation-cka-cca-and-the-platonic-and-linear-representation-hypotheses">3. Same representation? CKA, CCA, and the Platonic and linear representation hypotheses</h2></summary>
+<div class="sec-body">
+<a id="wb5-section-3"></a>
+<p>Three claims tend to get run together: that the internal representations of different networks are measurably similar; that, as models get more capable, they converge toward one shared representation (the Platonic representation hypothesis, PRH); and that the concepts in that representation are directions (the linear representation hypothesis, LRH). Each claim means something only once you say which transformations of a representation count as cosmetic. This section gives that vocabulary in two short exercises and otherwise points you to the papers.</p>
+<details class="sec sec3" data-sec="3a-same-up-to-what">
+<summary><h3 id="3a-same-up-to-what">3.A. Same up to what?</h3></summary>
+<div class="sec-body">
+
+<p>Take <span class="math inline">n</span> inputs. Stack a layer’s activations from two networks as the rows of <span class="math inline">X\in\mathbb R^{n\times p_1}</span> and <span class="math inline">Y\in\mathbb R^{n\times p_2}</span>, and center the columns. Write <span class="math inline">K=XX^\top</span> and <span class="math inline">L=YY^\top</span> for the Gram matrices, whose entries are inner products between inputs. Three common indices, each with its own invariance group:</p>
+<ul>
+<li><strong>Linear CKA</strong> (centered kernel alignment), <span class="math inline">\mathrm{CKA}(X,Y)=\langle K,L\rangle_F/(\|K\|_F\|L\|_F)</span>. It equals 1 exactly when <span class="math inline">K\propto L</span>, that is, when the two representations agree up to an isometry between the subspaces they occupy, a positive scale and a translation.</li>
+<li><strong>CCA</strong> (canonical correlation analysis): the canonical correlations are the cosines of the principal angles between the column spaces of <span class="math inline">X</span> and <span class="math inline">Y</span> in <span class="math inline">\mathbb R^n</span>. SVCCA (WB6 §2) truncates each representation to its top singular directions first.</li>
+<li><strong>Mutual <span class="math inline">k</span>-nearest neighbours</strong>, the index Huh et al. use in §3.B: do the two representations agree on each input’s <span class="math inline">k</span> nearest neighbours?</li>
+</ul>
+<p>Networks also have exact parameter symmetries. Permuting the hidden units of a layer, together with the matching columns of the next layer’s weights, leaves the function unchanged, giving <span class="math inline">\prod_\ell n_\ell!</span> equivalent settings; for ReLU units, scaling a unit’s incoming weights by <span class="math inline">c&gt;0</span> and its outgoing weights by <span class="math inline">1/c</span> does too. Permutations are invisible to all three indices. Exercise 3.1(c) is the continuous version for linear networks, and there the indices do see the difference.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1905.00414">Similarity of neural network representations revisited</a></strong>, Kornblith, Norouzi, Lee &amp; Hinton (ICML 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Shows that similarity indices invariant to all invertible linear maps, CCA included, cannot distinguish representations once the width reaches the number of data points. Proposes CKA, which identifies corresponding layers across networks trained from different initializations. Exercise 3.1 derives the invariance groups. Model stitching (WB6 §3) is the functional alternative: can one network’s layer be used by another’s upper layers?</p>
+</div>
+
+<p><strong>Exercise 3.1.</strong> Invariance groups, and why a minimum does not fix the representation.</p>
+<p>(a) Show that <span class="math inline">\langle K,L\rangle_F=\|Y^\top X\|_F^2</span>, and that CKA is unchanged by <span class="math inline">X\mapsto XQ</span> with <span class="math inline">Q</span> orthogonal and by <span class="math inline">X\mapsto cX</span>, <span class="math inline">c\neq0</span>. Show that it <em>is</em> changed by the stretch <span class="math inline">A=\mathrm{diag}(2,1)</span> applied to the four centered points <span class="math inline">(\pm1,0),(0,\pm1)</span>.</p>
+<p>(b) Show that CCA is unchanged by <span class="math inline">X\mapsto XA</span> for every invertible <span class="math inline">A</span>. If the centered <span class="math inline">X</span> and <span class="math inline">Y</span> both have rank <span class="math inline">n-1</span> (possible once the width is at least <span class="math inline">n-1</span>), show that all canonical correlations are 1, whatever the two networks compute.</p>
+<p>(c) Take a deep linear network <span class="math inline">f(x)=W_D\cdots W_1x</span> and an invertible <span class="math inline">T</span>. Show that <span class="math inline">W_i\to TW_i</span>, <span class="math inline">W_{i+1}\to W_{i+1}T^{-1}</span> leaves <span class="math inline">f</span>, and hence the loss, unchanged, while the layer-<span class="math inline">i</span> representation <span class="math inline">h</span> becomes <span class="math inline">Th</span>. If the centered representations span <span class="math inline">\mathbb R^{d_i}</span>, show that <span class="math inline">\mathrm{CKA}(h,Th)=1</span> only if <span class="math inline">T</span> is a scaled orthogonal matrix. (So for <span class="math inline">d_i\ge2</span> some minima on this orbit have different representations.)</p>
+<details class="hint"><summary>Hints</summary>
+
+<p>(a) Use cyclicity of the trace. With <span class="math inline">Y=X</span> and <span class="math inline">X&#39;=XA</span>, <span class="math inline">\mathrm{CKA}=\|X^\top X&#39;\|_F^2/(\|X&#39;^\top X&#39;\|_F\|X^\top X\|_F)</span>, using <span class="math inline">\|K\|_F=\|X^\top X\|_F</span>. (b) CCA depends only on the column spaces; every column of a centered matrix is orthogonal to <span class="math inline">\mathbf 1</span>. (c) CKA is 1 iff the Gram matrices are proportional: <span class="math inline">h^\top T^\top Th&#39;=c\,h^\top h&#39;</span> on a spanning set. A bilinear form that vanishes on a spanning set vanishes everywhere.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">\langle K,L\rangle_F=\mathrm{Tr}(XX^\top YY^\top)=\mathrm{Tr}(Y^\top XX^\top Y)=\|Y^\top X\|_F^2</span>. Under <span class="math inline">X\mapsto XQ</span>, <span class="math inline">K=XX^\top\mapsto XQQ^\top X^\top=K</span>. Under <span class="math inline">X\mapsto cX</span>, <span class="math inline">K\mapsto c^2K</span>, and the factor cancels between numerator and denominator. For the stretch: <span class="math inline">X^\top X=2I</span>, <span class="math inline">X^\top X&#39;=2A=\mathrm{diag}(4,2)</span> with squared norm <span class="math inline">20</span>, <span class="math inline">X&#39;^\top X&#39;=2A^2=\mathrm{diag}(8,2)</span> with norm <span class="math inline">2\sqrt{17}</span>, and <span class="math inline">\|X^\top X\|_F=2\sqrt2</span>. So <span class="math inline">\mathrm{CKA}=20/(4\sqrt{34})=5/\sqrt{34}\approx0.86</span>. CKA’s group is orthogonal maps and isotropic scaling (plus translation, removed by centering), not all of <span class="math inline">GL</span>.</p>
+<p><strong>(b)</strong> <span class="math inline">\mathrm{col}(XA)=\mathrm{col}(X)</span> for invertible <span class="math inline">A</span>. Centered columns lie in <span class="math inline">\mathbf 1^\perp</span>, of dimension <span class="math inline">n-1</span>, so rank <span class="math inline">n-1</span> means <span class="math inline">\mathrm{col}(X)=\mathbf 1^\perp=\mathrm{col}(Y)</span>: all principal angles vanish. This is Kornblith et al.’s argument that invariance to every invertible linear map is too much invariance for wide layers.</p>
+<p><strong>(c)</strong> <span class="math inline">W_{i+1}T^{-1}TW_i=W_{i+1}W_i</span>, so <span class="math inline">f</span> is unchanged, and the layer-<span class="math inline">i</span> output is <span class="math inline">TW_i\cdots W_1x=Th</span>. CKA is 1 iff <span class="math inline">h^\top T^\top Th&#39;=c\,h^\top h&#39;</span> for all pairs of centered representations; if these span, bilinearity gives <span class="math inline">T^\top T=cI</span>. For <span class="math inline">d_i\ge2</span> there are invertible <span class="math inline">T</span> that are not scaled orthogonal, e.g. <span class="math inline">\mathrm{diag}(2,1,\dots,1)</span>, and at a global minimum the layer’s representations span whenever its width equals the rank of the end-to-end map. So every global minimum of a deep linear network sits on a <span class="math inline">GL(d_i)</span> orbit of global minima whose representations are <em>not</em> all the same by CKA (or by nearest neighbours). Being a minimum fixes the function, not the representation. Any convergence of representations has to come from whatever selects a point on the orbit, which is what Ziyin and Chuang’s paper (§3.B) is about.</p>
+</div>
+</details>
+</div>
+</details>
+<details class="sec sec3" data-sec="3b-the-platonic-representation-hypothesis">
+<summary><h3 id="3b-the-platonic-representation-hypothesis">3.B. The Platonic representation hypothesis</h3></summary>
+<div class="sec-body">
+
+<p>Huh et al. observe that representations of different models, and even of models of different modalities, become more aligned as the models become more capable, and conjecture that they are converging toward a shared statistical model of the world.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2405.07987">The Platonic representation hypothesis</a></strong>, Huh, Cheung, Wang &amp; Isola (ICML 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Reports that representations in different models, architectures and modalities become more aligned as the models become more capable, measured mainly by mutual nearest neighbours. Hypothesizes convergence toward a shared statistical model of the world, driven by three pressures: multitask scaling, capacity and a simplicity bias. It discusses limitations, including information specific to one modality that cannot converge.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2507.01098">Proof of a perfect Platonic representation hypothesis</a></strong>, Ziyin &amp; Chuang (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Two deep linear networks of any depths, with hidden widths at least the rank of the target map, wrapped in arbitrary fixed invertible maps and trained on different invertible views of the same noisy-label data, have every pair of hidden layers aligned up to rotation and scale at the minima selected by SGD’s small-learning-rate modified objective. Short, and the proof is elementary linear algebra; the paper also lists the ways the result breaks. It does not prove that SGD converges to these minima.</p>
+</div>
+
+<p><strong>What Ziyin and Chuang show, in outline.</strong> The setting: underlying inputs <span class="math inline">x</span> with second moment <span class="math inline">\Sigma_x</span>, and labels <span class="math inline">y=V^*x+\epsilon</span> with noise covariance <span class="math inline">\Sigma_\epsilon</span>. Network <span class="math inline">A</span> sees <span class="math inline">x</span> through an invertible “modality” map <span class="math inline">Z_A</span>, network <span class="math inline">B</span> through <span class="math inline">Z_B</span>, and each computes <span class="math inline">M^OW_D\cdots W_1M^I</span> on its input, with fixed invertible <span class="math inline">M^I,M^O</span> standing in for the rest of an architecture; both are trained with squared loss on the same labels. Exercise 3.1(c) says a global minimum of a deep linear network does not fix its representations. Backward-error analysis of small-step SGD says training approximately minimizes <span class="math inline">L+\eta S</span>, where <span class="math inline">S=\mathbb E\|\nabla_\theta\ell\|^2</span> is, at a global minimum, the variance of the per-sample gradients. As <span class="math inline">\eta\to0^+</span> this picks, among global minima, those with the least gradient noise. Moving along the orbit of Exercise 3.1(c) changes <span class="math inline">S</span>, and stationarity along it forces a <em>balance condition</em> between adjacent layers. In whitened coordinates (multiply by <span class="math inline">\Sigma_\epsilon^{1/2}</span> on the output side and <span class="math inline">\Sigma_x^{1/2}</span> on the input side, where <span class="math inline">\Sigma_\epsilon</span> is the label-noise covariance) the balance condition and the end-to-end constraint have a solution unique up to rotation and scale, and every hidden layer’s Gram matrix comes out proportional to <span class="math display">x^\top\Sigma_x^{-1/2}\big(\bar V^\top\bar V\big)^{1/2}\Sigma_x^{-1/2}x&#39;,\qquad \bar V=\Sigma_\epsilon^{1/2}V^*\Sigma_x^{1/2},</span> in terms of the underlying input <span class="math inline">x</span>. Nothing here mentions the fixed input and output maps, the input “modality”, the depth, the width or which layer it is. So every layer of every such network is perfectly aligned (CKA <span class="math inline">=1</span>).</p>
+<p>Things worth noticing before you lean on it:</p>
+<ul>
+<li>It characterizes minimizers of <span class="math inline">S</span> among global minima; it does not show SGD reaches them.</li>
+<li>The selection needs label noise. With <span class="math inline">\Sigma_\epsilon=0</span>, every per-sample gradient vanishes at every global minimum, so <span class="math inline">S=0</span> on all of them and nothing is selected.</li>
+<li>Gradient flow conserves <span class="math inline">W_{i+1}^\top W_{i+1}-W_iW_i^\top</span>, so without the noise term a limit point, if training converges, keeps an imprint of the initialization.</li>
+<li>Weight decay (MAP under a Gaussian prior) selects a different, norm-balanced point, and in the simplest example its representation depends on the input modality. So the gradient-noise selection and the MAP one disagree here (compare WB2 §4.B).</li>
+<li>Training on invertibly transformed labels <span class="math inline">\Phi y</span> breaks alignment unless <span class="math inline">\Phi</span> is a scaled orthogonal matrix: the shared representation depends on the labels through both <span class="math inline">V^*</span> and <span class="math inline">\Sigma_\epsilon</span>.</li>
+<li>None of Huh et al.’s multitask or capacity pressures appears: there is one task, and the selection is an implicit bias acting on a parameter symmetry.</li>
+</ul>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2505.12387">Neural thermodynamics: entropic forces in deep and universal representation learning</a></strong>, Ziyin, Xu &amp; Chuang (NeurIPS 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The same entropic-force argument applied more broadly, including to sharpness- and flatness-seeking behaviour of SGD.</p>
+</div>
+
+<p>The Training Dynamics materials develop the dynamics behind the selection.</p>
+</div>
+</details>
+<details class="sec sec3" data-sec="3c-the-linear-representation-hypothesis">
+<summary><h3 id="3c-the-linear-representation-hypothesis">3.C. The linear representation hypothesis</h3></summary>
+<div class="sec-body">
+
+<p>The hypothesis says that high-level concepts are directions in a model’s representation space. One reading makes it precise and argues that its geometry needs a chosen inner product; the other finds features that are irreducibly multi-dimensional. Superposition, which asks how many such directions fit, is in WB6 §5.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2311.03658">The linear representation hypothesis and the geometry of large language models</a></strong>, Park, Choe &amp; Veitch (ICML 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Formalizes the hypothesis with counterfactual pairs, in the unembedding space (linked to linear probing) and in the embedding space (linked to steering). Shows that a non-Euclidean ‘causal inner product’, under which causally separable concepts are orthogonal, unifies the two; LLaMA-2 experiments find such representations and show that the choice of inner product matters. Exercise 3.2 works through the non-identifiability that makes the inner product a choice.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2405.14860">Not all language model features are one-dimensionally linear</a></strong>, Engels, Michaud, Liao, Gurnee &amp; Tegmark (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Uses sparse autoencoders on GPT-2 and Mistral 7B to find features that cannot be split into independent or non-co-occurring lower-dimensional parts, most clearly circles for days of the week and months of the year. Intervention experiments show that models use these circles for modular arithmetic on days and months.</p>
+</div>
+
+<p>A language model’s next-token logits are <span class="math inline">\lambda(x)^\top\gamma(y)</span>, where <span class="math inline">\lambda(x)\in\mathbb R^d</span> is the final hidden state for context <span class="math inline">x</span> and <span class="math inline">\gamma(y)</span> is the unembedding vector of token <span class="math inline">y</span>. Concept directions are differences such as <span class="math inline">\gamma(y_1)-\gamma(y_0)</span> over counterfactual pairs. Park et al. estimate their causal inner product as <span class="math inline">\langle a,b\rangle_{\mathrm C}=a^\top\mathrm{Cov}(\gamma)^{-1}b</span>, with the covariance over the vocabulary’s unembedding vectors (assume it is invertible).</p>
+<p><strong>Exercise 3.2.</strong> Which inner product?</p>
+<p>(a) Show that for any invertible <span class="math inline">A</span>, the change <span class="math inline">\lambda\to A\lambda</span>, <span class="math inline">\gamma\to A^{-\top}\gamma</span> leaves every logit, and hence the model’s behaviour, unchanged.</p>
+<p>(b) Give two unembedding differences that are orthogonal in the Euclidean inner product before such a change and not after it.</p>
+<p>(c) Show that <span class="math inline">\langle a,b\rangle_{\mathrm C}</span>, recomputed in the new coordinates (with <span class="math inline">a,b</span> transformed as unembedding differences and the covariance recomputed), equals its old value.</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>(c) If <span class="math inline">\gamma&#39;=A^{-\top}\gamma</span>, then <span class="math inline">\mathrm{Cov}(\gamma&#39;)=A^{-\top}\mathrm{Cov}(\gamma)A^{-1}</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">(A\lambda)^\top(A^{-\top}\gamma)=\lambda^\top A^\top A^{-\top}\gamma=\lambda^\top\gamma</span>.</p>
+<p><strong>(b)</strong> In <span class="math inline">\mathbb R^2</span>, take <span class="math inline">a=e_1</span>, <span class="math inline">b=e_2</span> and <span class="math inline">A^{-\top}=\begin{pmatrix}1&amp;1\\0&amp;1\end{pmatrix}</span>. Then <span class="math inline">a&#39;=(1,0)</span> and <span class="math inline">b&#39;=(1,1)</span>, with <span class="math inline">a&#39;\cdot b&#39;=1\neq0</span>. Euclidean orthogonality, and cosine similarity in general, of concept directions is not determined by the model’s input–output behaviour.</p>
+<p><strong>(c)</strong> <span class="math inline">a&#39;=A^{-\top}a</span>, <span class="math inline">b&#39;=A^{-\top}b</span> and <span class="math inline">\mathrm{Cov}(\gamma&#39;)^{-1}=A\,\mathrm{Cov}(\gamma)^{-1}A^\top</span>, so <span class="math display">a&#39;^\top\mathrm{Cov}(\gamma&#39;)^{-1}b&#39;=a^\top A^{-1}A\,\mathrm{Cov}(\gamma)^{-1}A^\top A^{-\top}b=a^\top\mathrm{Cov}(\gamma)^{-1}b .</span></p>
+<p>This is §3.A’s “same up to what” again. The model’s behaviour fixes the representation only up to <span class="math inline">GL(d)</span>, the same group as Exercise 3.1(c), and a geometric claim needs more structure. Whitening by the vocabulary’s covariance, <span class="math inline">g(y)=\mathrm{Cov}(\gamma)^{-1/2}(\gamma(y)-\mathbb E\gamma)</span>, turns <span class="math inline">\langle\cdot,\cdot\rangle_{\mathrm C}</span> into the Euclidean inner product and gives a geometry invariant under <span class="math inline">A</span>, up to an orthogonal transformation. Whether it is the <em>right</em> geometry is what Park et al. argue from their assumption about causally separable concepts; read the paper for that step.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="related-workbooks-and-further-study">
+<summary><h2 id="related-workbooks-and-further-study">Related workbooks and further study</h2></summary>
+<div class="sec-body">
+
+<ul>
+<li>WB3 §4 (ConvNets matching ViTs at scale) and WB3 §5 (fitting and using scaling laws) are the empirical background to §1–2.</li>
+<li>WB6 §2–3 (SVCCA, model stitching) are experimental counterparts to §3.A; WB6 §5 (superposition, adversarial examples) and §13 (low-rank logits, subliminal learning) are further evidence of shared structure across models.</li>
+<li>The Training Dynamics materials develop the dynamics behind §3.B’s selection.</li>
+</ul>
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:wb5", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>

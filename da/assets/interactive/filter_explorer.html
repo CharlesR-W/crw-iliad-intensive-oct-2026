@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spectral Filter Explorer</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg: #fcfcfb; --panel: #ffffff; --ink: #111110; --ink-2: #52514e; --ink-3: #8a8984;
+  --rule: #e4e3df; --grid: #efeeea; --shade: rgba(235, 104, 52, 0.08);
+  --c-if: #111110; --c-damp: #2a78d6; --c-gd: #1baf7a; --c-src: #eb6834;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+    --rule: #34332f; --grid: #2a2a28; --shade: rgba(240, 122, 72, 0.13);
+    --c-if: #f4f4f2; --c-damp: #4c95ec; --c-gd: #2cc48c; --c-src: #f07a48;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #1a1a19; --panel: #20201f; --ink: #f4f4f2; --ink-2: #c3c2b7; --ink-3: #8f8e87;
+  --rule: #34332f; --grid: #2a2a28; --shade: rgba(240, 122, 72, 0.13);
+  --c-if: #f4f4f2; --c-damp: #4c95ec; --c-gd: #2cc48c; --c-src: #f07a48;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 980px; margin: 0 auto; padding: 20px 16px 32px; }
+h1 { font-size: 1.3rem; font-weight: 650; margin: 0 0 2px; letter-spacing: -0.01em; }
+.sub { color: var(--ink-2); margin: 0 0 14px; font-size: 0.92rem; }
+.panel { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px 10px; margin: 0 0 14px; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 6px 22px; font-size: 0.88rem; }
+.ctl { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ctl label { white-space: nowrap; color: var(--ink-2); min-width: 8.5em; }
+.ctl input[type=range] { flex: 1; min-width: 60px; accent-color: var(--ink-2); }
+.ctl output { font-variant-numeric: tabular-nums; min-width: 3.6em; text-align: right; }
+.toggles { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.86rem; color: var(--ink-2); margin: 8px 0 2px; }
+.toggles label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.toggles svg { display: block; }
+.plots { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin: 0 0 14px; }
+.plots .panel { margin: 0; }
+@media (max-width: 720px) { .plots { grid-template-columns: minmax(0, 1fr); } }
+.plot h2 { font-size: 0.92rem; font-weight: 600; margin: 0 0 4px; color: var(--ink-2); }
+.plot svg { display: block; width: 100%; height: auto; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.plot svg text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 0.86rem; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 3px 8px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { color: var(--ink-2); font-weight: 560; }
+td:first-child, th:first-child { text-align: left; }
+.note { font-size: 0.82rem; color: var(--ink-3); margin: 8px 0 0; }
+@media (max-width: 480px) { table { font-size: 0.8rem; } th, td { padding: 3px 4px; } }
+</style>
+</head>
+<body>
+<main>
+<h1>Spectral filters</h1>
+<p class="sub">Response ∂w/∂β<sub>i</sub> = −F(M) g<sub>i</sub>, per curvature eigenvalue s (summed-loss units, §2). Hover or drag on a plot to read values.</p>
+
+<div class="panel">
+  <div class="controls">
+    <div class="ctl"><label for="eta">step size η</label><input id="eta" type="range" min="-3" max="0" step="0.01" value="-1"><output id="eta-o"></output></div>
+    <div class="ctl"><label for="K">steps K</label><input id="K" type="range" min="0" max="3" step="0.01" value="1"><output id="K-o"></output></div>
+    <div class="ctl"><label for="lam">damping λ</label><input id="lam" type="range" min="-3" max="2" step="0.01" value="0"><output id="lam-o"></output></div>
+    <div class="ctl"><label for="smax">linear plot: s up to</label><input id="smax" type="range" min="0" max="2" step="0.01" value="0.778"><output id="smax-o"></output></div>
+  </div>
+  <div class="toggles">
+    <label><input type="checkbox" id="tie" checked> tie λ = 1/(ηK)</label>
+    <label><input type="checkbox" id="neg"> show negative curvature (s &lt; 0) on the linear plot</label>
+  </div>
+  <div class="toggles" id="legend"></div>
+</div>
+
+<div class="plots">
+  <div class="panel plot"><h2>Linear axes: the value at s = 0</h2><svg id="lin" viewBox="0 0 440 320" role="img" aria-label="filters on linear axes"></svg></div>
+  <div class="panel plot"><h2>Log axes: small and large s</h2><svg id="log" viewBox="0 0 440 320" role="img" aria-label="filters on log axes"></svg></div>
+</div>
+
+<div class="panel tablewrap">
+  <table id="tab"><thead><tr><th>filter</th><th>F(0) / ηK</th><th>F(1/(ηK)) / ηK</th><th id="th-hover">at cursor</th></tr></thead><tbody></tbody></table>
+  <p class="note" id="note"></p>
+</div>
+</main>
+
+<script>
+// BEGIN MATH
+// Spectral filters F(s): the response of the parameters to upweighting one example, along a
+// curvature eigenvector with eigenvalue s, per unit gradient component (sign: dw/dbeta = -F g).
+function F_if(s) { return 1 / s; }                       // classical IF; infinite at s = 0
+function F_damped(s, lam) { return 1 / (s + lam); }      // damped Hessian IF, PBRF (s from G), local BIF (lam = gamma)
+function F_gd(s, eta, K) {                               // K steps of GD of size eta, frozen curvature and gradient
+  const x = eta * s;
+  if (Math.abs(x) < 1e-12) return eta * K;               // limit s -> 0
+  if (x > -0.5 && x < 0.5) return -Math.expm1(K * Math.log1p(-x)) / s;  // accurate near 0
+  return (1 - Math.pow(1 - x, K)) / s;
+}
+function F_source(s, eta, K) {                           // one SOURCE segment: (1 - exp(-eta K s)) / s
+  const T = eta * K;
+  if (Math.abs(T * s) < 1e-12) return T;
+  return -Math.expm1(-T * s) / s;
+}
+// END MATH
+</script>
+<script>
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const FILTERS = [
+  {key: "if", name: "IF", legend: "classical IF  1/s", color: "--c-if", dash: "", f: (s, p) => F_if(s)},
+  {key: "damp", name: "damped", legend: "damped IF / PBRF / local BIF  1/(s+λ)", color: "--c-damp", dash: "", f: (s, p) => F_damped(s, p.lam)},
+  {key: "gd", name: "GD", legend: "GD, K steps  [1−(1−ηs)^K]/s", color: "--c-gd", dash: "7 4", f: (s, p) => F_gd(s, p.eta, p.K)},
+  {key: "src", name: "SOURCE", legend: "SOURCE segment  (1−e^(−ηKs))/s", color: "--c-src", dash: "2 3", f: (s, p) => F_source(s, p.eta, p.K)},
+];
+const on = {if: true, damp: true, gd: true, src: true};
+let hoverS = null;
+const W = 440, H = 320, M = {l: 54, r: 12, t: 14, b: 42}, FS = 13;
+
+function fmt(v) {
+  if (!isFinite(v)) return v > 0 ? "∞" : (v < 0 ? "−∞" : "—");
+  const a = Math.abs(v);
+  if (a !== 0 && (a < 1e-3 || a >= 1e4)) return v.toExponential(2).replace("-", "−");
+  return (+v.toPrecision(3)).toString().replace("-", "−");
+}
+function params() {
+  const eta = Math.pow(10, +$("eta").value);
+  const K = Math.max(1, Math.round(Math.pow(10, +$("K").value)));
+  let lam = Math.pow(10, +$("lam").value);
+  if ($("tie").checked) { lam = 1 / (eta * K); $("lam").value = Math.log10(lam).toFixed(2); }
+  $("lam").disabled = $("tie").checked;
+  const T = eta * K;
+  return {eta, K, lam, T, smax: Math.pow(10, +$("smax").value) / T, logLo: 1e-3 / T, logHi: 1e3 / T};
+}
+function svgEl(tag, attrs, parent) {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function text(parent, x, y, str, opts = {}) {
+  const t = svgEl("text", Object.assign({x, y, "font-size": FS, fill: css("--ink-3")}, opts), parent);
+  t.textContent = str; return t;
+}
+function niceTicks(lo, hi, n) {
+  const span = hi - lo, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 5, 10].map(m => m * mag).find(s => span / s <= n) || 10 * mag;
+  const out = [];
+  for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-12 * span; v += step) out.push(+v.toPrecision(12));
+  return out;
+}
+function axisLabels(svg, xl, yl) {
+  text(svg, (M.l + W - M.r) / 2, H - 6, xl, {"text-anchor": "middle", fill: css("--ink-2")});
+  const yc = (M.t + H - M.b) / 2;
+  text(svg, 15, yc, yl, {"text-anchor": "middle", fill: css("--ink-2"), transform: `rotate(-90 15 ${yc})`});
+}
+function clipRect(svg, id) {
+  const clip = svgEl("clipPath", {id}, svgEl("defs", {}, svg));
+  svgEl("rect", {x: M.l, y: M.t, width: W - M.l - M.r, height: H - M.t - M.b}, clip);
+}
+
+// A polyline through (s, v) samples, broken wherever v is not finite, leaves the y window by far,
+// or jumps across a pole (a sign change with either end outside the window).
+function pathOf(samples, X, Y, ylo, yhi) {
+  let d = "", pen = false, prev = null;
+  const span = yhi - ylo;
+  for (const [s, v] of samples) {
+    const bad = !isFinite(v) || v > yhi + 3 * span || v < ylo - 3 * span;
+    const pole = prev !== null && Math.sign(v) !== Math.sign(prev) &&
+                 (Math.max(Math.abs(v), Math.abs(prev)) > Math.max(Math.abs(yhi), Math.abs(ylo)));
+    if (bad || pole) { pen = false; prev = bad ? null : v; if (bad) continue; }
+    d += (pen ? "L" : "M") + X(s).toFixed(1) + "," + Y(v).toFixed(1); pen = true; prev = v;
+  }
+  return d;
+}
+
+function drawLinear(p) {
+  const svg = $("lin"); svg.innerHTML = "";
+  const neg = $("neg").checked;
+  const smin = neg ? -0.6 * p.smax : 0;
+  const fmax = Math.max(p.T, on.damp ? Math.min(1 / p.lam, 8 * p.T) : 0);
+  const ymax = 1.5 * fmax, ymin = neg ? -0.6 * ymax : 0;
+  const X = s => M.l + (s - smin) / (p.smax - smin) * (W - M.l - M.r);
+  const Y = v => H - M.b - (v - ymin) / (ymax - ymin) * (H - M.t - M.b);
+  const sUnst = 2 / p.eta;
+  if (sUnst < p.smax) svgEl("rect", {x: X(sUnst), y: M.t, width: X(p.smax) - X(sUnst), height: H - M.t - M.b, fill: css("--shade")}, svg);
+  for (const t of niceTicks(smin, p.smax, 5)) {
+    svgEl("line", {x1: X(t), x2: X(t), y1: M.t, y2: H - M.b, stroke: css("--grid")}, svg);
+    text(svg, X(t), H - M.b + 17, fmt(t), {"text-anchor": "middle"});
+  }
+  for (const t of niceTicks(ymin, ymax, 5)) {
+    svgEl("line", {x1: M.l, x2: W - M.r, y1: Y(t), y2: Y(t), stroke: css("--grid")}, svg);
+    text(svg, M.l - 6, Y(t) + 4, fmt(t), {"text-anchor": "end"});
+  }
+  if (neg) {
+    svgEl("line", {x1: X(0), x2: X(0), y1: M.t, y2: H - M.b, stroke: css("--ink-3")}, svg);
+    svgEl("line", {x1: M.l, x2: W - M.r, y1: Y(0), y2: Y(0), stroke: css("--ink-3")}, svg);
+  }
+  svgEl("line", {x1: X(1 / p.T), x2: X(1 / p.T), y1: M.t, y2: H - M.b, stroke: css("--ink-3"), "stroke-dasharray": "3 3"}, svg);
+  text(svg, X(1 / p.T) + 4, H - M.b - 6, "1/(ηK)");
+  axisLabels(svg, "eigenvalue s", "filter F(s)");
+  clipRect(svg, "clin");
+  const N = 600;
+  for (const fl of FILTERS) {
+    if (!on[fl.key]) continue;
+    const samples = [];
+    for (let k = 0; k <= N; k++) { const s = smin + (p.smax - smin) * k / N; samples.push([s, fl.f(s, p)]); }
+    svgEl("path", {d: pathOf(samples, X, Y, ymin, ymax), fill: "none", stroke: css(fl.color), "stroke-width": 2.2,
+                   "stroke-dasharray": fl.dash, "clip-path": "url(#clin)"}, svg);
+  }
+  if (on.if) text(svg, X(Math.max(1 / ymax, 0)) + 8, M.t + 14, "IF → ∞ as s → 0", {fill: css("--c-if")});
+  // F(0) markers, drawn outside the clip so they are fully visible
+  const labels = [];
+  for (const fl of FILTERS) {
+    if (!on[fl.key] || fl.key === "if") continue;
+    const v0 = fl.f(0, p);
+    if (v0 > ymax) continue;
+    svgEl("circle", {cx: X(0), cy: Y(v0), r: 4.5, fill: css(fl.color), stroke: css("--panel"), "stroke-width": 1.2}, svg);
+    labels.push([v0, fl.key === "damp" ? "1/λ" : "ηK"]);
+  }
+  // labels sit in the empty region at the right, with a leader line back to each marker
+  const groups = [];                       // markers with the same F(0) share one label
+  for (const [v0, lab] of labels) {
+    const g = groups.find(q => Math.abs(q[0] - v0) < 1e-9 * p.T);
+    if (g) { if (!g[1].includes(lab)) g[1] += " = " + lab; } else groups.push([v0, lab]);
+  }
+  groups.sort((a, b) => b[0] - a[0]);
+  const xl = X(0.45 * p.smax);
+  groups.forEach(([v0, lab], k) => {
+    const yl = Math.max(M.t + 34 + 18 * k, Math.min(Y(v0), H - M.b - 30) - 18 * k);
+    svgEl("line", {x1: X(0) + 6, y1: Y(v0), x2: xl - 4, y2: yl - 4, stroke: css("--ink-3"), "stroke-width": 0.8}, svg);
+    text(svg, xl, yl, `F(0) = ${lab}`, {fill: css("--ink-2")});
+  });
+  if (sUnst < p.smax) text(svg, X(sUnst) + 4, M.t + 30, "GD unstable", {});
+  return {X, lo: smin, hi: p.smax, Y, log: false, ymin, ymax};
+}
+
+function drawLog(p) {
+  const svg = $("log"); svg.innerHTML = "";
+  const lo = p.logLo, hi = p.logHi, ylo = 1e-3 * p.T, yhi = 1e3 * p.T;
+  const X = s => M.l + Math.log10(s / lo) / Math.log10(hi / lo) * (W - M.l - M.r);
+  const Y = v => H - M.b - Math.log10(v / ylo) / Math.log10(yhi / ylo) * (H - M.t - M.b);
+  const sUnst = 2 / p.eta;
+  if (sUnst < hi) svgEl("rect", {x: X(Math.max(sUnst, lo)), y: M.t, width: X(hi) - X(Math.max(sUnst, lo)), height: H - M.t - M.b, fill: css("--shade")}, svg);
+  for (let e = Math.ceil(Math.log10(lo)); e <= Math.floor(Math.log10(hi)); e++) {
+    const t = Math.pow(10, e);
+    svgEl("line", {x1: X(t), x2: X(t), y1: M.t, y2: H - M.b, stroke: css("--grid")}, svg);
+    if ((e - Math.ceil(Math.log10(lo))) % 2 === 0) text(svg, X(t), H - M.b + 17, "1e" + e, {"text-anchor": "middle"});
+  }
+  for (let e = Math.ceil(Math.log10(ylo)); e <= Math.floor(Math.log10(yhi)); e++) {
+    const t = Math.pow(10, e);
+    svgEl("line", {x1: M.l, x2: W - M.r, y1: Y(t), y2: Y(t), stroke: css("--grid")}, svg);
+    if ((e - Math.ceil(Math.log10(ylo))) % 2 === 0) text(svg, M.l - 6, Y(t) + 4, "1e" + e, {"text-anchor": "end"});
+  }
+  svgEl("line", {x1: X(1 / p.T), x2: X(1 / p.T), y1: M.t, y2: H - M.b, stroke: css("--ink-3"), "stroke-dasharray": "3 3"}, svg);
+  text(svg, X(1 / p.T) + 4, H - M.b - 6, "1/(ηK)");
+  axisLabels(svg, "eigenvalue s (log)", "|F(s)| (log)");
+  if (sUnst < hi) text(svg, Math.min(X(Math.max(sUnst, lo)) + 4, W - M.r - 96), M.t + 16, "GD unstable");
+  clipRect(svg, "clog");
+  const N = 700;
+  for (const fl of FILTERS) {
+    if (!on[fl.key]) continue;
+    // positive stretches drawn normally; where F < 0 (GD beyond 2/eta, even K) draw |F| faint and thin
+    for (const sign of [1, -1]) {
+      const samples = [];
+      for (let k = 0; k <= N; k++) {
+        const s = lo * Math.pow(hi / lo, k / N), v = fl.f(s, p);
+        samples.push([s, (sign > 0 ? v > 0 : v < 0) ? Math.min(Math.abs(v), yhi * 30) : NaN]);
+      }
+      const d = pathOf(samples.map(([s, v]) => [s, v]), X, v => Y(Math.max(v, ylo / 30)), -Infinity, Infinity);
+      svgEl("path", {d, fill: "none", stroke: css(fl.color), "stroke-width": sign > 0 ? 2.2 : 1.2, opacity: sign > 0 ? 1 : 0.55,
+                     "stroke-dasharray": fl.dash, "clip-path": "url(#clog)"}, svg);
+    }
+  }
+  return {X, lo, hi, Y: v => Y(Math.abs(v)), log: true, ymin: ylo, ymax: yhi};
+}
+
+let frames = {};
+function drawCursor(p) {
+  for (const id of ["lin", "log"]) {
+    const svg = $(id), fr = frames[id];
+    svg.querySelectorAll(".cursor").forEach(e => e.remove());
+    if (hoverS === null || hoverS < fr.lo || hoverS > fr.hi) continue;
+    const g = svgEl("g", {class: "cursor"}, svg), x = fr.X(hoverS);
+    svgEl("line", {x1: x, x2: x, y1: M.t, y2: H - M.b, stroke: css("--ink-2"), "stroke-width": 1}, g);
+    for (const fl of FILTERS) {
+      if (!on[fl.key]) continue;
+      const v = fl.f(hoverS, p);
+      if (!isFinite(v) || (fr.log && v === 0)) continue;
+      const y = fr.Y(v);
+      if (y < M.t || y > H - M.b) continue;
+      svgEl("circle", {cx: x, cy: y, r: 3.5, fill: css(fl.color)}, g);
+    }
+  }
+}
+function attachHover(id) {
+  const svg = $(id);
+  function move(ev) {
+    const fr = frames[id], r = svg.getBoundingClientRect();
+    const px = (ev.clientX - r.left) / r.width * W;
+    if (px < M.l || px > W - M.r) return;
+    const u = (px - M.l) / (W - M.l - M.r);
+    hoverS = fr.log ? fr.lo * Math.pow(fr.hi / fr.lo, u) : fr.lo + u * (fr.hi - fr.lo);
+    const p = params(); drawCursor(p); table(p);
+  }
+  svg.addEventListener("pointermove", move);
+  svg.addEventListener("pointerdown", move);
+}
+
+function table(p) {
+  const tb = $("tab").querySelector("tbody"); tb.innerHTML = "";
+  $("th-hover").textContent = hoverS === null ? "at cursor" : `F(${fmt(hoverS)})`;
+  for (const fl of FILTERS) {
+    const tr = document.createElement("tr");
+    const v0 = fl.key === "if" ? Infinity : fl.f(0, p) / p.T;
+    const cells = [fl.name, fmt(v0), fmt(fl.f(1 / p.T, p) / p.T), hoverS === null ? "" : fmt(fl.f(hoverS, p))];
+    cells.forEach((c, i) => { const td = document.createElement("td"); td.textContent = c; if (i === 0) td.style.color = css(fl.color); tr.appendChild(td); });
+    tb.appendChild(tr);
+  }
+  const notes = [];
+  if ($("tie").checked) notes.push("With λ = 1/(ηK), every finite filter starts at F(0) = ηK and crosses over to 1/s near s = 1/(ηK), but the curves differ: there ridge gives 0.5 ηK and SOURCE 0.63 ηK.");
+  else notes.push(`λ set by hand: the damped filter starts at 1/λ = ${fmt(1 / p.lam)}, GD and SOURCE at ηK = ${fmt(p.T)}.`);
+  const shownMax = Math.max(p.smax, p.logHi);
+  if (2 / p.eta < shownMax) notes.push(`Shaded: s > 2/η = ${fmt(2 / p.eta)}, where |1−ηs| > 1. There the GD filter's magnitude explodes with K and its sign depends on whether K is odd or even (faint curve on the log plot: |F| where F < 0). SOURCE's exponential is the small-step limit and has no such boundary.`);
+  if ($("neg").checked) notes.push("For s < 0: the damped filter diverges at s = −λ (it stays finite only for curvature above −λ), and the GD and SOURCE filters grow quickly with ηK|s|.");
+  $("note").textContent = notes.join(" ");
+}
+
+function legend() {
+  const lg = $("legend"); lg.innerHTML = "";
+  for (const fl of FILTERS) {
+    const lab = document.createElement("label");
+    const cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = on[fl.key];
+    cb.addEventListener("change", () => { on[fl.key] = cb.checked; render(); });
+    const sw = svgEl("svg", {width: 26, height: 8, viewBox: "0 0 26 8"});
+    svgEl("line", {x1: 1, x2: 25, y1: 4, y2: 4, stroke: css(fl.color), "stroke-width": 2.4, "stroke-dasharray": fl.dash}, sw);
+    lab.append(cb, sw, document.createTextNode(fl.legend)); lg.appendChild(lab);
+  }
+}
+
+function render() {
+  const p = params();
+  $("eta-o").textContent = fmt(p.eta); $("K-o").textContent = p.K;
+  $("lam-o").textContent = fmt(p.lam); $("smax-o").textContent = fmt(p.smax);
+  frames.lin = drawLinear(p); frames.log = drawLog(p); drawCursor(p); table(p);
+}
+["eta", "K", "lam", "smax"].forEach(id => $(id).addEventListener("input", render));
+["tie", "neg"].forEach(id => $(id).addEventListener("change", render));
+attachHover("lin"); attachHover("log");
+if (window.matchMedia) window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { legend(); render(); });
+legend(); render();
+</script>
+<script>
+// Embedded in a notebook page (iframe): report this page's height so the frame fits it.
+(function () {
+  if (window.parent === window) return;
+  var last = 0;
+  function report() {
+    var b = document.body, cs = getComputedStyle(b);
+    var h = Math.ceil(b.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom));
+    if (Math.abs(h - last) < 2) return;
+    last = h; window.parent.postMessage({ type: "figure-height", height: h }, "*");
+  }
+  if (window.ResizeObserver) new ResizeObserver(report).observe(document.body);
+  window.addEventListener("load", report); window.addEventListener("resize", report); report();
+  window.addEventListener("message", function (e) {  // the page asks again once it is listening
+    if (e.source === window.parent && e.data && e.data.type === "figure-height-request") { last = 0; report(); }
+  });
+})();
+</script>
+</body>
+</html>

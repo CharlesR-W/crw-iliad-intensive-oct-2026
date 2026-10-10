@@ -1,0 +1,86 @@
+Mysteries of Deep Learning
+
+Lecture 1: Overview, history, motivation from perspective of AI (not stat-learning) perspective ('in the beginnings' and 'why LLMs' sectinos?)
+Workbook 1: deriving various learning theory results, getting familiar with the technology, Bayes stuff, etc (~statistical learning, reg.).  Empirical risk, population risk, etc.
+Lecture 2: Mysteries of DL from stat-learning and TCS.
+Workbook 2: Read papers until you find something cool I didn't know.
+
+Flow of ideas: 
+- how has deep learning changed what we think of as intelligence? (and alignment?  ontology problem)
+- Why statistical learning at all?  why not ____?  Doesn't theorem __ present an impossibility proof?  天无绝人之路
+- Regularization: why the hacky bullshit works, and how not to think about it
+- How did we get to LLMs?  Why not ____?
+- Aside : "Inductive Bias" is a curiosity stopper.
+- Evidence for universality
+- What the hell is going on in there?  Alignment and the Mysteries of deep learning
+
+---
+
+# In the misty beginnings: [lec 1]
+- Nature of intelligence (why gpt predictors?)
+  - GOFAI, optimization, planning, control theory
+- Why GOFAI failed - the bitter lesson
+- Why should we be doing statistical learning anyways?  RL etc.
+- Why alignment is hard: then and now
+  - RL, ontology problem, natural abstractions, decision theory
+  - "Just retarget the search"
+  - Byrnes on values
+  - Personae and simulators
+
+# Statistical Learning [workbook 1, need to flesh out]
+- Universal approximation theorem
+- No free lunch theorem
+- Bias-variance
+- Bayes and MLE generalization error - 'fantastic generalization measures' paper.
+- "Overfitting" and double descent (??how to cover this?)
+- It's all equivalent at zero-order: planning as inference (is this important?)
+
+# Regularization (workbook 1)
+- why should flatness matter?
+- Regularization - as bayes prior, as Lagrange multiplier
+
+# Why LLMs? (lec 2)
+- why generative models?
+- why text data? (why not video?)
+- why next token prediction? (why unsupervised learning)
+read 'simulators' sequence
+- why _scale_?
+
+# Inductive bias is a four-letter word (readings?)
+- Occam, Solomonoff, program synthesis, and 'hierarchical' / 'factored' representations
+- the insight behind CNNs - symmetry  (GNNs; GGGGG book)
+- A hundred flowers and the coming of the transformer - why is attention all you need?
+
+# Universality (lec 2)
+- Another bitter lesson: architecture doesn't matter.  The machines, they just want to learn.
+- Scaling laws - should _you_ consume more tokens?  A hundred unnecessary explanations
+- Platonic representation hypothesis
+- Linear representation hypothesis
+- Superposition, adversarial attacks, error correction
+
+# Mysteries myriad (readings / papers)
+- transformer middle layers
+- models learn from bottom up svcca
+- model stitching works
+- critical periods
+- adversarial attacks (and on you too)
+- critical modules
+- distillation and pruning
+- rewinding and lottery-tickets
+- GD low rank subspace?
+- Spectra and curvature
+- low-rank RL updates and KL leash and instability and BV tradeoff
+
+# What kinds of explanations do we need?
+- Psychology from quantum field theory
+
+------------------------------------
+Things to link
+- physics of language models, PAZ
+- bitter lesson
+- simulators seq.
+- waluigi effect
+- Yann Lecun (or whoever?) and the '3 part cake' view
+- all those papers
+- DL as program synthesis, Zach
+- Maybe some of dmitry stuff about circuit priors
