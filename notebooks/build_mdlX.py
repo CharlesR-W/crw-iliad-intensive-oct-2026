@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build WB1 (DEPRECATED, 2026-10-13: kept for reference, not part of the day).
+"""Build MDL.X (DEPRECATED, 2026-10-13: kept for reference, not part of the day).
 How Deep Learning Changed How We Think about Intelligence.
 
 Keystone + annotated trail (reviews/2026-10-09-trail-restructure-brief.md).
@@ -24,9 +24,9 @@ CELLS = [
     # ------------------------------------------------------------------ title
     markdown(
         r"""
-# Workbook 1 (deprecated) — How Deep Learning Changed How We Think about Intelligence
+# MDL.X (deprecated) — How Deep Learning Changed How We Think about Intelligence
 
-> **Deprecated (2026-10-13).** This workbook is no longer part of the day; it is kept for reference only. Start with Workbook 2 onward.
+> **Deprecated (2026-10-13).** This workbook is no longer part of the day; it is kept for reference only. Start with MDL1.
 
 **Mysteries of Deep Learning, Iliad Intensive 2026**
 
@@ -85,7 +85,7 @@ Two short questions on the limits of the bitter lesson and on why learned agents
         r"""
 A useful dividing line is between structure that **scales with compute** and structure that **substitutes for compute**.
 
-- **Convolution or attention.** These encode a symmetry or a routing mechanism, not domain facts, and they make learning cheaper without capping it, so they are arguably "meta-methods" in Sutton's sense. Sutton's own text is pulled both ways here. The evidence that architecture changes mostly shift scaling curves by a constant factor rather than change their slope, and that biases which help at small scale often stop helping at large scale (WB5), suggests built-in structure that does get eaten, just slowly.
+- **Convolution or attention.** These encode a symmetry or a routing mechanism, not domain facts, and they make learning cheaper without capping it, so they are arguably "meta-methods" in Sutton's sense. Sutton's own text is pulled both ways here. The evidence that architecture changes mostly shift scaling curves by a constant factor rather than change their slope, and that biases which help at small scale often stop helping at large scale (MDL4), suggests built-in structure that does get eaten, just slowly.
 - **Tokenizer.** Hand-written, and visibly brittle on arithmetic and spelling. Byte-level models are what the bitter lesson predicts; whether they win at equal compute is still an empirical question.
 - **Data curation, RL rubrics, constitutions.** These specify *what we want*, not *how to compute it*. The bitter lesson is a claim about capability, so these may be outside its scope: more compute cannot tell you which outcome is good. That is the alignment half of this workbook.
 """
@@ -126,7 +126,7 @@ Before learning won, engineers wrote intelligence down as symbols plus search, a
                 "Solomonoff's theory of inductive inference",
                 "https://en.wikipedia.org/wiki/Solomonoff%27s_theory_of_inductive_inference",
                 "Wikipedia",
-                "The universal prior over programs, why it is the ideal inductive learner, and why it is uncomputable. WB4 returns to it.",
+                "The universal prior over programs, why it is the ideal inductive learner, and why it is uncomputable. MDL3 returns to it.",
                 about="The pages on the [von Neumann–Morgenstern theorem](https://en.wikipedia.org/wiki/Von_Neumann%E2%80%93Morgenstern_utility_theorem) and [AIXI](https://en.wikipedia.org/wiki/AIXI) are the matching references for expected-utility agents and the ideal RL agent.",
                 importance=4,
                 length=2,
@@ -623,7 +623,7 @@ Pretraining on human text solved some old problems more or less by default, the 
                 "https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators",
                 "janus, 2022",
                 "A self-supervised model is a *simulator* of its training distribution that can produce goal-directed characters without being an agent itself. The first half carries the argument.",
-                about="WB3 has more on simulators and personae.",
+                about="MDL2 has more on simulators and personae.",
                 importance=4,
                 length=2,
             ),
@@ -764,4 +764,4 @@ One reasonable set of answers; several entries are contested.
 ]
 
 if __name__ == "__main__":
-    raise SystemExit(run(CELLS, "wb1", "01_deprecated_intelligence_then_and_now"))
+    raise SystemExit(run(CELLS, "wb1", "mdlX_intelligence_then_and_now"))

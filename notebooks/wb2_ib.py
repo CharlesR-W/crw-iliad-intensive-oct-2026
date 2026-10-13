@@ -1,4 +1,4 @@
-"""WB2 §9: did deep networks compress? The information-bottleneck debate.
+"""MDL1 §9: did deep networks compress? The information-bottleneck debate.
 
 Formulas are checked by checks/wb2b_check.py (old 1.F.3-1.F.4).
 """

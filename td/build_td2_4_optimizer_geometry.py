@@ -439,7 +439,7 @@ loss gradients and $H$ the loss Hessian.
 **Sharpness needs a metric.** At a critical point $H_\xi=J^\top H_\theta J$: the Hessian is a
 quadratic form, whose eigenvalues mean something only against a metric $M$ (they are those of
 $M^{-1}H$). Raw $\lambda_{\max}(H)$ silently uses $M=I$, so rescaling layers can make sharp
-minima flat (Dinh et al.; [MDL WB2 §4, exercise 4.5](../notebooks/02_statistical_learning.html#wb2-flatness)
+minima flat (Dinh et al.; [MDL MDL1 §4, exercise 4.5](../notebooks/mdl1_statistical_learning.html#wb2-flatness)
 works the two-layer example). An invariant curvature is the spectrum of $F^{-1}H$. Newton,
 whose metric is the Hessian, is invariant only under affine changes, because away from a
 critical point the Hessian picks up a term from the curvature of the coordinate change

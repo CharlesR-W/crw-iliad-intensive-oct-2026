@@ -816,8 +816,8 @@ invertible $G_j$. For two square layers and invertible $\Sigma$ the minima form 
 orbit of dimension $n^2$ (Exercise 3.2). This gauge symmetry makes every minimum degenerate,
 which singular learning theory measures with the learning coefficient (RLCT), known exactly
 for deep linear networks (Aoyagi, as cited in
-[Pepin Lehalleur and Rimányi](https://arxiv.org/abs/2411.19920)); see the MDL day's WB4,
-[§2 *Occam, two ways*](../notebooks/04_inductive_bias.html#wb4-section-2).
+[Pepin Lehalleur and Rimányi](https://arxiv.org/abs/2411.19920)); see the MDL day's MDL3,
+[§2 *Occam, two ways*](../notebooks/mdl3_program_synthesis.html#wb4-section-2).
 
 **3.3 Strict and degenerate saddles.** At the origin of one mode, depth 2 gives the loss
 $\tfrac12(s-bc)^2$, with Hessian eigenvalues $\pm s$: a *strict* saddle, escaped exponentially
@@ -1525,9 +1525,9 @@ Schoenholz and Ganguli show ReLU networks cannot reach it and orthogonal sigmoid
 **5. Generalization dynamics.** *Derived elsewhere:* overtraining worst at $n\approx p$
 (samples ≈ parameters), early stopping as a spectral filter, and the cost of a large
 initialization in directions the data never move are properties of linear least squares,
-not of depth. The MDL day's WB2 derives them, in
-[§4 *Regularization*](../notebooks/02_statistical_learning.html#wb2-spectral-filter) (exercise 4.3)
-and the keystone [*double descent in least squares*](../notebooks/02_statistical_learning.html#wb2-double-descent)
+not of depth. The MDL day's MDL1 derives them, in
+[§4 *Regularization*](../notebooks/mdl1_statistical_learning.html#wb2-spectral-filter) (exercise 4.3)
+and the keystone [*double descent in least squares*](../notebooks/mdl1_statistical_learning.html#wb2-double-descent)
 exercises. *Planted:* Advani, Saxe and Sompolinsky's curves assume i.i.d. isotropic inputs
 (hence Marchenko–Pastur; real spectra are closer to power laws) and a rank-one ansatz for deep
 scalar-output networks. *Transfer:* simulations, and a model with a fixed random first layer.

@@ -1,4 +1,4 @@
-"""WB2 §6: PAC-Bayes, bounds for the function you found.
+"""MDL1 §6: PAC-Bayes, bounds for the function you found.
 
 Formulas are checked by checks/wb2_new_pacbayes_check.py.
 """

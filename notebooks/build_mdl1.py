@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build WB2: How Deep Learning Changed Statistical Learning Theory.
+"""Build MDL1: How Deep Learning Changed Statistical Learning Theory.
 
 Shape (2026-10-09 trail restructure): a keystone section, then an annotated trail.
 Each section opens with a one-sentence purpose and a short rated reading list,
@@ -40,4 +40,4 @@ CELLS = (
 )
 
 if __name__ == "__main__":
-    raise SystemExit(run(CELLS, "wb2", "02_statistical_learning"))
+    raise SystemExit(run(CELLS, "wb2", "mdl1_statistical_learning"))

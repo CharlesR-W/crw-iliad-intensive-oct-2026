@@ -1,4 +1,4 @@
-"""WB2 §2 (reference cases: risk, least squares, bias–variance) and §3 (no free lunch,
+"""MDL1 §2 (reference cases: risk, least squares, bias–variance) and §3 (no free lunch,
 universal approximation, VC dimension).
 
 Formulas are checked by checks/wb2a_check.py and checks/wb2_new_pacbayes_check.py (VC part).
@@ -358,9 +358,9 @@ For 1, condition on the training labels. Under the uniform prior, the values $f(
 **3.** Fix $h$ with $\mathrm{err}_D(h)>\epsilon$. Each i.i.d. sample is consistent with it with probability below $1-\epsilon$, so $\Pr[h\text{ consistent with all }n]\le(1-\epsilon)^n\le e^{-n\epsilon}$. There are at most $M$ such $h$, so by the union bound $\Pr[\exists\text{ consistent }h\text{ with }\mathrm{err}_D(h)>\epsilon]\le Me^{-n\epsilon}$. Equivalently, with probability at least $1-\delta$, every consistent $h$ has $\mathrm{err}_D(h)\le(\ln M+\ln(1/\delta))/n$. For programs of at most $b$ bits, $M<2^{b+1}$, so $n\approx(b\ln2+\ln(1/\delta))/\epsilon$ samples suffice. The cost of learning scales with the *description length* of the target (Occam). For the class of all functions, $M=2^N$, and the bound needs $n\gtrsim N\ln2/\epsilon$: you must see a constant fraction of the domain, which is NFL again.
 
 **4.** It entered at "$f|_U$ is independent of the labels on the training set". Any prior under which seen labels are informative about unseen ones escapes NFL. Examples:
-- a simplicity (Solomonoff) prior, which favours the shortest consistent program (WB4);
+- a simplicity (Solomonoff) prior, which favours the shortest consistent program (MDL3);
 - a smoothness prior, which favours kernel or nearest-neighbour methods;
-- a symmetry prior, which favours equivariant architectures such as CNNs (WB3).
+- a symmetry prior, which favours equivariant architectures such as CNNs (MDL2).
 
 The question "why does deep learning generalize?" becomes: which prior over targets do the architecture and the optimizer implement, and why does it match the world?
 """

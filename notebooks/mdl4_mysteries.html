@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="nbkit.py (wb6); do not edit by hand">
-<title>Workbook 6 — Mysteries of Deep Learning</title>
+<meta name="generator" content="nbkit.py (mdl4); do not edit by hand">
+<title>MDL4 — Mysteries of Deep Learning: Universalities and a Hundred Surprises</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
@@ -217,47 +217,283 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
-<li><a href="#1-transformer-middle-layers">1. Transformer middle layers</a></li>
-<li><a href="#2-bottom-up-learning">2. Bottom-up learning</a></li>
-<li><a href="#3-model-stitching-works">3. Model stitching works</a></li>
-<li><a href="#4-critical-periods">4. Critical periods</a></li>
-<li><a href="#5-superposition-and-adversarial-attacks-and-on-you-too">5. Superposition and adversarial attacks (and on you too)</a></li>
-<li><a href="#6-critical-modules">6. Critical modules</a></li>
-<li><a href="#7-distillation">7. Distillation</a></li>
-<li><a href="#8-rewinding-and-lottery-tickets">8. Rewinding and lottery tickets</a></li>
-<li><a href="#9-gradient-descent-in-a-tiny-subspace">9. Gradient descent in a tiny subspace</a></li>
-<li><a href="#10-spectra-and-curvature">10. Spectra and curvature</a></li>
-<li><a href="#11-low-rank-rl-updates-and-the-kl-leash">11. Low-rank RL updates and the KL leash</a></li>
-<li><a href="#12-physics-of-language-models">12. Physics of language models</a></li>
-<li><a href="#13-hidden-signals-low-rank-logits-and-subliminal-learning">13. Hidden signals: low-rank logits and subliminal learning</a></li>
+<li><a href="#1-keystone-scaling-laws">1. Keystone: scaling laws</a></li>
+<li><a href="#2-why-power-laws-a-hundred-unnecessary-explanations">2. Why power laws? A hundred unnecessary explanations</a></li>
+<li><a href="#3-another-bitter-lesson-architecture-doesnt-matter-much">3. Another bitter lesson: architecture doesn’t matter (much)</a></li>
+<li><a href="#4-same-representation-cka-cca-and-the-platonic-and-linear-representation-hypotheses">4. Same representation? CKA, CCA, and the Platonic and linear representation hypotheses</a></li>
+<li><a href="#5-transformer-middle-layers">5. Transformer middle layers</a></li>
+<li><a href="#6-bottom-up-learning">6. Bottom-up learning</a></li>
+<li><a href="#7-model-stitching-works">7. Model stitching works</a></li>
+<li><a href="#8-critical-periods">8. Critical periods</a></li>
+<li><a href="#9-superposition-and-adversarial-attacks-and-on-you-too">9. Superposition and adversarial attacks (and on you too)</a></li>
+<li><a href="#10-critical-modules">10. Critical modules</a></li>
+<li><a href="#11-distillation">11. Distillation</a></li>
+<li><a href="#12-rewinding-and-lottery-tickets">12. Rewinding and lottery tickets</a></li>
+<li><a href="#13-gradient-descent-in-a-tiny-subspace">13. Gradient descent in a tiny subspace</a></li>
+<li><a href="#14-spectra-and-curvature">14. Spectra and curvature</a></li>
+<li><a href="#15-low-rank-rl-updates-and-the-kl-leash">15. Low-rank RL updates and the KL leash</a></li>
+<li><a href="#16-physics-of-language-models">16. Physics of language models</a></li>
+<li><a href="#17-hidden-signals-low-rank-logits-and-subliminal-learning">17. Hidden signals: low-rank logits and subliminal learning</a></li>
 </ol>
 </details>
-<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 6 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 11 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
 </nav>
 <main>
 <article>
-<h1 id="workbook-6--mysteries-of-deep-learning">Workbook 6 — Mysteries of Deep Learning</h1>
+<h1 id="mdl4--mysteries-of-deep-learning-universalities-and-a-hundred-surprises">MDL4 — Mysteries of Deep Learning: Universalities and a Hundred Surprises</h1>
 <p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
-<p>Trained networks do many things that no theory predicted, and any account of deep learning has to explain them. This workbook is a catalogue of such facts, one per section with the papers that report them: read until you find something you didn’t know.</p>
+<p>Different networks trained on similar data end up with the same smooth loss curves, nearly regardless of architecture, and arguably with similar internal representations. Nobody designed these regularities in, and nobody fully knows why they hold: the machines, they just want to learn. Sections 1–4 are about those universalities. Sections 5–17 are a catalogue of further things trained networks do that no theory predicted, one per section with the papers that report them: read until you find something you didn’t know. Together they are a lower bound on what any good theory of deep learning must explain.</p>
+<p><strong>Universalities</strong></p>
 <ul>
-<li><a href="#wb6-section-1">§1. Transformer middle layers</a>: the best features are not at the top.</li>
-<li><a href="#wb6-section-2">§2. Bottom-up learning</a>: lower layers settle first.</li>
-<li><a href="#wb6-section-3">§3. Model stitching works</a>: one linear layer joins two different networks.</li>
-<li><a href="#wb6-section-4">§4. Critical periods</a>: an early deficit outlasts later training.</li>
-<li><a href="#wb6-section-5">§5. Superposition and adversarial attacks (and on you too)</a>: more features than dimensions; brittle but real features. Exercises, interactive figure.</li>
-<li><a href="#wb6-section-6">§6. Critical modules</a>: most layers can be reset to initialization; a few cannot.</li>
-<li><a href="#wb6-section-7">§7. Distillation</a>: soft outputs teach far more than labels.</li>
-<li><a href="#wb6-section-8">§8. Rewinding and lottery tickets</a>: sparse subnetworks that train alone, if the initialization is kept.</li>
-<li><a href="#wb6-section-9">§9. Gradient descent in a tiny subspace</a>: the gradient lives in a few Hessian directions. Exercise.</li>
-<li><a href="#wb6-section-10">§10. Spectra and curvature</a>: Hessian bulk plus outliers; batch norm removes the outliers. Exercise.</li>
-<li><a href="#wb6-section-11">§11. Low-rank RL updates and the KL leash</a>: updates sparse yet full-rank, or rank-1 dominated; RL forgets less than SFT. Exercises.</li>
-<li><a href="#wb6-section-12">§12. Physics of language models</a>: transformers learn to parse a synthetic grammar.</li>
-<li><a href="#wb6-section-13">§13. Hidden signals: low-rank logits and subliminal learning</a>: shared low-rank structure; traits passed through unrelated data.</li>
+<li><a href="#wb5-keystone">1. Keystone: scaling laws</a>. Kaplan et al. 2020.</li>
+<li><a href="#wb5-section-2">2. Why power laws? A hundred unnecessary explanations</a>. Exercises on power-law learning curves.</li>
+<li><a href="#wb5-section-3">3. Another bitter lesson: architecture doesn’t matter (much)</a>. Fermi exercise on compute multipliers.</li>
+<li><a href="#wb5-section-4">4. Same representation? CKA, CCA, and the Platonic and linear representation hypotheses</a>. Exercises on similarity invariances.</li>
 </ul>
-<p>Sections are independent. Solutions to the exercises are folded under “Solution”. The Training Dynamics notebooks take up §4 and §8–§11.</p>
+<p><strong>The catalogue</strong> (sections are independent)</p>
+<ul>
+<li><a href="#wb6-section-1">5. Transformer middle layers</a>: the best features are not at the top.</li>
+<li><a href="#wb6-section-2">6. Bottom-up learning</a>: lower layers settle first.</li>
+<li><a href="#wb6-section-3">7. Model stitching works</a>: one linear layer joins two different networks.</li>
+<li><a href="#wb6-section-4">8. Critical periods</a>: an early deficit outlasts later training.</li>
+<li><a href="#wb6-section-5">9. Superposition and adversarial attacks (and on you too)</a>: more features than dimensions; brittle but real features. Exercises, interactive figure.</li>
+<li><a href="#wb6-section-6">10. Critical modules</a>: most layers can be reset to initialization; a few cannot.</li>
+<li><a href="#wb6-section-7">11. Distillation</a>: soft outputs teach far more than labels.</li>
+<li><a href="#wb6-section-8">12. Rewinding and lottery tickets</a>: sparse subnetworks that train alone, if the initialization is kept.</li>
+<li><a href="#wb6-section-9">13. Gradient descent in a tiny subspace</a>: the gradient lives in a few Hessian directions. Exercise.</li>
+<li><a href="#wb6-section-10">14. Spectra and curvature</a>: Hessian bulk plus outliers; batch norm removes the outliers. Exercise.</li>
+<li><a href="#wb6-section-11">15. Low-rank RL updates and the KL leash</a>: updates sparse yet full-rank, or rank-1 dominated; RL forgets less than SFT. Exercises.</li>
+<li><a href="#wb6-section-12">16. Physics of language models</a>: transformers learn to parse a synthetic grammar.</li>
+<li><a href="#wb6-section-13">17. Hidden signals: low-rank logits and subliminal learning</a>: shared low-rank structure; traits passed through unrelated data.</li>
+</ul>
 
-<details class="sec sec2" data-sec="1-transformer-middle-layers">
-<summary><h2 id="1-transformer-middle-layers">1. Transformer middle layers</h2></summary>
+<details class="sec sec2" data-sec="1-keystone-scaling-laws">
+<summary><h2 id="1-keystone-scaling-laws">1. Keystone: scaling laws</h2></summary>
+<div class="sec-body">
+<a id="wb5-keystone"></a>
+<p>Why it’s here: the loss of a language model is a predictable, smooth function of scale, and the details of the network barely enter. Both facts are empirical, and both are unexplained.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2001.08361">Scaling laws for neural language models</a></strong>, Kaplan et al. (2020) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Test loss is a power law in parameters, data and compute, while width, depth and shape barely matter at fixed parameter count. The abstract, Section 3 and Figures 1 and 5–7 carry the argument.</p>
+</div>
+
+<p><strong>Smooth power laws nobody designed in.</strong> Kaplan et al. train transformer language models with up to about <span class="math inline">10^9</span> non-embedding parameters <span class="math inline">N</span>. When not bottlenecked by the others, test loss falls as <span class="math inline">L(N)\approx(N_c/N)^{\alpha_N}</span> with <span class="math inline">\alpha_N\approx0.076</span>, and as similar power laws in dataset size <span class="math inline">D</span> (<span class="math inline">\alpha_D\approx0.095</span>) and in compute (<span class="math inline">\alpha_C\approx0.050</span>), with some trends spanning more than seven orders of magnitude. Loss on other text datasets follows the same power with an offset. Nothing in the architecture, the optimizer or the data was chosen to produce this. It made training a much larger model a predictable investment rather than a gamble. Fitting these curves and allocating compute between parameters and data (Chinchilla) is in <a href="mdl2_why_llms.html#wb3-section-6">MDL2, section ‘Why scale? Should you consume more tokens?’</a>.</p>
+<p><strong>Architecture mostly sets constants.</strong> At fixed <span class="math inline">N</span>, the loss varies only a few percent over a wide range of shapes. The aspect ratio <span class="math inline">d_{\rm model}/n_{\rm layer}</span> can vary by a factor of 40 at little cost (Figure 5), and models of different depths fall on one curve once embedding parameters are excluded (Figure 6). <a href="#wb5-section-3">§3</a> extends this across architecture families: most changes shift the curve by a constant factor in compute and rarely change its slope. Kaplan’s exception is instructive. LSTMs match transformers on early tokens of the context but cannot use long contexts, so they scale worse (Figure 7). This is another bitter lesson: what matters is scale, not cleverness in the layers.</p>
+</div>
+</details>
+<details class="sec sec2" data-sec="2-why-power-laws-a-hundred-unnecessary-explanations">
+<summary><h2 id="2-why-power-laws-a-hundred-unnecessary-explanations">2. Why power laws? A hundred unnecessary explanations</h2></summary>
+<div class="sec-body">
+<a id="wb5-section-2"></a>
+<p>Very different mechanisms produce the same power-law learning curve, so the curve’s form alone cannot tell you which one is at work.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2303.13506">The quantization model of neural scaling</a></strong>, Michaud, Liu, Girit &amp; Tegmark (NeurIPS 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Networks learn discrete skills (‘quanta’) in order of use frequency; Zipfian frequencies give power-law scaling. Decomposes model behaviour into candidate quanta using gradients.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2309.13337">On the asymptotic learning curves of kernel ridge regression under power-law decay</a></strong>, Li, Zhang &amp; Lin (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Rigorous kernel-ridge learning curves for power-law spectra, including the saturation of Exercise 2.2. A rabbit hole.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-power-law-learning-curves">
+<summary><h3 id="exercises-power-law-learning-curves">Exercises: power-law learning curves</h3></summary>
+<div class="sec-body">
+
+<p>Two toy models with the same answer.</p>
+<p><strong>Exercise 2.1.</strong> Two routes to one curve.</p>
+<p><em>Spectral model.</em> Features <span class="math inline">x\in\mathbb R^\infty</span> are Gaussian with covariance <span class="math inline">\mathrm{diag}(\lambda_k)</span>, <span class="math inline">\lambda_k=k^{-\alpha}</span>, <span class="math inline">\alpha&gt;1</span>. The target is <span class="math inline">y=\sum_k\beta_kx_k+\varepsilon</span>, with noise variance <span class="math inline">\sigma^2</span>, and we have <span class="math inline">n</span> samples. The excess loss of an estimate <span class="math inline">\hat\beta</span> is <span class="math inline">\sum_k\lambda_k(\hat\beta_k-\beta_k)^2</span>. The signal power in mode <span class="math inline">k</span> is <span class="math inline">c_k^2=\lambda_k\beta_k^2=k^{-\alpha&#39;}</span> with <span class="math inline">\alpha&#39;&gt;1</span> (a generic target has <span class="math inline">\alpha&#39;=\alpha</span>; smoother targets have <span class="math inline">\alpha&#39;&gt;\alpha</span>).</p>
+<p><em>Quanta model.</em> A task consists of discrete skills <span class="math inline">k=1,2,\dots</span>, used with frequencies <span class="math inline">p_k\propto k^{-(1+a)}</span>, <span class="math inline">a&gt;0</span>. A model that has learned the <span class="math inline">N</span> most frequent skills has loss proportional to the frequency mass of the rest.</p>
+<p>(a) Show that <span class="math inline">\sum_{k&gt;K}k^{-s}\sim K^{1-s}/(s-1)</span> for <span class="math inline">s&gt;1</span>.</p>
+<p>(b) <em>Heuristic for ridge.</em> Suppose the estimator learns modes <span class="math inline">1,\dots,K</span> with <span class="math inline">K\le n</span> and nothing beyond. Each learned mode costs about <span class="math inline">\sigma^2/n</span> (error variance <span class="math inline">\sigma^2/(n\lambda_k)</span>, weighted by <span class="math inline">\lambda_k</span>); each unlearned mode costs <span class="math inline">c_k^2</span>. So <span class="math display">E(K)\approx\sum_{k&gt;K}c_k^2+\frac{\sigma^2K}n .</span> Show that <span class="math inline">E\sim n^{-(\alpha&#39;-1)}</span> without noise, and <span class="math inline">E\sim n^{-(\alpha&#39;-1)/\alpha&#39;}</span> with noise and the best <span class="math inline">K</span>.</p>
+<p>(c) Show that the quanta model’s loss after learning <span class="math inline">N</span> skills scales as <span class="math inline">N^{-a}</span>. If <span class="math inline">N</span> grows as a power of parameters or data, what form does the loss curve take?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">k^{-s}</span> is decreasing, so <span class="math inline">\int_{K+1}^\infty t^{-s}dt\le\sum_{k&gt;K}k^{-s}\le\int_K^\infty t^{-s}dt</span>. Both integrals are <span class="math inline">\sim K^{1-s}/(s-1)</span>.</p>
+<p><strong>(b)</strong> With <span class="math inline">s=\alpha&#39;</span>, the tail is <span class="math inline">\sim K^{-(\alpha&#39;-1)}/(\alpha&#39;-1)</span>. Without noise, take <span class="math inline">K=n</span>: <span class="math inline">E\sim n^{-(\alpha&#39;-1)}</span>. With noise, <span class="math inline">dE/dK=0</span> gives <span class="math inline">-K^{-\alpha&#39;}+\sigma^2/n=0</span>, so <span class="math inline">K^*=(n/\sigma^2)^{1/\alpha&#39;}</span>, below <span class="math inline">n</span> for large <span class="math inline">n</span>. Both terms are then of order <span class="math inline">(K^*)^{1-\alpha&#39;}</span>, so <span class="math display">E\sim(n/\sigma^2)^{-(\alpha&#39;-1)/\alpha&#39;} .</span></p>
+<p><strong>(c)</strong> By (a) with <span class="math inline">s=1+a</span>, <span class="math inline">\sum_{k&gt;N}p_k\propto N^{-a}/a</span>. If <span class="math inline">N\propto P^\mu</span> for a resource <span class="math inline">P</span>, the loss is <span class="math inline">\propto P^{-a\mu}</span>, again a power law, with nothing spectral used. An observed power law cannot by itself tell the two mechanisms apart. Finer measurements can: per-example loss curves should be step-like under quanta and smooth under the spectral picture.</p>
+</div>
+</details>
+
+<p><strong>Exercise 2.2.</strong> Where the heuristic fails: saturation.</p>
+<p>Use the spectral model of Exercise 2.1. Ridge shrinks mode <span class="math inline">k</span> by the filter <span class="math inline">\lambda_k/(\lambda_k+\kappa)</span>, so it also biases the modes it “learns”. At large <span class="math inline">n</span> the effective regularization <span class="math inline">\kappa</span> sits near the eigenvalue of the last resolved mode; without noise take <span class="math inline">\kappa\approx\lambda_n=n^{-\alpha}</span>. The bias from shrinking the head is <span class="math display">B_{\rm head}=\sum_{k&lt;n}c_k^2\Big(\frac{\kappa}{\lambda_k+\kappa}\Big)^2 .</span></p>
+<p>(a) Show that <span class="math inline">B_{\rm head}\approx n^{-2\alpha}\sum_{k&lt;n}k^{2\alpha-\alpha&#39;}</span> up to constants, and that modes with <span class="math inline">k</span> comparable to <span class="math inline">n</span> contribute at most the order of the tail, <span class="math inline">n^{1-\alpha&#39;}</span>.</p>
+<p>(b) Evaluate the sum when <span class="math inline">\alpha&#39;-1&lt;2\alpha</span>, when <span class="math inline">\alpha&#39;-1&gt;2\alpha</span>, and at <span class="math inline">\alpha&#39;-1=2\alpha</span>. Conclude that the noiseless rate is <span class="math inline">n^{-\min(\alpha&#39;-1,\,2\alpha)}</span> away from the boundary, and find the rate on it.</p>
+<p>(c) With noise and optimally tuned ridge, redo Exercise 2.1(b) with <span class="math inline">s=\min(\alpha&#39;-1,2\alpha)</span> in place of <span class="math inline">\alpha&#39;-1</span>, taking the cutoff <span class="math inline">K</span> as free. Show that <span class="math inline">E\sim n^{-s/(s+1)}</span> away from the boundary.</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>(a) For <span class="math inline">k\le n/2</span>, <span class="math inline">\lambda_k\ge2^\alpha\kappa</span>, so <span class="math inline">\kappa/(\lambda_k+\kappa)</span> is within a constant of <span class="math inline">\kappa/\lambda_k=n^{-\alpha}k^\alpha</span>. For <span class="math inline">n/2&lt;k&lt;n</span> the filter factor is at most 1. (b) <span class="math inline">\sum_{k&lt;n}k^q</span> grows like <span class="math inline">n^{q+1}</span> for <span class="math inline">q&gt;-1</span>, like <span class="math inline">\log n</span> for <span class="math inline">q=-1</span>, and converges for <span class="math inline">q&lt;-1</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> For <span class="math inline">k\le n/2</span>, <span class="math inline">\big(\kappa/(\lambda_k+\kappa)\big)^2\asymp n^{-2\alpha}k^{2\alpha}</span>, so the summand is <span class="math inline">\asymp n^{-2\alpha}k^{2\alpha-\alpha&#39;}</span>. For <span class="math inline">n/2&lt;k&lt;n</span> the factor is at most 1, and those modes contribute at most <span class="math inline">\sum_{n/2&lt;k&lt;n}c_k^2\lesssim n^{1-\alpha&#39;}</span>, the order of the tail.</p>
+<p><strong>(b)</strong> Let <span class="math inline">q=2\alpha-\alpha&#39;</span>.</p>
+<ul>
+<li><span class="math inline">\alpha&#39;-1&lt;2\alpha</span> (<span class="math inline">q&gt;-1</span>): the sum is <span class="math inline">\sim n^{q+1}</span>, so <span class="math inline">B_{\rm head}\sim n^{-(\alpha&#39;-1)}</span>, the order of the tail. The heuristic’s exponent is right.</li>
+<li><span class="math inline">\alpha&#39;-1&gt;2\alpha</span> (<span class="math inline">q&lt;-1</span>): the sum converges, so <span class="math inline">B_{\rm head}\sim n^{-2\alpha}</span>, larger than the tail. Ridge <strong>saturates</strong> at <span class="math inline">n^{-2\alpha}</span>, however smooth the target.</li>
+<li><span class="math inline">\alpha&#39;-1=2\alpha</span> (<span class="math inline">q=-1</span>): the sum is <span class="math inline">\sim\log n</span>, so <span class="math inline">B_{\rm head}\sim n^{-2\alpha}\log n</span>.</li>
+</ul>
+<p><strong>(c)</strong> With cutoff <span class="math inline">K</span> (<span class="math inline">\kappa\approx\lambda_K</span>), the same argument gives bias <span class="math inline">\sim K^{-s}</span> and variance <span class="math inline">\sim\sigma^2K/n</span>. Minimizing gives <span class="math inline">K^*\sim(n/\sigma^2)^{1/(s+1)}</span> and <span class="math inline">E\sim n^{-s/(s+1)}</span>. For <span class="math inline">s=\alpha&#39;-1</span> this is Exercise 2.1(b). On the boundary there is an extra factor <span class="math inline">(\log n)^{1/(s+1)}</span>.</p>
+<p>These are heuristic scalings, valid up to constants. None of it needs the model to learn a good representation: plain ridge suffices. In both toy models the exponent is set by the data (<span class="math inline">\alpha,\alpha&#39;</span>, or <span class="math inline">a</span>), except where the learner’s own limits bind (ridge’s saturation at <span class="math inline">2\alpha</span>, or the quanta model’s acquisition rate <span class="math inline">\mu</span>). That is <a href="#wb5-section-3">§3</a>’s theme.</p>
+</div>
+</details>
+
+<p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/spectral_filters.html"><code>spectral_filters.html</code></a>. Panel B plots the deterministic-equivalent ridge risk (an asymptotic approximation) and Exercise 2.1’s heuristic against <span class="math inline">n</span>, with Monte Carlo ridge points. Toggle noise, and push <span class="math inline">\alpha&#39;</span> past <span class="math inline">2\alpha+1</span> to see saturation.</p>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="3-another-bitter-lesson-architecture-doesnt-matter-much">
+<summary><h2 id="3-another-bitter-lesson-architecture-doesnt-matter-much">3. Another bitter lesson: architecture doesn’t matter (much)</h2></summary>
+<div class="sec-body">
+<a id="wb5-section-3"></a>
+<p>Since 2017, challengers to and refinements of the transformer have mostly moved the scaling curve by a constant factor in compute, rarely changed its slope, and where slopes measurably differ the alternatives usually scale <em>worse</em>.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1712.00409">Deep learning scaling is predictable, empirically</a></strong>, Hestness et al. (2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Power-law learning curves (against data, not compute) in translation, language, images and speech: “model improvements only shift the error but do not appear to affect the power-law exponent.”</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2403.05812">Algorithmic progress in language models</a></strong>, Ho et al. (Epoch AI, 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Estimates the transformer’s compute-equivalent gain at about <span class="math inline">7\times</span> (95% CI roughly <span class="math inline">3</span>–<span class="math inline">46\times</span>), and required compute halving every 8 months or so. Treats each innovation as a constant multiplier, so cannot see slope changes.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2207.10551">Scaling laws vs model architectures: how does inductive bias influence scaling?</a></strong>, Tay et al. (2022) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The counterpoint: compute slopes for about ten architectures differ, with the vanilla transformer steepest, so architectures that win small can lose at scale. Few points per fit.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2312.00752">Mamba: linear-time sequence modeling with selective state spaces</a></strong>, Gu &amp; Dao (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The strongest recent challenger: a selective state-space model that matches a strong transformer recipe on roughly parallel scaling curves (Figure 4). Explainers: Grootendorst’s <a href="https://www.maartengrootendorst.com/blog/mamba/">visual guide to Mamba</a>; <a href="https://srush.github.io/annotated-s4/">The annotated S4</a>.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://ai.meta.com/blog/yann-lecun-ai-model-i-jepa/">I-JEPA: the first AI model based on Yann LeCun’s vision for more human-like AI</a></strong>, Meta AI blog (2023; paper: <a href="https://arxiv.org/abs/2301.08243">Assran et al.</a>) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>A different objective rather than different layers: predict the representation of a masked region, not its pixels.</p>
+</div>
+
+<p>In vision, NFNet CNNs match vision transformers at equal compute (<a href="mdl2_why_llms.html#wb3-section-5">MDL2, section ‘The opposite thesis: symmetry as inductive bias’</a>).</p>
+<details class="sec sec3" data-sec="exercises-what-a-constant-factor-is-worth">
+<summary><h3 id="exercises-what-a-constant-factor-is-worth">Exercises: what a constant factor is worth</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 3.1 (Fermi).</strong> Write the reducible loss as <span class="math inline">R(C)=A\,C^{-\alpha}</span> in training compute <span class="math inline">C</span>. Take <span class="math inline">\alpha\approx0.05</span> (Kaplan et al.’s exponent for loss against compute), and redo (a) with <span class="math inline">\alpha\approx0.15</span>, roughly the Chinchilla fit’s exponent for the reducible loss at compute-optimal allocation (<a href="mdl2_why_llms.html#wb3-section-6">MDL2, section ‘Why scale? Should you consume more tokens?’</a>).</p>
+<p>(a) Architecture B has <span class="math inline">R_B(C)=(A/m)\,C^{-\alpha}</span> with <span class="math inline">m&gt;1</span>: same exponent, better constant. Show that B at compute <span class="math inline">C</span> matches A at compute <span class="math inline">m^{1/\alpha}C</span> for every <span class="math inline">C</span>. Ho et al. estimate the transformer’s gain at about <span class="math inline">7\times</span> in compute. What reduction of reducible loss is that? What about the roughly <span class="math inline">10^4\times</span> of training compute separating GPT-2 from frontier models a few years later?</p>
+<p>(b) B instead has a slightly better exponent: <span class="math inline">R_B(C)=A\,C^{-(\alpha+\delta)}</span>, with <span class="math inline">C</span> in units of the compute where the curves cross. Show that B’s compute multiplier at <span class="math inline">C</span> is <span class="math inline">C^{\delta/\alpha}</span>. With <span class="math inline">\delta/\alpha=0.1</span> (a 10% better exponent), what is it three and ten orders of magnitude past the crossing?</p>
+<p>(c) An architecture paper typically spans two or three decades of compute. Why does that make “a constant-factor gain” and “a better exponent” hard to tell apart, and which way would a small-scale advantage from a helpful inductive bias tend to mislead?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">R_A(kC)=A\,k^{-\alpha}C^{-\alpha}</span> equals <span class="math inline">(A/m)C^{-\alpha}</span> when <span class="math inline">k=m^{1/\alpha}</span>, independent of <span class="math inline">C</span>: on log–log axes B is A shifted left by <span class="math inline">\log m/\alpha</span>. Conversely <span class="math inline">m=k^\alpha</span>. With <span class="math inline">\alpha=0.05</span>: <span class="math inline">7^{0.05}\approx1.10</span>, a 10% lower reducible loss, and <span class="math inline">10^{4\times0.05}\approx1.58</span>, 37% lower. With <span class="math inline">\alpha=0.15</span>: <span class="math inline">7^{0.15}\approx1.34</span> (25%) and <span class="math inline">10^{0.6}\approx4</span> (75%). Because <span class="math inline">\alpha</span> is small, a modest loss improvement is a large compute multiplier, and four orders of magnitude would need a far larger constant-factor improvement than any architecture change has delivered.</p>
+<p><strong>(b)</strong> A reaches <span class="math inline">A\,C^{-(\alpha+\delta)}</span> at <span class="math inline">C_A=C^{1+\delta/\alpha}</span>, so the multiplier is <span class="math inline">C^{\delta/\alpha}</span>: <span class="math inline">10^{0.3}\approx2</span> three decades past the crossing and <span class="math inline">10</span> ten decades past it. A better exponent wins eventually, but slowly; over the explored range it looks like a constant factor.</p>
+<p><strong>(c)</strong> Over two or three decades a 10% exponent difference changes the multiplier by about <span class="math inline">2\times</span>, comparable to fitting noise and to tuning one architecture better than another, so the two hypotheses give nearly the same plot. An inductive bias that suits the data helps most when data or compute is scarce, so it shows up as a small-scale advantage that shrinks: the better-looking architecture has the <em>shallower</em> slope. This is Tay et al.’s pattern, and extrapolating such a win is the mistake the bitter lesson warns against.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="4-same-representation-cka-cca-and-the-platonic-and-linear-representation-hypotheses">
+<summary><h2 id="4-same-representation-cka-cca-and-the-platonic-and-linear-representation-hypotheses">4. Same representation? CKA, CCA, and the Platonic and linear representation hypotheses</h2></summary>
+<div class="sec-body">
+<a id="wb5-section-4"></a>
+<p>Different networks seem to learn similar representations, perhaps converging on one shared one whose concepts are directions; each claim means something only once you say which transformations of a representation count as cosmetic.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1905.00414">Similarity of neural network representations revisited</a></strong>, Kornblith, Norouzi, Lee &amp; Hinton (ICML 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Indices invariant to every invertible linear map (CCA included) go blind once width reaches the number of data points; proposes CKA, which matches corresponding layers across seeds.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2405.07987">The Platonic representation hypothesis</a></strong>, Huh, Cheung, Wang &amp; Isola (ICML 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Representations across models and modalities align more as models get more capable (by mutual nearest neighbours); conjectures convergence to a shared statistical model of the world.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2507.01098">Proof of a perfect Platonic representation hypothesis</a></strong>, Ziyin &amp; Chuang (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Deep linear networks of any depth and width, seeing different invertible views of the same noisy-label data, have every hidden layer aligned up to rotation and scale at the minima SGD’s gradient noise selects. Elementary proof; needs label noise, and does not show SGD gets there.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2311.03658">The linear representation hypothesis and the geometry of large language models</a></strong>, Park, Choe &amp; Veitch (ICML 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Makes “concepts are directions” precise with counterfactual pairs, and argues the geometry needs a chosen ‘causal inner product’ (Exercise 4.2).</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2405.14860">Not all language model features are one-dimensionally linear</a></strong>, Engels, Michaud, Liao, Gurnee &amp; Tegmark (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The counterpoint: irreducibly multi-dimensional features, such as circles for days and months, used for modular arithmetic.</p>
+</div>
+
+<p>Also: <a href="https://arxiv.org/abs/2505.12387">Neural thermodynamics</a>, Ziyin, Xu &amp; Chuang (2025), the same entropic-force argument applied more broadly. SVCCA, model stitching and superposition are in MDL4 (sections <a href="#wb6-section-2">‘Bottom-up learning’</a>, <a href="#wb6-section-3">‘Model stitching works’</a> and <a href="#wb6-section-5">‘Superposition and adversarial attacks’</a>).</p>
+<details class="sec sec3" data-sec="exercises-similarity-invariances">
+<summary><h3 id="exercises-similarity-invariances">Exercises: similarity invariances</h3></summary>
+<div class="sec-body">
+
+<p><strong>Exercise 4.1.</strong> Invariance groups, and why a minimum does not fix the representation.</p>
+<p>Stack a layer’s activations on <span class="math inline">n</span> inputs from two networks as rows of <span class="math inline">X\in\mathbb R^{n\times p_1}</span>, <span class="math inline">Y\in\mathbb R^{n\times p_2}</span>, columns centered, with Gram matrices <span class="math inline">K=XX^\top</span>, <span class="math inline">L=YY^\top</span>. Linear CKA is <span class="math inline">\langle K,L\rangle_F/(\|K\|_F\|L\|_F)</span>. CCA’s canonical correlations are the cosines of the principal angles between the column spaces of <span class="math inline">X</span> and <span class="math inline">Y</span>.</p>
+<p>(a) Show that <span class="math inline">\langle K,L\rangle_F=\|Y^\top X\|_F^2</span>, and that CKA is unchanged by <span class="math inline">X\mapsto XQ</span> with <span class="math inline">Q</span> orthogonal and by <span class="math inline">X\mapsto cX</span>, <span class="math inline">c\neq0</span>. Show that it <em>is</em> changed by the stretch <span class="math inline">A=\mathrm{diag}(2,1)</span> applied to the four centered points <span class="math inline">(\pm1,0),(0,\pm1)</span>.</p>
+<p>(b) Show that CCA is unchanged by <span class="math inline">X\mapsto XA</span> for every invertible <span class="math inline">A</span>. If centered <span class="math inline">X</span> and <span class="math inline">Y</span> both have rank <span class="math inline">n-1</span>, show that all canonical correlations are 1, whatever the two networks compute.</p>
+<p>(c) Take a deep linear network <span class="math inline">f(x)=W_D\cdots W_1x</span> and an invertible <span class="math inline">T</span>. Show that <span class="math inline">W_i\to TW_i</span>, <span class="math inline">W_{i+1}\to W_{i+1}T^{-1}</span> leaves <span class="math inline">f</span>, and hence the loss, unchanged, while the layer-<span class="math inline">i</span> representation <span class="math inline">h</span> becomes <span class="math inline">Th</span>. If the centered representations span <span class="math inline">\mathbb R^{d_i}</span>, show that <span class="math inline">\mathrm{CKA}(h,Th)=1</span> only if <span class="math inline">T</span> is a scaled orthogonal matrix.</p>
+<details class="hint"><summary>Hints</summary>
+
+<p>(a) Use cyclicity of the trace, and <span class="math inline">\|K\|_F=\|X^\top X\|_F</span>. (b) CCA depends only on column spaces; every centered column is orthogonal to <span class="math inline">\mathbf 1</span>. (c) CKA is 1 iff the Gram matrices are proportional: <span class="math inline">h^\top T^\top Th&#39;=c\,h^\top h&#39;</span> on a spanning set.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">\langle K,L\rangle_F=\mathrm{Tr}(XX^\top YY^\top)=\mathrm{Tr}(Y^\top XX^\top Y)=\|Y^\top X\|_F^2</span>. Under <span class="math inline">X\mapsto XQ</span>, <span class="math inline">K\mapsto XQQ^\top X^\top=K</span>. Under <span class="math inline">X\mapsto cX</span>, <span class="math inline">K\mapsto c^2K</span>, which cancels. For the stretch, with <span class="math inline">Y=X</span> and <span class="math inline">X&#39;=XA</span>: <span class="math inline">X^\top X=2I</span>, <span class="math inline">X^\top X&#39;=\mathrm{diag}(4,2)</span> with squared norm <span class="math inline">20</span>, <span class="math inline">\|X&#39;^\top X&#39;\|_F=\|\mathrm{diag}(8,2)\|_F=2\sqrt{17}</span>, <span class="math inline">\|X^\top X\|_F=2\sqrt2</span>. So <span class="math inline">\mathrm{CKA}=20/(4\sqrt{34})=5/\sqrt{34}\approx0.86</span>. CKA’s group is orthogonal maps and isotropic scaling, not all of <span class="math inline">GL</span>.</p>
+<p><strong>(b)</strong> <span class="math inline">\mathrm{col}(XA)=\mathrm{col}(X)</span> for invertible <span class="math inline">A</span>. Centered columns lie in <span class="math inline">\mathbf 1^\perp</span>, of dimension <span class="math inline">n-1</span>, so rank <span class="math inline">n-1</span> forces <span class="math inline">\mathrm{col}(X)=\mathbf 1^\perp=\mathrm{col}(Y)</span> and all principal angles vanish. This is Kornblith et al.’s point: invariance to every invertible linear map is too much for wide layers.</p>
+<p><strong>(c)</strong> <span class="math inline">W_{i+1}T^{-1}TW_i=W_{i+1}W_i</span>, and the layer-<span class="math inline">i</span> output becomes <span class="math inline">Th</span>. CKA is 1 iff <span class="math inline">h^\top T^\top Th&#39;=c\,h^\top h&#39;</span> for all pairs; if the <span class="math inline">h</span> span, bilinearity gives <span class="math inline">T^\top T=cI</span>. For <span class="math inline">d_i\ge2</span>, <span class="math inline">T=\mathrm{diag}(2,1,\dots,1)</span> is not scaled orthogonal. So every global minimum of a deep linear network sits on a <span class="math inline">GL(d_i)</span> orbit of global minima whose representations differ by CKA. Being a minimum fixes the function, not the representation; convergence of representations must come from whatever selects a point on the orbit, which is what Ziyin and Chuang analyse.</p>
+</div>
+</details>
+
+<p><strong>Exercise 4.2.</strong> Which inner product?</p>
+<p>A language model’s next-token logits are <span class="math inline">\lambda(x)^\top\gamma(y)</span>, where <span class="math inline">\lambda(x)\in\mathbb R^d</span> is the final hidden state for context <span class="math inline">x</span> and <span class="math inline">\gamma(y)</span> the unembedding of token <span class="math inline">y</span>. Concept directions are differences such as <span class="math inline">\gamma(y_1)-\gamma(y_0)</span>. Park et al.’s causal inner product is <span class="math inline">\langle a,b\rangle_{\mathrm C}=a^\top\mathrm{Cov}(\gamma)^{-1}b</span>, with the covariance over the vocabulary (assume it invertible).</p>
+<p>(a) Show that for any invertible <span class="math inline">A</span>, <span class="math inline">\lambda\to A\lambda</span>, <span class="math inline">\gamma\to A^{-\top}\gamma</span> leaves every logit, and so the model’s behaviour, unchanged.</p>
+<p>(b) Give two unembedding differences that are Euclidean-orthogonal before such a change and not after.</p>
+<p>(c) Show that <span class="math inline">\langle a,b\rangle_{\mathrm C}</span>, recomputed in the new coordinates, equals its old value.</p>
+<details class="hint"><summary>Hint</summary>
+
+<p>(c) If <span class="math inline">\gamma&#39;=A^{-\top}\gamma</span>, then <span class="math inline">\mathrm{Cov}(\gamma&#39;)=A^{-\top}\mathrm{Cov}(\gamma)A^{-1}</span>.</p>
+</details>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p><strong>(a)</strong> <span class="math inline">(A\lambda)^\top(A^{-\top}\gamma)=\lambda^\top A^\top A^{-\top}\gamma=\lambda^\top\gamma</span>.</p>
+<p><strong>(b)</strong> In <span class="math inline">\mathbb R^2</span>, <span class="math inline">a=e_1</span>, <span class="math inline">b=e_2</span> and <span class="math inline">A^{-\top}=\begin{pmatrix}1&amp;1\\0&amp;1\end{pmatrix}</span> give <span class="math inline">a&#39;=(1,0)</span>, <span class="math inline">b&#39;=(1,1)</span>, with <span class="math inline">a&#39;\cdot b&#39;=1</span>. Euclidean angles between concept directions are not fixed by the model’s behaviour.</p>
+<p><strong>(c)</strong> <span class="math inline">a&#39;=A^{-\top}a</span>, <span class="math inline">b&#39;=A^{-\top}b</span> and <span class="math inline">\mathrm{Cov}(\gamma&#39;)^{-1}=A\,\mathrm{Cov}(\gamma)^{-1}A^\top</span>, so <span class="math display">a&#39;^\top\mathrm{Cov}(\gamma&#39;)^{-1}b&#39;=a^\top A^{-1}A\,\mathrm{Cov}(\gamma)^{-1}A^\top A^{-\top}b=a^\top\mathrm{Cov}(\gamma)^{-1}b .</span></p>
+<p>Behaviour fixes the representation only up to <span class="math inline">GL(d)</span>, the same group as Exercise 4.1(c), so a geometric claim needs extra structure. Whitening by the vocabulary covariance supplies an invariant geometry; whether it is the <em>right</em> one is what Park et al. argue from their assumption about causally separable concepts.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="5-transformer-middle-layers">
+<summary><h2 id="5-transformer-middle-layers">5. Transformer middle layers</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-1"></a>
 <p>Intermediate layers of language models often give better general-purpose features than the final layer, even though the final layer is the one the training objective shapes most directly.</p>
@@ -268,8 +504,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="2-bottom-up-learning">
-<summary><h2 id="2-bottom-up-learning">2. Bottom-up learning</h2></summary>
+<details class="sec sec2" data-sec="6-bottom-up-learning">
+<summary><h2 id="6-bottom-up-learning">6. Bottom-up learning</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-2"></a>
 <p>Gradient descent updates every layer at once, yet lower layers converge first and upper layers later: networks learn bottom-up.</p>
@@ -280,11 +516,11 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="3-model-stitching-works">
-<summary><h2 id="3-model-stitching-works">3. Model stitching works</h2></summary>
+<details class="sec sec2" data-sec="7-model-stitching-works">
+<summary><h2 id="7-model-stitching-works">7. Model stitching works</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-3"></a>
-<p>The bottom of one trained network joins the top of another through a single linear layer with little loss, so separately trained networks represent things almost the same way (see <a href="05_universality.html#wb5-section-4">WB5, section ‘Same representation? CKA, CCA, and the Platonic and linear representation hypotheses’</a>).</p>
+<p>The bottom of one trained network joins the top of another through a single linear layer with little loss, so separately trained networks represent things almost the same way (see <a href="#wb5-section-4">MDL4, section ‘Same representation? CKA, CCA, and the Platonic and linear representation hypotheses’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2106.07682">Revisiting model stitching to compare neural representations</a></strong>, Bansal, Nakkiran &amp; Barak (NeurIPS 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
@@ -292,8 +528,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="4-critical-periods">
-<summary><h2 id="4-critical-periods">4. Critical periods</h2></summary>
+<details class="sec sec2" data-sec="8-critical-periods">
+<summary><h2 id="8-critical-periods">8. Critical periods</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-4"></a>
 <p>As in animal vision, a deficit early in training (blurred images) leaves a permanent deficit, while the same deficit later does little harm: later training does not undo what was decided early.</p>
@@ -304,11 +540,11 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="5-superposition-and-adversarial-attacks-and-on-you-too">
-<summary><h2 id="5-superposition-and-adversarial-attacks-and-on-you-too">5. Superposition and adversarial attacks (and on you too)</h2></summary>
+<details class="sec sec2" data-sec="9-superposition-and-adversarial-attacks-and-on-you-too">
+<summary><h2 id="9-superposition-and-adversarial-attacks-and-on-you-too">9. Superposition and adversarial attacks (and on you too)</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-5"></a>
-<p>Networks store more sparse features than they have dimensions, in almost-orthogonal directions; adversarial examples may exploit this interference, or features that are predictive but brittle, and some even bias briefly shown humans (see <a href="05_universality.html#wb5-section-4">WB5, section ‘Same representation? CKA, CCA, and the Platonic and linear representation hypotheses’</a>).</p>
+<p>Networks store more sparse features than they have dimensions, in almost-orthogonal directions; adversarial examples may exploit this interference, or features that are predictive but brittle, and some even bias briefly shown humans (see <a href="#wb5-section-4">MDL4, section ‘Same representation? CKA, CCA, and the Platonic and linear representation hypotheses’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://transformer-circuits.pub/2022/toy_model/index.html">Toy models of superposition</a></strong>, Elhage et al. (Anthropic, 2022; also arXiv 2209.10652) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
@@ -327,12 +563,12 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Perturbations built to transfer across an ensemble of models with a retina-like front end measurably bias people’s choices when images are shown for a fraction of a second.</p>
 </div>
 
-<p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/superposition.html"><code>superposition.html</code></a>. Panel 1 is the two-feature, one-dimension phase diagram over density and relative importance (dashed: the closed form of Exercise 5.2; solid: optimized weights and biases; dots: trained models). Panel 2 trains <span class="math inline">n=5</span> or <span class="math inline">6</span> features in <span class="math inline">m=2</span> dimensions in your browser: as sparsity grows, features go from dedicated dimensions to antipodal pairs to a regular polygon.</p>
+<p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/superposition.html"><code>superposition.html</code></a>. Panel 1 is the two-feature, one-dimension phase diagram over density and relative importance (dashed: the closed form of Exercise 9.2; solid: optimized weights and biases; dots: trained models). Panel 2 trains <span class="math inline">n=5</span> or <span class="math inline">6</span> features in <span class="math inline">m=2</span> dimensions in your browser: as sparsity grows, features go from dedicated dimensions to antipodal pairs to a regular polygon.</p>
 <details class="sec sec3" data-sec="exercises-packing-directions-and-the-two-feature-toy">
 <summary><h3 id="exercises-packing-directions-and-the-two-feature-toy">Exercises: packing directions and the two-feature toy</h3></summary>
 <div class="sec-body">
 
-<p><strong>Exercise 5.1 (packing almost-orthogonal directions).</strong> Let <span class="math inline">u,v</span> be independent, uniformly random unit vectors in <span class="math inline">\mathbb R^m</span>.</p>
+<p><strong>Exercise 9.1 (packing almost-orthogonal directions).</strong> Let <span class="math inline">u,v</span> be independent, uniformly random unit vectors in <span class="math inline">\mathbb R^m</span>.</p>
 <ul>
 <li>(a) Show that <span class="math inline">\mathbb E\langle u,v\rangle=0</span> and <span class="math inline">\mathbb E\langle u,v\rangle^2=1/m</span>.</li>
 <li>(b) Take as given <span class="math inline">\Pr(|\langle u,v\rangle|&gt;\varepsilon)\le2e^{-m\varepsilon^2/2}</span>. Show that if <span class="math inline">N^2e^{-m\varepsilon^2/2}&lt;1</span>, then <span class="math inline">N</span> independent random unit vectors have all pairwise <span class="math inline">|\cos|\le\varepsilon</span> with positive probability. Conclude that <span class="math inline">\mathbb R^m</span> contains about <span class="math inline">e^{m\varepsilon^2/4}</span> such directions.</li>
@@ -350,7 +586,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </details>
 
-<p><strong>Exercise 5.2 (the smallest superposition).</strong> The toy model of Elhage et al. compresses features <span class="math inline">x\in\mathbb R^n</span> to <span class="math inline">Wx\in\mathbb R^m</span> and reads them back as <span class="math inline">\hat x=\mathrm{ReLU}(W^\top Wx+b)</span>, with loss <span class="math inline">\sum_iI_i\,\mathbb E(\hat x_i-x_i)^2</span> for importances <span class="math inline">I_i</span>. Take <span class="math inline">n=2</span>, <span class="math inline">m=1</span>, importances <span class="math inline">1</span> and <span class="math inline">r\le1</span>, and features that are independently <span class="math inline">0</span> with probability <span class="math inline">1-p</span> and uniform on <span class="math inline">[0,1]</span> with probability <span class="math inline">p</span>.</p>
+<p><strong>Exercise 9.2 (the smallest superposition).</strong> The toy model of Elhage et al. compresses features <span class="math inline">x\in\mathbb R^n</span> to <span class="math inline">Wx\in\mathbb R^m</span> and reads them back as <span class="math inline">\hat x=\mathrm{ReLU}(W^\top Wx+b)</span>, with loss <span class="math inline">\sum_iI_i\,\mathbb E(\hat x_i-x_i)^2</span> for importances <span class="math inline">I_i</span>. Take <span class="math inline">n=2</span>, <span class="math inline">m=1</span>, importances <span class="math inline">1</span> and <span class="math inline">r\le1</span>, and features that are independently <span class="math inline">0</span> with probability <span class="math inline">1-p</span> and uniform on <span class="math inline">[0,1]</span> with probability <span class="math inline">p</span>.</p>
 <ul>
 <li>(a) <em>Dedicated:</em> <span class="math inline">W=[1,0]</span>, <span class="math inline">b=(0,b_2)</span> with the best <span class="math inline">b_2\ge0</span>. Show that the loss is <span class="math inline">r\,(p/3-p^2/4)</span>.</li>
 <li>(b) <em>Antipodal:</em> <span class="math inline">W=[1,-1]</span>, <span class="math inline">b=0</span>. Show that the loss is <span class="math inline">(1+r)\,p^2/6</span>.</li>
@@ -370,8 +606,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="6-critical-modules">
-<summary><h2 id="6-critical-modules">6. Critical modules</h2></summary>
+<details class="sec sec2" data-sec="10-critical-modules">
+<summary><h2 id="10-critical-modules">10. Critical modules</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-6"></a>
 <p>After training, most layers can be reset to their initial weights with almost no loss, but a few cannot: the trained function depends on its weights very unevenly.</p>
@@ -382,8 +618,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="7-distillation">
-<summary><h2 id="7-distillation">7. Distillation</h2></summary>
+<details class="sec sec2" data-sec="11-distillation">
+<summary><h2 id="11-distillation">11. Distillation</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-7"></a>
 <p>A small network trained on a large network’s softened outputs learns far more than from the labels, even about a class it never sees, so the probabilities assigned to wrong answers carry much of what the teacher knows.</p>
@@ -394,8 +630,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="8-rewinding-and-lottery-tickets">
-<summary><h2 id="8-rewinding-and-lottery-tickets">8. Rewinding and lottery tickets</h2></summary>
+<details class="sec sec2" data-sec="12-rewinding-and-lottery-tickets">
+<summary><h2 id="12-rewinding-and-lottery-tickets">12. Rewinding and lottery tickets</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-8"></a>
 <p>Trained networks contain sparse subnetworks that, rewound to their initial weights, train alone to full accuracy but do worse with fresh random weights: the particular initialization matters.</p>
@@ -412,8 +648,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="9-gradient-descent-in-a-tiny-subspace">
-<summary><h2 id="9-gradient-descent-in-a-tiny-subspace">9. Gradient descent in a tiny subspace</h2></summary>
+<details class="sec sec2" data-sec="13-gradient-descent-in-a-tiny-subspace">
+<summary><h2 id="13-gradient-descent-in-a-tiny-subspace">13. Gradient descent in a tiny subspace</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-9"></a>
 <p>After a short initial phase the gradient lies almost entirely in the span of a few top Hessian eigenvectors, about as many as there are classes, in networks with millions of parameters.</p>
@@ -427,7 +663,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <summary><h3 id="exercises-where-the-gradient-is-versus-where-learning-happens">Exercises: where the gradient is versus where learning happens</h3></summary>
 <div class="sec-body">
 
-<p><strong>Exercise 9.1 (a quadratic toy).</strong> This toy is not the paper’s model. It shows that “the gradient lies in the top subspace” and “the loss goes down along the top subspace” can come apart. Take <span class="math inline">L(\theta)=\tfrac12(\theta-\theta^*)^\top H(\theta-\theta^*)</span> with <span class="math inline">H</span> symmetric positive semi-definite, orthonormal eigenvectors <span class="math inline">v_i</span> with eigenvalues <span class="math inline">\lambda_1\ge\lambda_2\ge\dots</span>, and write <span class="math inline">\theta-\theta^*=\sum_i c_iv_i</span>. The overlap is <span class="math inline">\lVert P_kg\rVert^2/\lVert g\rVert^2</span>, where <span class="math inline">g=\nabla L</span> and <span class="math inline">P_k</span> projects onto <span class="math inline">v_1,\dots,v_k</span>.</p>
+<p><strong>Exercise 13.1 (a quadratic toy).</strong> This toy is not the paper’s model. It shows that “the gradient lies in the top subspace” and “the loss goes down along the top subspace” can come apart. Take <span class="math inline">L(\theta)=\tfrac12(\theta-\theta^*)^\top H(\theta-\theta^*)</span> with <span class="math inline">H</span> symmetric positive semi-definite, orthonormal eigenvectors <span class="math inline">v_i</span> with eigenvalues <span class="math inline">\lambda_1\ge\lambda_2\ge\dots</span>, and write <span class="math inline">\theta-\theta^*=\sum_i c_iv_i</span>. The overlap is <span class="math inline">\lVert P_kg\rVert^2/\lVert g\rVert^2</span>, where <span class="math inline">g=\nabla L</span> and <span class="math inline">P_k</span> projects onto <span class="math inline">v_1,\dots,v_k</span>.</p>
 <ul>
 <li>(a) Show that the overlap equals <span class="math inline">\sum_{i\le k}\lambda_i^2c_i^2\big/\sum_i\lambda_i^2c_i^2</span>, and that <span class="math inline">L=\tfrac12\sum_i\lambda_ic_i^2</span>.</li>
 <li>(b) For gradient descent <span class="math inline">\theta\leftarrow\theta-\eta g</span>, show that <span class="math inline">c_i(t)=(1-\eta\lambda_i)^t\,c_i(0)</span>.</li>
@@ -458,8 +694,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="10-spectra-and-curvature">
-<summary><h2 id="10-spectra-and-curvature">10. Spectra and curvature</h2></summary>
+<details class="sec sec2" data-sec="14-spectra-and-curvature">
+<summary><h2 id="14-spectra-and-curvature">14. Spectra and curvature</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-10"></a>
 <p>The Hessian spectrum of a trained network is a bulk near zero plus a few large outliers that appear early in training, and batch normalization largely removes the outliers.</p>
@@ -473,14 +709,14 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <summary><h3 id="exercises-scale-invariance-under-batch-norm">Exercises: scale invariance under batch norm</h3></summary>
 <div class="sec-body">
 
-<p><strong>Exercise 10.1 (scale invariance).</strong> This calculation is not in the paper; it shows one concrete way batch normalization changes curvature. With batch statistics (and <span class="math inline">\varepsilon=0</span>, nonzero pre-activation variance), rescaling a unit’s nonzero incoming weight vector <span class="math inline">w</span> by <span class="math inline">\alpha&gt;0</span> leaves its normalized output unchanged. So, with all other parameters fixed, <span class="math inline">L(\alpha w)=L(w)</span> for every <span class="math inline">\alpha&gt;0</span>; assume <span class="math inline">L</span> is twice differentiable near <span class="math inline">w</span>, and write <span class="math inline">g=\nabla L(w)</span>, <span class="math inline">H=\nabla^2L(w)</span> with respect to <span class="math inline">w</span>.</p>
+<p><strong>Exercise 14.1 (scale invariance).</strong> This calculation is not in the paper; it shows one concrete way batch normalization changes curvature. With batch statistics (and <span class="math inline">\varepsilon=0</span>, nonzero pre-activation variance), rescaling a unit’s nonzero incoming weight vector <span class="math inline">w</span> by <span class="math inline">\alpha&gt;0</span> leaves its normalized output unchanged. So, with all other parameters fixed, <span class="math inline">L(\alpha w)=L(w)</span> for every <span class="math inline">\alpha&gt;0</span>; assume <span class="math inline">L</span> is twice differentiable near <span class="math inline">w</span>, and write <span class="math inline">g=\nabla L(w)</span>, <span class="math inline">H=\nabla^2L(w)</span> with respect to <span class="math inline">w</span>.</p>
 <ul>
 <li>(a) Show that <span class="math inline">w^\top g=0</span>.</li>
 <li>(b) Show that <span class="math inline">\nabla L(\alpha w)=\alpha^{-1}\nabla L(w)</span> and <span class="math inline">\nabla^2L(\alpha w)=\alpha^{-2}\nabla^2L(w)</span>.</li>
 <li>(c) Show that <span class="math inline">Hw=-g</span>. Deduce that <span class="math inline">w^\top Hw=0</span>. When is <span class="math inline">w</span> an eigenvector of <span class="math inline">H</span> with eigenvalue 0, and why is it not one in general?</li>
 <li>(d) For a gradient step <span class="math inline">w&#39;=w-\eta g</span>, show that <span class="math inline">\lVert w&#39;\rVert^2=\lVert w\rVert^2+\eta^2\lVert g\rVert^2</span>. Using (b), separate the effect of changing <span class="math inline">\lVert w\rVert</span> from that of changing the direction <span class="math inline">u=w/\lVert w\rVert</span>. What effective step size acts on the direction?</li>
 </ul>
-<p>As with layer rescaling in ReLU networks (Dinh et al., <em>Sharp minima can generalize</em>, in <a href="02_statistical_learning.html#wb2-section-4">WB2, section ‘Regularization: prior, constraint, filter, flatness’</a>), curvature measured in these weights is not a property of the function alone.</p>
+<p>As with layer rescaling in ReLU networks (Dinh et al., <em>Sharp minima can generalize</em>, in <a href="mdl1_statistical_learning.html#wb2-section-4">MDL1, section ‘Regularization: prior, constraint, filter, flatness’</a>), curvature measured in these weights is not a property of the function alone.</p>
 
 <details class="solution">
 <summary>Solution</summary>
@@ -497,11 +733,11 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="11-low-rank-rl-updates-and-the-kl-leash">
-<summary><h2 id="11-low-rank-rl-updates-and-the-kl-leash">11. Low-rank RL updates and the KL leash</h2></summary>
+<details class="sec sec2" data-sec="15-low-rank-rl-updates-and-the-kl-leash">
+<summary><h2 id="15-low-rank-rl-updates-and-the-kl-leash">15. Low-rank RL updates and the KL leash</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-11"></a>
-<p>RL fine-tuning of LLMs is reported to change few parameters yet at full rank, or to be dominated by one rank-1 direction, and to forget less than SFT; how these fit together, and how much is a bfloat16 artifact, is open (KL-regularized optimum: <a href="01_deprecated_intelligence_then_and_now.html#wb1-section-3">WB1 (deprecated), section ‘From Bellman to AlphaZero’, exercises ‘planning as inference’</a>).</p>
+<p>RL fine-tuning of LLMs is reported to change few parameters yet at full rank, or to be dominated by one rank-1 direction, and to forget less than SFT; how these fit together, and how much is a bfloat16 artifact, is open (KL-regularized optimum: <a href="mdlX_intelligence_then_and_now.html#wb1-section-3">MDL.X (deprecated), section ‘From Bellman to AlphaZero’, exercises ‘planning as inference’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2505.11711">Reinforcement learning finetunes small subnetworks in large language models</a></strong>, Mukherjee, Yuan, Hakkani-Tür &amp; Peng (NeurIPS 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
@@ -511,7 +747,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2509.04259">RL’s Razor: why online reinforcement learning forgets less</a></strong>, Shenfeld, Pari &amp; Agrawal (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>On-policy RL forgets less than SFT at matched new-task performance, with forgetting predicted by KL to the base policy; their §6 finds the update sparsity was a bfloat16 effect.</p>
+<p>On-policy RL forgets less than SFT at matched new-task performance, with forgetting predicted by KL to the base policy; their §10 finds the update sparsity was a bfloat16 effect.</p>
 </div>
 
 <div class="reading">
@@ -524,7 +760,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <summary><h3 id="exercises-sparse-updates-and-bfloat16">Exercises: sparse updates and bfloat16</h3></summary>
 <div class="sec-body">
 
-<p><strong>Exercise 11.1 (sparse is not low-rank).</strong> An update <span class="math inline">\Delta W\in\mathbb R^{n\times n}</span> is <em>sparse</em> if most entries are zero, and has <em>rank at most <span class="math inline">r</span></em> if <span class="math inline">\Delta W=AB^\top</span> with <span class="math inline">A,B\in\mathbb R^{n\times r}</span> (LoRA’s form, with small <span class="math inline">r</span>).</p>
+<p><strong>Exercise 15.1 (sparse is not low-rank).</strong> An update <span class="math inline">\Delta W\in\mathbb R^{n\times n}</span> is <em>sparse</em> if most entries are zero, and has <em>rank at most <span class="math inline">r</span></em> if <span class="math inline">\Delta W=AB^\top</span> with <span class="math inline">A,B\in\mathbb R^{n\times r}</span> (LoRA’s form, with small <span class="math inline">r</span>).</p>
 <ul>
 <li>(a) Give a matrix with only <span class="math inline">n</span> nonzero entries and rank <span class="math inline">n</span>, and a matrix of rank 1 with all <span class="math inline">n^2</span> entries nonzero.</li>
 <li>(b) Fix a support <span class="math inline">S\subseteq\{1,\dots,n\}^2</span> that contains the positions <span class="math inline">\{(i,\pi(i))\}</span> of some permutation <span class="math inline">\pi</span>. Show that for almost every choice of real values on <span class="math inline">S</span> (zero elsewhere), the matrix is invertible.</li>
@@ -540,11 +776,11 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="solution-body">
 <p><strong>(a)</strong> The identity <span class="math inline">I_n</span> (or any scaled permutation matrix) has <span class="math inline">n</span> nonzero entries and rank <span class="math inline">n</span>. For <span class="math inline">u,v\in\mathbb R^n</span> with no zero entries, <span class="math inline">uv^\top</span> has all entries <span class="math inline">u_iv_j\neq0</span> and rank 1.</p>
 <p><strong>(b)</strong> <span class="math inline">\det M=\sum_\sigma\operatorname{sgn}(\sigma)\prod_iM_{i\sigma(i)}</span> is a polynomial in the entries on <span class="math inline">S</span>. Putting 1 on the positions <span class="math inline">(i,\pi(i))</span> and 0 elsewhere on <span class="math inline">S</span> gives the permutation matrix of <span class="math inline">\pi</span>, with determinant <span class="math inline">\pm1</span>, so the polynomial is not identically zero. The zero set of a nonzero polynomial has Lebesgue measure zero, so <span class="math inline">\det M\neq0</span> for almost every choice of values.</p>
-<p><strong>(c)</strong> Sparsity alone does not imply low rank: generic values on a support containing a permutation pattern give full rank almost surely, and a support with density <span class="math inline">\rho=0.05</span> at width <span class="math inline">n=4096</span> has <span class="math inline">\rho n\approx200\gg\log n\approx8</span>. So “sparse but nearly full-rank” is what a generic sparse update looks like. Learned supports and values can be structured, so the measured rank is still an empirical fact, but the informative findings are the small fraction of parameters that change (if it survives a higher-precision measurement, Exercise 11.2) and its overlap across runs. A rank-<span class="math inline">r</span> update is a different restriction: it is generically dense.</p>
+<p><strong>(c)</strong> Sparsity alone does not imply low rank: generic values on a support containing a permutation pattern give full rank almost surely, and a support with density <span class="math inline">\rho=0.05</span> at width <span class="math inline">n=4096</span> has <span class="math inline">\rho n\approx200\gg\log n\approx8</span>. So “sparse but nearly full-rank” is what a generic sparse update looks like. Learned supports and values can be structured, so the measured rank is still an empirical fact, but the informative findings are the small fraction of parameters that change (if it survives a higher-precision measurement, Exercise 15.2) and its overlap across runs. A rank-<span class="math inline">r</span> update is a different restriction: it is generically dense.</p>
 </div>
 </details>
 
-<p><strong>Exercise 11.2 (what “unchanged” means).</strong> Mukherjee et al. count a parameter as unchanged when its bfloat16 values before and after fine-tuning differ by at most <span class="math inline">10^{-5}</span>. A bfloat16 number has 8 exponent bits and 7 stored fraction bits (8 significant bits with the implicit leading 1).</p>
+<p><strong>Exercise 15.2 (what “unchanged” means).</strong> Mukherjee et al. count a parameter as unchanged when its bfloat16 values before and after fine-tuning differ by at most <span class="math inline">10^{-5}</span>. A bfloat16 number has 8 exponent bits and 7 stored fraction bits (8 significant bits with the implicit leading 1).</p>
 <ul>
 <li>(a) Show that for normal values with <span class="math inline">2^e\le|w|&lt;2^{e+1}</span>, the spacing between neighbouring bfloat16 numbers is <span class="math inline">2^{e-7}</span>.</li>
 <li>(b) For which magnitudes <span class="math inline">|w|</span> can a change of the stored value be within the <span class="math inline">10^{-5}</span> tolerance?</li>
@@ -558,7 +794,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p><strong>(a)</strong> The bfloat16 numbers in <span class="math inline">[2^e,2^{e+1})</span> are <span class="math inline">2^e(1+f/2^7)</span> for <span class="math inline">f=0,\dots,127</span>, so neighbours differ by <span class="math inline">2^{e-7}</span>.</p>
 <p><strong>(b)</strong> Away from powers of two, a change of stored value is at least one spacing, <span class="math inline">2^{e-7}</span>, which is <span class="math inline">\le10^{-5}</span> only if <span class="math inline">e\le-10</span>, i.e. <span class="math inline">|w|&lt;2^{-9}\approx0.002</span>. At <span class="math inline">|w|=2^{-9}</span> exactly, the neighbour toward zero is <span class="math inline">2^{-17}\approx7.6\times10^{-6}</span> away (within tolerance) and the one away from zero <span class="math inline">2^{-16}\approx1.5\times10^{-5}</span> (outside). So a distinct stored value lies within tolerance iff <span class="math inline">|w|\le2^{-9}</span>. Above that, “unchanged” means the stored bfloat16 value is identical.</p>
 <p><strong>(c)</strong> Rounding returns <span class="math inline">w</span> when <span class="math inline">|\Delta|</span> is below half a spacing, <span class="math inline">2^{e-8}</span>, which lies between <span class="math inline">|w|/512</span> and <span class="math inline">|w|/256</span>: roughly 0.2–0.4% of <span class="math inline">|w|</span>. For <span class="math inline">|w|\approx0.02</span>, <span class="math inline">e=-6</span>, so the threshold is <span class="math inline">2^{-14}\approx6.1\times10^{-5}</span>, about 0.3%. “Unchanged” does not mean “received no gradient”. If updates were written straight into bfloat16 weights every step, the same threshold would apply per step, and many small steps could all be lost.</p>
-<p><strong>(d)</strong> It rules out the simplest artifact, that this measurement makes every fine-tune look sparse: SFT looks dense under it. It does not distinguish “RL moves few parameters” from “RL moves most parameters by less than the rounding threshold”, since SFT may simply move weights further. That needs a higher-precision measurement. Shenfeld et al. (RL’s Razor, §6) did this in their setting: float32 training gave the same performance and no sparsity. Their setting is not Mukherjee et al.’s, so this does not settle it everywhere, but the concern is real. Mukherjee et al.’s finding that tuning only the subnetwork gives a nearly identical model bears on whether sub-threshold movement matters for the function.</p>
+<p><strong>(d)</strong> It rules out the simplest artifact, that this measurement makes every fine-tune look sparse: SFT looks dense under it. It does not distinguish “RL moves few parameters” from “RL moves most parameters by less than the rounding threshold”, since SFT may simply move weights further. That needs a higher-precision measurement. Shenfeld et al. (RL’s Razor, §10) did this in their setting: float32 training gave the same performance and no sparsity. Their setting is not Mukherjee et al.’s, so this does not settle it everywhere, but the concern is real. Mukherjee et al.’s finding that tuning only the subnetwork gives a nearly identical model bears on whether sub-threshold movement matters for the function.</p>
 </div>
 </details>
 </div>
@@ -566,11 +802,11 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="12-physics-of-language-models">
-<summary><h2 id="12-physics-of-language-models">12. Physics of language models</h2></summary>
+<details class="sec sec2" data-sec="16-physics-of-language-models">
+<summary><h2 id="16-physics-of-language-models">16. Physics of language models</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-12"></a>
-<p>Transformers trained on a deep, ambiguous synthetic grammar learn to parse it, though nothing in the architecture is built for parsing (data-model side: <a href="04_inductive_bias.html#wb4-section-5">WB4, section ‘Hierarchical representations’</a>).</p>
+<p>Transformers trained on a deep, ambiguous synthetic grammar learn to parse it, though nothing in the architecture is built for parsing (data-model side: <a href="mdl3_program_synthesis.html#wb4-section-5">MDL3, section ‘Hierarchical representations’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2305.13673">Physics of language models: Part 1, learning hierarchical language structures</a></strong>, Allen-Zhu &amp; Li (2023; <a href="https://physics.allen-zhu.com/">project page</a>, with the later parts) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
@@ -578,8 +814,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="13-hidden-signals-low-rank-logits-and-subliminal-learning">
-<summary><h2 id="13-hidden-signals-low-rank-logits-and-subliminal-learning">13. Hidden signals: low-rank logits and subliminal learning</h2></summary>
+<details class="sec sec2" data-sec="17-hidden-signals-low-rank-logits-and-subliminal-learning">
+<summary><h2 id="17-hidden-signals-low-rank-logits-and-subliminal-learning">17. Hidden signals: low-rank logits and subliminal learning</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-13"></a>
 <p>Language models’ multi-token log-probabilities are approximately low-rank and share structure across models, though the architecture forces low rank only for the next token; and a student fine-tuned on a teacher’s innocuous outputs picks up the teacher’s traits.</p>
@@ -660,7 +896,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (location.hash) reveal();
   // Sections are folded; remember which ones this viewer has open.
   var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
-  var secKey = "open-sections:wb6", saved = null;
+  var secKey = "open-sections:mdl4", saved = null;
   try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
   if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
   var secBtn = document.getElementById("toggle-sections");

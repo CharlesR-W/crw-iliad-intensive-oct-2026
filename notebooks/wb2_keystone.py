@@ -1,4 +1,4 @@
-"""WB2 opening and §1 keystone: vacuous bounds and double descent.
+"""MDL1 opening and §1 keystone: vacuous bounds and double descent.
 
 Exercises 1.3-1.6 are checked by checks/wb2a_check.py (old numbering 3.A-3.C).
 """
@@ -7,7 +7,7 @@ from nbkit import *  # noqa: F401,F403
 OPENING = [
     markdown(
         r"""
-# Workbook 2 — How Deep Learning Changed Statistical Learning Theory
+# MDL1 — How Deep Learning Changed Statistical Learning Theory
 
 **Mysteries of Deep Learning, Iliad Intensive 2026**
 

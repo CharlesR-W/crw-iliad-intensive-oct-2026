@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="nbkit.py (wb1); do not edit by hand">
-<title>Workbook 1 (deprecated) — How Deep Learning Changed How We Think about Intelligence</title>
+<title>MDL.X (deprecated) — How Deep Learning Changed How We Think about Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
@@ -228,9 +228,9 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </nav>
 <main>
 <article>
-<h1 id="workbook-1-deprecated--how-deep-learning-changed-how-we-think-about-intelligence">Workbook 1 (deprecated) — How Deep Learning Changed How We Think about Intelligence</h1>
+<h1 id="mdlx-deprecated--how-deep-learning-changed-how-we-think-about-intelligence">MDL.X (deprecated) — How Deep Learning Changed How We Think about Intelligence</h1>
 <blockquote>
-<p><strong>Deprecated (2026-10-13).</strong> This workbook is no longer part of the day; it is kept for reference only. Start with Workbook 2 onward.</p>
+<p><strong>Deprecated (2026-10-13).</strong> This workbook is no longer part of the day; it is kept for reference only. Start with MDL1.</p>
 </blockquote>
 <p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
 <p>The first mystery of deep learning is that it works at all: intelligence turned out to be something a generic method can grow, not something we have to write down. This workbook follows that lesson through the history of AI and through the history of alignment, which had to be restated once agents were trained rather than designed.</p>
@@ -274,7 +274,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="solution-body">
 <p>A useful dividing line is between structure that <strong>scales with compute</strong> and structure that <strong>substitutes for compute</strong>.</p>
 <ul>
-<li><strong>Convolution or attention.</strong> These encode a symmetry or a routing mechanism, not domain facts, and they make learning cheaper without capping it, so they are arguably “meta-methods” in Sutton’s sense. Sutton’s own text is pulled both ways here. The evidence that architecture changes mostly shift scaling curves by a constant factor rather than change their slope, and that biases which help at small scale often stop helping at large scale (WB5), suggests built-in structure that does get eaten, just slowly.</li>
+<li><strong>Convolution or attention.</strong> These encode a symmetry or a routing mechanism, not domain facts, and they make learning cheaper without capping it, so they are arguably “meta-methods” in Sutton’s sense. Sutton’s own text is pulled both ways here. The evidence that architecture changes mostly shift scaling curves by a constant factor rather than change their slope, and that biases which help at small scale often stop helping at large scale (MDL4), suggests built-in structure that does get eaten, just slowly.</li>
 <li><strong>Tokenizer.</strong> Hand-written, and visibly brittle on arithmetic and spelling. Byte-level models are what the bitter lesson predicts; whether they win at equal compute is still an empirical question.</li>
 <li><strong>Data curation, RL rubrics, constitutions.</strong> These specify <em>what we want</em>, not <em>how to compute it</em>. The bitter lesson is a claim about capability, so these may be outside its scope: more compute cannot tell you which outcome is good. That is the alignment half of this workbook.</li>
 </ul>
@@ -309,7 +309,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="reading">
 
 <p><strong><a href="https://en.wikipedia.org/wiki/Solomonoff%27s_theory_of_inductive_inference">Solomonoff’s theory of inductive inference</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>The universal prior over programs, why it is the ideal inductive learner, and why it is uncomputable. WB4 returns to it. The pages on the <a href="https://en.wikipedia.org/wiki/Von_Neumann%E2%80%93Morgenstern_utility_theorem">von Neumann–Morgenstern theorem</a> and <a href="https://en.wikipedia.org/wiki/AIXI">AIXI</a> are the matching references for expected-utility agents and the ideal RL agent.</p>
+<p>The universal prior over programs, why it is the ideal inductive learner, and why it is uncomputable. MDL3 returns to it. The pages on the <a href="https://en.wikipedia.org/wiki/Von_Neumann%E2%80%93Morgenstern_utility_theorem">von Neumann–Morgenstern theorem</a> and <a href="https://en.wikipedia.org/wiki/AIXI">AIXI</a> are the matching references for expected-utility agents and the ideal RL agent.</p>
 </div>
 
 <div class="reading">
@@ -690,7 +690,7 @@ p(\text{good}\mid s_t,\text{gamble},\mathcal O)=\frac{p\,e^{R}}{p\,e^{R}+(1-p)\,
 <div class="reading">
 
 <p><strong><a href="https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators">Simulators</a></strong>, janus, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>A self-supervised model is a <em>simulator</em> of its training distribution that can produce goal-directed characters without being an agent itself. The first half carries the argument. WB3 has more on simulators and personae.</p>
+<p>A self-supervised model is a <em>simulator</em> of its training distribution that can produce goal-directed characters without being an agent itself. The first half carries the argument. MDL2 has more on simulators and personae.</p>
 </div>
 
 <div class="reading">

@@ -1,4 +1,4 @@
-"""WB2 §5: interpolation without harm (kernel ridge and the ridgeless limit; benign overfitting).
+"""MDL1 §5: interpolation without harm (kernel ridge and the ridgeless limit; benign overfitting).
 
 Formulas are checked by checks/wb2_new_kernels_check.py and checks/wb2_new_benign_check.py.
 """

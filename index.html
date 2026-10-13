@@ -15,25 +15,45 @@
   ul { padding-left: 1.2rem; }
   li { margin: .3rem 0; }
   .dep { color: var(--muted); }
+  blockquote.crw { border-left: 3px solid var(--link); margin: 1.2rem 0; padding: .2rem 1rem; background: color-mix(in srgb, var(--link) 6%, var(--bg)); }
+  blockquote.crw p { margin: .6rem 0; }
+  .uc { font-variant: small-caps; color: var(--muted); font-weight: normal; }
 </style>
 </head>
 <body>
 <h1>Iliad Intensive, October 2026</h1>
 <p class="lead">Course pages for the days taught by Charles R-W. Each notebook is a single page: pick what interests you, open the sections you want, and nobody is expected to finish everything. Math is typeset in the browser, so the first load needs a network connection.</p>
+<blockquote class="crw">
+<p><b>CRW:</b> These are readings and exercises I've compiled for the days I'm teaching at the Iliad Intensive. In all cases, they are far more than can be read in the allotted time. They are provided on the assumption that you will use your good judgement, and your LLMs, to determine what is worth your time.</p>
+<p>Follow your talents, your curiosity, and your confusions. Please try to leave the day much more confused than you entered it. Consult me if you've any questions on the content, meta-questions about how to study it, or meta*-questions.</p>
+</blockquote>
 
 <h2>Mysteries of Deep Learning</h2>
 <p><a href="https://github.com/CharlesR-W/crw-iliad-intensive-oct-2026/blob/main/notebooks/README.md">Read me</a> for the format (keystone reading, then an annotated trail with exercises and folded solutions).</p>
+<blockquote class="crw">
+<p><b>CRW:</b> This day is about surprising and confusing things from deep learning. In previous iterations of the intensive, the main material was Zach Furman's discussion of the theoretical computer-science perspective on deep learning as program synthesis; you can find this in MDL3. I've added a lot more material because I know relatively little about Solomonoff/TCS and because I have many other beloved mysteries which I am excited to share.</p>
+<p>There are roughly 4 different areas we cover:</p>
+<ol>
+<li>Deep learning in relation to traditional statistical learning theory [MDL1]: our sword shattered in our hands.</li>
+<li>Reflections on LLMs, pre-training, next-token-prediction, and text [MDL2]: why did all the 2010s labs start doing RL, and why did they switch?</li>
+<li>Deep learning as program synthesis [MDL3]: how to square the success of deep learning with TCS ideas like Solomonoff and Occam?</li>
+<li>Mysteries of deep learning [MDL4]: a potpourri of a hundred surprising things about how deep learning works in practice. Additional reflections on universality and interpretability. A mishmash, but the things I personally find most immediately salient. This is the <em>lower bound</em> on how much any good theory of deep learning must explain. Not a low bar.</li>
+</ol>
+<p>MDL1 (stat-learning) is a tour through statistical learning, includes derivations etc. Textbook-like.<br>
+MDL2 is broadly about perspective building, and has little truly technical material.<br>
+MDL3 is Solomonoff and friends; not my cup of tea, you'll know if it's yours.<br>
+MDL4 is a tour through my favorite surprising observations from deep learning: things that make me feel confused, my 'bag of nails' to hit when I find hammers; there is no coherent story, only a steeping in confusion befitting of the most courageous of natural philosophers.</p>
+</blockquote>
 <ul>
-  <li><a href="notebooks/02_statistical_learning.html">Workbook 2: How Deep Learning Changed Statistical Learning Theory</a> (the derivations workbook)</li>
-  <li><a href="notebooks/03_why_llms.html">Workbook 3: Why Did LLMs Become the Dominant Paradigm?</a></li>
-  <li><a href="notebooks/04_inductive_bias.html">Workbook 4: Deep Learning as Program Synthesis</a></li>
-  <li><a href="notebooks/05_universality.html">Workbook 5: Universalities: Scaling Laws and Architectures</a></li>
-  <li><a href="notebooks/06_mysteries_myriad.html">Workbook 6: Mysteries of Deep Learning</a></li>
-  <li class="dep"><a href="notebooks/01_deprecated_intelligence_then_and_now.html">Workbook 1 (deprecated): How Deep Learning Changed How We Think about Intelligence</a>, kept for reference only</li>
+  <li><a href="notebooks/mdl1_statistical_learning.html">MDL1: How Deep Learning Changed Statistical Learning Theory</a> (the derivations notebook)</li>
+  <li><a href="notebooks/mdl2_why_llms.html">MDL2: Why Did LLMs Become the Dominant Paradigm?</a></li>
+  <li><a href="notebooks/mdl3_program_synthesis.html">MDL3: Deep Learning as Program Synthesis</a></li>
+  <li><a href="notebooks/mdl4_mysteries.html">MDL4: Mysteries of Deep Learning: Universalities and a Hundred Surprises</a></li>
+  <li class="dep"><a href="notebooks/mdlX_intelligence_then_and_now.html">MDL.X (deprecated): How Deep Learning Changed How We Think about Intelligence</a>, kept for reference only</li>
 </ul>
 <p>Interactive figures: <a href="notebooks/assets/interactive/double_descent.html">double descent</a>, <a href="notebooks/assets/interactive/spectral_filters.html">spectral filters</a>, <a href="notebooks/assets/interactive/sgd_stationary_vs_posterior.html">SGD stationary spread vs posterior</a>, <a href="notebooks/assets/interactive/superposition.html">superposition</a>.</p>
 
-<h2>Training Dynamics</h2>
+<h2>Training Dynamics <span class="uc">[under construction]</span></h2>
 <p><a href="https://github.com/CharlesR-W/crw-iliad-intensive-oct-2026/blob/main/td/README.md">Read me</a>. Each notebook starts with the paper to read; the annotated derivations and code are optional.</p>
 <ul>
   <li><a href="td/td1_linear_networks.html">TD1: Deep linear networks</a></li>
@@ -47,7 +67,7 @@
   <li><a href="td/td2_8_further_readings.html">TD2.8: Further readings and a map of the day</a></li>
 </ul>
 
-<h2>Singular Learning Theory</h2>
+<h2>Singular Learning Theory <span class="uc">[under construction]</span></h2>
 <p><a href="https://github.com/CharlesR-W/crw-iliad-intensive-oct-2026/blob/main/slt/README.md">Read me</a>. Bayesian statistics in thermodynamic language, plus the learning coefficient.</p>
 <ul>
   <li><a href="slt/slt1_bayes_statmech.html">SLT1: Bayesian inference as statistical mechanics</a></li>
@@ -56,7 +76,7 @@
   <li><a href="slt/slt4_applications.html">SLT4: Applications</a></li>
 </ul>
 
-<h2>Data Attribution</h2>
+<h2>Data Attribution <span class="uc">[under construction]</span></h2>
 <p><a href="https://github.com/CharlesR-W/crw-iliad-intensive-oct-2026/blob/main/da/README.md">Read me</a>. Adapted from Louis Jaburi's Iliad notes (CC BY 4.0).</p>
 <ul>
   <li><a href="da/da1_core.html">DA1: Core</a></li>

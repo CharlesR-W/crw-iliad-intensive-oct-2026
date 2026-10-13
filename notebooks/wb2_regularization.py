@@ -1,4 +1,4 @@
-"""WB2 §4: regularization (ridge as prior, constraint and spectral filter; dropout; flatness).
+"""MDL1 §4: regularization (ridge as prior, constraint and spectral filter; dropout; flatness).
 
 Formulas are checked by checks/wb2a_check.py.
 """
@@ -156,7 +156,7 @@ with fixed point $(u_k^\top y)/s_k$. From $b_k(0)=0$ the solution is $b_k(t)=(1-
 - *Weak directions,* $x\ll1$: ridge $\approx x$ and flow $\approx x\ln2$, so ridge passes about $1/\ln2\approx1.44$ times more of each weak direction.
 - *Strong directions,* $x\gg1$: ridge leaves a shrinkage of $1-\phi\approx1/x$, only polynomially small, while flow leaves $2^{-x}$, exponentially small. So ridge shrinks the strong directions more.
 
-Gradient flow is the sharper, more step-like filter. The largest disagreements are flow above ridge by about $0.138$ (near $x\approx4.3$) and ridge above flow by about $0.044$ (near $x\approx0.36$). With the naive matching $t=1/\lambda$, flow becomes $1-e^{-x}$ and its half-point moves to $x=\ln2$. "Early stopping is ridge" is right in outline (keep the strong directions, drop the weak ones) and wrong in detail. WB5 (learning curves) derives how the polynomial tail of the ridge filter affects learning-curve exponents.
+Gradient flow is the sharper, more step-like filter. The largest disagreements are flow above ridge by about $0.138$ (near $x\approx4.3$) and ridge above flow by about $0.044$ (near $x\approx0.36$). With the naive matching $t=1/\lambda$, flow becomes $1-e^{-x}$ and its half-point moves to $x=\ln2$. "Early stopping is ridge" is right in outline (keep the strong directions, drop the weak ones) and wrong in detail. MDL4 (learning curves) derives how the polynomial tail of the ridge filter affects learning-curve exponents.
 
 **4.** $\dot\beta\in\mathrm{row}(X)$, so $\beta(t)\in\mathrm{row}(X)$ for all $t$. For $p>n$ with $X$ of full row rank, all $s_k>0$ for $k\le n$, so by 2 the flow converges to $\sum_{k\le n}\frac{u_k^\top y}{s_k}v_k=X^+y$. That is the unique interpolant in the row space, and so the minimum-norm interpolant. From $\beta_0$, the row-space component converges to the same place and the null-space component never moves: the limit is $X^+y+(I-X^+X)\beta_0$. The implicit bias is "minimum distance from the initialization".
 """
@@ -164,7 +164,7 @@ Gradient flow is the sharper, more step-like filter. The largest disagreements a
     markdown(
         figure(
             "assets/interactive/spectral_filters.html",
-            "Use panel A only (panel B belongs to WB5). Press “match half-points” and read the difference "
+            "Use panel A only (panel B belongs to MDL4). Press “match half-points” and read the difference "
             "strip: where do the filters disagree, and which passes more of the weak tail? Then set "
             "t = 1/λ by hand and see the ln 2 offset.",
         )

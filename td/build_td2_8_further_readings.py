@@ -61,7 +61,7 @@ alone; take whatever interests you.
 `td2_6`, where small-step theory breaks down.
 
 **Out of scope:** whether SGD samples a Bayesian posterior (the Mysteries day's
-[WB2 §8](../notebooks/02_statistical_learning.html#wb2-sgd-posterior), exercise
+[MDL1 §8](../notebooks/mdl1_statistical_learning.html#wb2-sgd-posterior), exercise
 8.2), and infinite-width NTK theory (the Physics of Deep Learning day).
 
 **This notebook:** five topics the day does not derive, each led by its paper.
@@ -111,7 +111,7 @@ mean.
         + r"""
 Also: [Srivastava et al., Dropout (JMLR 2014)](https://jmlr.org/papers/v15/srivastava14a.html),
 the standard reference. Dropout as an adaptive $L^2$ penalty is derived in the
-Mysteries day's [WB2 §4](../notebooks/02_statistical_learning.html#wb2-dropout),
+Mysteries day's [MDL1 §4](../notebooks/mdl1_statistical_learning.html#wb2-dropout),
 exercise 4.4.
 
 <a id="td28-dropout-walkthrough"></a>
@@ -270,7 +270,7 @@ higher layers.
 This is a quantitative replacement for "flat minima generalize", whose raw
 flatness depends on how the network is parametrized
 ([`td2_4` §4.2](td2_4_optimizer_geometry.html#td24-2); the Mysteries day's
-[WB2 §4](../notebooks/02_statistical_learning.html#wb2-flatness), under "Why
+[MDL1 §4](../notebooks/mdl1_statistical_learning.html#wb2-flatness), under "Why
 flatness could matter, and why sharpness needs a metric"). A network that
 attenuates injected noise can be compressed a lot, since compression error acts
 like injected noise, and the compressed network gets a generalization bound the
@@ -532,7 +532,7 @@ where the mode equations of [`td1_linear_networks` §1](td1_linear_networks.html
 make them tractable (Kleinman et al.), and plasticity loss is tied to changes in
 loss-landscape curvature (Lyle et al.; [`td2_6`](td2_6_curvature.html)). The
 Mysteries day lists critical periods among its strange facts in
-[WB6 §4](../notebooks/06_mysteries_myriad.html#wb6-section-4).
+[MDL4 §4](../notebooks/mdl4_mysteries.html#wb6-section-4).
 
 Also: [Kleinman, Achille & Soatto, critical periods in deep linear networks (ICLR 2024)](https://arxiv.org/abs/2308.12221);
 [Lyle et al., understanding plasticity (ICML 2023)](https://arxiv.org/abs/2303.01486)
@@ -574,7 +574,7 @@ The question this day adds, from [`td2_6` §6.4](td2_6_curvature.html#td26-4):
 how does the update sit relative to the curvature (the Hessian or Gauss–Newton
 eigenbasis)? None of these papers measures that directly at language-model scale,
 and Exercise 5.2 shows why a weight-matrix proxy for it needs care. The Mysteries
-day's [WB6 §11](../notebooks/06_mysteries_myriad.html#wb6-section-11) reads
+day's [MDL4 §11](../notebooks/mdl4_mysteries.html#wb6-section-11) reads
 Mukherjee et al. and Shenfeld et al. as a pair, including what "unchanged" means
 in bfloat16.
 

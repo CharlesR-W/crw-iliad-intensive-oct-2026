@@ -415,7 +415,7 @@ scale, not literally a Gibbs temperature. Real gradient noise depends on $\theta
 and is strongly anisotropic, often roughly aligned with $H$ (for a well-specified
 likelihood, $\Sigma\approx H$ at the optimum), so SGD has no Gibbs guarantee.
 Whether SGD's cloud resembles a Bayesian posterior is taken up by the MDL day in
-[WB2 §4](../notebooks/02_statistical_learning.html#wb2-section-4), part 4.B, "Does
+[MDL1 §4](../notebooks/mdl1_statistical_learning.html#wb2-section-4), part 4.B, "Does
 curvature cancel?", with the figure
 [`sgd_stationary_vs_posterior.html`](../notebooks/assets/interactive/sgd_stationary_vs_posterior.html).
 
@@ -430,7 +430,7 @@ whether training gets near stationarity at all (§3.7).
 **Exercise 3.3.A — The Lyapunov equation and the loss floor.** The setting:
 $L=\tfrac12\theta^\top H\theta$ with $H\succ0$, frozen noise covariance $\Sigma$,
 diffusion $D=\frac\eta B\Sigma$, stationary covariance $\Pi$. (Items 1, 2, the first
-identity of 3, and 4(a) repeat items 1–4 of the MDL day's WB2 exercise 4.B.3, whose
+identity of 3, and 4(a) repeat items 1–4 of the MDL day's MDL1 exercise 4.B.3, whose
 $C$ and $\Sigma$ are $\Sigma$ and $\Pi$ here.) Items 4 and 6 compute what
 discreteness and state-dependent noise change.
 
@@ -1184,7 +1184,7 @@ covers where that picture fails).
 
 1. *(Malladi et al.'s warm-up.)* Take a linear loss $f(\theta)=\langle\theta,\bar g\rangle$ and isotropic noise, $g_k\sim\mathcal N(\bar g,\sigma^2I)$. Assume $v_k\approx\bar g^2+\sigma^2$ (concentrated) and $\sigma\gg\|\bar g\|$, and ignore $\epsilon$. Show that RMSprop gives, approximately, $\theta_k-\theta_0\sim\mathcal N\big(-k\eta\bar g/\sigma,\ k\eta^2I\big)$. What must happen to $\eta$ and $k$ to keep this law fixed when $\sigma\to\sigma/\sqrt\kappa$?
 2. Why must $1-\beta$ scale like $\kappa$, and $\epsilon$ like $1/\sqrt\kappa$?
-3. *(The floor.)* Assume all $\Sigma_{jj}>0$, and let $H\succ0$ be the Hessian of a quadratic basin. For preconditioned SGD $\theta\leftarrow\theta-\eta P(H\theta+\xi)$ with a fixed $P\succ0$ and $\mathrm{Cov}\,\xi=\Sigma/B$, the stationary covariance $\Pi$ of the OU model solves $PH\Pi+\Pi HP=\frac\eta BP\Sigma P$ (MDL [WB2 §4](../notebooks/02_statistical_learning.html#wb2-section-4), exercise 4.B.3, item 6, in this notebook's notation). Show that $\tfrac12\mathrm{tr}(H\Pi)=\frac{\eta}{4B}\mathrm{tr}(P\Sigma)$. With the noise-dominated RMSprop preconditioner $P=(\mathrm{diag}\,\Sigma/B)^{-1/2}$, show the floor is $\frac{\eta}{4\sqrt B}\sum_j\sqrt{\Sigma_{jj}}$. What happens to it under the square-root rule, and under the linear rule?
+3. *(The floor.)* Assume all $\Sigma_{jj}>0$, and let $H\succ0$ be the Hessian of a quadratic basin. For preconditioned SGD $\theta\leftarrow\theta-\eta P(H\theta+\xi)$ with a fixed $P\succ0$ and $\mathrm{Cov}\,\xi=\Sigma/B$, the stationary covariance $\Pi$ of the OU model solves $PH\Pi+\Pi HP=\frac\eta BP\Sigma P$ (MDL [MDL1 §4](../notebooks/mdl1_statistical_learning.html#wb2-section-4), exercise 4.B.3, item 6, in this notebook's notation). Show that $\tfrac12\mathrm{tr}(H\Pi)=\frac{\eta}{4B}\mathrm{tr}(P\Sigma)$. With the noise-dominated RMSprop preconditioner $P=(\mathrm{diag}\,\Sigma/B)^{-1/2}$, show the floor is $\frac{\eta}{4\sqrt B}\sum_j\sqrt{\Sigma_{jj}}$. What happens to it under the square-root rule, and under the linear rule?
 4. *(The exponent.)* Consider updates $\theta\leftarrow\theta-\eta\,(\mathrm{diag}\,\Sigma/B)^{-p}g_B$ with a fixed power $p\ge0$: $p=0$ is SGD and $p=\tfrac12$ is noise-dominated RMSprop. Using item 3, show that the floor depends on $(\eta,B)$ only through $\eta B^{p-1}$, so the scaling rule is $\eta\propto B^{1-p}$. Check that along this rule the number of steps per unit of drift scales like $1/B$, so the number of examples is unchanged for every $p$.
 
 <details><summary>Hint</summary>

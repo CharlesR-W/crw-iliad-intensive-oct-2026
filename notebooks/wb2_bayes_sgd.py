@@ -1,4 +1,4 @@
-"""WB2 §7 (Bayes and MLE generalization error) and §8 (gradient noise, curvature, SGD,
+"""MDL1 §7 (Bayes and MLE generalization error) and §8 (gradient noise, curvature, SGD,
 generalization measures).
 
 Formulas are checked by checks/wb2b_check.py (old numbering 4.A-4.C).
@@ -266,7 +266,7 @@ predictor $p_{\hat\theta_n}$: a prediction question. BIC approximates
 $-2\log$ of the evidence, so differences of BIC approximate log posterior
 odds between models: a model-identification question. The evidence penalizes
 each parameter by $\tfrac12\log n$ because the posterior volume shrinks like
-$n^{-p/2}$ relative to the prior (the Occam factor; WB4, Occam and prior volume). In singular
+$n^{-p/2}$ relative to the prior (the Occam factor; MDL3, Occam and prior volume). In singular
 models this volume scaling changes: $\frac p2\log n$ becomes $\lambda\log n$
 with $\lambda$ the *real log canonical threshold* (RLCT), the central quantity
 of singular learning theory (SLT). (This $\lambda$ is not a ridge penalty.) In
@@ -582,7 +582,7 @@ relative to $H$'s? The interactive figure below draws these ellipses.
 - The discrete-time ellipse is slightly wider than the continuous one along
   $\theta_2$, by a relative $O(\eta h_2)=O(10\eta)$, where $h_2=10$ is the sharp curvature.
 
-This is as far as WB2 goes. The Training Dynamics materials take up
+This is as far as MDL1 goes. The Training Dynamics materials take up
 state-dependent noise, edge-of-stability effects and what happens away from a
 quadratic basin.
 """

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build WB4, "Deep Learning as Program Synthesis" (stem 04_inductive_bias).
+"""Build MDL3, "Deep Learning as Program Synthesis" (stem 04_inductive_bias).
 
 Shape (trail restructure, reviews/2026-10-09-trail-restructure-brief.md):
 
@@ -26,7 +26,7 @@ CELLS = [
     # ------------------------------------------------------------------ intro
     markdown(
         r"""
-# Workbook 4 — Deep Learning as Program Synthesis
+# MDL3 — Deep Learning as Program Synthesis
 
 **Mysteries of Deep Learning, Iliad Intensive 2026**
 
@@ -106,7 +106,7 @@ and points to singular learning theory as a route.
 a model wastes on data that did not occur, while Kolmogorov complexity and MDL penalize
 description length; they agree at leading order for regular models and part elsewhere.
 
-For $p$ parameters and $n$ samples, both give a penalty of about $\tfrac p2\ln n$ (BIC; WB2,
+For $p$ parameters and $n$ samples, both give a penalty of about $\tfrac p2\ln n$ (BIC; MDL1,
 section "Bayes and MLE generalization error"). For singular models the volume penalty's $\tfrac p2$ becomes the learning
 coefficient $\lambda\le\tfrac p2$ (the SLT day): the evidence measures the volume of
 near-optimal parameters, not the parameter count.
@@ -600,4 +600,4 @@ parameter space (section 2's volume, done correctly for singular models); see th
 ]
 
 if __name__ == "__main__":
-    raise SystemExit(run(CELLS, "wb4", "04_inductive_bias"))
+    raise SystemExit(run(CELLS, "wb4", "mdl3_program_synthesis"))

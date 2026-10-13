@@ -119,7 +119,7 @@ with $u=w/\|w\|$. Show:
 4. $\nabla^2L(w)\,w=-\nabla L(w)$. In particular $w$ is a null direction of the Hessian at every critical point.
 5. Under gradient flow $\dot w=-\nabla L(w)$, $\|w\|$ is conserved.
 
-(The Mysteries day's [WB6 §10](../notebooks/06_mysteries_myriad.html#wb6-section-10), Exercise 10.1, derives 1–4 for batch normalization.)
+(The Mysteries day's [MDL4 §10](../notebooks/mdl4_mysteries.html#wb6-section-10), Exercise 10.1, derives 1–4 for batch normalization.)
 
 <details><summary>Hint</summary>
 

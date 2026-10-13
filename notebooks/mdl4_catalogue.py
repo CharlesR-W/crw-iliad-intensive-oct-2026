@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Build WB6, "Mysteries of Deep Learning": an annotated catalogue of strange empirical facts about trained networks.
+"""Build MDL4, "Mysteries of Deep Learning": an annotated catalogue of strange empirical facts about trained networks.
 
 Trail format (reviews/2026-10-09-trail-restructure-brief.md). No keystone: the
 whole workbook is the catalogue. An intro (two sentences) and a one-line route,
 then 13 sections with stable anchors `wb6-section-1` ... `wb6-section-13`
-(TD notebooks and WB5 link to -4, -5, -9, -10, -11, -13). Each section opens
+(TD notebooks and MDL4 link to -4, -5, -9, -10, -11, -13). Each section opens
 with one sentence stating the mystery, then one to three `reading()` blurbs of
 about one sentence, sometimes a trailing "Also:" line. Four sections carry a
 "### Exercises: <topic>" subsection with self-contained exercises and folded
@@ -45,7 +45,7 @@ def head(k: str, mystery: str) -> str:
 CELLS = [
     markdown(
         r"""
-# Workbook 6 — Mysteries of Deep Learning
+# MDL4 — Mysteries of Deep Learning
 
 **{{VARIANT}} · Mysteries of Deep Learning, Iliad Intensive 2026**
 
@@ -83,7 +83,7 @@ Sections are independent. Solutions to the exercises are folded under "Solution"
 
     # ------------------------------------------------------------------ 3
     markdown(
-        head("3", "The bottom of one trained network joins the top of another through a single linear layer with little loss, so separately trained networks represent things almost the same way (see [WB5, section 'Same representation? CKA, CCA, and the Platonic and linear representation hypotheses'](05_universality.html#wb5-section-4)).")
+        head("3", "The bottom of one trained network joins the top of another through a single linear layer with little loss, so separately trained networks represent things almost the same way (see [MDL4, section 'Same representation? CKA, CCA, and the Platonic and linear representation hypotheses'](mdl4_mysteries.html#wb5-section-4)).")
         + reading(
             "Revisiting model stitching to compare neural representations",
             "https://arxiv.org/abs/2106.07682",
@@ -107,7 +107,7 @@ Sections are independent. Solutions to the exercises are folded under "Solution"
 
     # ------------------------------------------------------------------ 5
     markdown(
-        head("5", "Networks store more sparse features than they have dimensions, in almost-orthogonal directions; adversarial examples may exploit this interference, or features that are predictive but brittle, and some even bias briefly shown humans (see [WB5, section 'Same representation? CKA, CCA, and the Platonic and linear representation hypotheses'](05_universality.html#wb5-section-4)).")
+        head("5", "Networks store more sparse features than they have dimensions, in almost-orthogonal directions; adversarial examples may exploit this interference, or features that are predictive but brittle, and some even bias briefly shown humans (see [MDL4, section 'Same representation? CKA, CCA, and the Platonic and linear representation hypotheses'](mdl4_mysteries.html#wb5-section-4)).")
         + reading(
             "Toy models of superposition",
             "https://transformer-circuits.pub/2022/toy_model/index.html",
@@ -281,7 +281,7 @@ So an overlap near 1 is compatible with most of the loss decrease coming from ou
 - (c) Show that $Hw=-g$. Deduce that $w^\top Hw=0$. When is $w$ an eigenvector of $H$ with eigenvalue 0, and why is it not one in general?
 - (d) For a gradient step $w'=w-\eta g$, show that $\lVert w'\rVert^2=\lVert w\rVert^2+\eta^2\lVert g\rVert^2$. Using (b), separate the effect of changing $\lVert w\rVert$ from that of changing the direction $u=w/\lVert w\rVert$. What effective step size acts on the direction?
 
-As with layer rescaling in ReLU networks (Dinh et al., *Sharp minima can generalize*, in [WB2, section 'Regularization: prior, constraint, filter, flatness'](02_statistical_learning.html#wb2-section-4)), curvature measured in these weights is not a property of the function alone.
+As with layer rescaling in ReLU networks (Dinh et al., *Sharp minima can generalize*, in [MDL1, section 'Regularization: prior, constraint, filter, flatness'](mdl1_statistical_learning.html#wb2-section-4)), curvature measured in these weights is not a property of the function alone.
 """
     ),
     answer(
@@ -300,7 +300,7 @@ If $g=0$ (a stationary point), $Hw=0$ and $w$ is an eigenvector with eigenvalue 
 
     # ------------------------------------------------------------------ 11
     markdown(
-        head("11", "RL fine-tuning of LLMs is reported to change few parameters yet at full rank, or to be dominated by one rank-1 direction, and to forget less than SFT; how these fit together, and how much is a bfloat16 artifact, is open (KL-regularized optimum: [WB1 (deprecated), section 'From Bellman to AlphaZero', exercises 'planning as inference'](01_deprecated_intelligence_then_and_now.html#wb1-section-3)).")
+        head("11", "RL fine-tuning of LLMs is reported to change few parameters yet at full rank, or to be dominated by one rank-1 direction, and to forget less than SFT; how these fit together, and how much is a bfloat16 artifact, is open (KL-regularized optimum: [MDL.X (deprecated), section 'From Bellman to AlphaZero', exercises 'planning as inference'](mdlX_intelligence_then_and_now.html#wb1-section-3)).")
         + reading(
             "Reinforcement learning finetunes small subnetworks in large language models",
             "https://arxiv.org/abs/2505.11711",
@@ -369,7 +369,7 @@ For (b): $\det$ is a polynomial in the entries on $S$; find one choice of values
 
     # ------------------------------------------------------------------ 12
     markdown(
-        head("12", "Transformers trained on a deep, ambiguous synthetic grammar learn to parse it, though nothing in the architecture is built for parsing (data-model side: [WB4, section 'Hierarchical representations'](04_inductive_bias.html#wb4-section-5)).")
+        head("12", "Transformers trained on a deep, ambiguous synthetic grammar learn to parse it, though nothing in the architecture is built for parsing (data-model side: [MDL3, section 'Hierarchical representations'](mdl3_program_synthesis.html#wb4-section-5)).")
         + reading(
             "Physics of language models: Part 1, learning hierarchical language structures",
             "https://arxiv.org/abs/2305.13673",

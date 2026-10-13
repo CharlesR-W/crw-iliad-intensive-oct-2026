@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""Build WB3 (Why Did LLMs Become the Dominant Paradigm?).
+"""Build MDL2 (Why Did LLMs Become the Dominant Paradigm?).
 
 Shape (trail restructure, 2026-10-09): §1 is the keystone (Gwern, "The scaling
 hypothesis", paired with Sutskever's "An observation on generalization") with two
 short core-idea paragraphs. §2-7 are a lightly annotated reading trail, one
 sentence of purpose per section and about one sentence per reading, with the
 Fermi estimates and short derivations kept in "### Exercises: ..." subsections.
-Kaplan et al. 2020 is WB5's keystone and appears here only as a one-line pointer.
+Kaplan et al. 2020 is MDL4's keystone and appears here only as a one-line pointer.
 """
 from nbkit import answer, book, markdown, reading, references, run
 
 CELLS = [
     # ------------------------------------------------------------------ intro
     markdown(r"""
-# Workbook 3 — Why Did LLMs Become the Dominant Paradigm?
+# MDL2 — Why Did LLMs Become the Dominant Paradigm?
 
 **{{VARIANT}} · Mysteries of Deep Learning, Iliad Intensive 2026**
 
@@ -51,7 +51,7 @@ In 2020, just after GPT-3, Gwern argued that a simple objective plus more comput
     ) + r"""
 **One objective subsumes many tasks.** Next-token prediction needs no labels, so the data is nearly unlimited. A task is just a kind of text (a question then its answer), so a good enough model of text has to do the task. And the loss keeps rewarding generality: once spelling, grammar and topic are predicted, the remaining loss sits on tokens that need facts, reasoning and a model of the writer. Compressing everything people write forces a model to represent what they write about.
 
-**Scale, not cleverness, became the lever.** Loss falls as a smooth power law in parameters, data and compute over many orders of magnitude ([WB5, section 'Keystone: scaling laws'](05_universality.html#wb5-keystone)), and a causal transformer computes the loss at every position in one parallel pass of matrix multiplications, which is what GPUs do best. So capability could be bought predictably with compute, and most of the gain since GPT-2 came from spending more of it. Why the power laws are so clean, and why lower loss tracks broad capability, are still open.
+**Scale, not cleverness, became the lever.** Loss falls as a smooth power law in parameters, data and compute over many orders of magnitude ([MDL4, section 'Keystone: scaling laws'](mdl4_mysteries.html#wb5-keystone)), and a causal transformer computes the loss at every position in one parallel pass of matrix multiplications, which is what GPUs do best. So capability could be bought predictably with compute, and most of the gain since GPT-2 came from spending more of it. Why the power laws are so clean, and why lower loss tracks broad capability, are still open.
 """),
 
     # ------------------------------------------------------------------ §2
@@ -161,7 +161,7 @@ Almost none of the video's bits are about what happened; the sentence is almost 
 
 Next-token prediction is a full model of the data whose loss is code length, every position is a training target, and a causal transformer computes all of them in one parallel pass, which is what the hardware rewards.
 
-By the chain rule $q(x_{1:T})=\prod_tq(x_t\mid x_{<t})$, so this is a parametrization, not a restriction ([WB4, section 'Occam, two ways'](04_inductive_bias.html#wb4-section-2) takes up loss as code length). BERT's masked objective trains on only 15% of positions; an RNN needs $T$ sequential steps per layer where attention needs none ([Vaswani et al. 2017](https://arxiv.org/abs/1706.03762), Table 1).
+By the chain rule $q(x_{1:T})=\prod_tq(x_t\mid x_{<t})$, so this is a parametrization, not a restriction ([MDL3, section 'Occam, two ways'](mdl3_program_synthesis.html#wb4-section-2) takes up loss as code length). BERT's masked objective trains on only 15% of positions; an RNN needs $T$ sequential steps per layer where attention needs none ([Vaswani et al. 2017](https://arxiv.org/abs/1706.03762), Table 1).
 """ + reading(
         "Generalized language models",
         "https://lilianweng.github.io/posts/2019-01-31-lm/",
@@ -281,7 +281,7 @@ Position-wise MLPs and residual connections are also permutation-equivariant, so
 
 Loss falls as a power law in model size and data, so a compute budget has an optimal split between the two, and serving costs push that split toward smaller models trained on more tokens.
 
-Kaplan et al. 2020, [Scaling laws for neural language models](https://arxiv.org/abs/2001.08361), is the keystone of [WB5, section 'Keystone: scaling laws'](05_universality.html#wb5-keystone); here it appears only as the allocation that Chinchilla corrected (Exercise 6.2).
+Kaplan et al. 2020, [Scaling laws for neural language models](https://arxiv.org/abs/2001.08361), is the keystone of [MDL4, section 'Keystone: scaling laws'](mdl4_mysteries.html#wb5-keystone); here it appears only as the allocation that Chinchilla corrected (Exercise 6.2).
 """ + reading(
         "Training compute-optimal large language models",
         "https://arxiv.org/abs/2203.15556",
@@ -412,4 +412,4 @@ Also: nostalgebraist, [larger language models may disappoint you](https://www.le
 ]
 
 if __name__ == "__main__":
-    raise SystemExit(run(CELLS, "wb3", "03_why_llms"))
+    raise SystemExit(run(CELLS, "wb3", "mdl2_why_llms"))

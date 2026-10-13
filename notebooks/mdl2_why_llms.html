@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="nbkit.py (wb3); do not edit by hand">
-<title>Workbook 3 — Why Did LLMs Become the Dominant Paradigm?</title>
+<title>MDL2 — Why Did LLMs Become the Dominant Paradigm?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
@@ -230,7 +230,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </nav>
 <main>
 <article>
-<h1 id="workbook-3--why-did-llms-become-the-dominant-paradigm">Workbook 3 — Why Did LLMs Become the Dominant Paradigm?</h1>
+<h1 id="mdl2--why-did-llms-become-the-dominant-paradigm">MDL2 — Why Did LLMs Become the Dominant Paradigm?</h1>
 <p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
 <p>Nobody designed language models to be general. One generic objective, predicting the next token of internet text, kept rewarding more general capability and kept improving with compute; why is one of the field’s central surprises.</p>
 <p><strong>Route</strong></p>
@@ -262,7 +262,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 
 <p><strong>One objective subsumes many tasks.</strong> Next-token prediction needs no labels, so the data is nearly unlimited. A task is just a kind of text (a question then its answer), so a good enough model of text has to do the task. And the loss keeps rewarding generality: once spelling, grammar and topic are predicted, the remaining loss sits on tokens that need facts, reasoning and a model of the writer. Compressing everything people write forces a model to represent what they write about.</p>
-<p><strong>Scale, not cleverness, became the lever.</strong> Loss falls as a smooth power law in parameters, data and compute over many orders of magnitude (<a href="05_universality.html#wb5-keystone">WB5, section ‘Keystone: scaling laws’</a>), and a causal transformer computes the loss at every position in one parallel pass of matrix multiplications, which is what GPUs do best. So capability could be bought predictably with compute, and most of the gain since GPT-2 came from spending more of it. Why the power laws are so clean, and why lower loss tracks broad capability, are still open.</p>
+<p><strong>Scale, not cleverness, became the lever.</strong> Loss falls as a smooth power law in parameters, data and compute over many orders of magnitude (<a href="mdl4_mysteries.html#wb5-keystone">MDL4, section ‘Keystone: scaling laws’</a>), and a causal transformer computes the loss at every position in one parallel pass of matrix multiplications, which is what GPUs do best. So capability could be bought predictably with compute, and most of the gain since GPT-2 came from spending more of it. Why the power laws are so clean, and why lower loss tracks broad capability, are still open.</p>
 </div>
 </details>
 <details class="sec sec2" data-sec="2-why-generative-why-unsupervised">
@@ -365,7 +365,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb3-section-4"></a>
 <p>Next-token prediction is a full model of the data whose loss is code length, every position is a training target, and a causal transformer computes all of them in one parallel pass, which is what the hardware rewards.</p>
-<p>By the chain rule <span class="math inline">q(x_{1:T})=\prod_tq(x_t\mid x_{&lt;t})</span>, so this is a parametrization, not a restriction (<a href="04_inductive_bias.html#wb4-section-2">WB4, section ‘Occam, two ways’</a> takes up loss as code length). BERT’s masked objective trains on only 15% of positions; an RNN needs <span class="math inline">T</span> sequential steps per layer where attention needs none (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al. 2017</a>, Table 1).</p>
+<p>By the chain rule <span class="math inline">q(x_{1:T})=\prod_tq(x_t\mid x_{&lt;t})</span>, so this is a parametrization, not a restriction (<a href="mdl3_program_synthesis.html#wb4-section-2">MDL3, section ‘Occam, two ways’</a> takes up loss as code length). BERT’s masked objective trains on only 15% of positions; an RNN needs <span class="math inline">T</span> sequential steps per layer where attention needs none (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al. 2017</a>, Table 1).</p>
 <div class="reading">
 
 <p><strong><a href="https://lilianweng.github.io/posts/2019-01-31-lm/">Generalized language models</a></strong>, Lilian Weng, 2019, updated to 2021 (blog) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
@@ -473,7 +473,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb3-section-6"></a>
 <p>Loss falls as a power law in model size and data, so a compute budget has an optimal split between the two, and serving costs push that split toward smaller models trained on more tokens.</p>
-<p>Kaplan et al. 2020, <a href="https://arxiv.org/abs/2001.08361">Scaling laws for neural language models</a>, is the keystone of <a href="05_universality.html#wb5-keystone">WB5, section ‘Keystone: scaling laws’</a>; here it appears only as the allocation that Chinchilla corrected (Exercise 6.2).</p>
+<p>Kaplan et al. 2020, <a href="https://arxiv.org/abs/2001.08361">Scaling laws for neural language models</a>, is the keystone of <a href="mdl4_mysteries.html#wb5-keystone">MDL4, section ‘Keystone: scaling laws’</a>; here it appears only as the allocation that Chinchilla corrected (Exercise 6.2).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2203.15556">Training compute-optimal large language models</a></strong>, Hoffmann, Borgeaud, Mensch, et al. (DeepMind, “Chinchilla”), 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>

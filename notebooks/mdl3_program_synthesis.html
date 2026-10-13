@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="generator" content="nbkit.py (wb4); do not edit by hand">
-<title>Workbook 4 — Deep Learning as Program Synthesis</title>
+<title>MDL3 — Deep Learning as Program Synthesis</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
@@ -229,7 +229,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </nav>
 <main>
 <article>
-<h1 id="workbook-4--deep-learning-as-program-synthesis">Workbook 4 — Deep Learning as Program Synthesis</h1>
+<h1 id="mdl3--deep-learning-as-program-synthesis">MDL3 — Deep Learning as Program Synthesis</h1>
 <p><strong>Mysteries of Deep Learning, Iliad Intensive 2026</strong></p>
 <p>“Networks generalize because of their inductive bias” is true and explains nothing: every learner that generalizes has an inductive bias, and naming it is a curiosity stopper. This workbook follows one concrete proposal for what the bias is (a preference for simple, compositional programs) and the classical theory of simplicity it borrows from.</p>
 <ul>
@@ -262,7 +262,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb4-section-2"></a>
 <p>“Simplicity” means two different things: Bayesian evidence penalizes the prior volume a model wastes on data that did not occur, while Kolmogorov complexity and MDL penalize description length; they agree at leading order for regular models and part elsewhere.</p>
-<p>For <span class="math inline">p</span> parameters and <span class="math inline">n</span> samples, both give a penalty of about <span class="math inline">\tfrac p2\ln n</span> (BIC; WB2, section “Bayes and MLE generalization error”). For singular models the volume penalty’s <span class="math inline">\tfrac p2</span> becomes the learning coefficient <span class="math inline">\lambda\le\tfrac p2</span> (the SLT day): the evidence measures the volume of near-optimal parameters, not the parameter count.</p>
+<p>For <span class="math inline">p</span> parameters and <span class="math inline">n</span> samples, both give a penalty of about <span class="math inline">\tfrac p2\ln n</span> (BIC; MDL1, section “Bayes and MLE generalization error”). For singular models the volume penalty’s <span class="math inline">\tfrac p2</span> becomes the learning coefficient <span class="math inline">\lambda\le\tfrac p2</span> (the SLT day): the evidence measures the volume of near-optimal parameters, not the parameter count.</p>
 <div class="reading">
 
 <p><strong><a href="https://authors.library.caltech.edu/records/r7qgh-q6g10">Bayesian interpolation</a></strong>, David J. C. MacKay, 1992 (<em>Neural Computation</em> 4(3)) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
