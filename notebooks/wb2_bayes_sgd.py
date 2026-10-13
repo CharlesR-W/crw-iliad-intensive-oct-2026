@@ -18,6 +18,8 @@ matrix; this section derives it, the model-selection criteria it implies
 (TIC, AIC, BIC), and how a single fit compares with the Bayes ensemble. Most
 claims of the form "count the parameters", "flat minima generalize" or "the
 posterior is what matters" are claims about this formula.
+
+Notation: $H$ is the curvature (Hessian of the population risk at its minimizer $\theta^*$) and $C$ the covariance of the per-sample gradient there, $p$ the number of parameters, $n$ the sample size, $\sigma^2$ the noise variance; in 7.5 $\lambda$ is the real log canonical threshold, not a ridge penalty.
 """
         + reading(
             "Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory",
@@ -120,11 +122,11 @@ For 2, expand $\hat R_n$ around its own minimizer $\hat\theta_n$ and evaluate th
 
 **7.3. A misspecified case where parameter counting is off by 3.** Let
 $x\sim\mathcal N(0,1)$ and $y=\beta x+\varepsilon$, where
-$\varepsilon\mid x\sim\mathcal N(0,\tau^2x^2)$: the noise is *heteroscedastic*.
+$\varepsilon\mid x\sim\mathcal N(0,\sigma^2x^2)$: the noise is *heteroscedastic*.
 Fit $y\approx\theta x$ with $\ell=\tfrac12(y-\theta x)^2$.
 
 1. Compute $H$, $C$, the asymptotic variance of $\hat\theta_n$, the expected excess risk and the expected optimism.
-2. Compare each with what you get by assuming homoscedastic noise of the same average variance, $\mathbb E\varepsilon^2=\tau^2$, i.e. with $C=\tau^2H$. By what factor is the naive answer wrong?
+2. Compare each with what you get by assuming homoscedastic noise of the same average variance, $\mathbb E\varepsilon^2=\sigma^2$, i.e. with $C=\sigma^2H$. By what factor is the naive answer wrong?
 
 <details><summary>Hint</summary>
 
@@ -161,16 +163,16 @@ risk between two models are measurable.
 
 **7.3.1.** $\nabla\ell=-(y-\theta x)x$, so $H=\mathbb E x^2=1$. At
 $\theta^*=\beta$, $\nabla\ell=-\varepsilon x$, so
-$C=\mathbb E[\varepsilon^2x^2]=\mathbb E[\tau^2x^2\cdot x^2]=3\tau^2$, using
+$C=\mathbb E[\varepsilon^2x^2]=\mathbb E[\sigma^2x^2\cdot x^2]=3\sigma^2$, using
 $\mathbb E x^4=3$. Hence:
 
-- $\mathrm{Var}\,\hat\theta_n\approx H^{-1}CH^{-1}/n=3\tau^2/n$;
-- excess risk $\approx\mathrm{Tr}(H^{-1}C)/2n=3\tau^2/2n$;
-- optimism $\approx3\tau^2/n$.
+- $\mathrm{Var}\,\hat\theta_n\approx H^{-1}CH^{-1}/n=3\sigma^2/n$;
+- excess risk $\approx\mathrm{Tr}(H^{-1}C)/2n=3\sigma^2/2n$;
+- optimism $\approx3\sigma^2/n$.
 
-**7.3.2.** The homoscedastic formulas use $C=\tau^2H$, i.e.
-$\mathrm{Tr}(H^{-1}C)=\tau^2p$ with $p=1$. They give variance $\tau^2/n$,
-excess risk $\tau^2/2n$ and optimism $\tau^2/n$: all too small by a factor of
+**7.3.2.** The homoscedastic formulas use $C=\sigma^2H$, i.e.
+$\mathrm{Tr}(H^{-1}C)=\sigma^2p$ with $p=1$. They give variance $\sigma^2/n$,
+excess risk $\sigma^2/2n$ and optimism $\sigma^2/n$: all too small by a factor of
 3. The noise is largest exactly where $x$ is large, which is where the data
 have the most leverage on $\hat\theta$.
 
@@ -370,6 +372,8 @@ For trained networks the gradient noise $C$ is not proportional to the
 curvature $H$, so the clean cancellations of §7 fail; this decides what SGD's
 noise cloud looks like (not a posterior) and which published complexity
 measures can track the generalization gap.
+
+Notation: $H$ and $C$ as in §7, $\eta$ the learning rate, $B$ the batch size, $\Sigma$ the stationary covariance of the iterates, $T$ a temperature, $\mu_{\max}(H)$ the largest eigenvalue of $H$; in 8.2, $C=cH^\gamma$ with a scalar $c$ and an exponent $\gamma$ (neither is the $c$ or $\gamma$ of earlier sections); Kendall's $\tau$ in 8.4 is a rank correlation.
 """
         + reading(
             "Fantastic generalization measures and where to find them",
@@ -464,7 +468,7 @@ $$
 \theta_{k+1}=\theta_k-\eta\,(H\theta_k+\xi_k),\qquad\mathbb E\,\xi_k=0,\quad\mathrm{Cov}\,\xi_k=C/B,
 $$
 with $\xi_k$ independent across steps and of $\theta_k$, and $C$ fixed near
-the minimum. Assume $0<\eta<2/\lambda_{\max}(H)$. The *stationary covariance*
+the minimum. Assume $0<\eta<2/\mu_{\max}(H)$. The *stationary covariance*
 $\Sigma$ is the covariance of $\theta_k$ once it no longer changes from step to
 step. A *Lyapunov equation* is a linear matrix equation
 $A\Sigma+\Sigma A^\top=Q$ for symmetric $\Sigma$; an *Ornstein–Uhlenbeck (OU)
@@ -602,7 +606,7 @@ the regular regime.
 
 1. Let $\theta=A\phi$ with $A$ invertible be a reparametrization that leaves the network function fixed (or the linearization of a smooth one at the minimum). Show that at the minimum $H\to A^\top HA$ and $C\to A^\top CA$, and that $\mathrm{Tr}(H^{-1}C)$ is invariant. Which of the parameter $\ell_2$ norm, the gradient variance $\mathrm{Tr}\,C$, $\mathrm{Tr}\,H$ and the product of layer spectral norms are invariant under the layer rescaling of 4.5.3, and which under a general $A$?
 2. Jiang et al. train every model to the same cross-entropy. Why? Using 8.1, what does this do to the per-sample gradients and to $\hat C$? Which assumptions behind the derivation of TIC in 7.2 fail for these networks?
-3. Jiang et al. score each measure by rank correlation with the gap. *Kendall's $\tau$* over a set of models is the fraction of pairs of models that the measure and the gap order the same way, minus the fraction they order oppositely. The *pooled* $\tau$ uses all pairs of models. The *granulated* $\Psi$ (their §2.2) computes $\tau$ only over pairs that differ in a single hyperparameter, then averages over hyperparameters. Why might a measure have a high pooled $\tau$ but a low $\Psi$?
+3. Jiang et al. score each measure by rank correlation with the gap. *Kendall's $\tau$* (a rank correlation, unrelated to the prior variance $\tau^2$ of earlier sections) over a set of models is the fraction of pairs of models that the measure and the gap order the same way, minus the fraction they order oppositely. The *pooled* $\tau$ uses all pairs of models. The *granulated* $\Psi$ (their §2.2) computes $\tau$ only over pairs that differ in a single hyperparameter, then averages over hyperparameters. Why might a measure have a high pooled $\tau$ but a low $\Psi$?
 
 <details><summary>Hint</summary>
 

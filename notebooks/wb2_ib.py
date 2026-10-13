@@ -15,6 +15,8 @@ A once-popular account said networks generalize because SGD compresses what
 their layers keep about the input; the debate that followed is a compact
 lesson in what mutual information can and cannot measure about a
 deterministic network.
+
+Notation: $X$ is the input, $T=f(X)$ a layer's activations, $I(X;T)$ their mutual information, $q_\Delta$ a discretization of $T$ with bin width $\Delta$ and $K$ bins.
 """
         + reading(
             "Opening the black box of deep neural networks via information",

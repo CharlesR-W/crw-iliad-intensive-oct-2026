@@ -18,6 +18,8 @@ REFERENCE = [
 The textbook quantities (generalization gap, excess risk, bias and variance),
 computed exactly in linear regression, where claims about generalization can
 be checked against a closed form.
+
+Notation: $X$ is the $n\times p$ design with singular values $s_k$, $\varepsilon$ the label noise with variance $\sigma^2$, $\lambda$ the ridge penalty in $\frac1n\|y-X\beta\|^2+\lambda\|\beta\|^2$ and $a=n\lambda$, $\tau^2$ a Gaussian prior variance on $\beta$; $\mu=X\beta$ in 2.3.4 is the noiseless mean vector.
 """
         + references(
             book("The Elements of Statistical Learning", ESL,
@@ -289,6 +291,8 @@ THEOREMS = [
 No free lunch, universal approximation and capacity bounds each seem to say
 deep learning should be impossible or unexplained; each is true, and the
 exercises find the assumption that keeps it from biting.
+
+Notation: $d$ is the input dimension, $d_{\mathrm{VC}}$ the VC dimension, $m$ a number of points; the $\alpha_i$ in 3.3 are Radon coefficients. No ridge penalty appears in this section.
 """
         + reading(
             "The lack of a priori distinctions between learning algorithms",
@@ -440,8 +444,8 @@ something only when $n\gg d$.
 
 For 2, sort the points: which patterns of 0s and 1s can an interval cut out?
 For 3, the halfspace $\{x:w^\top x+b\ge0\}$ and its complement are both
-convex. For Radon, solve $\sum_i\lambda_ix_i=0$, $\sum_i\lambda_i=0$ and
-split the points by the sign of $\lambda_i$. For 4, compute
+convex. For Radon, solve $\sum_i\alpha_ix_i=0$, $\sum_i\alpha_i=0$ and
+split the points by the sign of $\alpha_i$. For 4, compute
 $\omega x_i/\pi$ modulo 2: the terms with $j>i$ are even integers.
 </details>
 """
@@ -460,7 +464,7 @@ again equal to the Sauer–Shelah bound.
 
 **3.** *Lower bound.* Write the labels of $0,e_1,\dots,e_d$ as $y_0,\dots,y_d$ and let $s_i=2y_i-1\in\{\pm1\}$. Take $b=s_0/2$ and $w_i=s_i-s_0/2$. Then $w^\top0+b=s_0/2$ and $w^\top e_i+b=s_i$. Each has the sign $s_i$ and none is zero, so every labelling is produced and $d_{\mathrm{VC}}\ge d+1$.
 
-*Upper bound.* Take any $d+2$ points $x_1,\dots,x_{d+2}$. The system $\sum_i\lambda_ix_i=0$, $\sum_i\lambda_i=0$ has $d+1$ equations and $d+2$ unknowns, so it has a solution $\lambda\ne0$. Because the $\lambda_i$ sum to zero, some are positive and some negative. Let $I=\{i:\lambda_i>0\}$, let $J$ be the rest, and let $s=\sum_{i\in I}\lambda_i>0$. Then
+*Upper bound.* Take any $d+2$ points $x_1,\dots,x_{d+2}$. The system $\sum_i\alpha_ix_i=0$, $\sum_i\alpha_i=0$ has $d+1$ equations and $d+2$ unknowns, so it has a solution $\alpha\ne0$. Because the $\alpha_i$ sum to zero, some are positive and some negative. Let $I=\{i:\alpha_i>0\}$, let $J$ be the rest, and let $s=\sum_{i\in I}\alpha_i>0$. Then
 
 $$
 p=\sum_{i\in I}\frac{\lambda_i}{s}x_i=\sum_{i\in J}\frac{-\lambda_i}{s}x_i

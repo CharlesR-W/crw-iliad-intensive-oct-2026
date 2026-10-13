@@ -14,6 +14,8 @@ CELLS = [
 When a fit that passes through every noisy training point is still close to
 optimal: kernel "ridgeless" regression is a minimum-norm interpolant, and many
 weak directions act on it as an implicit ridge penalty.
+
+Notation: $\lambda$ is the ridge penalty and $a=n\lambda$; in 5.1, $k(\cdot,\cdot)$ is the kernel, $K$ the $n\times n$ kernel matrix and $s_k$ the singular values of the feature matrix; in 5.2–5.3, $k$ is the number of signal directions, $m$ the number of tail directions, $\nu$ their variance and $c=m\nu$ the tail's total variance, which acts as $n\lambda$; $\mu_{\min}(\cdot)$, $\mu_{\max}(\cdot)$ and $\mu_i$ denote eigenvalues; $\sigma^2$ is the noise variance and $r^2=\|\beta\|^2$.
 """
         + reading(
             "Surprises in high-dimensional ridgeless least squares interpolation",
@@ -74,7 +76,7 @@ is $k(x,x')=e^{-\|x-x'\|^2/(2\ell^2)}$.
 
 1. *Push-through.* For $a>0$, show that $(\Phi^\top\Phi+aI_D)^{-1}\Phi^\top=\Phi^\top(\Phi\Phi^\top+aI_n)^{-1}$. Deduce that $\hat w_\lambda=\Phi^\top\hat\alpha$ with $\hat\alpha=(K+n\lambda I_n)^{-1}y$, and that the prediction at any input $x$ is
 $$\hat f_\lambda(x)=\sum_{i=1}^n\hat\alpha_i\,k(x,x_i)=k_x^\top(K+n\lambda I_n)^{-1}y .$$
-Suppose evaluating $k$ costs $c$ operations. Compare the costs of fitting and of predicting in the primal form (a $D\times D$ solve) and the dual form (an $n\times n$ solve). When is each cheaper?
+Suppose each kernel evaluation costs a fixed number of operations. Compare the costs of fitting and of predicting in the primal form (a $D\times D$ solve) and the dual form (an $n\times n$ solve). When is each cheaper?
 2. *Representer theorem.* Let $\mathcal L:\mathbb R^n\to\mathbb R$ be any loss that depends on the parameters only through the training predictions $\Phi w$, and minimize $J(w)=\mathcal L(\Phi w)+\lambda\|w\|^2$. Show that every minimizer has the form $\Phi^\top\alpha$ for some $\alpha\in\mathbb R^n$, and rewrite $J$ in terms of $\alpha$ and $K$ only. For the squared loss $\mathcal L(v)=\frac1n\|y-v\|^2$, check that $\hat\alpha$ from part 1 minimizes the rewritten objective.
 3. *Ridgeless limit.* Assume $K$ is invertible. This needs $n\le D$; for the Gaussian kernel it holds whenever the $x_i$ are distinct. Show that as $\lambda\to0$, $\hat f_\lambda(x)\to k_x^\top K^{-1}y$, that this limit interpolates the training data, and that $\hat w_0=\Phi^\top K^{-1}y$ is the minimum-norm interpolant: it minimizes $\|w\|$ subject to $\Phi w=y$, with $\|\hat w_0\|^2=y^\top K^{-1}y$.
 4. *What the interpolant pays for.* Show that the fitted values and the norm of the fit are
@@ -200,11 +202,11 @@ $$
 $$
 Combine with 1 to write the total excess risk as roughly $\sigma^2k/n+c^2r^2/n^2+\sigma^2(n-k)/m$. State in words the two conditions under which interpolation is benign, i.e. the excess risk tends to $0$ as $n\to\infty$.
 5. *Contrast with the isotropic model.* All $p$ features $\mathcal N(0,1)$ and $n<p$; the minimum-norm excess risk is $\|\beta\|^2(1-n/p)+\sigma^2n/(p-n-1)$ (1.4, for $p>n+1$). Think of the features beyond the first few as a tail with $\nu=1$. Which of the two conditions fails near $p\approx n$, and which fails for $p\gg n$? Why can no choice of $p$ satisfy both?
-6. *Effective ranks.* For a covariance $\Sigma$ with eigenvalues $\lambda_1\ge\lambda_2\ge\dots$, Bartlett et al. define $r_j(\Sigma)=\sum_{i>j}\lambda_i/\lambda_{j+1}$ and $R_j(\Sigma)=\big(\sum_{i>j}\lambda_i\big)^2/\sum_{i>j}\lambda_i^2$, and $k^*=\min\{j\ge0:r_j(\Sigma)\ge bn\}$ for a constant $b>1$. They call a sequence of problems benign when $r_0(\Sigma)/n\to0$, $k^*/n\to0$ and $n/R_{k^*}(\Sigma)\to0$. Compute these for this model (assume $\nu<1$, $k+c<bn\le m$) and check that the three conditions are the ones you found in 4.
+6. *Effective ranks.* For a covariance $\Sigma$ with eigenvalues $\mu_1\ge\mu_2\ge\dots$, Bartlett et al. define $r_j(\Sigma)=\sum_{i>j}\mu_i/\mu_{j+1}$ and $R_j(\Sigma)=\big(\sum_{i>j}\mu_i\big)^2/\sum_{i>j}\mu_i^2$, and $k^*=\min\{j\ge0:r_j(\Sigma)\ge bn\}$ for a constant $b>1$. They call a sequence of problems benign when $r_0(\Sigma)/n\to0$, $k^*/n\to0$ and $n/R_{k^*}(\Sigma)\to0$. Compute these for this model (assume $\nu<1$, $k+c<bn\le m$) and check that the three conditions are the ones you found in 4.
 
 <details><summary>Hint</summary>
 
-For 1, write out $(X_sX_s^\top+cI_n)u=y$ and recognize $X_s^\top u$. For the tail cost, $\|\hat\beta_t\|^2=u^\top X_tX_t^\top u$. For 2, $\lambda_{\min}(XX^\top)\ge\mu_{\min}$ because $X_sX_s^\top\succeq0$, so $\|u\|\le\|y\|/\mu_{\min}$. For 3, average over $\varepsilon$ first: $\mathbb E\,\varepsilon^\top A\varepsilon=\sigma^2\mathrm{Tr}A$. For 4, a ridge estimate with $X_s^\top X_s=nI_k$ shrinks each coordinate of the signal-only least-squares estimate $(X_s^\top X_s)^{-1}X_s^\top y$ by $n/(n+c)$; add the squared bias and the variance. For the convergence of $\hat\beta_s$, write $X_tX_t^\top=c(I+\Delta)$ with $\|\Delta\|\to0$ and use $\|(A+E)^{-1}-A^{-1}\|\le\|A^{-1}\|\,\|E\|\,\|(A+E)^{-1}\|$.
+For 1, write out $(X_sX_s^\top+cI_n)u=y$ and recognize $X_s^\top u$. For the tail cost, $\|\hat\beta_t\|^2=u^\top X_tX_t^\top u$. For 2, $\mu_{\min}(XX^\top)\ge\mu_{\min}$ because $X_sX_s^\top\succeq0$, so $\|u\|\le\|y\|/\mu_{\min}$. For 3, average over $\varepsilon$ first: $\mathbb E\,\varepsilon^\top A\varepsilon=\sigma^2\mathrm{Tr}A$. For 4, a ridge estimate with $X_s^\top X_s=nI_k$ shrinks each coordinate of the signal-only least-squares estimate $(X_s^\top X_s)^{-1}X_s^\top y$ by $n/(n+c)$; add the squared bias and the variance. For the convergence of $\hat\beta_s$, write $X_tX_t^\top=c(I+\Delta)$ with $\|\Delta\|\to0$ and use $\|(A+E)^{-1}-A^{-1}\|\le\|A^{-1}\|\,\|E\|\,\|(A+E)^{-1}\|$.
 </details>
 """
     ),
@@ -218,7 +220,7 @@ For $n\gg k$, the expected squared ridge residual is about $\sigma^2(n-k)+c^2r^2
 
 Why it is cheap: $\hat\beta_t=\sum_iu_i\,x_{t,i}$ is a combination of the $n$ training tail vectors. These are nearly orthogonal in $\mathbb R^m$ (here exactly orthogonal, each of squared norm $c$), so $x_{t,i}^\top\hat\beta_t=cu_i$ reproduces residual $i$ at training point $i$. A fresh $x_t$ is nearly orthogonal to all of them, and $x_t^\top\hat\beta_t$ has variance $\nu\|\hat\beta_t\|^2$. The fitted function is the ridge fit plus a narrow spike at each training point, and the spikes occupy a vanishing fraction of the $m$-dimensional tail.
 
-**2.** $\nu\|\hat\beta_t\|^2=\nu\,u^\top X_tX_t^\top u\le\nu\mu_{\max}\|u\|^2$. Because $XX^\top\succeq X_tX_t^\top$, $\lambda_{\min}(XX^\top)\ge\mu_{\min}$, so $\|u\|=\|(XX^\top)^{-1}y\|\le\|y\|/\mu_{\min}$. On the event of 5.2.4, $\mu_{\min}\ge c(1-d)^2$ and $\mu_{\max}\le c(1+d)^2$, so
+**2.** $\nu\|\hat\beta_t\|^2=\nu\,u^\top X_tX_t^\top u\le\nu\mu_{\max}\|u\|^2$. Because $XX^\top\succeq X_tX_t^\top$, $\mu_{\min}(XX^\top)\ge\mu_{\min}$, so $\|u\|=\|(XX^\top)^{-1}y\|\le\|y\|/\mu_{\min}$. On the event of 5.2.4, $\mu_{\min}\ge c(1-d)^2$ and $\mu_{\max}\le c(1+d)^2$, so
 $$
 \nu\|\hat\beta_t\|^2\le\frac{\nu c(1+d)^2}{c^2(1-d)^4}\|y\|^2=\frac{\|y\|^2}{m}\cdot\frac{(1+d)^2}{(1-d)^4}.
 $$

@@ -16,6 +16,8 @@ CELLS = [
 What weight decay, early stopping, dropout and flat minima each do to the
 learned function, derived exactly in linear models, and why any claim about
 flatness needs a metric.
+
+Notation: $\lambda$ is the ridge penalty in $\frac1n\|y-X\beta\|^2+\lambda\|\beta\|^2$ (in 4.2 it is also the KKT multiplier, which turns out to be the same number), $a=n\lambda$, $s_k$ the singular values of $X$, $\sigma^2$ the noise variance, $\tau^2$ the prior variance, $\rho$ the squared constraint radius in 4.2, $t$ gradient-flow time, $q$ the dropout keep-probability, $H$ the Hessian.
 """
         + reading(
             "Sharp minima can generalize for deep nets",
@@ -43,7 +45,7 @@ flatness needs a metric.
             importance=2, length=2,
         )
         + r"""
-Also (techniques not derived here): [Tibshirani (1996)](https://doi.org/10.1111/j.2517-6161.1996.tb02080.x), the lasso and sparsity; [Bishop (1995)](https://doi.org/10.1162/neco.1995.7.1.108), training with input noise as a derivative penalty; [Chen, Dobriban and Lee (2020)](https://arxiv.org/abs/1907.10905), data augmentation as averaging over group orbits; [Loshchilov and Hutter (2019)](https://arxiv.org/abs/1711.05101), decoupled weight decay (AdamW).
+Also (techniques not derived here): [Tibshirani (1996)](https://doi.org/10.1111/j.2517-6161.1996.tb02080.x), the lasso and sparsity; [Bishop (1995)](https://doi.org/10.1162/neco.1995.7.1.108), training with small input noise equals, to second order in the noise amplitude and for the expected loss, Tikhonov regularization by the input Jacobian (a Hessian term drops out at a minimum); [Chen, Dobriban and Lee (2020)](https://arxiv.org/abs/1907.10905), data augmentation as averaging over group orbits; [Loshchilov and Hutter (2019)](https://arxiv.org/abs/1711.05101), decoupled weight decay (AdamW).
 """
         + references(
             book("Deep Learning", GBC7, "Goodfellow, Bengio and Courville (2016; free online)",
@@ -94,25 +96,25 @@ So the identification "penalty = negative log prior" holds *in a chosen parametr
     markdown(
         r"""
 **4.2. Ridge as a constraint: the Lagrange multiplier.** The second reading:
-minimize the training loss over a ball $\|b\|^2\le c$. Small balls contain few
+minimize the training loss over a ball $\|b\|^2\le \rho$. Small balls contain few
 functions, which is the capacity explanation of why regularized models
 generalize.
 
-1. For $c>0$, show that a minimizer of $\hat R_n(b)=\frac1n\|y-Xb\|^2$ subject to $\|b\|^2\le c$ is $\hat\beta_\lambda$, where $\lambda$ is the KKT (Lagrange) multiplier. Interpret $\hat\beta_0=X^+y$ when the design is rank deficient.
-2. Show that $c(\lambda)=\|\hat\beta_\lambda\|^2$ is strictly decreasing when $X^\top y\neq0$. Hence $\lambda(c)$ is well defined for $c<\|X^+y\|^2$, and $\lambda=0$ for $c\ge\|X^+y\|^2$.
+1. For $\rho>0$, show that a minimizer of $\hat R_n(b)=\frac1n\|y-Xb\|^2$ subject to $\|b\|^2\le \rho$ is $\hat\beta_\lambda$, where $\lambda$ is the KKT (Lagrange) multiplier. Interpret $\hat\beta_0=X^+y$ when the design is rank deficient.
+2. Show that $\rho(\lambda)=\|\hat\beta_\lambda\|^2$ is strictly decreasing when $X^\top y\neq0$. Hence $\lambda(\rho)$ is well defined for $\rho<\|X^+y\|^2$, and $\lambda=0$ for $\rho\ge\|X^+y\|^2$.
 3. In this view, what explains why the constrained estimator generalizes? Which objection from the random-label experiments (keystone) applies to that explanation?
 
 <details><summary>Hint</summary>
 
-For 1, write the Lagrangian $\hat R_n(b)+\lambda(\|b\|^2-c)$ with $\lambda\ge0$, set its gradient to zero, and use complementary slackness. For 2, write $\|\hat\beta_\lambda\|^2$ in the SVD of $X$ and look at each term as a function of $\lambda$. For 3, recall 2.1.3; the Rademacher complexity of a norm ball of linear predictors is in *Understanding Machine Learning* §26.2.
+For 1, write the Lagrangian $\hat R_n(b)+\lambda(\|b\|^2-\rho)$ with $\lambda\ge0$, set its gradient to zero, and use complementary slackness. For 2, write $\|\hat\beta_\lambda\|^2$ in the SVD of $X$ and look at each term as a function of $\lambda$. For 3, recall 2.1.3; the Rademacher complexity of a norm ball of linear predictors is in *Understanding Machine Learning* §26.2.
 </details>
 """
     ),
     answer(
         r"""
-**1.** The problem is convex, and Slater's condition holds for $c>0$. The Lagrangian is $\hat R_n(b)+\lambda(\|b\|^2-c)$ with $\lambda\ge0$. Stationarity gives $-\frac2nX^\top(y-Xb)+2\lambda b=0$, i.e. $b=(X^\top X+n\lambda I)^{-1}X^\top y=\hat\beta_\lambda$ for $\lambda>0$. For $\lambda=0$, use the minimum-norm least-squares solution $X^+y$; other feasible least-squares solutions may also minimize when $X$ is rank deficient. Complementary slackness says either $\lambda=0$ (the constraint need not be strictly slack) or $\|\hat\beta_\lambda\|^2=c$.
+**1.** The problem is convex, and Slater's condition holds for $\rho>0$. The Lagrangian is $\hat R_n(b)+\lambda(\|b\|^2-\rho)$ with $\lambda\ge0$. Stationarity gives $-\frac2nX^\top(y-Xb)+2\lambda b=0$, i.e. $b=(X^\top X+n\lambda I)^{-1}X^\top y=\hat\beta_\lambda$ for $\lambda>0$. For $\lambda=0$, use the minimum-norm least-squares solution $X^+y$; other feasible least-squares solutions may also minimize when $X$ is rank deficient. Complementary slackness says either $\lambda=0$ (the constraint need not be strictly slack) or $\|\hat\beta_\lambda\|^2=\rho$.
 
-**2.** In the SVD, $\|\hat\beta_\lambda\|^2=\sum_k\frac{s_k^2(u_k^\top y)^2}{(s_k^2+n\lambda)^2}$. Each term is non-increasing in $\lambda$, and at least one is strictly decreasing when $X^\top y\ne0$. As $\lambda\downarrow0$ the norm rises to $\|X^+y\|^2$, the minimum-norm least-squares solution, and as $\lambda\to\infty$ it falls to $0$. So the map from $c$ to $\lambda$ is a decreasing bijection on $(0,\|X^+y\|^2)$. Tighter constraints need bigger multipliers.
+**2.** In the SVD, $\|\hat\beta_\lambda\|^2=\sum_k\frac{s_k^2(u_k^\top y)^2}{(s_k^2+n\lambda)^2}$. Each term is non-increasing in $\lambda$, and at least one is strictly decreasing when $X^\top y\ne0$. As $\lambda\downarrow0$ the norm rises to $\|X^+y\|^2$, the minimum-norm least-squares solution, and as $\lambda\to\infty$ it falls to $0$. So the map from $\rho$ to $\lambda$ is a decreasing bijection on $(0,\|X^+y\|^2)$. Tighter constraints need bigger multipliers.
 
 **3.** The explanation is capacity. The norm ball $\{x\mapsto x^\top b:\|b\|\le B\}$ has Rademacher complexity of order $B\sqrt{\mathbb E\|x\|^2/n}$ (quoted), which controls prediction complexity. To turn this into a squared-loss gap bound, additionally control the input norms and labels (or suitable tails), so the loss is Lipschitz on the allowed prediction range. Small enough complexity then gives an excess-risk bound via 2.1.3. This inherits two problems. The norm depends on the parametrization (4.1.3, 4.5), and Zhang et al.'s objection applies: nets with weight decay still fit random labels, so the constraint that is actually active is not small.
 """
@@ -182,7 +184,7 @@ $\xi_{ij}\sim\mathrm{Bernoulli}(q)$, where $q$ is the keep probability; the
 $1/q$ keeps $\mathbb E\tilde x_{ij}=x_{ij}$.
 
 1. Show that $\mathbb E_\xi\frac1n\sum_i(y_i-\tilde x_i^\top\beta)^2=\frac1n\|y-X\beta\|^2+\frac{1-q}{q}\sum_j\beta_j^2\,\frac{\|x_{\cdot j}\|^2}{n}$, where $x_{\cdot j}$ is the $j$-th column of $X$.
-2. Write the penalty as $\beta^\top\Gamma\beta$. Show that it is invariant under rescaling a feature ($x_{\cdot j}\to cx_{\cdot j}$, $\beta_j\to\beta_j/c$), while the ridge penalty is not. Which standard procedure is it equivalent to?
+2. Write the penalty as $\beta^\top\Gamma\beta$. Show that it is invariant under rescaling a feature ($x_{\cdot j}\to \alpha x_{\cdot j}$, $\beta_j\to\beta_j/\alpha$), while the ridge penalty is not. Which standard procedure is it equivalent to?
 3. Take a generalized linear model with per-example loss $A(x^\top\beta)-y\,x^\top\beta$ (for logistic regression, $A(\eta)=\log(1+e^\eta)$). Expand to second order in the dropout noise and show that the expected penalty is approximately $\frac{1-q}{2q}\cdot\frac1n\sum_iA''(x_i^\top\beta)\sum_jx_{ij}^2\beta_j^2$. In what sense is this "adaptive"?
 
 <details><summary>Hint</summary>
@@ -195,7 +197,7 @@ Write $\tilde x_i^\top\beta=x_i^\top\beta+\sum_jx_{ij}\beta_j(\xi_{ij}/q-1)$. Th
         r"""
 **1.** Let $\eta_i=x_i^\top\beta$ and $\delta_i=\tilde x_i^\top\beta-\eta_i=\sum_jx_{ij}\beta_j(\xi_{ij}/q-1)$. Then $\mathbb E\delta_i=0$ and, by independence, $\mathrm{Var}\,\delta_i=\frac{1-q}{q}\sum_jx_{ij}^2\beta_j^2$. So $\mathbb E(y_i-\eta_i-\delta_i)^2=(y_i-\eta_i)^2+\mathrm{Var}\,\delta_i$. Averaging over $i$ gives the penalty $\frac{1-q}{q}\sum_j\beta_j^2\|x_{\cdot j}\|^2/n$.
 
-**2.** $\Gamma=\frac{1-q}{q}\,\mathrm{diag}(X^\top X/n)$. Under $x_{\cdot j}\to cx_{\cdot j}$, $\beta_j\to\beta_j/c$, the product $\beta_j^2\|x_{\cdot j}\|^2$ is unchanged, while ridge's $\beta_j^2$ changes by $1/c^2$. Dropout on inputs is ridge after standardizing each feature by its root mean square: ridge in the metric $\mathrm{diag}(\hat\Sigma)$.
+**2.** $\Gamma=\frac{1-q}{q}\,\mathrm{diag}(X^\top X/n)$. Under $x_{\cdot j}\to \alpha x_{\cdot j}$, $\beta_j\to\beta_j/\alpha$, the product $\beta_j^2\|x_{\cdot j}\|^2$ is unchanged, while ridge's $\beta_j^2$ changes by $1/\alpha^2$. Dropout on inputs is ridge after standardizing each feature by its root mean square: ridge in the metric $\mathrm{diag}(\hat\Sigma)$.
 
 **3.** $\mathbb E\tilde x_i^\top\beta=\eta_i$, so the linear term $-y\,\tilde x_i^\top\beta$ is unchanged in expectation. A second-order expansion gives $\mathbb E A(\eta_i+\delta_i)\approx A(\eta_i)+\tfrac12A''(\eta_i)\mathrm{Var}\,\delta_i$, so the penalty is $\frac1n\sum_i\tfrac12A''(\eta_i)\frac{1-q}{q}\sum_jx_{ij}^2\beta_j^2$. For logistic regression $A''(\eta)=\hat p(1-\hat p)$, the Fisher information of the example. The penalty is ridge in the metric of the diagonal Fisher information. Confidently classified examples contribute little, and features that matter on uncertain examples are penalized most. "Adaptive" because the metric depends on the current $\beta$. For squared loss written as $\tfrac12(y-\eta)^2$, $A''=1$, which recovers 1 up to the factor $\tfrac12$ of that convention.
 

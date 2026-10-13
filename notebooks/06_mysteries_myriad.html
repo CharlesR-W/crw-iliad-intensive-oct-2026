@@ -284,7 +284,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <summary><h2 id="3-model-stitching-works">3. Model stitching works</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-3"></a>
-<p>The bottom of one trained network joins the top of another through a single linear layer with little loss, so separately trained networks represent things almost the same way (see WB5, representation similarity).</p>
+<p>The bottom of one trained network joins the top of another through a single linear layer with little loss, so separately trained networks represent things almost the same way (see <a href="05_universality.html#wb5-section-4">WB5, section ‘Same representation? CKA, CCA, and the Platonic and linear representation hypotheses’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2106.07682">Revisiting model stitching to compare neural representations</a></strong>, Bansal, Nakkiran &amp; Barak (NeurIPS 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
@@ -308,7 +308,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <summary><h2 id="5-superposition-and-adversarial-attacks-and-on-you-too">5. Superposition and adversarial attacks (and on you too)</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-5"></a>
-<p>Networks store more sparse features than they have dimensions, in almost-orthogonal directions; adversarial examples may exploit this interference, or features that are predictive but brittle, and some even bias briefly shown humans (see WB5, linear representation hypothesis).</p>
+<p>Networks store more sparse features than they have dimensions, in almost-orthogonal directions; adversarial examples may exploit this interference, or features that are predictive but brittle, and some even bias briefly shown humans (see <a href="05_universality.html#wb5-section-4">WB5, section ‘Same representation? CKA, CCA, and the Platonic and linear representation hypotheses’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://transformer-circuits.pub/2022/toy_model/index.html">Toy models of superposition</a></strong>, Elhage et al. (Anthropic, 2022; also arXiv 2209.10652) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
@@ -480,7 +480,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <li>(c) Show that <span class="math inline">Hw=-g</span>. Deduce that <span class="math inline">w^\top Hw=0</span>. When is <span class="math inline">w</span> an eigenvector of <span class="math inline">H</span> with eigenvalue 0, and why is it not one in general?</li>
 <li>(d) For a gradient step <span class="math inline">w&#39;=w-\eta g</span>, show that <span class="math inline">\lVert w&#39;\rVert^2=\lVert w\rVert^2+\eta^2\lVert g\rVert^2</span>. Using (b), separate the effect of changing <span class="math inline">\lVert w\rVert</span> from that of changing the direction <span class="math inline">u=w/\lVert w\rVert</span>. What effective step size acts on the direction?</li>
 </ul>
-<p>As with layer rescaling in ReLU networks (Dinh et al., <em>Sharp minima can generalize</em>, in WB2), curvature measured in these weights is not a property of the function alone.</p>
+<p>As with layer rescaling in ReLU networks (Dinh et al., <em>Sharp minima can generalize</em>, in <a href="02_statistical_learning.html#wb2-section-4">WB2, section ‘Regularization: prior, constraint, filter, flatness’</a>), curvature measured in these weights is not a property of the function alone.</p>
 
 <details class="solution">
 <summary>Solution</summary>
@@ -501,7 +501,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <summary><h2 id="11-low-rank-rl-updates-and-the-kl-leash">11. Low-rank RL updates and the KL leash</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-11"></a>
-<p>RL fine-tuning of LLMs is reported to change few parameters yet at full rank, or to be dominated by one rank-1 direction, and to forget less than SFT; how these fit together, and how much is a bfloat16 artifact, is open (KL-regularized optimum: WB1, planning as inference).</p>
+<p>RL fine-tuning of LLMs is reported to change few parameters yet at full rank, or to be dominated by one rank-1 direction, and to forget less than SFT; how these fit together, and how much is a bfloat16 artifact, is open (KL-regularized optimum: <a href="01_deprecated_intelligence_then_and_now.html#wb1-section-3">WB1 (deprecated), section ‘From Bellman to AlphaZero’, exercises ‘planning as inference’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2505.11711">Reinforcement learning finetunes small subnetworks in large language models</a></strong>, Mukherjee, Yuan, Hakkani-Tür &amp; Peng (NeurIPS 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
@@ -570,7 +570,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <summary><h2 id="12-physics-of-language-models">12. Physics of language models</h2></summary>
 <div class="sec-body">
 <a id="wb6-section-12"></a>
-<p>Transformers trained on a deep, ambiguous synthetic grammar learn to parse it, though nothing in the architecture is built for parsing (data-model side: WB4, hierarchical representations).</p>
+<p>Transformers trained on a deep, ambiguous synthetic grammar learn to parse it, though nothing in the architecture is built for parsing (data-model side: <a href="04_inductive_bias.html#wb4-section-5">WB4, section ‘Hierarchical representations’</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2305.13673">Physics of language models: Part 1, learning hierarchical language structures</a></strong>, Allen-Zhu &amp; Li (2023; <a href="https://physics.allen-zhu.com/">project page</a>, with the later parts) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>

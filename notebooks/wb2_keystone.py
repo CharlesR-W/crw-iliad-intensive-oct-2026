@@ -55,6 +55,8 @@ Every later section of this workbook is a response to one of these
 observations. The readings below give an overview of these observations.
 Readers should feel free to read them in as much depth as their interest and
 time permit, as guided by the marked importance and length.
+
+Notation (used throughout the workbook): $n$ samples, $p$ parameters or features, $\gamma=p/n$; $\sigma^2$ is the label-noise variance, $\tau^2$ a Gaussian prior variance on the coefficients $\beta$, $r^2=\|\beta\|^2$, and $\lambda$ the ridge penalty in $\frac1n\|y-X\beta\|^2+\lambda\|\beta\|^2$.
 """
         + reading(
             "The paper that killed deep learning theory",

@@ -49,7 +49,7 @@ Why it's here: the loss of a language model is a predictable, smooth function of
         length=3,
     ) + r"""
 
-**Smooth power laws nobody designed in.** Kaplan et al. train transformer language models with up to about $10^9$ non-embedding parameters $N$. When not bottlenecked by the others, test loss falls as $L(N)\approx(N_c/N)^{\alpha_N}$ with $\alpha_N\approx0.076$, and as similar power laws in dataset size $D$ ($\alpha_D\approx0.095$) and in compute ($\alpha_C\approx0.050$), with some trends spanning more than seven orders of magnitude. Loss on other text datasets follows the same power with an offset. Nothing in the architecture, the optimizer or the data was chosen to produce this. It made training a much larger model a predictable investment rather than a gamble. Fitting these curves and allocating compute between parameters and data (Chinchilla) is in WB3, scale section.
+**Smooth power laws nobody designed in.** Kaplan et al. train transformer language models with up to about $10^9$ non-embedding parameters $N$. When not bottlenecked by the others, test loss falls as $L(N)\approx(N_c/N)^{\alpha_N}$ with $\alpha_N\approx0.076$, and as similar power laws in dataset size $D$ ($\alpha_D\approx0.095$) and in compute ($\alpha_C\approx0.050$), with some trends spanning more than seven orders of magnitude. Loss on other text datasets follows the same power with an offset. Nothing in the architecture, the optimizer or the data was chosen to produce this. It made training a much larger model a predictable investment rather than a gamble. Fitting these curves and allocating compute between parameters and data (Chinchilla) is in [WB3, section 'Why scale? Should you consume more tokens?'](03_why_llms.html#wb3-section-6).
 
 **Architecture mostly sets constants.** At fixed $N$, the loss varies only a few percent over a wide range of shapes. The aspect ratio $d_{\rm model}/n_{\rm layer}$ can vary by a factor of 40 at little cost (Figure 5), and models of different depths fall on one curve once embedding parameters are excluded (Figure 6). [§3](#wb5-section-3) extends this across architecture families: most changes shift the curve by a constant factor in compute and rarely change its slope. Kaplan's exception is instructive. LSTMs match transformers on early tokens of the context but cannot use long contexts, so they scale worse (Figure 7). This is another bitter lesson: what matters is scale, not cleverness in the layers.
 """),
@@ -180,11 +180,11 @@ Since 2017, challengers to and refinements of the transformer have mostly moved 
         importance=2,
         length=1,
     ) + r"""
-In vision, NFNet CNNs match vision transformers at equal compute (WB3).
+In vision, NFNet CNNs match vision transformers at equal compute ([WB3, section 'The opposite thesis: symmetry as inductive bias'](03_why_llms.html#wb3-section-5)).
 
 ### Exercises: what a constant factor is worth
 
-**Exercise 3.1 (Fermi).** Write the reducible loss as $R(C)=A\,C^{-\alpha}$ in training compute $C$. Take $\alpha\approx0.05$ (Kaplan et al.'s exponent for loss against compute), and redo (a) with $\alpha\approx0.15$, roughly the Chinchilla fit's exponent for the reducible loss at compute-optimal allocation (WB3, scale section).
+**Exercise 3.1 (Fermi).** Write the reducible loss as $R(C)=A\,C^{-\alpha}$ in training compute $C$. Take $\alpha\approx0.05$ (Kaplan et al.'s exponent for loss against compute), and redo (a) with $\alpha\approx0.15$, roughly the Chinchilla fit's exponent for the reducible loss at compute-optimal allocation ([WB3, section 'Why scale? Should you consume more tokens?'](03_why_llms.html#wb3-section-6)).
 
 (a) Architecture B has $R_B(C)=(A/m)\,C^{-\alpha}$ with $m>1$: same exponent, better constant. Show that B at compute $C$ matches A at compute $m^{1/\alpha}C$ for every $C$. Ho et al. estimate the transformer's gain at about $7\times$ in compute. What reduction of reducible loss is that? What about the roughly $10^4\times$ of training compute separating GPT-2 from frontier models a few years later?
 
@@ -244,7 +244,7 @@ Different networks seem to learn similar representations, perhaps converging on 
         importance=3,
         length=3,
     ) + r"""
-Also: [Neural thermodynamics](https://arxiv.org/abs/2505.12387), Ziyin, Xu & Chuang (2025), the same entropic-force argument applied more broadly. SVCCA, model stitching and superposition are in WB6.
+Also: [Neural thermodynamics](https://arxiv.org/abs/2505.12387), Ziyin, Xu & Chuang (2025), the same entropic-force argument applied more broadly. SVCCA, model stitching and superposition are in WB6 (sections ['Bottom-up learning'](06_mysteries_myriad.html#wb6-section-2), ['Model stitching works'](06_mysteries_myriad.html#wb6-section-3) and ['Superposition and adversarial attacks'](06_mysteries_myriad.html#wb6-section-5)).
 
 ### Exercises: similarity invariances
 

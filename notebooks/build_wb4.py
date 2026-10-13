@@ -106,8 +106,8 @@ and points to singular learning theory as a route.
 a model wastes on data that did not occur, while Kolmogorov complexity and MDL penalize
 description length; they agree at leading order for regular models and part elsewhere.
 
-For $p$ parameters and $n$ samples, both give a penalty of about $\tfrac p2\ln n$ (BIC,
-WB2). For singular models the volume penalty's $\tfrac p2$ becomes the learning
+For $p$ parameters and $n$ samples, both give a penalty of about $\tfrac p2\ln n$ (BIC; WB2,
+section "Bayes and MLE generalization error"). For singular models the volume penalty's $\tfrac p2$ becomes the learning
 coefficient $\lambda\le\tfrac p2$ (the SLT day): the evidence measures the volume of
 near-optimal parameters, not the parameter count.
 
@@ -148,7 +148,7 @@ near-optimal parameters, not the parameter count.
 
 These are the standard short arguments. Kolmogorov complexity is also uncomputable (the
 Berry-paradox argument) and can only be approximated from above; Rathmanner and Hutter
-§5.9 (section 3) covers this.
+§5.9 (in the reading list of section 3, "Solomonoff and its limits") covers this.
 """
     ),
     markdown(
@@ -433,6 +433,19 @@ kernel can do, and from what gradient search actually achieves.
             importance=4,
             length=2,
         )
+        + reading(
+            "Hidden progress in deep learning: SGD learns parities near the computational limit",
+            "https://arxiv.org/abs/2207.08799",
+            "Boaz Barak, Benjamin L. Edelman, Surbhi Goel, Sham Kakade, Eran Malach and Cyril Zhang, NeurIPS 2022",
+            r"The empirical row of the table: SGD on small MLPs does learn $k$-sparse "
+            r"parities, after a number of steps polynomial in $d$ with a $k$-dependent "
+            r"exponent (roughly $d^{k-1}$ in the regime of their analysis, far below the "
+            r"$\sim d^k$ kernel scale and far above $k\log_2d$); progress is invisible "
+            r"to the loss until a sharp transition.",
+            r"Sections 1–3 for the phenomenon and the Fourier-gap mechanism; the rest is proofs.",
+            importance=3,
+            length=3,
+        )
         + r"""
 
 Also: [Width-robust learnability in mean-field Bayesian neural networks](https://arxiv.org/abs/2607.05735) (Vaintrob and Hänni 2026), the mean-field counterpart.
@@ -462,6 +475,11 @@ and deduce $\mathbb E_S\lVert\hat f-\chi_S\rVert^2\ge1-n/N$ for a uniformly rand
 **(c)** Put in $d=100$, $k=5$. What does each result say, and not say, about networks
 trained by SGD?
 
+**(d) Optional, empirical.** Train a small MLP by SGD on $k=3$ for a few values of $d$,
+record the number of samples at which test error first drops well below $1/2$, and fit a
+slope on log–log axes. Theory only brackets the answer, between $\log_2d$-ish (a) and
+$d^k$ (b); report what you get.
+
 <details><summary>Hints</summary>
 
 (a) $\chi_S\chi_T=\chi_{S\triangle T}$, and a non-constant parity has mean zero; then a
@@ -483,7 +501,9 @@ $$
 
 by Bessel. Since $\hat f\in V$, $\lVert\hat f-\chi_S\rVert^2\ge1-\lVert P_V\chi_S\rVert^2$; averaging over $S$ gives $1-n/N$. The predictor $\hat f=0$ already has error 1, so any fixed kernel needs $n$ of order $\binom dk\approx d^k/k!$ to do much better. (A posterior *sample* is the mean plus label-independent noise, which only adds error.)
 
-**(c)** $N=\binom{100}5\approx7.5\times10^7$ and $\log_2N\approx26.2$: about 33 samples for $\delta=0.01$ versus tens of millions for any fixed kernel. That is the gap between a description-length (or circuit) prior and the NNGP/NTK kernel prior. But (a) is information-theoretic: the learner enumerates $N$ candidates. Gradient methods are believed to need time growing like $d^{\Omega(k)}$ on this task (statistical-query lower bounds), though few samples suffice in principle. So the gap between (a) and SGD is about *search*, not the prior: Furman's search problem.
+**(c)** $N=\binom{100}5\approx7.5\times10^7$ and $\log_2N\approx26.2$: about 33 samples for $\delta=0.01$ versus tens of millions for any fixed kernel. That is the gap between a description-length (or circuit) prior and the NNGP/NTK kernel prior. But both numbers are theory, and neither is SGD: (a) is the information-theoretic count for a learner that enumerates $N$ candidates, (b) the scale for a learner that never moves its features. A network trained by SGD sits empirically in between. Barak et al. (2022) find that online SGD on a small MLP (one fresh sample per step) learns sparse parities after a number of steps polynomial in $d$ with a $k$-dependent exponent, roughly $d^{k-1}$ in the regime of their analysis; the exponent depends on width, learning rate and $k$, and is a measured quantity rather than a theorem. Statistical-query lower bounds say any SQ algorithm needs $d^{\Omega(k)}$ queries, so the gap between (a) and SGD is about *search*, not the prior: Furman's search problem.
+
+**(d)** Expect a clean power law with an exponent well below $k$ and well above $0$; small runs at $k=3$ typically land nearer $d^{1}$–$d^{2}$ than $d^3$, and the number moves with width, learning rate and the threshold you choose. The point is the bracket, not the slope: SGD is neither the counting learner nor a fixed kernel.
 """
     ),
     # ------------------------------------------------------------- section 5
@@ -571,7 +591,7 @@ One table comparing the priors over functions met above on the two test problems
 | program length, $2^{-\ell(f)}$ (sections 2–3, keystone) | $\approx k\log_2d$ samples, information-theoretic (Ex. 4.1a) | equally short, so equally easy |
 | circuit size at fixed depth (Hänni–Vaintrob) | $\mathrm{poly}(d,C)$ samples, any width $N\ge C$ | not addressed |
 | kernel norm (NNGP, lazy/NTK) | $\gtrsim\binom dk$ samples for any fixed kernel (Ex. 4.1b) | not addressed |
-| *observed:* deep nets trained by gradient methods | time believed $d^{\Omega(k)}$ | polynomial vs exponential in $d$ (Ex. 5.1) |
+| *observed:* MLPs trained by SGD | samples between $k\log_2d$ and $d^k$: polynomial in $d$ with a $k$-dependent exponent (Barak et al. 2022, Ex. 4.1d); SQ lower bound $d^{\Omega(k)}$ queries | polynomial vs exponential in $d$ (Ex. 5.1) |
 
 Singular learning theory is not a fourth row: it describes posterior concentration in
 parameter space (section 2's volume, done correctly for singular models); see the SLT day.
