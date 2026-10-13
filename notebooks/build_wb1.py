@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Build WB1: How Deep Learning Changed How We Think about Intelligence.
+"""Build WB1 (DEPRECATED, 2026-10-13: kept for reference, not part of the day).
+How Deep Learning Changed How We Think about Intelligence.
 
 Keystone + annotated trail (reviews/2026-10-09-trail-restructure-brief.md).
 §1 is the keystone: Sutton's bitter lesson and Ngo, Chan & Mindermann's
@@ -23,7 +24,9 @@ CELLS = [
     # ------------------------------------------------------------------ title
     markdown(
         r"""
-# Workbook 1 — How Deep Learning Changed How We Think about Intelligence
+# Workbook 1 (deprecated) — How Deep Learning Changed How We Think about Intelligence
+
+> **Deprecated (2026-10-13).** This workbook is no longer part of the day; it is kept for reference only. Start with Workbook 2 onward.
 
 **Mysteries of Deep Learning, Iliad Intensive 2026**
 
@@ -761,4 +764,4 @@ One reasonable set of answers; several entries are contested.
 ]
 
 if __name__ == "__main__":
-    raise SystemExit(run(CELLS, "wb1", "01_intelligence_then_and_now"))
+    raise SystemExit(run(CELLS, "wb1", "01_deprecated_intelligence_then_and_now"))

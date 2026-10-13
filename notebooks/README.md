@@ -1,12 +1,12 @@
 # Mysteries of Deep Learning: notebooks
 
-Six workbooks. Pick whatever interests you; the sections are largely independent, and nobody is expected to finish everything.
+Five workbooks (plus a deprecated Workbook 1, kept for reference). Pick whatever interests you; the sections are largely independent, and nobody is expected to finish everything.
 
 Each workbook is a single HTML page: open it in any browser (math is typeset by KaTeX, loaded from a CDN, so the first load needs a network connection). Every exercise is followed by its worked **solution**, folded away until you click "Solution"; hints are folded the same way. The "Show all solutions" button expands or collapses every solution at once, and printing the page prints them all. Solutions are for everyone; use them however helps you learn.
 
 | WB | Title | Keystone | Notebook |
 |---|---|---|---|
-| 1 | **How Deep Learning Changed How We Think about Intelligence** | Sutton, *The bitter lesson*; Ngo, Chan & Mindermann, *The alignment problem from a deep learning perspective*. Trail: GOFAI and ideal agents; Bellman to AlphaZero (exercises); alignment in 2006/2016; alignment in 2026 | [01_intelligence_then_and_now.html](01_intelligence_then_and_now.html) |
+| 1 | **(Deprecated)** How Deep Learning Changed How We Think about Intelligence. Kept for reference, not part of the day | Sutton, *The bitter lesson*; Ngo, Chan & Mindermann, *The alignment problem from a deep learning perspective*. Trail: GOFAI and ideal agents; Bellman to AlphaZero (exercises); alignment in 2006/2016; alignment in 2026 | [01_deprecated_intelligence_then_and_now.html](01_deprecated_intelligence_then_and_now.html) |
 | 2 | **How Deep Learning Changed Statistical Learning Theory** | Vacuous bounds and double descent (Lawrence Chan's LessWrong posts, Zhang et al., Belkin et al.), with exercises. Trail: reference cases, theorems that seem to forbid learning, regularization, interpolation without harm, PAC-Bayes, Bayes vs MLE, gradient noise and curvature, the information bottleneck. The derivations workbook | [02_statistical_learning.html](02_statistical_learning.html) |
 | 3 | **Why Did LLMs Become the Dominant Paradigm?** | Gwern, *The scaling hypothesis*; Sutskever, *An observation on generalization*. Trail: generative objectives, text vs video, next-token + transformer, symmetry, Chinchilla, simulators and personae; Fermi exercises | [03_why_llms.html](03_why_llms.html) |
 | 4 | **Deep Learning as Program Synthesis** | Furman, *Deep learning as program synthesis*. Trail: Occam two ways, Solomonoff, circuit prior and sparse parity, hierarchical representations | [04_inductive_bias.html](04_inductive_bias.html) |
