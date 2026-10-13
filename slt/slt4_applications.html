@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmlkit_slt.py (slt4); do not edit by hand">
+<title>SLT Notebook 4 — Applications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --out-bg: #ffffff; --err: #b3261e;
+  --hl-kw: #8a3ea8; --hl-str: #2f7a2f; --hl-num: #a3570d; --hl-com: #7a7f86;
+  --hl-fn: #1f5f9e; --hl-bi: #0e7490;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    --out-bg: #1b1d22; --err: #f2948b;
+    --hl-kw: #d2a8ff; --hl-str: #8fd18f; --hl-num: #f0b072; --hl-com: #8b9199;
+    --hl-fn: #8ab8f0; --hl-bi: #67d0e0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  --out-bg: #1b1d22; --err: #f2948b;
+  --hl-kw: #d2a8ff; --hl-str: #8fd18f; --hl-num: #f0b072; --hl-com: #8b9199;
+  --hl-fn: #8ab8f0; --hl-bi: #67d0e0;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- TD additions: run note, code cells, outputs, embedded figures ---- */
+/* KaTeX's hidden MathML is position:absolute; keep it inside scrolling tables and displays. */
+.katex, .table-wrap, .katex-display { position: relative; }
+.run-note {
+  font: 400 .86rem/1.5 var(--sans); color: var(--muted);
+  border: 1px solid var(--rule); border-radius: 6px; padding: .6rem .8rem; margin: 0 0 1.6em;
+}
+.cell { margin: 1.2em 0; }
+pre.code { font-size: .84rem; margin: 0; border-left: 3px solid var(--rule); border-radius: 0 6px 6px 0; }
+pre.code code { font-size: 1em; }
+.cell-stub pre.code { border-left-style: dashed; }
+.solution-body pre.code { background: var(--bg); }
+.output { margin: .35em 0 0; display: flex; flex-direction: column; gap: .4em; }
+.output pre {
+  margin: 0; font: 400 .8rem/1.45 var(--mono); background: var(--out-bg);
+  border: 1px solid var(--rule); border-radius: 6px; padding: .6em .9em; white-space: pre; overflow-x: auto;
+}
+.output pre.out-stderr { color: var(--muted); }
+.output pre.out-error { color: var(--err); }
+.output img.plot { display: block; background: #fff; border: 1px solid var(--rule); border-radius: 6px; padding: 4px; }
+.solution-body .output { margin-bottom: 1em; }
+@media (max-width: 40rem) {
+  pre.code, .output pre { font-size: .74rem; }
+  .solution-body { padding-left: .7rem; padding-right: .7rem; }
+}
+.figure-frame { margin: 1em 0 1.4em; }
+.figure-frame iframe {
+  display: block; width: 100%; height: 80vh; min-height: 32rem; max-height: 62rem;
+  border: 1px solid var(--rule); border-radius: 6px; background: #fff;
+}
+.code .k, .code .kn, .code .kd, .code .kc, .code .kr, .code .ow { color: var(--hl-kw); }
+.code .s, .code .s1, .code .s2, .code .sa, .code .sd, .code .se, .code .si, .code .sb, .code .sh { color: var(--hl-str); }
+.code .m, .code .mi, .code .mf, .code .mh, .code .mo, .code .il { color: var(--hl-num); }
+.code .c, .code .c1, .code .cm, .code .ch, .code .cs { color: var(--hl-com); font-style: italic; }
+.code .nf, .code .nc, .code .nd { color: var(--hl-fn); }
+.code .nb, .code .bp { color: var(--hl-bi); }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- folded code ---- */
+article details.code { margin: 0; border-radius: 0; background: none; }
+article details.code > summary {
+  padding: .3rem .1rem; font: 500 .78rem/1.2 var(--sans); letter-spacing: .02em;
+  color: var(--muted); text-transform: none;
+}
+article details.code > summary:hover { color: var(--fg); }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, .katex-display, table, img.plot { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+  .figure-frame { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#41-stagewise-development-and-phase-transitions">4.1 Stagewise development and phase transitions</a></li>
+<li><a href="#42-susceptibilities">4.2 Susceptibilities</a></li>
+<li><a href="#43-bayesian-influence-functions">4.3 Bayesian influence functions</a></li>
+<li><a href="#44-minimum-description-length-and-compressibility">4.4 Minimum description length and compressibility</a></li>
+<li><a href="#45-programs-and-singularities">4.5 Programs and singularities</a></li>
+<li><a href="#46-background-for-the-whole-day">4.6 Background for the whole day</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="slt-notebook-4--applications">SLT Notebook 4 — Applications</h1>
+<p><strong>Singular Learning Theory, Iliad Intensive 2026</strong></p>
+<p class="run-note">To run the code, open <a href='slt4_applications.ipynb'><code>slt4_applications.ipynb</code></a> in Jupyter (CPU only; needs Python 3). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
+
+<p><em>Question:</em> what has been done with the local learning coefficient and the sampler of Notebook 3?</p>
+<p>This page is a reading list, not a notebook. Each entry gets one sentence on what it does, so that you can decide whether to open it; none is evaluated here. The entries use the day’s objects: the tempered posterior <span class="math inline">\pi_{n,\beta}\propto\varphi e^{-\beta nL_n}</span>, local expectations under it taken with stochastic gradient Langevin dynamics (SGLD), and the local learning coefficient <span class="math inline">\hat\lambda</span>. Watanabe’s two books are listed at the end as references, not as readings.</p>
+<p><strong>Route.</strong> <a href="#slt4-s1">4.1 Stagewise development</a> · <a href="#slt4-s2">4.2 Susceptibilities</a> · <a href="#slt4-s3">4.3 Bayesian influence functions</a> · <a href="#slt4-s4">4.4 Compressibility</a> · <a href="#slt4-s5">4.5 Programs and singularities</a> · <a href="#slt4-s6">4.6 Background for the whole day</a></p>
+
+<details class="sec sec2" data-sec="41-stagewise-development-and-phase-transitions">
+<summary><h2 id="41-stagewise-development-and-phase-transitions">4.1 Stagewise development and phase transitions</h2></summary>
+<div class="sec-body">
+<a id="slt4-s1"></a>
+<p><em>What this is:</em> Notebook 2 §2.3 said the posterior changes basin at critical sample sizes. These papers track <span class="math inline">\hat\lambda</span> along a training run and use its plateaus and jumps to divide training into stages.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2310.06301">Dynamical versus Bayesian Phase Transitions in a Toy Model of Superposition</a></strong>, Chen, Lau, Mendel, Wei &amp; Murfet (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>In a small autoencoder whose critical points are regular polygons, the learning coefficients of those polygons predict the posterior’s phase transitions in <span class="math inline">n</span>, and the same critical points organize what SGD training does.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2402.02364">Loss Landscape Degeneracy and Stagewise Development in Transformers</a></strong>, Hoogland, Wang, Farrugia-Roberts, Carroll, Wei &amp; Murfet (TMLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p><span class="math inline">\hat\lambda</span> measured through training of a small language model and an in-context regression transformer, with its changes marking stages that line up with changes in what the model computes.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://openreview.net/forum?id=SUc1UOWndp">Differentiation and Specialization of Attention Heads via the Refined Local Learning Coefficient</a></strong>, Wang, Hoogland, van Wingerden, Furman &amp; Murfet (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The estimator restricted to a subset of the weights or of the data (the refined LLC), used to follow individual attention heads as they take on separate roles during training. Also on arXiv as <a href="https://arxiv.org/abs/2410.02984">2410.02984</a>.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="42-susceptibilities">
+<summary><h2 id="42-susceptibilities">4.2 Susceptibilities</h2></summary>
+<div class="sec-body">
+<a id="slt4-s2"></a>
+<p><em>What this is:</em> in Notebook 1’s dictionary, a derivative of a posterior expectation with respect to a small change of the “Hamiltonian” is a susceptibility, and it equals a posterior covariance. Here the change is a reweighting of the data distribution.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2504.18274">Structural Inference: Interpreting Small Language Models with Susceptibilities</a></strong>, Baker, Wang, Hoogland &amp; Murfet (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Shifting the data distribution slightly and measuring the first-order response of a local posterior expectation, estimated with SGLD samples, gives per-component and per-token attribution scores whose low-rank structure separates functional modules of a small transformer.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2601.12703">Towards Spectroscopy: Susceptibility Clusters in Language Models</a></strong>, Gordon, Baker, Wang, Snell, van Wingerden &amp; Murfet (2026) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Susceptibilities to upweighting a token in a context, computed as covariances under the localized tempered posterior, cluster tokens that are predicted for similar reasons; applied to a 14M-parameter model.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="43-bayesian-influence-functions">
+<summary><h2 id="43-bayesian-influence-functions">4.3 Bayesian influence functions</h2></summary>
+<div class="sec-body">
+<a id="slt4-s3"></a>
+<p><em>What this is:</em> classical influence functions ask how a trained parameter moves when one training point is reweighted, and need an inverse Hessian; the Bayesian version asks how a posterior expectation moves, which is again a covariance under the local posterior.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2509.26544">Bayesian Influence Functions for Hessian-Free Data Attribution</a></strong>, Kreer, Wu, Adam, Furman &amp; Hoogland (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Replaces the inverse-Hessian step of the classical influence function by a covariance of per-sample losses under the local tempered posterior, estimated by SGLD, so that it is defined when the Hessian is singular and scales to large models.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2509.26537">The Loss Kernel: A Geometric Probe for Deep Learning Interpretability</a></strong>, Adam, Furman &amp; Hoogland (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The covariance matrix of per-sample losses under low-loss-preserving perturbations of the parameters, used as a similarity between data points and compared with semantic hierarchies on ImageNet.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="44-minimum-description-length-and-compressibility">
+<summary><h2 id="44-minimum-description-length-and-compressibility">4.4 Minimum description length and compressibility</h2></summary>
+<div class="sec-body">
+<a id="slt4-s4"></a>
+<p><em>What this is:</em> Notebook 1 §1.3 read the free energy as a code length; <span class="math inline">\lambda</span> is then the coefficient of <span class="math inline">\log n</span> in the description length of the model, and the question is whether it predicts how well a trained network compresses.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2510.12077">Compressibility Measures Complexity: Minimum Description Length Meets Singular Learning Theory</a></strong>, Urdshals, Lau, Hoogland, van Wingerden &amp; Murfet (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Extends the minimum description length principle to models with degenerate minima and reports, across the Pythia models and several compression schemes, that <span class="math inline">\hat\lambda</span> tracks (sometimes linearly) how compressible a network is.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="45-programs-and-singularities">
+<summary><h2 id="45-programs-and-singularities">4.5 Programs and singularities</h2></summary>
+<div class="sec-body">
+<a id="slt4-s5"></a>
+<p><em>What this is:</em> a line of work relating the structure of a Turing machine to the local geometry of the loss of a statistical model that encodes it. Listed for completeness; it is not on the day’s path and is not assessed here.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2103.16080">Geometry of Program Synthesis</a></strong>, Clift, Murfet &amp; Wallbridge (2021) <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Synthesis of Turing machines set up as Bayesian inference over a smooth parameter space, so that programs appear as singularities of the loss, with small experiments.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2504.08075">Programs as Singularities</a></strong>, Murfet &amp; Troiani (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>A correspondence between the structure of a Turing machine and the Taylor expansion of a negative log-likelihood at the critical point that encodes it.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="46-background-for-the-whole-day">
+<summary><h2 id="46-background-for-the-whole-day">4.6 Background for the whole day</h2></summary>
+<div class="sec-body">
+<a id="slt4-s6"></a>
+<p>Readings that serve any of Notebook 1–Notebook 3.</p>
+<div class="reading">
+
+<p><strong><a href="https://www.cs.toronto.edu/~hinton/absps/colt93.pdf">Keeping neural networks simple by minimizing the description length of the weights</a></strong>, Hinton &amp; van Camp (COLT 1993) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The code-length reading of the posterior volume (Notebook 1 §1.3), from the minimum-description-length side.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2211.10049">Recent Advances in Algebraic Geometry and Bayesian Statistics</a></strong>, Watanabe (2022) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>The author’s survey of the theory behind Notebook 2: the free energy expansion, the poles of <span class="math inline">\zeta</span>, and the generalization error.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://jmlr.org/papers/v14/watanabe13a.html">A Widely Applicable Bayesian Information Criterion</a></strong>, Watanabe (JMLR 2013) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The source of Notebook 3’s identity <span class="math inline">\mathbb E_{1/\log n}[nL_n]\approx F_n</span>.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2010.11560">Deep Learning is Singular, and That’s Good</a></strong>, Wei, Murfet, Gong, Li, Gell-Redman &amp; Quella (2020) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The case that neural networks are not regular models and that this is the right starting point for a theory of them.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/3HYqTAi4kD35G3BzQ/singular-learning-theory-exercises">Singular learning theory: exercises</a></strong>, Furman (LessWrong, 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A problem set on the volume computations of Notebook 2, with the same toy losses.</p>
+</div>
+
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="https://doi.org/10.1017/CBO9780511800474">Algebraic Geometry and Statistical Learning Theory</a>, Watanabe (Cambridge University Press, 2009), the theory of Notebook 2 with proofs; <a href="https://doi.org/10.1201/9781315373010">Mathematical Theory of Bayesian Statistics</a>, Watanabe (CRC Press, 2018), the regular case of Notebook 1 and the general case, with the WBIC.</p>
+</div>
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:slt4", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Embedded figures: fit the frame to the figure's height when the figure reports it
+  // (postMessage {type: "figure-height", height}) or when it is same-origin (served over http).
+  var frames = Array.prototype.slice.call(document.querySelectorAll(".figure-frame iframe"));
+  function fit(f, h) { if (h > 100) { f.style.height = Math.ceil(h) + 2 + "px"; f.style.maxHeight = "none"; f.style.minHeight = "0"; } }
+  window.addEventListener("message", function (e) {
+    var d = e.data;
+    if (!d || d.type !== "figure-height") return;
+    frames.forEach(function (f) { if (f.contentWindow === e.source) fit(f, d.height); });
+  });
+  function ask(f) { try { f.contentWindow.postMessage({ type: "figure-height-request" }, "*"); } catch (err) {} }
+  frames.forEach(function (f) {
+    ask(f);
+    f.addEventListener("load", function () {
+      ask(f);
+      try { var b = f.contentDocument && f.contentDocument.body, cs = b && getComputedStyle(b);
+            if (b) fit(f, b.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom)); }
+      catch (err) { /* cross-origin (file://): keep the default height, the figure scrolls */ }
+    });
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>
