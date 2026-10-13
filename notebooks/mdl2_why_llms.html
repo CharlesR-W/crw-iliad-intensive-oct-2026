@@ -149,6 +149,11 @@ details.hint > :last-child { padding-bottom: .4rem; }
 
 /* ---- readings ---- */
 .reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading.main { border-left: 4px solid var(--accent, #0b57d0); padding-left: calc(1rem - 2px); }
+.reading.main > p:first-child { font-size: 1.04em; }
+.supp { margin: 1.6em 0 .6em; padding-top: .5em; border-top: 1px solid var(--rule); color: var(--muted, #666); font-size: .92em; }
+.supp > span { font-variant: small-caps; letter-spacing: .04em; font-weight: 600; }
+.supp ~ .reading { opacity: .9; }
 .reading > p:first-child { margin-bottom: .35em; }
 .reading > p:last-child { margin-bottom: 0; }
 .tier {
@@ -249,7 +254,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb3-keystone"></a>
 <p>In 2020, just after GPT-3, Gwern argued that a simple objective plus more compute was the road to general capability; the next five years largely bore him out.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://gwern.net/scaling-hypothesis">The scaling hypothesis</a></strong>, Gwern Branwen, 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>The case that networks get more general as they get bigger, that prediction loss rewards ever deeper understanding (the section “Why does pretraining work?”: “the last bits are deepest”), and that scale, not new ideas, is the lever.</p>
@@ -270,25 +275,27 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb3-section-2"></a>
 <p>Labels and rewards carry few bits per sample and the input carries many, so most of what a system learns about the world has to come from predicting its own input.</p>
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://www.youtube.com/watch?v=Ount2Y4qxQo">LeCun, “Predictive learning” (NIPS 2016 keynote)</a></strong>, Yann LeCun, 2016 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p><strong><a href="https://www.youtube.com/watch?v=Ount2Y4qxQo">LeCun, “Predictive learning” (NIPS 2016 keynote)</a></strong>, Yann LeCun, 2016 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>The cake talk: prediction of the input is the cake, supervision the icing, reward the cherry, because that is where the bits are. Or read the paragraph in Ruder’s <a href="https://www.ruder.io/highlights-nips-2016/">Highlights of NIPS 2016</a>.</p>
 </div>
 
+<div class="supp"><span>Supplemental</span></div>
+
 <div class="reading">
 
-<p><strong><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language models are unsupervised multitask learners</a></strong>, Radford, Wu, Child, Luan, Amodei, Sutskever (GPT-2), 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p><strong><a href="https://en.wikipedia.org/wiki/Self-supervised_learning">Self-supervised learning</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The concept page: the input supplies its own targets, so no labels are needed; next-token prediction is the autoregressive case.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">Language models are unsupervised multitask learners</a></strong>, Radford, Wu, Child, Luan, Amodei, Sutskever (GPT-2), 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>Trained only on next-token prediction, GPT-2 does reading comprehension, translation and summarization zero-shot, badly but better with scale; §2 argues a task is just a kind of text.</p>
 </div>
 
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1704.01444">Learning to generate reviews and discovering sentiment</a></strong>, Alec Radford, Rafal Jozefowicz, Ilya Sutskever, 2017 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>A byte-level LSTM trained to predict Amazon reviews grows a single unit that tracks sentiment: an early case of prediction producing a concept nobody labelled.</p>
-</div>
-
-<p>Also: Karpathy, <a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">The unreasonable effectiveness of recurrent neural networks</a> (2015; the pre-transformer version of the surprise).</p>
+<p>Also: Radford, Jozefowicz, Sutskever, <a href="https://arxiv.org/abs/1704.01444">Learning to generate reviews and discovering sentiment</a> (2017; a byte-level LSTM grows a single unit that tracks sentiment, a concept nobody labelled); Karpathy, <a href="https://karpathy.github.io/2015/05/21/rnn-effectiveness/">The unreasonable effectiveness of recurrent neural networks</a> (2015; the pre-transformer version of the surprise).</p>
 <details class="sec sec3" data-sec="exercises-where-the-bits-are">
 <summary><h3 id="exercises-where-the-bits-are">Exercises: where the bits are</h3></summary>
 <div class="sec-body">
@@ -318,17 +325,13 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb3-section-3"></a>
 <p>Video has far more bits than text, but most are texture and noise, while text is data a mind has already abstracted; LeCun’s JEPA is the serious attempt to get that abstraction from video instead.</p>
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://openreview.net/forum?id=BZ5a1r-kVsf">A path towards autonomous machine intelligence</a></strong>, Yann LeCun, 2022 (position paper) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p><strong><a href="https://openreview.net/forum?id=BZ5a1r-kVsf">A path towards autonomous machine intelligence</a></strong>, Yann LeCun, 2022 (position paper) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>Argues that generating raw observations is the wrong objective for world models, and proposes JEPA: predict the <em>representation</em> of the missing input.</p>
 </div>
 
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2506.09985">V-JEPA 2: self-supervised video models enable understanding, prediction and planning</a></strong>, Assran, Bardes, Fan, et al. (Meta), 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>JEPA at scale on a million hours of video: good motion understanding and zero-shot robot planning toward image goals, but question answering still goes through a language model.</p>
-</div>
+<div class="supp"><span>Supplemental</span></div>
 
 <div class="reading">
 
@@ -336,6 +339,13 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>The generative-video counterpoint: 3-D consistency and object permanence emerge from scaling a pixel generator; its own failure list includes glass shattering (compare Exercise 3.1).</p>
 </div>
 
+<div class="reading">
+
+<p><strong><a href="https://en.wikipedia.org/wiki/World_model_(artificial_intelligence)">World model (artificial intelligence)</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The concept page: a learned model of how the environment evolves, with the generative and JEPA-style versions side by side.</p>
+</div>
+
+<p>Also: Assran, Bardes, Fan, et al., <a href="https://arxiv.org/abs/2506.09985">V-JEPA 2</a> (2025; JEPA on a million hours of video gives motion understanding and zero-shot robot planning, but question answering still goes through a language model).</p>
 <details class="sec sec3" data-sec="exercises-what-a-bit-buys">
 <summary><h3 id="exercises-what-a-bit-buys">Exercises: what a bit buys</h3></summary>
 <div class="sec-body">
@@ -366,22 +376,18 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <a id="wb3-section-4"></a>
 <p>Next-token prediction is a full model of the data whose loss is code length, every position is a training target, and a causal transformer computes all of them in one parallel pass, which is what the hardware rewards.</p>
 <p>By the chain rule <span class="math inline">q(x_{1:T})=\prod_tq(x_t\mid x_{&lt;t})</span>, so this is a parametrization, not a restriction (<a href="mdl3_program_synthesis.html#wb4-section-2">MDL3, section ‘Occam, two ways’</a> takes up loss as code length). BERT’s masked objective trains on only 15% of positions; an RNN needs <span class="math inline">T</span> sequential steps per layer where attention needs none (<a href="https://arxiv.org/abs/1706.03762">Vaswani et al. 2017</a>, Table 1).</p>
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://lilianweng.github.io/posts/2019-01-31-lm/">Generalized language models</a></strong>, Lilian Weng, 2019, updated to 2021 (blog) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>A tour of pretraining objectives from ELMo to GPT-3; the sections on GPT’s decoder-only language model and BERT’s pretraining tasks give the contrast.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2009.06489">The hardware lottery</a></strong>, Sara Hooker, 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p><strong><a href="https://arxiv.org/abs/2009.06489">The hardware lottery</a></strong>, Sara Hooker, 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>Research ideas often win because they suit the available hardware rather than because they are better; it predates the question, so apply it to transformers yourself.</p>
 </div>
 
+<div class="supp"><span>Supplemental</span></div>
+
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/2204.05832">What language model architecture and pretraining objective work best for zero-shot generalization?</a></strong>, Wang, Roberts, Hesslow, Le Scao, Chung, Beltagy, Launay, Raffel, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Controlled comparison at 5B parameters: causal next-token models generalize best zero-shot after pretraining alone, masked objectives after multitask fine-tuning; next-token prediction won the regime that turned out to matter.</p>
+<p><strong><a href="https://lilianweng.github.io/posts/2019-01-31-lm/">Generalized language models</a></strong>, Lilian Weng, 2019, updated to 2021 (blog) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A tour of pretraining objectives from ELMo to GPT-3; the sections on GPT’s decoder-only language model and BERT’s pretraining tasks give the contrast.</p>
 </div>
 
 <div class="reading">
@@ -390,7 +396,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>LLMs inside an arithmetic coder compress text, image patches and audio better than gzip, PNG and FLAC, until the model’s own size is counted; §2 sets out the equivalence.</p>
 </div>
 
-<p>Also: Horace He, <a href="https://horace.io/brrr_intro.html">Making deep learning go brrrr</a> (where GPU time goes); Jay Alammar, <a href="https://jalammar.github.io/illustrated-transformer/">The illustrated transformer</a> (if you have not met the architecture); Devlin et al., <a href="https://arxiv.org/abs/1810.04805">BERT</a> (§3.1 defines the masked objective).</p>
+<p>Also: Wang et al., <a href="https://arxiv.org/abs/2204.05832">What language model architecture and pretraining objective work best for zero-shot generalization?</a> (2022; at 5B parameters, causal next-token models generalize best zero-shot after pretraining alone); Horace He, <a href="https://horace.io/brrr_intro.html">Making deep learning go brrrr</a> (where GPU time goes); Devlin et al., <a href="https://arxiv.org/abs/1810.04805">BERT</a> (§3.1 defines the masked objective). If you have not met the architecture: Wikipedia, <a href="https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)">Transformer</a>, and 3Blue1Brown, <a href="https://www.youtube.com/watch?v=wjZofJX0v4M">Transformers, the tech behind LLMs</a> (Deep Learning ch. 5).</p>
 </div>
 </details>
 <details class="sec sec2" data-sec="5-the-opposite-thesis-symmetry-as-inductive-bias">
@@ -398,24 +404,21 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb3-section-5"></a>
 <p>Geometric deep learning says to build the domain’s symmetries into the network for sample efficiency; the transformer has little such structure, and at scale the missing bias stopped mattering.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://www.youtube.com/watch?v=w6Pw4MOzMuo">Geometric deep learning: the Erlangen programme of ML</a></strong>, Michael Bronstein, ICLR 2021 keynote <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>The blueprint: choose the symmetry group, use equivariant layers, pool locally, read out invariantly; CNNs, GNNs, DeepSets and transformers are instances.</p>
 </div>
 
+<div class="supp"><span>Supplemental</span></div>
+
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/2010.11929">An image is worth 16x16 words: transformers for image recognition at scale</a></strong>, Dosovitskiy et al. (ViT), 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p><strong><a href="https://arxiv.org/abs/2010.11929">An image is worth 16x16 words: transformers for image recognition at scale</a></strong>, Dosovitskiy et al. (ViT), 2020 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>A plain transformer on image patches trails ResNets on ImageNet alone but matches or beats them when pretrained on 14M–300M images: “large scale training trumps inductive bias.”</p>
 </div>
 
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2310.16764">ConvNets match vision transformers at scale</a></strong>, Smith, Brock, Berrada, De (DeepMind), 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>The other half: at matched compute on JFT-4B, NFNet CNNs match ViTs with the same kind of scaling law, so neither inductive bias wins.</p>
-</div>
-
+<p>Also: Smith, Brock, Berrada, De, <a href="https://arxiv.org/abs/2310.16764">ConvNets match vision transformers at scale</a> (2023; at matched compute on JFT-4B, NFNet CNNs match ViTs with the same kind of scaling law, so neither inductive bias wins).</p>
 <div class="refs">
 
 <p><strong>For reference (books):</strong> <a href="https://www.deeplearningbook.org/contents/convnets.html">Deep Learning</a>, Goodfellow, Bengio, Courville, ch. 9, §9.2 and §9.4 (convolution as an infinitely strong prior); <a href="https://arxiv.org/abs/2104.13478">Geometric deep learning: grids, groups, graphs, geodesics, and gauges</a>, Bronstein, Bruna, Cohen, Veličković, §3 (the blueprint is §3.5).</p>
@@ -474,11 +477,13 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <a id="wb3-section-6"></a>
 <p>Loss falls as a power law in model size and data, so a compute budget has an optimal split between the two, and serving costs push that split toward smaller models trained on more tokens.</p>
 <p>Kaplan et al. 2020, <a href="https://arxiv.org/abs/2001.08361">Scaling laws for neural language models</a>, is the keystone of <a href="mdl4_mysteries.html#wb5-keystone">MDL4, section ‘Keystone: scaling laws’</a>; here it appears only as the allocation that Chinchilla corrected (Exercise 6.2).</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/2203.15556">Training compute-optimal large language models</a></strong>, Hoffmann, Borgeaud, Mensch, et al. (DeepMind, “Chinchilla”), 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>At fixed compute, scale parameters and tokens together; Chinchilla (70B parameters, 1.4T tokens) beats the 280B Gopher at the same compute. §3.3 and Appendix D.2 are the fit of Exercise 6.1.</p>
 </div>
+
+<div class="supp"><span>Supplemental</span></div>
 
 <div class="reading">
 
@@ -486,7 +491,13 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Plugs the Chinchilla fit into how much text exists and concludes that data, not parameters, becomes the binding constraint.</p>
 </div>
 
-<p>Also: EleutherAI, <a href="https://blog.eleuther.ai/transformer-math/">Transformer math 101</a> (derives <span class="math inline">C\approx6ND</span> and training memory).</p>
+<div class="reading">
+
+<p><strong><a href="https://en.wikipedia.org/wiki/Neural_scaling_law">Neural scaling law</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The concept page: loss as a power law in parameters, data and compute, with the Kaplan and Chinchilla fits and their exponents in one place.</p>
+</div>
+
+<p>Also: EleutherAI, <a href="https://blog.eleuther.ai/transformer-math/">Transformer math 101</a> (derives <span class="math inline">C\approx6ND</span> and training memory); Epoch AI, <a href="https://epoch.ai/publications/chinchilla-scaling-a-replication-attempt">Chinchilla scaling: a replication attempt</a> (2024; the re-fit discussed in Exercise 6.1(d)).</p>
 <details class="sec sec3" data-sec="exercises-compute-optimal-allocation">
 <summary><h3 id="exercises-compute-optimal-allocation">Exercises: compute-optimal allocation</h3></summary>
 <div class="sec-body">
@@ -559,11 +570,13 @@ D_{\text{opt}}=\frac{9.6\times10^{22}}{3.2\times10^{10}}\approx3.0\times10^{12},
 <div class="sec-body">
 <a id="wb3-section-7"></a>
 <p>Next-token prediction on human text produces a model of the text’s authors rather than an agent: prompting conditions on who is writing, and post-training selects one character, the assistant.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://www.lesswrong.com/posts/vJFdjigzmcXMhNTsx/simulators">Simulators</a></strong>, janus, 2022 (LessWrong) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>A self-supervised language model is a <em>simulator</em> of its training distribution that, when sampled, runs <em>simulacra</em>, which may be agentic even though the simulator is not.</p>
 </div>
+
+<div class="supp"><span>Supplemental</span></div>
 
 <div class="reading">
 
@@ -571,19 +584,7 @@ D_{\text{opt}}=\frac{9.6\times10^{22}}{3.2\times10^{10}}\approx3.0\times10^{12},
 <p>The assistant is a character with a nearly empty specification, so the base model fills it from whatever its training data say about AI assistants, fiction and alignment writing included.</p>
 </div>
 
-<div class="reading">
-
-<p><strong><a href="https://alignment.anthropic.com/2026/psm">The persona selection model: why AI assistants might behave like humans</a></strong>, Sam Marks, Jack Lindsey, Chris Olah (Anthropic), 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Post-training mostly selects one of the characters pretraining taught, so human-like behaviour is the default, and narrow fine-tuning can shift which persona the model infers it is.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2601.10387">The assistant axis: situating and stabilizing the default persona of language models</a></strong>, Lu, Gallagher, Michala, Fish, Lindsey (Anthropic), 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>One activation direction tracks how assistant-like the current character is; drift along it predicts slipping into other characters, and capping it resists that drift and some jailbreaks.</p>
-</div>
-
-<p>Also: nostalgebraist, <a href="https://www.lesswrong.com/posts/pv7Qpu8WSge8NRbpB">larger language models may disappoint you</a> (2021; a prompt is evidence about what document this is); Gwern, <a href="https://gwern.net/gpt-3#prompts-as-programming">GPT-3 creative fiction: prompts as programming</a> (2020; models “are not ‘an’ agent, because they are every agent”).</p>
+<p>Also: Marks, Lindsey, Olah, <a href="https://alignment.anthropic.com/2026/psm">The persona selection model</a> (2026; post-training selects one of the characters pretraining taught) and Lu et al., <a href="https://arxiv.org/abs/2601.10387">The assistant axis</a> (2026; one activation direction tracks how assistant-like the current character is); nostalgebraist, <a href="https://www.lesswrong.com/posts/pv7Qpu8WSge8NRbpB">larger language models may disappoint you</a> (2021; a prompt is evidence about what document this is); Gwern, <a href="https://gwern.net/gpt-3#prompts-as-programming">GPT-3 creative fiction: prompts as programming</a> (2020; models “are not ‘an’ agent, because they are every agent”).</p>
 </div>
 </details>
 

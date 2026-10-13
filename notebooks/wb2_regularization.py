@@ -29,23 +29,32 @@ Notation: $\lambda$ is the ridge penalty in $\frac1n\|y-X\beta\|^2+\lambda\|\bet
             importance=5, length=3,
         )
         + reading(
-            "A continuous-time view of early stopping for least squares regression",
-            "https://arxiv.org/abs/1810.10082",
-            "Alnur Ali, J. Zico Kolter, Ryan J. Tibshirani (AISTATS 2019)",
-            r"Compares the risks of gradient flow and ridge along the whole path, under the calibration "
-            r"$t=1/\lambda$; the exact version of 4.3.3.",
-            importance=2, length=3,
+            "Ridge regression",
+            "https://en.wikipedia.org/wiki/Ridge_regression",
+            "Wikipedia",
+            "The closed form, the Bayesian reading, and the shrinkage of each singular direction; "
+            "4.1–4.3 derive all three and compare what they predict.",
+            importance=5, length=2,
+        )
+        + supplemental()
+        + reading(
+            "Early stopping",
+            "https://en.wikipedia.org/wiki/Early_stopping",
+            "Wikipedia",
+            "Stopping gradient descent before convergence as a regularizer, and its relation to ridge "
+            "in the spectral picture of 4.3.",
+            importance=2, length=2,
         )
         + reading(
-            "Dropout training as adaptive regularization",
-            "https://arxiv.org/abs/1307.1493",
-            "Stefan Wager, Sida Wang, Percy Liang (NeurIPS 2013)",
-            "Dropout in generalized linear models is, to second order, an L2 penalty in the metric of the "
-            "diagonal Fisher information (4.4.3).",
+            "Dilution (neural networks)",
+            "https://en.wikipedia.org/wiki/Dilution_(neural_networks)",
+            "Wikipedia",
+            "Dropout and its relatives: what is dropped, how the test-time network is rescaled, and the "
+            "ensemble reading; 4.4 derives the penalty it adds in a linear model.",
             importance=2, length=2,
         )
         + r"""
-Also (techniques not derived here): [Tibshirani (1996)](https://doi.org/10.1111/j.2517-6161.1996.tb02080.x), the lasso and sparsity; [Bishop (1995)](https://doi.org/10.1162/neco.1995.7.1.108), training with small input noise equals, to second order in the noise amplitude and for the expected loss, Tikhonov regularization by the input Jacobian (a Hessian term drops out at a minimum); [Chen, Dobriban and Lee (2020)](https://arxiv.org/abs/1907.10905), data augmentation as averaging over group orbits; [Loshchilov and Hutter (2019)](https://arxiv.org/abs/1711.05101), decoupled weight decay (AdamW).
+Also (techniques not derived here): [Tibshirani (1996)](https://doi.org/10.1111/j.2517-6161.1996.tb02080.x), the lasso and sparsity; [Bishop (1995)](https://doi.org/10.1162/neco.1995.7.1.108), training with small input noise equals, to second order in the noise amplitude and for the expected loss, Tikhonov regularization by the input Jacobian (a Hessian term drops out at a minimum); [Chen, Dobriban and Lee (2020)](https://arxiv.org/abs/1907.10905), data augmentation as averaging over group orbits; [Loshchilov and Hutter (2019)](https://arxiv.org/abs/1711.05101), decoupled weight decay (AdamW); [Ali, Kolter and Tibshirani (2019)](https://arxiv.org/abs/1810.10082), the risks of gradient flow and ridge compared along the whole path under $t=1/\lambda$, the exact version of 4.3.3; [Wager, Wang and Liang (2013)](https://arxiv.org/abs/1307.1493), dropout in generalized linear models as an $L^2$ penalty in the diagonal Fisher metric (4.4.3).
 """
         + references(
             book("Deep Learning", GBC7, "Goodfellow, Bengio and Courville (2016; free online)",

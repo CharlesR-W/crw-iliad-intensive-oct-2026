@@ -18,39 +18,32 @@ weak directions act on it as an implicit ridge penalty.
 Notation: $\lambda$ is the ridge penalty and $a=n\lambda$; in 5.1, $k(\cdot,\cdot)$ is the kernel, $K$ the $n\times n$ kernel matrix and $s_k$ the singular values of the feature matrix; in 5.2–5.3, $k$ is the number of signal directions, $m$ the number of tail directions, $\nu$ their variance and $c=m\nu$ the tail's total variance, which acts as $n\lambda$; $\mu_{\min}(\cdot)$, $\mu_{\max}(\cdot)$ and $\mu_i$ denote eigenvalues; $\sigma^2$ is the noise variance and $r^2=\|\beta\|^2$.
 """
         + reading(
-            "Surprises in high-dimensional ridgeless least squares interpolation",
-            "https://arxiv.org/abs/1903.08560",
-            "Trevor Hastie, Andrea Montanari, Saharon Rosset, Ryan J. Tibshirani (Annals of Statistics, 2022)",
-            "Exact asymptotics of minimum-norm interpolation and ridge as p/n → γ, the source of 1.3–1.6. "
-            "Read §1 and §3; §5 shows when the best γ can lie above 1, §8 does random features.",
-            importance=3, length=3,
-        )
-        + reading(
             "Benign overfitting in linear regression",
             "https://arxiv.org/abs/1906.11300",
             "Peter L. Bartlett, Philip M. Long, Gábor Lugosi, Alexander Tsigler (PNAS, 2020)",
             "Interpolation is near-optimal exactly when the directions unimportant for prediction are many "
             "compared with n but small in total variance; 5.2–5.3 is a solvable case. Read §2–§3.",
-            importance=4, length=3,
+            importance=5, length=3,
+        )
+        + supplemental()
+        + reading(
+            "Neural tangent kernel",
+            "https://en.wikipedia.org/wiki/Neural_tangent_kernel",
+            "Wikipedia",
+            "A wide network linearized around its initialization trains as kernel regression with the gradient "
+            "features; in that regime training ends at the ridgeless kernel interpolant of 5.1.",
+            importance=3, length=2,
         )
         + reading(
-            "Neural tangent kernel: convergence and generalization in neural networks",
-            "https://arxiv.org/abs/1806.07572",
-            "Arthur Jacot, Franck Gabriel, Clément Hongler (NeurIPS 2018)",
-            r"A network linearized around its initialization is kernel regression with the gradient features "
-            r"$\nabla_\theta f(x;\theta_0)$; in that regime training ends at the ridgeless kernel interpolant of 5.1.",
-            importance=3, length=3,
-        )
-        + reading(
-            "Just interpolate: kernel “ridgeless” regression can generalize",
-            "https://arxiv.org/abs/1808.00387",
-            "Tengyuan Liang, Alexander Rakhlin (Annals of Statistics, 2020)",
-            "For high-dimensional inputs the many small eigenvalues of the kernel matrix act as an implicit "
-            "ridge, the kernel version of 5.2.",
-            importance=2, length=3,
+            "Double descent",
+            "https://en.wikipedia.org/wiki/Double_descent",
+            "Wikipedia",
+            "The test-error curve that peaks at the interpolation threshold and falls again; 1.3–1.6 compute it "
+            "for least squares and 5.2–5.3 say when the right branch is benign.",
+            importance=2, length=2,
         )
         + r"""
-Also: [Lee et al. (2018)](https://arxiv.org/abs/1711.00165), wide random networks are Gaussian processes; [Rahimi and Recht (2007)](https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html), random Fourier features; [Mei and Montanari (2019)](https://arxiv.org/abs/1908.05355), double descent in random-feature regression.
+Also: [Jacot, Gabriel and Hongler (2018)](https://arxiv.org/abs/1806.07572), the neural tangent kernel paper; [Liang and Rakhlin (2020)](https://arxiv.org/abs/1808.00387), for high-dimensional inputs the many small eigenvalues of the kernel matrix act as an implicit ridge, the kernel version of 5.2; [Lee et al. (2018)](https://arxiv.org/abs/1711.00165), wide random networks are Gaussian processes; [Rahimi and Recht (2007)](https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html), random Fourier features; [Mei and Montanari (2019)](https://arxiv.org/abs/1908.05355), double descent in random-feature regression.
 """
         + references(
             book("Understanding Machine Learning: From Theory to Algorithms",

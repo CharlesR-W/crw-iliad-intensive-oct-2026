@@ -12,7 +12,7 @@ Chinchilla and compute-optimal allocation live in MDL2. Superposition and low-ra
 live in MDL4. Pre-trail snapshot: _pre_trail_2026-10-09/; older material, including the
 full perfect-PRH derivation, in _old_wb5/. Standard library only.
 """
-from nbkit import answer, figure, markdown, reading, run
+from nbkit import answer, figure, markdown, reading, run, supplemental
 
 SF = "assets/interactive/spectral_filters.html"
 
@@ -67,9 +67,9 @@ Very different mechanisms produce the same power-law learning curve, so the curv
         "https://arxiv.org/abs/2303.13506",
         "Michaud, Liu, Girit & Tegmark (NeurIPS 2023)",
         "Networks learn discrete skills ('quanta') in order of use frequency; Zipfian frequencies give power-law scaling. Decomposes model behaviour into candidate quanta using gradients.",
-        importance=3,
+        importance=5,
         length=3,
-    ) + reading(
+    ) + supplemental() + reading(
         "On the asymptotic learning curves of kernel ridge regression under power-law decay",
         "https://arxiv.org/abs/2309.13337",
         "Li, Zhang & Lin (2023)",
@@ -80,7 +80,7 @@ Very different mechanisms produce the same power-law learning curve, so the curv
 
 ### Exercises: power-law learning curves
 
-Two toy models with the same answer.
+Two toy models with the same answer; the second assumes [Zipf's law](https://en.wikipedia.org/wiki/Zipf%27s_law) for how often skills are used.
 
 **Exercise 2.1.** Two routes to one curve.
 
@@ -144,18 +144,25 @@ These are heuristic scalings, valid up to constants. None of it needs the model 
 Since 2017, challengers to and refinements of the transformer have mostly moved the scaling curve by a constant factor in compute, rarely changed its slope, and where slopes measurably differ the alternatives usually scale *worse*.
 
 """ + reading(
+        "The bitter lesson",
+        "http://www.incompleteideas.net/IncIdeas/BitterLesson.html",
+        "Sutton (2019)",
+        "Seventy years of AI research: general methods that exploit more computation beat methods built on human knowledge of the domain, every time the computation arrives. Summary and reactions on [Wikipedia](https://en.wikipedia.org/wiki/Bitter_lesson).",
+        importance=5,
+        length=1,
+    ) + reading(
+        "Algorithmic progress in language models",
+        "https://epoch.ai/blog/algorithmic-progress-in-language-models",
+        "Ho et al. (Epoch AI, 2024; [paper](https://arxiv.org/abs/2403.05812))",
+        r"Estimates the transformer's compute-equivalent gain at about $7\times$ (95% CI roughly $3$–$46\times$), and required compute halving every 8 months or so. Treats each innovation as a constant multiplier, so cannot see slope changes.",
+        importance=5,
+        length=2,
+    ) + supplemental() + reading(
         "Deep learning scaling is predictable, empirically",
         "https://arxiv.org/abs/1712.00409",
         "Hestness et al. (2017)",
         "Power-law learning curves (against data, not compute) in translation, language, images and speech: \"model improvements only shift the error but do not appear to affect the power-law exponent.\"",
-        importance=5,
-        length=3,
-    ) + reading(
-        "Algorithmic progress in language models",
-        "https://arxiv.org/abs/2403.05812",
-        "Ho et al. (Epoch AI, 2024)",
-        r"Estimates the transformer's compute-equivalent gain at about $7\times$ (95% CI roughly $3$–$46\times$), and required compute halving every 8 months or so. Treats each innovation as a constant multiplier, so cannot see slope changes.",
-        importance=4,
+        importance=3,
         length=3,
     ) + reading(
         "Scaling laws vs model architectures: how does inductive bias influence scaling?",
@@ -165,21 +172,15 @@ Since 2017, challengers to and refinements of the transformer have mostly moved 
         importance=3,
         length=3,
     ) + reading(
-        "Mamba: linear-time sequence modeling with selective state spaces",
-        "https://arxiv.org/abs/2312.00752",
-        "Gu & Dao (2023)",
-        "The strongest recent challenger: a selective state-space model that matches a strong transformer recipe on roughly parallel scaling curves (Figure 4).",
-        "Explainers: Grootendorst's [visual guide to Mamba](https://www.maartengrootendorst.com/blog/mamba/); [The annotated S4](https://srush.github.io/annotated-s4/).",
-        importance=2,
-        length=3,
-    ) + reading(
-        "I-JEPA: the first AI model based on Yann LeCun's vision for more human-like AI",
-        "https://ai.meta.com/blog/yann-lecun-ai-model-i-jepa/",
-        "Meta AI blog (2023; paper: [Assran et al.](https://arxiv.org/abs/2301.08243))",
-        "A different objective rather than different layers: predict the representation of a masked region, not its pixels.",
-        importance=2,
-        length=1,
+        "Neural scaling law",
+        "https://en.wikipedia.org/wiki/Neural_scaling_law",
+        "Wikipedia",
+        "Survey of the empirical scaling laws across modalities and of the proposed explanations, with the main papers linked.",
+        importance=3,
+        length=2,
     ) + r"""
+Also: [Mamba](https://en.wikipedia.org/wiki/Mamba_(deep_learning_architecture)) ([Gu & Dao 2023](https://arxiv.org/abs/2312.00752); explainers: Grootendorst's [visual guide](https://www.maartengrootendorst.com/blog/mamba/), [The annotated S4](https://srush.github.io/annotated-s4/)), the strongest recent challenger, a selective state-space model whose scaling curve runs roughly parallel to a strong transformer recipe (their Figure 4); and [I-JEPA](https://ai.meta.com/blog/yann-lecun-ai-model-i-jepa/) ([Assran et al. 2023](https://arxiv.org/abs/2301.08243)), a different objective rather than different layers: predict the representation of a masked region, not its pixels.
+
 In vision, NFNet CNNs match vision transformers at equal compute ([MDL2, section 'The opposite thesis: symmetry as inductive bias'](mdl2_why_llms.html#wb3-section-5)).
 
 ### Exercises: what a constant factor is worth
@@ -209,13 +210,6 @@ In vision, NFNet CNNs match vision transformers at equal compute ([MDL2, section
 Different networks seem to learn similar representations, perhaps converging on one shared one whose concepts are directions; each claim means something only once you say which transformations of a representation count as cosmetic.
 
 """ + reading(
-        "Similarity of neural network representations revisited",
-        "https://arxiv.org/abs/1905.00414",
-        "Kornblith, Norouzi, Lee & Hinton (ICML 2019)",
-        "Indices invariant to every invertible linear map (CCA included) go blind once width reaches the number of data points; proposes CKA, which matches corresponding layers across seeds.",
-        importance=4,
-        length=3,
-    ) + reading(
         "The Platonic representation hypothesis",
         "https://arxiv.org/abs/2405.07987",
         "Huh, Cheung, Wang & Isola (ICML 2024)",
@@ -223,19 +217,26 @@ Different networks seem to learn similar representations, perhaps converging on 
         importance=5,
         length=3,
     ) + reading(
-        "Proof of a perfect Platonic representation hypothesis",
-        "https://arxiv.org/abs/2507.01098",
-        "Ziyin & Chuang (2025)",
-        "Deep linear networks of any depth and width, seeing different invertible views of the same noisy-label data, have every hidden layer aligned up to rotation and scale at the minima SGD's gradient noise selects. Elementary proof; needs label noise, and does not show SGD gets there.",
-        importance=4,
-        length=2,
-    ) + reading(
         "The linear representation hypothesis and the geometry of large language models",
         "https://arxiv.org/abs/2311.03658",
         "Park, Choe & Veitch (ICML 2024)",
         "Makes \"concepts are directions\" precise with counterfactual pairs, and argues the geometry needs a chosen 'causal inner product' (Exercise 4.2).",
+        importance=5,
+        length=3,
+    ) + supplemental() + reading(
+        "Similarity of neural network representations revisited",
+        "https://arxiv.org/abs/1905.00414",
+        "Kornblith, Norouzi, Lee & Hinton (ICML 2019)",
+        "Indices invariant to every invertible linear map (CCA included) go blind once width reaches the number of data points; proposes CKA, which matches corresponding layers across seeds. Background for Exercise 4.1.",
         importance=4,
         length=3,
+    ) + reading(
+        "Proof of a perfect Platonic representation hypothesis",
+        "https://arxiv.org/abs/2507.01098",
+        "Ziyin & Chuang (2025)",
+        "Deep linear networks of any depth and width, seeing different invertible views of the same noisy-label data, have every hidden layer aligned up to rotation and scale at the minima SGD's gradient noise selects. Elementary proof; needs label noise, and does not show SGD gets there.",
+        importance=3,
+        length=2,
     ) + reading(
         "Not all language model features are one-dimensionally linear",
         "https://arxiv.org/abs/2405.14860",
@@ -243,8 +244,15 @@ Different networks seem to learn similar representations, perhaps converging on 
         "The counterpoint: irreducibly multi-dimensional features, such as circles for days and months, used for modular arithmetic.",
         importance=3,
         length=3,
+    ) + reading(
+        "Mechanistic interpretability: linear representation hypothesis",
+        "https://en.wikipedia.org/wiki/Mechanistic_interpretability#Linear_representation_hypothesis",
+        "Wikipedia",
+        "A short statement of the hypothesis and of superposition, placed in the field that relies on them.",
+        importance=2,
+        length=1,
     ) + r"""
-Also: [Neural thermodynamics](https://arxiv.org/abs/2505.12387), Ziyin, Xu & Chuang (2025), the same entropic-force argument applied more broadly. SVCCA, model stitching and superposition are in MDL4 (sections ['Bottom-up learning'](mdl4_mysteries.html#wb6-section-2), ['Model stitching works'](mdl4_mysteries.html#wb6-section-3) and ['Superposition and adversarial attacks'](mdl4_mysteries.html#wb6-section-5)).
+SVCCA, model stitching and superposition are in the catalogue below (sections ['Early training decides: bottom-up learning and critical periods'](mdl4_mysteries.html#wb6-section-2), ['Model stitching works'](mdl4_mysteries.html#wb6-section-3) and ['Superposition and adversarial attacks'](mdl4_mysteries.html#wb6-section-5)).
 
 ### Exercises: similarity invariances
 

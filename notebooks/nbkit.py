@@ -66,8 +66,19 @@ def reading(title: str, url: str, who: str, result: str, about: str = "",
     tier, note: ignored (kept for compatibility with older call sites).
     """
     body = f"{result} {about}".strip()
-    return (f'\n\n<div class="reading">\n\n**[{title}]({url})**, {who} {ratings(importance, length)}\n\n'
+    cls = "reading main" if importance >= 5 else "reading"
+    return (f'\n\n<div class="{cls}">\n\n**[{title}]({url})**, {who} {ratings(importance, length)}\n\n'
             f"{body}\n\n</div>\n\n")
+
+
+def supplemental(note: str = "") -> str:
+    """Divider between a section's main readings (importance 5, styled as such) and the rest.
+
+    Everything after it in the section is supplemental: read if the section's question grabbed you.
+    `note` is an optional short clause shown after the label.
+    """
+    tail = f" {note}" if note else ""
+    return f'\n\n<div class="supp"><span>Supplemental</span>{tail}</div>\n\n'
 
 
 def figure(path: str, what: str) -> str:
@@ -527,6 +538,11 @@ details.hint > :last-child { padding-bottom: .4rem; }
 
 /* ---- readings ---- */
 .reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading.main { border-left: 4px solid var(--accent, #0b57d0); padding-left: calc(1rem - 2px); }
+.reading.main > p:first-child { font-size: 1.04em; }
+.supp { margin: 1.6em 0 .6em; padding-top: .5em; border-top: 1px solid var(--rule); color: var(--muted, #666); font-size: .92em; }
+.supp > span { font-variant: small-caps; letter-spacing: .04em; font-weight: 600; }
+.supp ~ .reading { opacity: .9; }
 .reading > p:first-child { margin-bottom: .35em; }
 .reading > p:last-child { margin-bottom: 0; }
 .tier {

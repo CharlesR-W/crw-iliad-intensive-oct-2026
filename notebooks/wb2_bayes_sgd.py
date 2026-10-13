@@ -22,15 +22,15 @@ posterior is what matters" are claims about this formula.
 Notation: $H$ is the curvature (Hessian of the population risk at its minimizer $\theta^*$) and $C$ the covariance of the per-sample gradient there, $p$ the number of parameters, $n$ the sample size, $\sigma^2$ the noise variance; in 7.5 $\lambda$ is the real log canonical threshold, not a ridge penalty.
 """
         + reading(
-            "Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory",
-            "https://jmlr.org/papers/v11/watanabe10a.html",
-            "Sumio Watanabe (JMLR, 2010)",
-            "The Bayes generalization error and WAIC in singular models, where the parameter count p/2 is "
-            "replaced by the real log canonical threshold (7.5.2). Read the introduction and the main theorems.",
-            importance=2, length=4,
+            "Akaike information criterion",
+            "https://en.wikipedia.org/wiki/Akaike_information_criterion",
+            "Wikipedia",
+            "The criterion, its derivation as an estimate of expected out-of-sample log-likelihood, and its "
+            "relation to BIC and cross-validation; 7.2–7.4 derive it from the sandwich.",
+            importance=5, length=2,
         )
         + r"""
-Also: [Schwarz (1978)](https://doi.org/10.1214/aos/1176344136), BIC; the sandwich is due to Huber (1967) and, for misspecified likelihoods, White (1982).
+Also: [Bayesian information criterion](https://en.wikipedia.org/wiki/Bayesian_information_criterion) (Wikipedia) and [Schwarz (1978)](https://doi.org/10.1214/aos/1176344136), BIC; the sandwich is due to Huber (1967) and, for misspecified likelihoods, White (1982); [Watanabe (2010)](https://jmlr.org/papers/v11/watanabe10a.html), the Bayes generalization error and WAIC in singular models, where the parameter count $p/2$ is replaced by the real log canonical threshold (7.5.2).
 """
         + references(
             book("The Elements of Statistical Learning", "https://hastie.su.domains/ElemStatLearn/",
@@ -390,8 +390,9 @@ Notation: $H$ and $C$ as in §7, $\eta$ the learning rate, $B$ the batch size, $
             "Yikuan Zhang, Ning Yang, Yuhai Tu (arXiv, 2026)",
             "Why C ∝ H fails for networks (compare 8.1), and per-layer power laws C_ii ∝ H_ii^γ with fitted γ "
             "near 1–1.5. Read §2 and §4–5; note which layers the fits cover.",
-            importance=4, length=2,
+            importance=5, length=2,
         )
+        + supplemental()
         + reading(
             "Stochastic gradient descent as approximate Bayesian inference",
             "https://arxiv.org/abs/1704.04289",

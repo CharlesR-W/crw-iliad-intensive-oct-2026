@@ -6,21 +6,22 @@ Shape (trail restructure, reviews/2026-10-09-trail-restructure-brief.md):
 1. Keystone (#wb4-keystone): Furman, "Deep learning as program synthesis";
    two short core-idea paragraphs, no exercises.
 2. Occam, two ways (#wb4-section-2): prior volume vs description length / MDL;
-   short readings; four exercises (Occam factor, Kolmogorov basics, MDL precision,
+   main: WP Kolmogorov complexity, MacKay ch. 28; supplemental: Grünwald,
+   Valle-Pérez; four exercises (Occam factor, Kolmogorov basics, MDL precision,
    making the notions disagree).
-3. Solomonoff and its limits (#wb4-section-3): Rathmanner-Hutter, Legg;
-   exercises on the mixture regret bound and Legg's diagonalization.
+3. Solomonoff and its limits (#wb4-section-3): main: WP Solomonoff induction;
+   supplemental: Rathmanner-Hutter, Legg, LessWrong explainer; exercises on the mixture regret bound and Legg's diagonalization.
 4. The circuit prior and sparse parity (#wb4-section-4): Hanni-Vaintrob;
    the sparse-parity exercise (counting learner vs fixed kernel).
-5. Hierarchical representations (#wb4-section-5): Poggio et al., the Random
-   Hierarchy Model; one estimation exercise.
+5. Hierarchical representations (#wb4-section-5): the Random Hierarchy Model
+   (Poggio et al. in "Also:"); one estimation exercise.
 6. The accounts side by side (#wb4-section-6): one compact table.
 
 Each section opens with a one-sentence purpose, then a lightly annotated reading
 list, then "### Exercises: ..." whose statements carry their own notation.
 The pre-restructure builder is in _pre_trail_2026-10-09/build_wb4.py.
 """
-from nbkit import answer, markdown, reading, run
+from nbkit import answer, markdown, reading, run, supplemental
 
 CELLS = [
     # ------------------------------------------------------------------ intro
@@ -113,15 +114,28 @@ near-optimal parameters, not the parameter count.
 
 """
         + reading(
-            "Bayesian interpolation",
-            "https://authors.library.caltech.edu/records/r7qgh-q6g10",
-            "David J. C. MacKay, 1992 (*Neural Computation* 4(3))",
-            "Introduces the Occam factor: evidence is best-fit likelihood times "
-            "posterior width over prior width, so a flexible model pays for every dataset "
-            "it could have fit.",
-            importance=4,
-            length=3,
+            "Kolmogorov complexity",
+            "https://en.wikipedia.org/wiki/Kolmogorov_complexity",
+            "Wikipedia",
+            "The length of the shortest program that prints a string: invariant up to a "
+            "constant under change of machine, and uncomputable.",
+            importance=5,
+            length=2,
         )
+        + reading(
+            "Model comparison and Occam's razor",
+            "https://www.inference.org.uk/itprnn/book.pdf",
+            "David J. C. MacKay, *Information Theory, Inference, and Learning Algorithms*, "
+            "ch. 28 (2003)",
+            "The Occam factor: evidence is best-fit likelihood times posterior width over "
+            "prior width, so a flexible model pays for every dataset it could have fit.",
+            "Chapter 28 of the free PDF; "
+            "[Lecture 10](https://www.inference.org.uk/itprnn_lectures/) of the video "
+            "course covers the same material.",
+            importance=5,
+            length=2,
+        )
+        + supplemental()
         + reading(
             "A tutorial introduction to the minimum description length principle",
             "https://arxiv.org/abs/math/0406077",
@@ -139,10 +153,12 @@ near-optimal parameters, not the parameter count.
             "Bridges the two notions: the prior volume that random parameters assign to a "
             "function is exponentially biased toward low (proxy) complexity, and a "
             "PAC-Bayes bound on that prior is non-vacuous on binarized MNIST.",
-            importance=3,
+            importance=2,
             length=3,
         )
         + r"""
+
+Also: [Bayesian interpolation](https://authors.library.caltech.edu/records/r7qgh-q6g10) (MacKay 1992), the original Occam-factor paper, which ch. 28 above reworks; Wikipedia on [Minimum description length](https://en.wikipedia.org/wiki/Minimum_description_length) and the [Kraft–McMillan inequality](https://en.wikipedia.org/wiki/Kraft%E2%80%93McMillan_inequality).
 
 ### Exercises: volume versus description length
 
@@ -302,6 +318,16 @@ predictor approximates it.
 
 """
         + reading(
+            "Solomonoff's theory of inductive inference",
+            "https://en.wikipedia.org/wiki/Solomonoff%27s_theory_of_inductive_inference",
+            "Wikipedia",
+            r"The universal prior $2^{-\text{length}}$ over programs, the Bayes mixture it "
+            r"defines, its convergence on computable sources, and why it is uncomputable.",
+            importance=5,
+            length=2,
+        )
+        + supplemental()
+        + reading(
             "A philosophical treatise of universal induction",
             "https://arxiv.org/abs/1105.5721",
             "Samuel Rathmanner and Marcus Hutter, 2011 (*Entropy* 13(6))",
@@ -310,7 +336,7 @@ predictor approximates it.
             "and the philosophical objections.",
             "About 60 pages; for this workbook §4.7–4.9, §5.9, §6.5–8.1, §9 (MDL and "
             "approximations) and §10.2 (the reference-machine problem).",
-            importance=5,
+            importance=3,
             length=3,
         )
         + reading(
@@ -320,8 +346,17 @@ predictor approximates it.
             "Every computable predictor is defeated by a sequence of about its own "
             "complexity, so predictors for all sequences up to complexity $n$ must "
             "themselves be about that complex; Exercise 3.2 follows it.",
-            importance=4,
+            importance=3,
             length=2,
+        )
+        + reading(
+            "An intuitive explanation of Solomonoff induction",
+            "https://www.lesswrong.com/posts/Kyc5dFDzBg4WccrbK/an-intuitive-explanation-of-solomonoff-induction",
+            "Alex Altair, LessWrong, 2012",
+            "A long informal walkthrough that builds the universal prior up from Occam, "
+            "Bayes and Turing machines with worked examples.",
+            importance=2,
+            length=3,
         )
         + r"""
 
@@ -430,9 +465,10 @@ kernel can do, and from what gradient search actually achieves.
             r"$N\ge C$; slide 34 contrasts NNGP's $\sim d^k$ for $k$-sparse parity.",
             r"Slides 10–12 are a warm-up (Solomonoff function induction), 15–17 the "
             r"theorem; a full write-up is forthcoming.",
-            importance=4,
+            importance=5,
             length=2,
         )
+        + supplemental()
         + reading(
             "Hidden progress in deep learning: SGD learns parities near the computational limit",
             "https://arxiv.org/abs/2207.08799",
@@ -448,7 +484,7 @@ kernel can do, and from what gradient search actually achieves.
         )
         + r"""
 
-Also: [Width-robust learnability in mean-field Bayesian neural networks](https://arxiv.org/abs/2607.05735) (Vaintrob and Hänni 2026), the mean-field counterpart.
+Also: [Width-robust learnability in mean-field Bayesian neural networks](https://arxiv.org/abs/2607.05735) (Vaintrob and Hänni 2026), the mean-field counterpart; Wikipedia on [Parity learning](https://en.wikipedia.org/wiki/Parity_learning), the problem and its noisy variant.
 
 ### Exercises: sparse parity
 """
@@ -520,17 +556,6 @@ simplicity prior.
 
 """
         + reading(
-            "Why and when can deep, but not shallow, networks avoid the curse of dimensionality: a review",
-            "https://arxiv.org/abs/1611.00740",
-            "Tomaso Poggio, Hrushikesh Mhaskar, Lorenzo Rosasco, Brando Miranda and Qianli Liao, 2017",
-            r"A deep network matched to a binary tree of 2-variable functions approximates "
-            r"it with about $(d-1)\varepsilon^{-2/r}$ units, a shallow one needs "
-            r"$\varepsilon^{-d/r}$ (Theorems 1–2; $r$ is the smoothness).",
-            "An existence result about approximation, not learning.",
-            importance=3,
-            length=2,
-        )
-        + reading(
             "How deep neural networks learn compositional data: the Random Hierarchy Model",
             "https://arxiv.org/abs/2307.02129",
             "Francesco Cagnetta, Leonardo Petrini, Umberto M. Tomasini, Alessandro Favero and Matthieu Wyart, 2024 (*Phys. Rev. X* 14, 031001)",
@@ -543,6 +568,8 @@ simplicity prior.
             length=3,
         )
         + r"""
+
+Also: [Why and when can deep, but not shallow, networks avoid the curse of dimensionality: a review](https://arxiv.org/abs/1611.00740) (Poggio et al. 2017): a deep network matched to a binary tree of 2-variable functions approximates it with about $(d-1)\varepsilon^{-2/r}$ units where a shallow one needs $\varepsilon^{-d/r}$ (Theorems 1–2); an existence result about approximation, not learning.
 
 ### Exercises: where does simplicity enter?
 """

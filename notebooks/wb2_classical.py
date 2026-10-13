@@ -21,6 +21,22 @@ be checked against a closed form.
 
 Notation: $X$ is the $n\times p$ design with singular values $s_k$, $\varepsilon$ the label noise with variance $\sigma^2$, $\lambda$ the ridge penalty in $\frac1n\|y-X\beta\|^2+\lambda\|\beta\|^2$ and $a=n\lambda$, $\tau^2$ a Gaussian prior variance on $\beta$; $\mu=X\beta$ in 2.3.4 is the noiseless mean vector.
 """
+        + reading(
+            "Bias–variance tradeoff",
+            "https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff",
+            "Wikipedia",
+            "The decomposition of expected squared error into bias, variance and noise, with the "
+            "least-squares case worked out; 2.4–2.5 derive it for ridge.",
+            importance=5, length=2,
+        )
+        + supplemental()
+        + reading(
+            "Lecture 08: Bias-Variance Tradeoff",
+            "https://www.youtube.com/watch?v=zrEyxfl2-a8",
+            "Yaser Abu-Mostafa (Caltech, Learning from Data, 2012; YouTube)",
+            "A lecture on the same decomposition, with a worked example of a constant fit against a line fit.",
+            importance=2, length=3,
+        )
         + references(
             book("The Elements of Statistical Learning", ESL,
                  "Hastie, Tibshirani and Friedman (2nd ed. 2009; free PDF)",
@@ -295,13 +311,22 @@ exercises find the assumption that keeps it from biting.
 Notation: $d$ is the input dimension, $d_{\mathrm{VC}}$ the VC dimension, $m$ a number of points; the $\alpha_i$ in 3.3 are Radon coefficients. No ridge penalty appears in this section.
 """
         + reading(
-            "The lack of a priori distinctions between learning algorithms",
-            "https://doi.org/10.1162/neco.1996.8.7.1341",
-            "David H. Wolpert (Neural Computation, 1996)",
-            "The original off-training-set no-free-lunch theorem: averaged uniformly over targets, all learners "
-            "are equal. 3.1 proves the core of it.",
-            importance=2, length=3,
+            "No free lunch theorem",
+            "https://en.wikipedia.org/wiki/No_free_lunch_theorem",
+            "Wikipedia",
+            "Averaged uniformly over all targets, every learner does equally well off the training set; "
+            "3.1 proves the core of it and finds the assumption that breaks the average.",
+            importance=5, length=2,
         )
+        + reading(
+            "Universal approximation theorem",
+            "https://en.wikipedia.org/wiki/Universal_approximation_theorem",
+            "Wikipedia",
+            "The statements for width and for depth, with the conditions on the activation; 3.2 asks what the "
+            "theorem does not say about how many units are needed.",
+            importance=5, length=2,
+        )
+        + supplemental()
         + reading(
             "Representation benefits of deep feedforward networks",
             "https://arxiv.org/abs/1509.08101",
@@ -311,15 +336,15 @@ Notation: $d$ is the input dimension, $d_{\mathrm{VC}}$ the VC dimension, $m$ a 
             importance=3, length=1,
         )
         + reading(
-            "Nearly-tight VC-dimension and pseudodimension bounds for piecewise linear neural networks",
-            "https://jmlr.org/papers/v20/17-612.html",
-            "Peter L. Bartlett, Nick Harvey, Christopher Liaw, Abbas Mehrabian (JMLR, 2019)",
-            "The VC dimension of ReLU networks with W weights in L layers is O(WL log W), and some architectures "
-            "reach Ω(WL log(W/L)). Read the introduction for the statements.",
-            importance=2, length=3,
+            "VC dimension",
+            "https://en.wikipedia.org/wiki/Vapnik%E2%80%93Chervonenkis_dimension",
+            "Wikipedia",
+            "Shattering, the definition, and the standard examples; 3.3 computes it for a few classes, "
+            "including a one-parameter class with infinite VC dimension.",
+            importance=2, length=2,
         )
         + r"""
-Also: [Leshno, Lin, Pinkus and Schocken (1993)](https://linkinghub.elsevier.com/retrieve/pii/S0893608005801315), universal approximation holds exactly for non-polynomial activations.
+Also: [Wolpert (1996)](https://doi.org/10.1162/neco.1996.8.7.1341), the original off-training-set no-free-lunch theorem; [Leshno, Lin, Pinkus and Schocken (1993)](https://linkinghub.elsevier.com/retrieve/pii/S0893608005801315), universal approximation holds exactly for non-polynomial activations; [Bartlett, Harvey, Liaw and Mehrabian (2019)](https://jmlr.org/papers/v20/17-612.html), the VC dimension of ReLU networks with $W$ weights in $L$ layers is $O(WL\log W)$, and some architectures reach $\Omega(WL\log(W/L))$.
 """
         + references(
             book("Understanding Machine Learning: From Theory to Algorithms", UML,

@@ -92,6 +92,14 @@ Notation (used throughout the workbook): $n$ samples, $p$ parameters or features
             importance=4, length=2,
         )
         + reading(
+            "Surprises in high-dimensional ridgeless least squares interpolation",
+            "https://arxiv.org/abs/1903.08560",
+            "Trevor Hastie, Andrea Montanari, Saharon Rosset, Ryan J. Tibshirani (Annals of Statistics, 2022)",
+            "Exact asymptotics of minimum-norm interpolation and ridge as p/n → γ, the source of exercises "
+            "1.3–1.6. Read §1 and §3; §5 shows when the best γ can lie above 1, §8 does random features.",
+            importance=4, length=3,
+        )
+        + reading(
             "Maybe I was too harsh on deep learning theory (three days ago)",
             "https://www.lesswrong.com/posts/6SRq7mZ97Dwuavwb6/maybe-i-was-too-harsh-on-deep-learning-theory-three-days-ago",
             "Lawrence Chan (LessWrong, 2026)",

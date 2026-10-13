@@ -27,10 +27,13 @@ Notation: $P$ is the prior, $Q$ the posterior, $\mathrm{KL}(Q\|P)$ their diverge
             "magnitude; on random labels the bound is vacuous. Read §1–3 and §5.",
             importance=5, length=3,
         )
-        + references(
-            book("User-friendly introduction to PAC-Bayes bounds", "https://arxiv.org/abs/2110.11216",
-                 "Pierre Alquier (Foundations and Trends in Machine Learning, 2024)",
-                 "§2.1 (Catoni's bound), §3.2–3.3"),
+        + reading(
+            "User-friendly introduction to PAC-Bayes bounds",
+            "https://arxiv.org/abs/2110.11216",
+            "Pierre Alquier (Foundations and Trends in Machine Learning, 2024)",
+            "A tutorial whose §2.1 states and proves Catoni's bound in the notation used here, the bound 6.1 "
+            "builds in five steps. Read §2.1, then §3.2–3.3 for the Gaussian case of 6.2.",
+            importance=5, length=3,
         )
         + r"""
 ### Exercises: a PAC-Bayes bound from scratch

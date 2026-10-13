@@ -532,7 +532,7 @@ where the mode equations of [`td1_linear_networks` §1](td1_linear_networks.html
 make them tractable (Kleinman et al.), and plasticity loss is tied to changes in
 loss-landscape curvature (Lyle et al.; [`td2_6`](td2_6_curvature.html)). The
 Mysteries day lists critical periods among its strange facts in
-[MDL4 §4](../notebooks/mdl4_mysteries.html#wb6-section-4).
+[MDL4 §6](../notebooks/mdl4_mysteries.html#wb6-section-4).
 
 Also: [Kleinman, Achille & Soatto, critical periods in deep linear networks (ICLR 2024)](https://arxiv.org/abs/2308.12221);
 [Lyle et al., understanding plasticity (ICML 2023)](https://arxiv.org/abs/2303.01486)
@@ -574,7 +574,7 @@ The question this day adds, from [`td2_6` §6.4](td2_6_curvature.html#td26-4):
 how does the update sit relative to the curvature (the Hessian or Gauss–Newton
 eigenbasis)? None of these papers measures that directly at language-model scale,
 and Exercise 5.2 shows why a weight-matrix proxy for it needs care. The Mysteries
-day's [MDL4 §11](../notebooks/mdl4_mysteries.html#wb6-section-11) reads
+day's [MDL4 §12](../notebooks/mdl4_mysteries.html#wb6-section-11) reads
 Mukherjee et al. and Shenfeld et al. as a pair, including what "unchanged" means
 in bfloat16.
 

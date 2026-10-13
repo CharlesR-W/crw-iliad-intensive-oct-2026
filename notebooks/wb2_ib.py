@@ -19,12 +19,21 @@ deterministic network.
 Notation: $X$ is the input, $T=f(X)$ a layer's activations, $I(X;T)$ their mutual information, $q_\Delta$ a discretization of $T$ with bin width $\Delta$ and $K$ bins.
 """
         + reading(
+            "Information bottleneck method",
+            "https://en.wikipedia.org/wiki/Information_bottleneck_method",
+            "Wikipedia",
+            "The objective (keep what T says about Y, forget the rest of X), its rate–distortion form, and "
+            "the deep-learning claims built on it; 9.1 shows what it means for a deterministic layer.",
+            importance=5, length=2,
+        )
+        + supplemental()
+        + reading(
             "Opening the black box of deep neural networks via information",
             "https://arxiv.org/abs/1703.00810",
             "Ravid Shwartz-Ziv, Naftali Tishby (arXiv, 2017)",
             "The claim: in the information plane, training has a short fitting phase and a long compression "
             "phase driven by SGD noise. Read it against 9.1–9.2.",
-            importance=4, length=2,
+            importance=3, length=2,
         )
         + reading(
             "On the information bottleneck theory of deep learning",
@@ -33,27 +42,18 @@ Notation: $X$ is the input, $T=f(X)$ a layer's activations, $I(X;T)$ their mutua
             "Brendan D. Tracey, David D. Cox (ICLR 2018)",
             "The critique: compression appears with saturating tanh units but not ReLU, non-compressing "
             "networks generalize, and full-batch training shows the same curves.",
-            importance=4, length=3,
+            importance=3, length=3,
         )
         + reading(
-            "Estimating information flow in deep neural networks",
-            "https://arxiv.org/abs/1810.05728",
-            "Ziv Goldfeld, Ewout van den Berg, Kristjan Greenewald, Igor Melnyk, Nam Nguyen, "
-            "Brian Kingsbury, Yury Polyanskiy (ICML 2019)",
-            "Add a little noise to each layer and I(X;T) becomes finite; its decrease is then the clustering "
-            "of same-class representations, which binned estimates also track.",
-            importance=3, length=2,
-        )
-        + reading(
-            "Deep variational information bottleneck",
-            "https://arxiv.org/abs/1612.00410",
-            "Alexander A. Alemi, Ian Fischer, Joshua V. Dillon, Kevin Murphy (ICLR 2017)",
-            "The IB objective as a trainable loss for a network with a stochastic encoder, with better "
-            "robustness than deterministic baselines.",
-            importance=2, length=2,
+            "Information Theory of Deep Learning",
+            "https://www.youtube.com/watch?v=bLqJHjXihK8",
+            "Naftali Tishby (talk, 2017; YouTube)",
+            "Tishby's own account of the information plane and the compression claim, given before the "
+            "critiques; watch it knowing what 9.1–9.2 show.",
+            importance=2, length=4,
         )
         + r"""
-Also: [Tishby, Pereira and Bialek (1999)](https://arxiv.org/abs/physics/0004057), the information bottleneck as rate–distortion with a learned distortion.
+Also: [Tishby, Pereira and Bialek (1999)](https://arxiv.org/abs/physics/0004057), the information bottleneck as rate–distortion with a learned distortion; [Goldfeld et al. (2019)](https://arxiv.org/abs/1810.05728), add a little noise to each layer and $I(X;T)$ becomes finite, and its decrease is then the clustering of same-class representations.
 """
         + references(
             book("Elements of Information Theory, 2nd ed.", "https://doi.org/10.1002/047174882X",

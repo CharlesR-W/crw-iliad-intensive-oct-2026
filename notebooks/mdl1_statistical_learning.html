@@ -149,6 +149,11 @@ details.hint > :last-child { padding-bottom: .4rem; }
 
 /* ---- readings ---- */
 .reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading.main { border-left: 4px solid var(--accent, #0b57d0); padding-left: calc(1rem - 2px); }
+.reading.main > p:first-child { font-size: 1.04em; }
+.supp { margin: 1.6em 0 .6em; padding-top: .5em; border-top: 1px solid var(--rule); color: var(--muted, #666); font-size: .92em; }
+.supp > span { font-variant: small-caps; letter-spacing: .04em; font-weight: 600; }
+.supp ~ .reading { opacity: .9; }
 .reading > p:first-child { margin-bottom: .35em; }
 .reading > p:last-child { margin-bottom: 0; }
 .tier {
@@ -259,7 +264,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </ol>
 <p>Every later section of this workbook is a response to one of these observations. The readings below give an overview of these observations. Readers should feel free to read them in as much depth as their interest and time permit, as guided by the marked importance and length.</p>
 <p>Notation (used throughout the workbook): <span class="math inline">n</span> samples, <span class="math inline">p</span> parameters or features, <span class="math inline">\gamma=p/n</span>; <span class="math inline">\sigma^2</span> is the label-noise variance, <span class="math inline">\tau^2</span> a Gaussian prior variance on the coefficients <span class="math inline">\beta</span>, <span class="math inline">r^2=\|\beta\|^2</span>, and <span class="math inline">\lambda</span> the ridge penalty in <span class="math inline">\frac1n\|y-X\beta\|^2+\lambda\|\beta\|^2</span>.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://www.lesswrong.com/posts/ZvQfcLbcNHYqmvWyo/the-paper-that-killed-deep-learning-theory">The paper that killed deep learning theory</a></strong>, Lawrence Chan (LessWrong, 2026) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
 <p>A short account of Zhang et al. (2016), and why fitting random labels ended the programme of explaining generalization by the capacity of the model class.</p>
@@ -271,7 +276,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>On Nagarajan and Kolter (2019): the data-dependent norm and margin bounds proposed after Zhang et al. grow with the sample size, and uniform convergence provably cannot explain generalization in some overparametrized settings, even restricted to what gradient descent outputs.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/1611.03530">Understanding deep learning requires rethinking generalization</a></strong>, Chiyuan Zhang, Samy Bengio, Moritz Hardt, Benjamin Recht, Oriol Vinyals (ICLR 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>Standard image classifiers trained by SGD reach zero training error on random labels and random pixels, with or without explicit regularization. Read §1–§2; §3 is short.</p>
@@ -281,6 +286,12 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 <p><strong><a href="https://arxiv.org/abs/1812.11118">Reconciling modern machine-learning practice and the classical bias–variance trade-off</a></strong>, Mikhail Belkin, Daniel Hsu, Siyuan Ma, Soumik Mandal (PNAS, 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>Names double descent: test error peaks at the interpolation threshold and falls again as capacity grows, in random-feature models, small networks and tree ensembles. The figures carry the argument.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1903.08560">Surprises in high-dimensional ridgeless least squares interpolation</a></strong>, Trevor Hastie, Andrea Montanari, Saharon Rosset, Ryan J. Tibshirani (Annals of Statistics, 2022) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Exact asymptotics of minimum-norm interpolation and ridge as p/n → γ, the source of exercises 1.3–1.6. Read §1 and §3; §5 shows when the best γ can lie above 1, §8 does random features.</p>
 </div>
 
 <div class="reading">
@@ -459,6 +470,20 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <a id="wb2-section-2"></a>
 <p>The textbook quantities (generalization gap, excess risk, bias and variance), computed exactly in linear regression, where claims about generalization can be checked against a closed form.</p>
 <p>Notation: <span class="math inline">X</span> is the <span class="math inline">n\times p</span> design with singular values <span class="math inline">s_k</span>, <span class="math inline">\varepsilon</span> the label noise with variance <span class="math inline">\sigma^2</span>, <span class="math inline">\lambda</span> the ridge penalty in <span class="math inline">\frac1n\|y-X\beta\|^2+\lambda\|\beta\|^2</span> and <span class="math inline">a=n\lambda</span>, <span class="math inline">\tau^2</span> a Gaussian prior variance on <span class="math inline">\beta</span>; <span class="math inline">\mu=X\beta</span> in 2.3.4 is the noiseless mean vector.</p>
+<div class="reading main">
+
+<p><strong><a href="https://en.wikipedia.org/wiki/Bias%E2%80%93variance_tradeoff">Bias–variance tradeoff</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The decomposition of expected squared error into bias, variance and noise, with the least-squares case worked out; 2.4–2.5 derive it for ridge.</p>
+</div>
+
+<div class="supp"><span>Supplemental</span></div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.youtube.com/watch?v=zrEyxfl2-a8">Lecture 08: Bias-Variance Tradeoff</a></strong>, Yaser Abu-Mostafa (Caltech, Learning from Data, 2012; YouTube) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A lecture on the same decomposition, with a worked example of a constant fit against a line fit.</p>
+</div>
+
 <div class="refs">
 
 <p><strong>For reference (books):</strong> <a href="https://hastie.su.domains/ElemStatLearn/">The Elements of Statistical Learning</a>, Hastie, Tibshirani and Friedman (2nd ed. 2009; free PDF), §3.2, §3.4.1, §7.2–7.4.</p>
@@ -653,11 +678,19 @@ f_k(a_k^*)=\frac{\sigma^2(\sigma^2+s_k^2\beta_k^2)/\beta_k^2}{(s_k^2\beta_k^2+\s
 <a id="wb2-section-3"></a>
 <p>No free lunch, universal approximation and capacity bounds each seem to say deep learning should be impossible or unexplained; each is true, and the exercises find the assumption that keeps it from biting.</p>
 <p>Notation: <span class="math inline">d</span> is the input dimension, <span class="math inline">d_{\mathrm{VC}}</span> the VC dimension, <span class="math inline">m</span> a number of points; the <span class="math inline">\alpha_i</span> in 3.3 are Radon coefficients. No ridge penalty appears in this section.</p>
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://doi.org/10.1162/neco.1996.8.7.1341">The lack of a priori distinctions between learning algorithms</a></strong>, David H. Wolpert (Neural Computation, 1996) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The original off-training-set no-free-lunch theorem: averaged uniformly over targets, all learners are equal. 3.1 proves the core of it.</p>
+<p><strong><a href="https://en.wikipedia.org/wiki/No_free_lunch_theorem">No free lunch theorem</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Averaged uniformly over all targets, every learner does equally well off the training set; 3.1 proves the core of it and finds the assumption that breaks the average.</p>
 </div>
+
+<div class="reading main">
+
+<p><strong><a href="https://en.wikipedia.org/wiki/Universal_approximation_theorem">Universal approximation theorem</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The statements for width and for depth, with the conditions on the activation; 3.2 asks what the theorem does not say about how many units are needed.</p>
+</div>
+
+<div class="supp"><span>Supplemental</span></div>
 
 <div class="reading">
 
@@ -667,11 +700,11 @@ f_k(a_k^*)=\frac{\sigma^2(\sigma^2+s_k^2\beta_k^2)/\beta_k^2}{(s_k^2\beta_k^2+\s
 
 <div class="reading">
 
-<p><strong><a href="https://jmlr.org/papers/v20/17-612.html">Nearly-tight VC-dimension and pseudodimension bounds for piecewise linear neural networks</a></strong>, Peter L. Bartlett, Nick Harvey, Christopher Liaw, Abbas Mehrabian (JMLR, 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The VC dimension of ReLU networks with W weights in L layers is O(WL log W), and some architectures reach Ω(WL log(W/L)). Read the introduction for the statements.</p>
+<p><strong><a href="https://en.wikipedia.org/wiki/Vapnik%E2%80%93Chervonenkis_dimension">VC dimension</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Shattering, the definition, and the standard examples; 3.3 computes it for a few classes, including a one-parameter class with infinite VC dimension.</p>
 </div>
 
-<p>Also: <a href="https://linkinghub.elsevier.com/retrieve/pii/S0893608005801315">Leshno, Lin, Pinkus and Schocken (1993)</a>, universal approximation holds exactly for non-polynomial activations.</p>
+<p>Also: <a href="https://doi.org/10.1162/neco.1996.8.7.1341">Wolpert (1996)</a>, the original off-training-set no-free-lunch theorem; <a href="https://linkinghub.elsevier.com/retrieve/pii/S0893608005801315">Leshno, Lin, Pinkus and Schocken (1993)</a>, universal approximation holds exactly for non-polynomial activations; <a href="https://jmlr.org/papers/v20/17-612.html">Bartlett, Harvey, Liaw and Mehrabian (2019)</a>, the VC dimension of ReLU networks with <span class="math inline">W</span> weights in <span class="math inline">L</span> layers is <span class="math inline">O(WL\log W)</span>, and some architectures reach <span class="math inline">\Omega(WL\log(W/L))</span>.</p>
 <div class="refs">
 
 <p><strong>For reference (books):</strong> <a href="http://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning">Understanding Machine Learning: From Theory to Algorithms</a>, Shalev-Shwartz and Ben-David (2014; free PDF), §2.3, ch. 4–6, §7.3.</p>
@@ -801,25 +834,33 @@ p=\sum_{i\in I}\frac{\lambda_i}{s}x_i=\sum_{i\in J}\frac{-\lambda_i}{s}x_i
 <a id="wb2-section-4"></a>
 <p>What weight decay, early stopping, dropout and flat minima each do to the learned function, derived exactly in linear models, and why any claim about flatness needs a metric.</p>
 <p>Notation: <span class="math inline">\lambda</span> is the ridge penalty in <span class="math inline">\frac1n\|y-X\beta\|^2+\lambda\|\beta\|^2</span> (in 4.2 it is also the KKT multiplier, which turns out to be the same number), <span class="math inline">a=n\lambda</span>, <span class="math inline">s_k</span> the singular values of <span class="math inline">X</span>, <span class="math inline">\sigma^2</span> the noise variance, <span class="math inline">\tau^2</span> the prior variance, <span class="math inline">\rho</span> the squared constraint radius in 4.2, <span class="math inline">t</span> gradient-flow time, <span class="math inline">q</span> the dropout keep-probability, <span class="math inline">H</span> the Hessian.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/1703.04933">Sharp minima can generalize for deep nets</a></strong>, Laurent Dinh, Razvan Pascanu, Samy Bengio, Yoshua Bengio (ICML 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>Rescaling symmetries of ReLU networks make a minimum arbitrarily sharp without changing the function, so weight-space flatness alone cannot explain generalization. Read §2–§4; 4.5.3 is their construction in miniature.</p>
 </div>
 
+<div class="reading main">
+
+<p><strong><a href="https://en.wikipedia.org/wiki/Ridge_regression">Ridge regression</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The closed form, the Bayesian reading, and the shrinkage of each singular direction; 4.1–4.3 derive all three and compare what they predict.</p>
+</div>
+
+<div class="supp"><span>Supplemental</span></div>
+
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/1810.10082">A continuous-time view of early stopping for least squares regression</a></strong>, Alnur Ali, J. Zico Kolter, Ryan J. Tibshirani (AISTATS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Compares the risks of gradient flow and ridge along the whole path, under the calibration <span class="math inline">t=1/\lambda</span>; the exact version of 4.3.3.</p>
+<p><strong><a href="https://en.wikipedia.org/wiki/Early_stopping">Early stopping</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Stopping gradient descent before convergence as a regularizer, and its relation to ridge in the spectral picture of 4.3.</p>
 </div>
 
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/1307.1493">Dropout training as adaptive regularization</a></strong>, Stefan Wager, Sida Wang, Percy Liang (NeurIPS 2013) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Dropout in generalized linear models is, to second order, an L2 penalty in the metric of the diagonal Fisher information (4.4.3).</p>
+<p><strong><a href="https://en.wikipedia.org/wiki/Dilution_(neural_networks)">Dilution (neural networks)</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Dropout and its relatives: what is dropped, how the test-time network is rescaled, and the ensemble reading; 4.4 derives the penalty it adds in a linear model.</p>
 </div>
 
-<p>Also (techniques not derived here): <a href="https://doi.org/10.1111/j.2517-6161.1996.tb02080.x">Tibshirani (1996)</a>, the lasso and sparsity; <a href="https://doi.org/10.1162/neco.1995.7.1.108">Bishop (1995)</a>, training with small input noise equals, to second order in the noise amplitude and for the expected loss, Tikhonov regularization by the input Jacobian (a Hessian term drops out at a minimum); <a href="https://arxiv.org/abs/1907.10905">Chen, Dobriban and Lee (2020)</a>, data augmentation as averaging over group orbits; <a href="https://arxiv.org/abs/1711.05101">Loshchilov and Hutter (2019)</a>, decoupled weight decay (AdamW).</p>
+<p>Also (techniques not derived here): <a href="https://doi.org/10.1111/j.2517-6161.1996.tb02080.x">Tibshirani (1996)</a>, the lasso and sparsity; <a href="https://doi.org/10.1162/neco.1995.7.1.108">Bishop (1995)</a>, training with small input noise equals, to second order in the noise amplitude and for the expected loss, Tikhonov regularization by the input Jacobian (a Hessian term drops out at a minimum); <a href="https://arxiv.org/abs/1907.10905">Chen, Dobriban and Lee (2020)</a>, data augmentation as averaging over group orbits; <a href="https://arxiv.org/abs/1711.05101">Loshchilov and Hutter (2019)</a>, decoupled weight decay (AdamW); <a href="https://arxiv.org/abs/1810.10082">Ali, Kolter and Tibshirani (2019)</a>, the risks of gradient flow and ridge compared along the whole path under <span class="math inline">t=1/\lambda</span>, the exact version of 4.3.3; <a href="https://arxiv.org/abs/1307.1493">Wager, Wang and Liang (2013)</a>, dropout in generalized linear models as an <span class="math inline">L^2</span> penalty in the diagonal Fisher metric (4.4.3).</p>
 <div class="refs">
 
 <p><strong>For reference (books):</strong> <a href="https://www.deeplearningbook.org/contents/regularization.html">Deep Learning</a>, Goodfellow, Bengio and Courville (2016; free online), ch. 7, a survey of every regularizer in common use; <a href="https://hastie.su.domains/ElemStatLearn/">The Elements of Statistical Learning</a>, Hastie, Tibshirani and Friedman (2nd ed. 2009; free PDF), §3.4.1–3.4.3.</p>
@@ -989,31 +1030,27 @@ H=2a\begin{pmatrix}w_2^2&amp;w_1w_2\\ w_1w_2&amp;w_1^2\end{pmatrix}=2a\,vv^\top,
 <a id="wb2-section-5"></a>
 <p>When a fit that passes through every noisy training point is still close to optimal: kernel “ridgeless” regression is a minimum-norm interpolant, and many weak directions act on it as an implicit ridge penalty.</p>
 <p>Notation: <span class="math inline">\lambda</span> is the ridge penalty and <span class="math inline">a=n\lambda</span>; in 5.1, <span class="math inline">k(\cdot,\cdot)</span> is the kernel, <span class="math inline">K</span> the <span class="math inline">n\times n</span> kernel matrix and <span class="math inline">s_k</span> the singular values of the feature matrix; in 5.2–5.3, <span class="math inline">k</span> is the number of signal directions, <span class="math inline">m</span> the number of tail directions, <span class="math inline">\nu</span> their variance and <span class="math inline">c=m\nu</span> the tail’s total variance, which acts as <span class="math inline">n\lambda</span>; <span class="math inline">\mu_{\min}(\cdot)</span>, <span class="math inline">\mu_{\max}(\cdot)</span> and <span class="math inline">\mu_i</span> denote eigenvalues; <span class="math inline">\sigma^2</span> is the noise variance and <span class="math inline">r^2=\|\beta\|^2</span>.</p>
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://arxiv.org/abs/1903.08560">Surprises in high-dimensional ridgeless least squares interpolation</a></strong>, Trevor Hastie, Andrea Montanari, Saharon Rosset, Ryan J. Tibshirani (Annals of Statistics, 2022) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Exact asymptotics of minimum-norm interpolation and ridge as p/n → γ, the source of 1.3–1.6. Read §1 and §3; §5 shows when the best γ can lie above 1, §8 does random features.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1906.11300">Benign overfitting in linear regression</a></strong>, Peter L. Bartlett, Philip M. Long, Gábor Lugosi, Alexander Tsigler (PNAS, 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p><strong><a href="https://arxiv.org/abs/1906.11300">Benign overfitting in linear regression</a></strong>, Peter L. Bartlett, Philip M. Long, Gábor Lugosi, Alexander Tsigler (PNAS, 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>Interpolation is near-optimal exactly when the directions unimportant for prediction are many compared with n but small in total variance; 5.2–5.3 is a solvable case. Read §2–§3.</p>
 </div>
 
+<div class="supp"><span>Supplemental</span></div>
+
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/1806.07572">Neural tangent kernel: convergence and generalization in neural networks</a></strong>, Arthur Jacot, Franck Gabriel, Clément Hongler (NeurIPS 2018) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>A network linearized around its initialization is kernel regression with the gradient features <span class="math inline">\nabla_\theta f(x;\theta_0)</span>; in that regime training ends at the ridgeless kernel interpolant of 5.1.</p>
+<p><strong><a href="https://en.wikipedia.org/wiki/Neural_tangent_kernel">Neural tangent kernel</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A wide network linearized around its initialization trains as kernel regression with the gradient features; in that regime training ends at the ridgeless kernel interpolant of 5.1.</p>
 </div>
 
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/1808.00387">Just interpolate: kernel “ridgeless” regression can generalize</a></strong>, Tengyuan Liang, Alexander Rakhlin (Annals of Statistics, 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>For high-dimensional inputs the many small eigenvalues of the kernel matrix act as an implicit ridge, the kernel version of 5.2.</p>
+<p><strong><a href="https://en.wikipedia.org/wiki/Double_descent">Double descent</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The test-error curve that peaks at the interpolation threshold and falls again; 1.3–1.6 compute it for least squares and 5.2–5.3 say when the right branch is benign.</p>
 </div>
 
-<p>Also: <a href="https://arxiv.org/abs/1711.00165">Lee et al. (2018)</a>, wide random networks are Gaussian processes; <a href="https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html">Rahimi and Recht (2007)</a>, random Fourier features; <a href="https://arxiv.org/abs/1908.05355">Mei and Montanari (2019)</a>, double descent in random-feature regression.</p>
+<p>Also: <a href="https://arxiv.org/abs/1806.07572">Jacot, Gabriel and Hongler (2018)</a>, the neural tangent kernel paper; <a href="https://arxiv.org/abs/1808.00387">Liang and Rakhlin (2020)</a>, for high-dimensional inputs the many small eigenvalues of the kernel matrix act as an implicit ridge, the kernel version of 5.2; <a href="https://arxiv.org/abs/1711.00165">Lee et al. (2018)</a>, wide random networks are Gaussian processes; <a href="https://papers.nips.cc/paper_files/paper/2007/hash/013a006f03dbc5392effeb8f18fda755-Abstract.html">Rahimi and Recht (2007)</a>, random Fourier features; <a href="https://arxiv.org/abs/1908.05355">Mei and Montanari (2019)</a>, double descent in random-feature regression.</p>
 <div class="refs">
 
 <p><strong>For reference (books):</strong> <a href="http://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning">Understanding Machine Learning: From Theory to Algorithms</a>, Shalev-Shwartz and Ben-David (2014; free PDF), ch. 16, §16.1–16.2; <a href="https://gaussianprocess.org/gpml/chapters/RW2.pdf">Gaussian Processes for Machine Learning</a>, Rasmussen and Williams (2006; free online), ch. 2, §2.1–2.3.</p>
@@ -1180,15 +1217,16 @@ J=\mathcal L(K\alpha)+\lambda\,\alpha^\top K\alpha .
 <a id="wb2-section-6"></a>
 <p>A rigorous bound that can be small for the network SGD actually found, because its complexity term depends on the data and the solution rather than on what else the class could fit; it is the one classical bound that survives the keystone’s argument.</p>
 <p>Notation: <span class="math inline">P</span> is the prior, <span class="math inline">Q</span> the posterior, <span class="math inline">\mathrm{KL}(Q\|P)</span> their divergence, <span class="math inline">\delta</span> the confidence level; <span class="math inline">\lambda&gt;0</span> is Catoni’s free parameter (Alquier’s notation), not a ridge penalty; <span class="math inline">\sigma_P^2</span> is the prior variance, <span class="math inline">w</span> the trained weights, <span class="math inline">\hat H</span> the training-loss Hessian.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/1703.11008">Computing nonvacuous generalization bounds for deep (stochastic) neural networks with many more parameters than training data</a></strong>, Gintare Karolina Dziugaite, Daniel M. Roy (UAI 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>Optimizing a Gaussian posterior around SGD solutions on binary MNIST gives error bounds of 0.16–0.22 for networks with up to 2.4 million parameters, where VC bounds are vacuous by orders of magnitude; on random labels the bound is vacuous. Read §1–3 and §5.</p>
 </div>
 
-<div class="refs">
+<div class="reading main">
 
-<p><strong>For reference (books):</strong> <a href="https://arxiv.org/abs/2110.11216">User-friendly introduction to PAC-Bayes bounds</a>, Pierre Alquier (Foundations and Trends in Machine Learning, 2024), §2.1 (Catoni’s bound), §3.2–3.3.</p>
+<p><strong><a href="https://arxiv.org/abs/2110.11216">User-friendly introduction to PAC-Bayes bounds</a></strong>, Pierre Alquier (Foundations and Trends in Machine Learning, 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A tutorial whose §2.1 states and proves Catoni’s bound in the notation used here, the bound 6.1 builds in five steps. Read §2.1, then §3.2–3.3 for the Gaussian case of 6.2.</p>
 </div>
 
 <details class="sec sec3" data-sec="exercises-a-pac-bayes-bound-from-scratch">
@@ -1317,13 +1355,13 @@ J=\frac p{2\lambda}-\frac p{2\lambda}+\frac1{2\lambda}\ln\det\big(\sigma_P^2\Sig
 <a id="wb2-section-7"></a>
 <p>In the classical regime the expected excess risk of a fitted model is <span class="math inline">\mathrm{Tr}(H^{-1}C)/2n</span>, built from a curvature matrix and a gradient-noise matrix; this section derives it, the model-selection criteria it implies (TIC, AIC, BIC), and how a single fit compares with the Bayes ensemble. Most claims of the form “count the parameters”, “flat minima generalize” or “the posterior is what matters” are claims about this formula.</p>
 <p>Notation: <span class="math inline">H</span> is the curvature (Hessian of the population risk at its minimizer <span class="math inline">\theta^*</span>) and <span class="math inline">C</span> the covariance of the per-sample gradient there, <span class="math inline">p</span> the number of parameters, <span class="math inline">n</span> the sample size, <span class="math inline">\sigma^2</span> the noise variance; in 7.5 <span class="math inline">\lambda</span> is the real log canonical threshold, not a ridge penalty.</p>
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://jmlr.org/papers/v11/watanabe10a.html">Asymptotic equivalence of Bayes cross validation and widely applicable information criterion in singular learning theory</a></strong>, Sumio Watanabe (JMLR, 2010) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>The Bayes generalization error and WAIC in singular models, where the parameter count p/2 is replaced by the real log canonical threshold (7.5.2). Read the introduction and the main theorems.</p>
+<p><strong><a href="https://en.wikipedia.org/wiki/Akaike_information_criterion">Akaike information criterion</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The criterion, its derivation as an estimate of expected out-of-sample log-likelihood, and its relation to BIC and cross-validation; 7.2–7.4 derive it from the sandwich.</p>
 </div>
 
-<p>Also: <a href="https://doi.org/10.1214/aos/1176344136">Schwarz (1978)</a>, BIC; the sandwich is due to Huber (1967) and, for misspecified likelihoods, White (1982).</p>
+<p>Also: <a href="https://en.wikipedia.org/wiki/Bayesian_information_criterion">Bayesian information criterion</a> (Wikipedia) and <a href="https://doi.org/10.1214/aos/1176344136">Schwarz (1978)</a>, BIC; the sandwich is due to Huber (1967) and, for misspecified likelihoods, White (1982); <a href="https://jmlr.org/papers/v11/watanabe10a.html">Watanabe (2010)</a>, the Bayes generalization error and WAIC in singular models, where the parameter count <span class="math inline">p/2</span> is replaced by the real log canonical threshold (7.5.2).</p>
 <div class="refs">
 
 <p><strong>For reference (books):</strong> <a href="https://hastie.su.domains/ElemStatLearn/">The Elements of Statistical Learning</a>, Hastie, Tibshirani and Friedman (2nd ed. 2009; free PDF), §7.4–7.5, §7.7.</p>
@@ -1483,17 +1521,19 @@ G_g\approx\tfrac12\mathrm{Tr}\Big(H\big(\mathbb E\delta\delta^\top+\mathbb Euu^\
 <a id="wb2-section-8"></a>
 <p>For trained networks the gradient noise <span class="math inline">C</span> is not proportional to the curvature <span class="math inline">H</span>, so the clean cancellations of §7 fail; this decides what SGD’s noise cloud looks like (not a posterior) and which published complexity measures can track the generalization gap.</p>
 <p>Notation: <span class="math inline">H</span> and <span class="math inline">C</span> as in §7, <span class="math inline">\eta</span> the learning rate, <span class="math inline">B</span> the batch size, <span class="math inline">\Sigma</span> the stationary covariance of the iterates, <span class="math inline">T</span> a temperature, <span class="math inline">\mu_{\max}(H)</span> the largest eigenvalue of <span class="math inline">H</span>; in 8.2, <span class="math inline">C=cH^\gamma</span> with a scalar <span class="math inline">c</span> and an exponent <span class="math inline">\gamma</span> (neither is the <span class="math inline">c</span> or <span class="math inline">\gamma</span> of earlier sections); Kendall’s <span class="math inline">\tau</span> in 8.4 is a rank correlation.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/1912.02178">Fantastic generalization measures and where to find them</a></strong>, Yiding Jiang, Behnam Neyshabur, Hossein Mobahi, Dilip Krishnan, Samy Bengio (ICLR 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>Over 40 complexity measures ranked against the generalization gap across thousands of CIFAR-10 networks trained to the same cross-entropy. Norm-based measures often fail or anti-correlate; sharpness and PAC-Bayes measures do best. Read §2 and §4.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://arxiv.org/abs/2602.05600">On the superlinear relationship between SGD noise covariance and loss landscape curvature</a></strong>, Yikuan Zhang, Ning Yang, Yuhai Tu (arXiv, 2026) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p><strong><a href="https://arxiv.org/abs/2602.05600">On the superlinear relationship between SGD noise covariance and loss landscape curvature</a></strong>, Yikuan Zhang, Ning Yang, Yuhai Tu (arXiv, 2026) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>Why C ∝ H fails for networks (compare 8.1), and per-layer power laws C_ii ∝ H_ii^γ with fitted γ near 1–1.5. Read §2 and §4–5; note which layers the fits cover.</p>
 </div>
+
+<div class="supp"><span>Supplemental</span></div>
 
 <div class="reading">
 
@@ -1650,31 +1690,33 @@ H\Sigma+\Sigma H=\frac\eta B\,C .
 <a id="wb2-section-9"></a>
 <p>A once-popular account said networks generalize because SGD compresses what their layers keep about the input; the debate that followed is a compact lesson in what mutual information can and cannot measure about a deterministic network.</p>
 <p>Notation: <span class="math inline">X</span> is the input, <span class="math inline">T=f(X)</span> a layer’s activations, <span class="math inline">I(X;T)</span> their mutual information, <span class="math inline">q_\Delta</span> a discretization of <span class="math inline">T</span> with bin width <span class="math inline">\Delta</span> and <span class="math inline">K</span> bins.</p>
+<div class="reading main">
+
+<p><strong><a href="https://en.wikipedia.org/wiki/Information_bottleneck_method">Information bottleneck method</a></strong>, Wikipedia <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The objective (keep what T says about Y, forget the rest of X), its rate–distortion form, and the deep-learning claims built on it; 9.1 shows what it means for a deterministic layer.</p>
+</div>
+
+<div class="supp"><span>Supplemental</span></div>
+
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/1703.00810">Opening the black box of deep neural networks via information</a></strong>, Ravid Shwartz-Ziv, Naftali Tishby (arXiv, 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p><strong><a href="https://arxiv.org/abs/1703.00810">Opening the black box of deep neural networks via information</a></strong>, Ravid Shwartz-Ziv, Naftali Tishby (arXiv, 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>The claim: in the information plane, training has a short fitting phase and a long compression phase driven by SGD noise. Read it against 9.1–9.2.</p>
 </div>
 
 <div class="reading">
 
-<p><strong><a href="https://openreview.net/forum?id=ry_WPG-A-">On the information bottleneck theory of deep learning</a></strong>, Andrew M. Saxe, Yamini Bansal, Joel Dapello, Madhu Advani, Artemy Kolchinsky, Brendan D. Tracey, David D. Cox (ICLR 2018) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p><strong><a href="https://openreview.net/forum?id=ry_WPG-A-">On the information bottleneck theory of deep learning</a></strong>, Andrew M. Saxe, Yamini Bansal, Joel Dapello, Madhu Advani, Artemy Kolchinsky, Brendan D. Tracey, David D. Cox (ICLR 2018) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>The critique: compression appears with saturating tanh units but not ReLU, non-compressing networks generalize, and full-batch training shows the same curves.</p>
 </div>
 
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/1810.05728">Estimating information flow in deep neural networks</a></strong>, Ziv Goldfeld, Ewout van den Berg, Kristjan Greenewald, Igor Melnyk, Nam Nguyen, Brian Kingsbury, Yury Polyanskiy (ICML 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Add a little noise to each layer and I(X;T) becomes finite; its decrease is then the clustering of same-class representations, which binned estimates also track.</p>
+<p><strong><a href="https://www.youtube.com/watch?v=bLqJHjXihK8">Information Theory of Deep Learning</a></strong>, Naftali Tishby (talk, 2017; YouTube) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Tishby’s own account of the information plane and the compression claim, given before the critiques; watch it knowing what 9.1–9.2 show.</p>
 </div>
 
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1612.00410">Deep variational information bottleneck</a></strong>, Alexander A. Alemi, Ian Fischer, Joshua V. Dillon, Kevin Murphy (ICLR 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>The IB objective as a trainable loss for a network with a stochastic encoder, with better robustness than deterministic baselines.</p>
-</div>
-
-<p>Also: <a href="https://arxiv.org/abs/physics/0004057">Tishby, Pereira and Bialek (1999)</a>, the information bottleneck as rate–distortion with a learned distortion.</p>
+<p>Also: <a href="https://arxiv.org/abs/physics/0004057">Tishby, Pereira and Bialek (1999)</a>, the information bottleneck as rate–distortion with a learned distortion; <a href="https://arxiv.org/abs/1810.05728">Goldfeld et al. (2019)</a>, add a little noise to each layer and <span class="math inline">I(X;T)</span> becomes finite, and its decrease is then the clustering of same-class representations.</p>
 <div class="refs">
 
 <p><strong>For reference (books):</strong> <a href="https://doi.org/10.1002/047174882X">Elements of Information Theory, 2nd ed.</a>, Cover and Thomas (2006), ch. 2; ch. 10, §10.1–10.3.</p>

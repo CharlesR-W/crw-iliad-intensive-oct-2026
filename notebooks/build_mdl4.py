@@ -4,8 +4,9 @@
 Merged on 2026-10-13 from the former WB5 (scaling laws, architecture,
 representational convergence: `mdl4_universality.py`, sections 1-4) and WB6
 (the catalogue of surprising empirical facts: `mdl4_catalogue.py`, now
-sections 5-17). Anchors keep their old ids (`wb5-keystone`, `wb5-section-N`,
-`wb6-section-N`) so existing links survive.
+sections 5-14 after the 2026-10-13 merges). Anchors keep their old ids (`wb5-keystone`, `wb5-section-N`,
+`wb6-section-N`; the catalogue's SECTIONS carry them, since a merged section
+has two) so existing links survive.
 """
 import re
 
@@ -48,7 +49,7 @@ ROUTE_U = "\n".join([
     "- [3. Another bitter lesson: architecture doesn't matter (much)](#wb5-section-3). Fermi exercise on compute multipliers.",
     "- [4. Same representation? CKA, CCA, and the Platonic and linear representation hypotheses](#wb5-section-4). Exercises on similarity invariances.",
 ])
-ROUTE_C = "\n".join(f"- [{int(k) + OFFSET}. {t}](#wb6-section-{k}): {p}" for k, t, p in C.SECTIONS)
+ROUTE_C = "\n".join(f"- [{int(k) + OFFSET}. {t}](#{a[0]}): {p}" for k, a, t, p in C.SECTIONS)
 
 CELLS = [
     markdown(r"""
@@ -56,7 +57,7 @@ CELLS = [
 
 **Mysteries of Deep Learning, Iliad Intensive 2026**
 
-Different networks trained on similar data end up with the same smooth loss curves, nearly regardless of architecture, and arguably with similar internal representations. Nobody designed these regularities in, and nobody fully knows why they hold: the machines, they just want to learn. Sections 1–4 are about those universalities. Sections 5–17 are a catalogue of further things trained networks do that no theory predicted, one per section with the papers that report them: read until you find something you didn't know. Together they are a lower bound on what any good theory of deep learning must explain.
+Different networks trained on similar data end up with the same smooth loss curves, nearly regardless of architecture, and arguably with similar internal representations. Nobody designed these regularities in, and nobody fully knows why they hold: the machines, they just want to learn. Sections 1–4 are about those universalities. Sections 5–14 are a catalogue of further things trained networks do that no theory predicted, one per section with the papers that report them: read until you find something you didn't know. Together they are a lower bound on what any good theory of deep learning must explain.
 
 **Universalities**
 

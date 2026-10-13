@@ -924,7 +924,7 @@ ill-conditioned valley, and minibatch noise keeps knocking the iterate up the
 steep walls, where the gradient is large and points back across. Small-step
 GD shows no alignment ($f_{\rm top}\to0$); GD at the edge aligns through its
 self-stabilizing oscillation. The Mysteries day's
-[MDL4 §9](../notebooks/mdl4_mysteries.html#wb6-section-9) makes the same
+[MDL4 §11](../notebooks/mdl4_mysteries.html#wb6-section-9) makes the same
 point with a pure quadratic.
 
 **Where this holds.** The valley picture is about mid-training. Late in

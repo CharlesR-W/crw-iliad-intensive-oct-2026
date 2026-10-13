@@ -8,7 +8,7 @@ sentence of purpose per section and about one sentence per reading, with the
 Fermi estimates and short derivations kept in "### Exercises: ..." subsections.
 Kaplan et al. 2020 is MDL4's keystone and appears here only as a one-line pointer.
 """
-from nbkit import answer, book, markdown, reading, references, run
+from nbkit import answer, book, markdown, reading, references, run, supplemental
 
 CELLS = [
     # ------------------------------------------------------------------ intro
@@ -67,21 +67,21 @@ Labels and rewards carry few bits per sample and the input carries many, so most
         "Yann LeCun, 2016",
         "The cake talk: prediction of the input is the cake, supervision the icing, reward the cherry, because that is where the bits are.",
         about="Or read the paragraph in Ruder's [Highlights of NIPS 2016](https://www.ruder.io/highlights-nips-2016/).",
-        importance=4, length=3,
+        importance=5, length=3,
+    ) + supplemental() + reading(
+        "Self-supervised learning",
+        "https://en.wikipedia.org/wiki/Self-supervised_learning",
+        "Wikipedia",
+        "The concept page: the input supplies its own targets, so no labels are needed; next-token prediction is the autoregressive case.",
+        importance=3, length=2,
     ) + reading(
         "Language models are unsupervised multitask learners",
         "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
         "Radford, Wu, Child, Luan, Amodei, Sutskever (GPT-2), 2019",
         "Trained only on next-token prediction, GPT-2 does reading comprehension, translation and summarization zero-shot, badly but better with scale; §2 argues a task is just a kind of text.",
-        importance=3, length=2,
-    ) + reading(
-        "Learning to generate reviews and discovering sentiment",
-        "https://arxiv.org/abs/1704.01444",
-        "Alec Radford, Rafal Jozefowicz, Ilya Sutskever, 2017",
-        "A byte-level LSTM trained to predict Amazon reviews grows a single unit that tracks sentiment: an early case of prediction producing a concept nobody labelled.",
         importance=2, length=2,
     ) + r"""
-Also: Karpathy, [The unreasonable effectiveness of recurrent neural networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/) (2015; the pre-transformer version of the surprise).
+Also: Radford, Jozefowicz, Sutskever, [Learning to generate reviews and discovering sentiment](https://arxiv.org/abs/1704.01444) (2017; a byte-level LSTM grows a single unit that tracks sentiment, a concept nobody labelled); Karpathy, [The unreasonable effectiveness of recurrent neural networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/) (2015; the pre-transformer version of the surprise).
 
 ### Exercises: where the bits are
 
@@ -117,20 +117,22 @@ Video has far more bits than text, but most are texture and noise, while text is
         "https://openreview.net/forum?id=BZ5a1r-kVsf",
         "Yann LeCun, 2022 (position paper)",
         "Argues that generating raw observations is the wrong objective for world models, and proposes JEPA: predict the *representation* of the missing input.",
-        importance=4, length=2,
-    ) + reading(
-        "V-JEPA 2: self-supervised video models enable understanding, prediction and planning",
-        "https://arxiv.org/abs/2506.09985",
-        "Assran, Bardes, Fan, et al. (Meta), 2025",
-        "JEPA at scale on a million hours of video: good motion understanding and zero-shot robot planning toward image goals, but question answering still goes through a language model.",
-        importance=3, length=3,
-    ) + reading(
+        importance=5, length=2,
+    ) + supplemental() + reading(
         "Video generation models as world simulators",
         "https://openai.com/index/video-generation-models-as-world-simulators/",
         "OpenAI (Sora technical report), 2024",
         "The generative-video counterpoint: 3-D consistency and object permanence emerge from scaling a pixel generator; its own failure list includes glass shattering (compare Exercise 3.1).",
         importance=3, length=1,
+    ) + reading(
+        "World model (artificial intelligence)",
+        "https://en.wikipedia.org/wiki/World_model_(artificial_intelligence)",
+        "Wikipedia",
+        "The concept page: a learned model of how the environment evolves, with the generative and JEPA-style versions side by side.",
+        importance=2, length=2,
     ) + r"""
+Also: Assran, Bardes, Fan, et al., [V-JEPA 2](https://arxiv.org/abs/2506.09985) (2025; JEPA on a million hours of video gives motion understanding and zero-shot robot planning, but question answering still goes through a language model).
+
 ### Exercises: what a bit buys
 
 Compare text and vision first by raw volume, then by bits per event.
@@ -163,23 +165,17 @@ Next-token prediction is a full model of the data whose loss is code length, eve
 
 By the chain rule $q(x_{1:T})=\prod_tq(x_t\mid x_{<t})$, so this is a parametrization, not a restriction ([MDL3, section 'Occam, two ways'](mdl3_program_synthesis.html#wb4-section-2) takes up loss as code length). BERT's masked objective trains on only 15% of positions; an RNN needs $T$ sequential steps per layer where attention needs none ([Vaswani et al. 2017](https://arxiv.org/abs/1706.03762), Table 1).
 """ + reading(
-        "Generalized language models",
-        "https://lilianweng.github.io/posts/2019-01-31-lm/",
-        "Lilian Weng, 2019, updated to 2021 (blog)",
-        "A tour of pretraining objectives from ELMo to GPT-3; the sections on GPT's decoder-only language model and BERT's pretraining tasks give the contrast.",
-        importance=4, length=2,
-    ) + reading(
         "The hardware lottery",
         "https://arxiv.org/abs/2009.06489",
         "Sara Hooker, 2020",
         "Research ideas often win because they suit the available hardware rather than because they are better; it predates the question, so apply it to transformers yourself.",
-        importance=4, length=2,
-    ) + reading(
-        "What language model architecture and pretraining objective work best for zero-shot generalization?",
-        "https://arxiv.org/abs/2204.05832",
-        "Wang, Roberts, Hesslow, Le Scao, Chung, Beltagy, Launay, Raffel, 2022",
-        "Controlled comparison at 5B parameters: causal next-token models generalize best zero-shot after pretraining alone, masked objectives after multitask fine-tuning; next-token prediction won the regime that turned out to matter.",
-        importance=3, length=3,
+        importance=5, length=2,
+    ) + supplemental() + reading(
+        "Generalized language models",
+        "https://lilianweng.github.io/posts/2019-01-31-lm/",
+        "Lilian Weng, 2019, updated to 2021 (blog)",
+        "A tour of pretraining objectives from ELMo to GPT-3; the sections on GPT's decoder-only language model and BERT's pretraining tasks give the contrast.",
+        importance=3, length=2,
     ) + reading(
         "Language modeling is compression",
         "https://arxiv.org/abs/2309.10668",
@@ -187,7 +183,7 @@ By the chain rule $q(x_{1:T})=\prod_tq(x_t\mid x_{<t})$, so this is a parametriz
         "LLMs inside an arithmetic coder compress text, image patches and audio better than gzip, PNG and FLAC, until the model's own size is counted; §2 sets out the equivalence.",
         importance=3, length=1,
     ) + r"""
-Also: Horace He, [Making deep learning go brrrr](https://horace.io/brrr_intro.html) (where GPU time goes); Jay Alammar, [The illustrated transformer](https://jalammar.github.io/illustrated-transformer/) (if you have not met the architecture); Devlin et al., [BERT](https://arxiv.org/abs/1810.04805) (§3.1 defines the masked objective).
+Also: Wang et al., [What language model architecture and pretraining objective work best for zero-shot generalization?](https://arxiv.org/abs/2204.05832) (2022; at 5B parameters, causal next-token models generalize best zero-shot after pretraining alone); Horace He, [Making deep learning go brrrr](https://horace.io/brrr_intro.html) (where GPU time goes); Devlin et al., [BERT](https://arxiv.org/abs/1810.04805) (§3.1 defines the masked objective). If you have not met the architecture: Wikipedia, [Transformer](https://en.wikipedia.org/wiki/Transformer_(deep_learning_architecture)), and 3Blue1Brown, [Transformers, the tech behind LLMs](https://www.youtube.com/watch?v=wjZofJX0v4M) (Deep Learning ch. 5).
 """),
 
     # ------------------------------------------------------------------ §5
@@ -203,19 +199,15 @@ Geometric deep learning says to build the domain's symmetries into the network f
         "Michael Bronstein, ICLR 2021 keynote",
         "The blueprint: choose the symmetry group, use equivariant layers, pool locally, read out invariantly; CNNs, GNNs, DeepSets and transformers are instances.",
         importance=5, length=2,
-    ) + reading(
+    ) + supplemental() + reading(
         "An image is worth 16x16 words: transformers for image recognition at scale",
         "https://arxiv.org/abs/2010.11929",
         "Dosovitskiy et al. (ViT), 2020",
         "A plain transformer on image patches trails ResNets on ImageNet alone but matches or beats them when pretrained on 14M–300M images: \"large scale training trumps inductive bias.\"",
-        importance=4, length=3,
-    ) + reading(
-        "ConvNets match vision transformers at scale",
-        "https://arxiv.org/abs/2310.16764",
-        "Smith, Brock, Berrada, De (DeepMind), 2023",
-        "The other half: at matched compute on JFT-4B, NFNet CNNs match ViTs with the same kind of scaling law, so neither inductive bias wins.",
-        importance=3, length=2,
-    ) + references(
+        importance=3, length=3,
+    ) + r"""
+Also: Smith, Brock, Berrada, De, [ConvNets match vision transformers at scale](https://arxiv.org/abs/2310.16764) (2023; at matched compute on JFT-4B, NFNet CNNs match ViTs with the same kind of scaling law, so neither inductive bias wins).
+""" + references(
         book("Deep Learning", "https://www.deeplearningbook.org/contents/convnets.html",
              "Goodfellow, Bengio, Courville", "ch. 9, §9.2 and §9.4 (convolution as an infinitely strong prior)"),
         book("Geometric deep learning: grids, groups, graphs, geodesics, and gauges", "https://arxiv.org/abs/2104.13478",
@@ -289,14 +281,20 @@ Kaplan et al. 2020, [Scaling laws for neural language models](https://arxiv.org/
         "At fixed compute, scale parameters and tokens together; Chinchilla (70B parameters, 1.4T tokens) beats the 280B Gopher at the same compute.",
         about="§3.3 and Appendix D.2 are the fit of Exercise 6.1.",
         importance=5, length=2,
-    ) + reading(
+    ) + supplemental() + reading(
         "chinchilla's wild implications",
         "https://www.lesswrong.com/posts/6Fpvch8RR29qLEWNH/chinchilla-s-wild-implications",
         "nostalgebraist, 2022 (LessWrong)",
         "Plugs the Chinchilla fit into how much text exists and concludes that data, not parameters, becomes the binding constraint.",
         importance=3, length=2,
+    ) + reading(
+        "Neural scaling law",
+        "https://en.wikipedia.org/wiki/Neural_scaling_law",
+        "Wikipedia",
+        "The concept page: loss as a power law in parameters, data and compute, with the Kaplan and Chinchilla fits and their exponents in one place.",
+        importance=3, length=2,
     ) + r"""
-Also: EleutherAI, [Transformer math 101](https://blog.eleuther.ai/transformer-math/) (derives $C\approx6ND$ and training memory).
+Also: EleutherAI, [Transformer math 101](https://blog.eleuther.ai/transformer-math/) (derives $C\approx6ND$ and training memory); Epoch AI, [Chinchilla scaling: a replication attempt](https://epoch.ai/publications/chinchilla-scaling-a-replication-attempt) (2024; the re-fit discussed in Exercise 6.1(d)).
 
 ### Exercises: compute-optimal allocation
 
@@ -388,26 +386,14 @@ Next-token prediction on human text produces a model of the text's authors rathe
         "janus, 2022 (LessWrong)",
         "A self-supervised language model is a *simulator* of its training distribution that, when sampled, runs *simulacra*, which may be agentic even though the simulator is not.",
         importance=5, length=3,
-    ) + reading(
+    ) + supplemental() + reading(
         "the void",
         "https://nostalgebraist.tumblr.com/post/785766737747574784/the-void",
         "nostalgebraist, 2025",
         "The assistant is a character with a nearly empty specification, so the base model fills it from whatever its training data say about AI assistants, fiction and alignment writing included.",
         importance=4, length=3,
-    ) + reading(
-        "The persona selection model: why AI assistants might behave like humans",
-        "https://alignment.anthropic.com/2026/psm",
-        "Sam Marks, Jack Lindsey, Chris Olah (Anthropic), 2026",
-        "Post-training mostly selects one of the characters pretraining taught, so human-like behaviour is the default, and narrow fine-tuning can shift which persona the model infers it is.",
-        importance=4, length=3,
-    ) + reading(
-        "The assistant axis: situating and stabilizing the default persona of language models",
-        "https://arxiv.org/abs/2601.10387",
-        "Lu, Gallagher, Michala, Fish, Lindsey (Anthropic), 2026",
-        "One activation direction tracks how assistant-like the current character is; drift along it predicts slipping into other characters, and capping it resists that drift and some jailbreaks.",
-        importance=3, length=3,
     ) + r"""
-Also: nostalgebraist, [larger language models may disappoint you](https://www.lesswrong.com/posts/pv7Qpu8WSge8NRbpB) (2021; a prompt is evidence about what document this is); Gwern, [GPT-3 creative fiction: prompts as programming](https://gwern.net/gpt-3#prompts-as-programming) (2020; models "are not 'an' agent, because they are every agent").
+Also: Marks, Lindsey, Olah, [The persona selection model](https://alignment.anthropic.com/2026/psm) (2026; post-training selects one of the characters pretraining taught) and Lu et al., [The assistant axis](https://arxiv.org/abs/2601.10387) (2026; one activation direction tracks how assistant-like the current character is); nostalgebraist, [larger language models may disappoint you](https://www.lesswrong.com/posts/pv7Qpu8WSge8NRbpB) (2021; a prompt is evidence about what document this is); Gwern, [GPT-3 creative fiction: prompts as programming](https://gwern.net/gpt-3#prompts-as-programming) (2020; models "are not 'an' agent, because they are every agent").
 """),
 ]
 

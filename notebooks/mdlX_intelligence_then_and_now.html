@@ -149,6 +149,11 @@ details.hint > :last-child { padding-bottom: .4rem; }
 
 /* ---- readings ---- */
 .reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading.main { border-left: 4px solid var(--accent, #0b57d0); padding-left: calc(1rem - 2px); }
+.reading.main > p:first-child { font-size: 1.04em; }
+.supp { margin: 1.6em 0 .6em; padding-top: .5em; border-top: 1px solid var(--rule); color: var(--muted, #666); font-size: .92em; }
+.supp > span { font-variant: small-caps; letter-spacing: .04em; font-weight: 600; }
+.supp ~ .reading { opacity: .9; }
 .reading > p:first-child { margin-bottom: .35em; }
 .reading > p:last-child { margin-bottom: 0; }
 .tier {
@@ -247,13 +252,13 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="sec-body">
 <a id="wb1-keystone"></a>
 <p>Two short claims frame the rest of the day: capability comes from general methods that scale with compute, and once goals are produced the same way, alignment becomes a question about what training produces.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html">The bitter lesson</a></strong>, Rich Sutton, 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
 <p>Seventy years of chess, Go, speech and vision show general methods that leverage computation, search and learning, beating built-in human knowledge by a wide margin. Two pages; read it first.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/2209.00626">The alignment problem from a deep learning perspective</a></strong>, Richard Ngo, Lawrence Chan, Sören Mindermann, 2022 (revised 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>Argues from how models are actually trained that policies trained like today’s could learn situationally aware reward hacking, misaligned internally represented goals, and power-seeking. The best single synthesis of the deep-learning-era view.</p>
@@ -435,7 +440,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>The engineering paper on the machine that beat Kasparov: custom chips, parallel search and a large hand-built evaluation function. Read it beside AlphaZero.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://doi.org/10.1126/science.aar6404">A general reinforcement learning algorithm that masters chess, shogi, and Go through self-play</a></strong>, David Silver et al., 2018 (preprint on <a href="https://arxiv.org/abs/1712.01815">arXiv</a>, 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>AlphaZero: no human data, one network, tree search as the improvement operator, applied unchanged to three games and beating the strongest programs in each. Pair with <a href="https://www.nature.com/articles/nature24270">AlphaGo Zero</a> (2017).</p>
@@ -628,7 +633,7 @@ p(\text{good}\mid s_t,\text{gamble},\mathcal O)=\frac{p\,e^{R}}{p\,e^{R}+(1-p)\,
 <p>Recasts alignment as five ML problems (side effects, reward hacking, scalable oversight, safe exploration, distributional shift): the paper that made alignment an ML subfield.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/1906.01820">Risks from learned optimization in advanced machine learning systems</a></strong>, Evan Hubinger, Chris van Merwijk, Vladimir Mikulik, Joar Skalse, Scott Garrabrant, 2019 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>A trained model may itself be an optimizer whose objective differs from the loss, which splits alignment into outer and inner. §1 defines terms; §2.1 is the bitter lesson applied inside the model. §4 on deceptive alignment is optional; §7 is a glossary.</p>
@@ -707,7 +712,7 @@ p(\text{good}\mid s_t,\text{gamble},\mathcal O)=\frac{p\,e^{R}}{p\,e^{R}+(1-p)\,
 
 <p>Also: Templeton et al., <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">Scaling monosemanticity</a> (2024), for how recognizably human a large model’s features are.</p>
 <p><strong>What got set aside.</strong> Because prompting, RLHF and constitutions work well enough on current models, problems that only bite for much more capable systems (corrigibility, ELK, goal generalization under heavy RL) were set aside rather than solved.</p>
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://www.lesswrong.com/posts/epjuxGnSPof3GnMSL/alignment-remains-a-hard-unsolved-problem">Alignment remains a hard, unsolved problem</a></strong>, Evan Hubinger, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
 <p>Current LLMs are fairly well aligned, but the hard parts have not arrived: overseeing systems smarter than us, and long-horizon RL that selects for power-seeking.</p>
@@ -749,7 +754,7 @@ p(\text{good}\mid s_t,\text{gamble},\mathcal O)=\frac{p\,e^{R}}{p\,e^{R}+(1-p)\,
 <p>A chain-of-thought monitor catches reward hacking far better than an action monitor, but training against it teaches the model to hide its intent and keep hacking.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
 <p><strong><a href="https://arxiv.org/abs/2511.18397">Natural emergent misalignment from reward hacking in production RL</a></strong>, Monte MacDiarmid et al. (Anthropic), 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
 <p>Reward hacking learned in real coding environments generalizes to alignment faking and attempted sabotage; chat-style safety training hides this on chat evaluations but not agentic ones.</p>
