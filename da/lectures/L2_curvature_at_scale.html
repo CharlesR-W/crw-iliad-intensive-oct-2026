@@ -5,14 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Curvature at Scale</title>
 <!--
-  DA lecture 2: "Curvature at scale", about 30 minutes.
+  DA lecture 2: "Curvature at scale", about 30 minutes, 51 slides (many are 20-second slides).
   The words come from L2_curvature_at_scale.md (the source of truth); keep the two in step.
-  Figures: assets/L2/*.png, made by assets/L2/make_figures.py. Formulas checked in ../checks/L2_checks.py.
+  Every slide is one of: one equation + one sentence; one figure + one sentence;
+  at most three short bullets; a question. Numbers, citations and caveats live in the notes.
+  Figures: assets/L2/*.png, made by assets/L2/make_figures.py. Formulas and toy numbers are
+  checked in ../checks/L2_checks.py.
 
-  Keys: arrows / space move; N shows or hides the speaker notes on the slide;
-  S opens reveal.js's speaker view (notes, timer, next slide); Esc or O the overview; F fullscreen.
-  PDF: open this page with ?print-pdf appended and print to PDF from Chrome/Chromium
-  (add &showNotes to print the notes on separate pages).
+  Keys: arrows / space move (and step through fragments); N shows or hides the speaker notes
+  on the slide; S opens reveal.js's speaker view (notes, timer, next slide); Esc or O the
+  overview; F fullscreen. PDF: open with ?print-pdf appended and print to PDF from
+  Chrome/Chromium (add &showNotes to print the notes on separate pages).
 
   reveal.js 5.1.0 and KaTeX 0.16.9, pinned, from cdnjs.
 -->
@@ -27,16 +30,16 @@
     --ink-2: #4d5763;
     --ink-3: #808b97;
     --rule: #ddd7c9;
-    /* one accent per stage of the lecture */
-    --c0: #1b6aa8;  /* the primitive: jvp, vjp, Hv      */
-    --c1: #0f7a5f;  /* Lanczos and eigenpairs           */
-    --c2: #a2660f;  /* quadrature and SLQ               */
-    --c3: #7a4d9e;  /* spectra, and the 120B paper      */
-    --c4: #b8442a;  /* back to attribution              */
+    /* one accent per part of the lecture */
+    --c0: #1b6aa8;  /* the primitive            */
+    --c1: #0f7a5f;  /* traces, solves, Lanczos  */
+    --c2: #a2660f;  /* quadrature and SLQ       */
+    --c3: #7a4d9e;  /* spectra and the 120B run */
+    --c4: #b8442a;  /* back to attribution      */
     --sans: "Adwaita Sans", Inter, "DejaVu Sans", "Liberation Sans", system-ui, sans-serif;
   }
   html, body, .reveal-viewport { background: var(--paper); color: var(--ink); }
-  .reveal { font-family: var(--sans); font-size: 30px; color: var(--ink); }
+  .reveal { font-family: var(--sans); font-size: 32px; color: var(--ink); }
   .reveal .slides { text-align: left; }
   .reveal .slides section { padding: 0 8px; box-sizing: border-box; height: 100%; }
   .reveal section[data-stage="0"] { --accent: var(--c0); }
@@ -48,42 +51,36 @@
     margin: 0 0 10px; color: var(--accent, var(--ink-2)); font-size: 22px; font-weight: 700;
     letter-spacing: 0.14em; text-transform: uppercase;
   }
-  .reveal h1, .reveal h2 { font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 24px; color: var(--ink); }
-  .reveal h1 { font-size: 62px; max-width: 20ch; }
-  .reveal h2 { font-size: 42px; }
+  .reveal h1, .reveal h2 { font-weight: 500; letter-spacing: -0.02em; line-height: 1.12; margin: 0 0 26px; color: var(--ink); }
+  .reveal h1 { font-size: 64px; max-width: 20ch; }
+  .reveal h2 { font-size: 44px; }
   .reveal p { margin: 0 0 16px; line-height: 1.35; }
-  .reveal ul, .reveal ol { margin: 0 0 0 1.1em; padding: 0; }
-  .reveal li { margin: 0 0 12px; line-height: 1.32; }
+  .reveal ul { margin: 10px 0 0 1.1em; padding: 0; }
+  .reveal li { margin: 0 0 22px; line-height: 1.3; font-size: 36px; }
   .reveal li::marker { color: var(--accent, var(--ink-2)); }
-  .reveal .small { font-size: 24px; color: var(--ink-2); }
   .reveal .muted { color: var(--ink-2); }
-  .reveal strong { color: var(--ink); font-weight: 700; }
-  .reveal em { font-style: italic; }
   .reveal a { color: var(--accent, var(--c0)); }
   .reveal code { font-family: "DejaVu Sans Mono", monospace; font-size: 0.85em; background: var(--panel); padding: 1px 6px; border-radius: 4px; }
-  .reveal .eq { margin: 10px 0 22px; font-size: 32px; }
   .reveal .katex { white-space: nowrap; }
-  .reveal .eq.big { font-size: 38px; }
-  .reveal .box { border-left: 5px solid var(--accent, var(--ink-2)); background: var(--panel); padding: 14px 20px; margin: 10px 0 18px; border-radius: 0 6px 6px 0; }
-  .reveal img.fig { display: block; margin: 0 auto; max-width: 100%; max-height: 470px; }
-  .reveal img.fig.tall { max-height: 520px; }
-  .reveal .cap { font-size: 22px; color: var(--ink-2); margin-top: 8px; }
-  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
-  .reveal .cols.wide-left { grid-template-columns: 1.35fr 1fr; }
-  .reveal .cols.fig-left { grid-template-columns: 1.75fr 1fr; gap: 28px; }
-  .reveal table { border-collapse: collapse; font-size: 24px; width: 100%; }
-  .reveal th, .reveal td { border-bottom: 1px solid var(--rule); padding: 8px 10px; text-align: left; vertical-align: top; }
-  .reveal th { color: var(--ink-2); font-weight: 600; }
-  .reveal .room { color: var(--ink-3); font-style: italic; font-size: 24px; }
-  .reveal .dots { letter-spacing: 0.05em; color: var(--accent); white-space: nowrap; }
-  /* the three-arrow diagram on slide 3 */
-  .reveal .hub { display: grid; grid-template-columns: 300px 90px 1fr; grid-template-rows: repeat(3, auto); gap: 16px 0; align-items: center; margin-top: 18px; }
-  .reveal .hub .core { grid-row: 1 / span 3; border: 3px solid var(--c0); border-radius: 10px; padding: 30px 10px; text-align: center; font-size: 38px; background: var(--panel); }
-  .reveal .hub .arrow { color: var(--c0); font-size: 44px; text-align: center; }
-  .reveal .hub .out { border: 2px solid var(--rule); border-radius: 8px; padding: 12px 18px; background: #fff; }
-  .reveal .hub .out b { color: var(--ink); }
-  .reveal .readings li { font-size: 22px; margin-bottom: 6px; }
-  .reveal .readings h3 { font-size: 24px; margin: 8px 0 6px; color: var(--ink-2); font-weight: 700; text-transform: none; }
+  /* equation slides */
+  .reveal .eq { margin: 34px 0 34px; font-size: 40px; text-align: center; }
+  .reveal .eq.mid { font-size: 34px; }
+  .reveal .one { font-size: 32px; color: var(--ink-2); text-align: center; margin-top: 18px; }
+  /* figure slides */
+  .reveal img.fig { display: block; margin: 0 auto; max-width: 100%; max-height: 500px; }
+  .reveal .figcap { font-size: 30px; color: var(--ink-2); text-align: center; margin-top: 14px; }
+  /* question and takeaway slides */
+  .reveal section.q { display: flex !important; flex-direction: column; justify-content: center; }
+  .reveal section.q h2 { font-size: 56px; line-height: 1.18; max-width: 24ch; }
+  .reveal section.take { display: flex !important; flex-direction: column; justify-content: center; }
+  .reveal section.take .tk { font-size: 46px; line-height: 1.25; border-left: 8px solid var(--accent); padding: 8px 0 8px 30px; max-width: 26ch; }
+  /* the three-arrow diagram */
+  .reveal .hub { display: grid; grid-template-columns: 300px 90px 1fr; grid-template-rows: repeat(3, auto); gap: 20px 0; align-items: center; margin-top: 26px; }
+  .reveal .hub .core { grid-row: 1 / span 3; border: 3px solid var(--c0); border-radius: 10px; padding: 34px 10px; text-align: center; font-size: 40px; background: var(--panel); }
+  .reveal .hub .arrow { color: var(--c0); font-size: 46px; text-align: center; }
+  .reveal .hub .out { border: 2px solid var(--rule); border-radius: 8px; padding: 14px 20px; background: #fff; font-size: 32px; }
+  .reveal .readings li { font-size: 28px; margin-bottom: 18px; }
+  .reveal .dots { color: var(--accent); white-space: nowrap; font-size: 24px; }
   .reveal .speaker-notes { font-size: 20px; background: #fffef9; color: var(--ink); }
   .reveal .speaker-notes a { color: var(--c0); }
   .reveal .slide-number { background: transparent; color: var(--ink-3); font-size: 18px; right: auto; left: 14px; bottom: 10px; }
@@ -96,471 +93,528 @@
 <div class="reveal">
 <div class="slides">
 
-<!-- ===================================================================== 0 -->
+<!-- ===================================================================== opening -->
 <section data-stage="0">
   <p class="eyebrow">Data attribution · Lecture 2</p>
   <h1>Curvature at scale</h1>
-  <p class="muted" style="font-size:32px">From Hessian-vector products to the spectrum of a 100B-parameter model</p>
-  <p class="small" style="margin-top:60px">jvp and vjp · Pearlmutter · finite differences · Lanczos · stochastic Lanczos quadrature · Granziol &amp; Juarev (2026)</p>
+  <p class="muted" style="font-size:34px">From Hessian-vector products to the spectrum of a 100B-parameter model</p>
   <aside class="notes">
-    <p>About 30 minutes (30–35 live); the 15-minute path is in the outline, L2_curvature_at_scale.md. Keys: N toggles these notes, S opens the speaker view.</p>
-    <p>Figures use a toy tanh MLP: 1,573 parameters, $C=5$ classes, $n=1000$, curvature of the <em>mean</em> loss (eigenvalues are $1/n$ of the summed-loss ones; ratios and fractions are unaffected).</p>
+    <p>About 30 minutes, 51 slides; many are 20-second slides. The 15-minute path is in the outline (L2_curvature_at_scale.md). Keys: N toggles these notes, S opens the speaker view; arrows step through the build-ups.</p>
+    <p>Figures use a toy tanh MLP: 1,573 parameters, $C=5$ classes, $n=1000$, curvature of the <em>mean</em> loss (eigenvalues are $1/n$ of summed-loss ones; ratios and fractions are unaffected).</p>
   </aside>
 </section>
 
 <section data-stage="0">
   <p class="eyebrow">Where we are</p>
-  <h2>This morning gave the formula. Now we compute with the matrix inside it.</h2>
-  <div class="eq big">$$\mathcal I_i=-\nabla\phi^\top(G+\lambda I)^{-1}\nabla L_i$$</div>
-  <ul>
-    <li>Every method this afternoon approximates $(G+\lambda I)^{-1}$, replaces it by a filter of the same shape, or avoids it.</li>
-    <li>All of them need curvature information about a model with $10^8$ to $10^{11}$ parameters.</li>
-    <li>Every direct look at the true curvature uses one primitive: $v\mapsto Hv$.</li>
-  </ul>
+  <h2>This morning gave the formula</h2>
+  <div class="eq">$$\mathcal I_i=-\nabla\phi^\top(G+\lambda I)^{-1}\nabla L_i$$</div>
+  <p class="one fragment">For a 1B-parameter model, the matrix inside has $10^{18}$ entries.</p>
   <aside class="notes">
-    <p>Through-line: one primitive, $v\mapsto Hv$; what it buys; what trained spectra look like; how it was done at 120B; what that means for attribution.</p>
-    <p>Notation clashes to say out loud: the damping $\lambda$ against eigenvalues $\lambda_j$; Lanczos $\beta_k$ against data weights $\beta_i$. Eigenvalues carry an index; the damping never does.</p>
-    <p>Picked up in: <a href="../da1_core.html#da1-4">DA1 §4</a> (where the formula comes from), <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a> (computing it at scale).</p>
+    <p>Point at $(G+\lambda I)^{-1}$. Every method this afternoon approximates it, replaces it by a filter of the same shape (DA1 §6), or avoids it. In bf16, $10^{18}$ numbers are two exabytes.</p>
+    <p>Through-line: every direct look at the true curvature uses one primitive, $v\mapsto Hv$. Then what it buys, what trained spectra look like, how it was done at 120B, and what it means for attribution.</p>
+    <p>Notation clashes to say out loud: damping $\lambda$ against eigenvalues $\lambda_j$; Lanczos $\beta_k$ against data weights $\beta_i$. Eigenvalues carry an index; the damping never does.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-4">DA1 §4</a>, <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a>.</p>
   </aside>
 </section>
 
-<!-- ===================================================================== 1 -->
 <section data-stage="0">
-  <p class="eyebrow">§1 · Never form $H$</p>
-  <h2>$H$ has $P^2$ entries: $10^{18}$ for a 1B model. Ask questions that need only $Hv$.</h2>
+  <p class="eyebrow">The plan</p>
+  <h2>Three questions need only products $v\mapsto Hv$</h2>
   <div class="hub">
     <div class="core">$v\ \mapsto\ Hv$</div>
-    <div class="arrow">→</div>
-    <div class="out"><b>solve</b> $(H+\lambda I)x=g$ <span class="muted">· what an IF needs</span></div>
-    <div class="arrow">→</div>
-    <div class="out"><b>top-$k$ eigenpairs</b> <span class="muted">· sharpness, IFs in a subspace</span></div>
-    <div class="arrow">→</div>
-    <div class="out"><b>spectral density</b> $\rho(s)=\frac1P\sum_j\delta(s-\lambda_j)$ <span class="muted">· SLQ</span></div>
+    <div class="arrow fragment" data-fragment-index="1">→</div>
+    <div class="out fragment" data-fragment-index="1"><b>solve</b> $(H+\lambda I)x=g$</div>
+    <div class="arrow fragment" data-fragment-index="2">→</div>
+    <div class="out fragment" data-fragment-index="2"><b>top eigenpairs</b></div>
+    <div class="arrow fragment" data-fragment-index="3">→</div>
+    <div class="out fragment" data-fragment-index="3"><b>spectral density</b> $\rho(s)$: where the eigenvalues sit</div>
   </div>
+  <p class="one">$H$: the $P\times P$ Hessian of the training loss (or $G$, its Gauss–Newton part).</p>
   <aside class="notes">
-    <p>In bf16, $10^{18}$ numbers are two exabytes. The toy spectra in TD 2.6 used nets with a few thousand parameters, where <code>eigh</code> still works; today's figures use such a net, so every estimate can be compared with the exact answer.</p>
-    <p>The trace is the density's first moment: $\operatorname{tr}H=P\int s\,\rho(s)\,ds$.</p>
-    <p>Plan: how to get $Hv$ (§2–3), then one arrow at a time (§4–6).</p>
-    <p>Picked up in: <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a> ("never form $G$ or its inverse").</p>
+    <p>$P$ is the number of parameters. Solve: what an IF needs. Top eigenpairs: sharpness, IFs in a subspace. Density $\rho(s)=\frac1P\sum_j\delta(s-\lambda_j)$: what stochastic Lanczos quadrature (SLQ) estimates; the trace is its first moment, $\operatorname{tr}H=P\int s\rho(s)\,ds$.</p>
+    <p>Plan: how to get $Hv$ (slides 4–15), then one arrow at a time.</p>
   </aside>
 </section>
 
-<!-- ===================================================================== 2 -->
-<section data-stage="0">
-  <p class="eyebrow">§2 · Forward and reverse mode</p>
-  <h2>Autodiff gives two exact products, each for a few forward passes</h2>
-  <p>For $f:\mathbb R^P\to\mathbb R^d$ with Jacobian $J$:</p>
-  <div class="eq">$$\textbf{jvp: }v\mapsto Jv\quad(\text{forward mode}),\qquad\textbf{vjp: }u\mapsto J^\top u\quad(\text{reverse mode})$$</div>
-  <ul>
-    <li><b>jvp:</b> carry a tangent next to every value. Forward-pass memory, nothing stored.</li>
-    <li><b>vjp:</b> store activations, then one backward pass. Backprop is $\nabla L=J^\top 1$.</li>
-    <li>Code: <code>jax.jvp</code>, <code>jax.vjp</code>; <code>torch.func.jvp</code>, <code>torch.func.vjp</code>.</li>
-  </ul>
-  <aside class="notes">
-    <p>The only slide of autodiff theory. Both products are cheap and exact (to rounding), whatever $P$ and $d$ are, and neither forms $J$.</p>
-    <p>Picked up in: <a href="../da2_methods.html#da2-ekfac-code">DA2 Code 1</a> uses <code>torch.func</code>; <code>da/checks/L2_checks.py</code> tests both products against an explicit Jacobian.</p>
-  </aside>
+<!-- ===================================================================== §1 the primitive -->
+<section data-stage="0" class="q">
+  <p class="eyebrow">§1 · The primitive</p>
+  <h2>How do you multiply by a Jacobian you can't even store?</h2>
+  <aside class="notes"><p>Let the room answer for ten seconds. Then: autodiff never forms $J$; it only ever multiplies by it.</p></aside>
 </section>
 
-<!-- ===================================================================== 3 -->
 <section data-stage="0">
-  <p class="eyebrow">§3 · Hessian-vector products</p>
-  <h2>$Hv$ is a derivative of the gradient, so autodiff gives it exactly</h2>
-  <div class="eq">$$Hv=\nabla_w\big(\nabla L(w)^\top v\big)=\frac{d}{dr}\,\nabla L(w+rv)\Big|_{r=0}$$</div>
-  <ul>
-    <li><b>Reverse-over-reverse</b> ("double backward"): differentiate the scalar $\nabla L^\top v$. Keeps the backward graph.</li>
-    <li><b>Forward-over-reverse:</b> a jvp of the gradient. Pearlmutter's (1994) $\mathcal R_v\{\cdot\}$ operator.</li>
-    <li>Cost: gradient plus $Hv$ is about 2–3× the gradient alone (Schraudolph 2002).</li>
-  </ul>
+  <p class="eyebrow">§1 · Two directions</p>
+  <h2>Forward and reverse mode</h2>
+  <img class="fig" src="assets/L2/modes.png" alt="A chain of layers; forward mode carries a tangent left to right, reverse mode carries a covector right to left">
+  <p class="figcap">Forward mode pushes a tangent through; reverse mode pulls a covector back.</p>
   <aside class="notes">
-    <p>Pearlmutter: $\mathcal R_v\{f(w)\}=\frac{\partial}{\partial r}f(w+rv)|_{r=0}$, so $\mathcal R_v\{\nabla_w L\}=Hv$. He says it takes "about as much computation" as a gradient.</p>
-    <p>PyTorch: double backward is <code>torch.autograd.grad(..., create_graph=True)</code> twice; forward-over-reverse is <code>torch.func.jvp(torch.func.grad(L), (w,), (v,))</code>.</p>
+    <p>For $f:\mathbb R^P\to\mathbb R^d$ with Jacobian $J=J_2J_1$ (chain rule). Forward mode multiplies the layer Jacobians onto $v$ as it goes; reverse mode multiplies their transposes onto $u$ on the way back.</p>
   </aside>
 </section>
 
 <section data-stage="0">
-  <p class="eyebrow">§3 · The third route: finite differences</p>
-  <h2>Two ordinary gradients and a step size. The step size gives a V.</h2>
-  <div class="eq" style="font-size:27px;margin:0 0 6px">$$Hv\approx\frac{\nabla L(w+\epsilon v)-\nabla L(w-\epsilon v)}{2\epsilon}:\quad\text{truncation}\propto\epsilon^2,\ \ \text{round-off}\propto\frac{\epsilon_{\rm mach}}{\epsilon}\ \Rightarrow\ \epsilon^*\propto\epsilon_{\rm mach}^{1/3}$$</div>
-  <img class="fig" src="assets/L2/fd_error.png" alt="Relative error of the finite-difference Hv against autodiff Hv as a function of epsilon, in fp64, fp32 and with bf16-rounded gradients" style="max-height:395px">
-  <p class="cap">Toy MLP. Best $\epsilon\approx1.5\times10^{-2}$ in fp32 (error $3\times10^{-5}$); $0.2$ with bf16 gradients (error $3\times10^{-3}$). Best error $\propto\epsilon_{\rm mach}^{2/3}$.</p>
+  <p class="eyebrow">§1 · The two products</p>
+  <h2>jvp and vjp, for a Jacobian $J$</h2>
+  <div class="eq">$$\underbrace{v\mapsto Jv}_{\text{jvp}}\qquad\htmlClass{fragment}{\underbrace{u\mapsto J^\top u}_{\text{vjp}}}$$</div>
+  <p class="one fragment">Each costs a few forward passes, at any size; backprop is a vjp.</p>
   <aside class="notes">
-    <p>Works inside any training loop, including a sharded one. Granziol &amp; Juarev (2026), Thm 3.1, for unit $v$: error $\le\frac{\epsilon^2}{6}\|\nabla_w(D_v^3L)\|+O(\frac{\epsilon_{\rm mach}}{\epsilon}\|\nabla L\|)$, with $D_v^3L$ the third derivative of $L$ along $v$. That is leading order; a rigorous version takes the sup of the fourth derivative over the segment. Their Remark 3.2: fp32 $\epsilon^*\sim10^{-3}$–$10^{-2}$, errors $\sim10^{-5}$; bf16 $\epsilon^*\sim10^{-1}$, errors $\sim10^{-2}$. The toy agrees.</p>
-    <p>Ask: where is the minimum for your model? The constants depend on the model. And $\epsilon$ is a step along a unit vector in $\mathbb R^P$: each weight moves by about $\epsilon/\sqrt P$ (about $4\times10^{-4}$ here; about $10^{-8}$ for $\epsilon=10^{-4}$ at 160M parameters). Step sizes are not comparable across models: sweep $\epsilon$ against an exact HVP on a probe. Hold that for §8.</p>
-    <p>The bf16 curve rounds only the two gradients. With bf16 weights, a $10^{-8}$ perturbation would round away, so it has to live in higher precision. Autodiff $Hv$ in fp32: $2\times10^{-7}$ (the horizontal line).</p>
+    <p>jvp: one forward pass with a tangent next to every value; forward-pass memory, nothing stored. vjp: one forward pass storing activations, then one backward pass. Backprop: $\nabla L=J^\top 1$ for scalar $L$.</p>
+    <p>Code: <code>jax.jvp</code>, <code>jax.vjp</code>; <code>torch.func.jvp</code>, <code>torch.func.vjp</code>. Both exact to rounding; neither forms $J$.</p>
+    <p>Picked up in: <a href="../da2_methods.html#da2-ekfac-code">DA2 Code 1</a> uses <code>torch.func</code>.</p>
+  </aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · A tiny example</p>
+  <h2>Forward mode is arithmetic with dual numbers</h2>
+  <div class="eq mid">$$\begin{aligned}
+    &f(x_1,x_2)=x_1x_2+\sin x_1,\qquad x_1=1+\varepsilon,\ \ x_2=2,\ \ \varepsilon^2=0\\[6pt]
+    &\htmlClass{fragment}{f=(2+\sin 1)+(2+\cos 1)\,\varepsilon}
+  \end{aligned}$$</div>
+  <p class="one fragment">The $\varepsilon$-coefficient is $\partial f/\partial x_1$: a jvp with $v=(1,0)$.</p>
+  <aside class="notes">
+    <p>On the board: $x_1x_2=2+2\varepsilon$ and $\sin x_1=\sin1+(\cos1)\varepsilon$, so $f=2.841+2.540\,\varepsilon$; checked against <code>torch.func.jvp</code> in <code>da/checks/L2_checks.py</code>. One pass, exact, and the tangent rides along with the value.</p>
+  </aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · From gradients to Hv</p>
+  <h2>Move along $v$ and watch the gradient</h2>
+  <div class="eq">$$\nabla L(w+rv)=\nabla L(w)+r\,Hv+O(r^2)$$</div>
+  <p class="one fragment">The gradient changes along $v$ at rate $Hv$.</p>
+  <aside class="notes"><p>Taylor expansion of the gradient. Nothing new yet; the point is that $Hv$ is hiding in something we can already compute.</p></aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · From gradients to Hv</p>
+  <h2>So $Hv$ is a directional derivative of the gradient</h2>
+  <div class="eq">$$Hv=\frac{d}{dr}\,\nabla L(w+rv)\Big|_{r=0}$$</div>
+  <p class="one fragment">And a directional derivative is exactly what a jvp computes.</p>
+  <aside class="notes"><p>Pearlmutter (1994) calls this operator $\mathcal R_v\{\cdot\}=\frac{\partial}{\partial r}(\cdot)(w+rv)|_{r=0}$, with $\mathcal R_v\{\nabla L\}=Hv$.</p></aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · Pearlmutter's trick</p>
+  <h2>$Hv$ is a jvp of the gradient function</h2>
+  <div class="eq">$$Hv=\operatorname{jvp}\big(\nabla L;\ w,\ v\big)\qquad\htmlClass{fragment}{=\ \nabla_w\big(\nabla L^\top v\big)}$$</div>
+  <p class="one fragment">Exact, for about two to three gradients' worth of work.</p>
+  <aside class="notes">
+    <p>First form: forward-over-reverse, a jvp of the gradient, Pearlmutter (1994). Second form: reverse-over-reverse ("double backward"): differentiate the scalar $\nabla L^\top v$; keeps the backward graph.</p>
+    <p>Cost: Pearlmutter says "about as much computation" as a gradient; Schraudolph (2002) puts gradient plus product at 2–3× the gradient alone.</p>
+    <p>PyTorch: <code>torch.func.jvp(torch.func.grad(L), (w,), (v,))</code>, or <code>torch.autograd.grad</code> twice with <code>create_graph=True</code>.</p>
+  </aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · Gauss–Newton</p>
+  <h2>The Gauss–Newton product, piece by piece</h2>
+  <div class="eq">$$Gv=\sum_i\ \underbrace{J_i^\top}_{\text{vjp}}\ \underbrace{H_{y,i}}_{\substack{\text{loss Hessian}\\ \text{in the outputs}}}\ \underbrace{(J_iv)}_{\text{jvp}}$$</div>
+  <p class="one fragment">$J_i$: the Jacobian of the outputs on example $i$. One jvp, a small multiply, one vjp.</p>
+  <aside class="notes">
+    <p>$G$ is the matrix of DA1 §4 and of EK-FAC; $H_{y,i}$ is $C\times C$ for $C$ outputs. Schraudolph (2002). $G\succeq0$ for convex output losses, so conjugate gradients on $(G+\lambda I)x=g$ converges. $H-G$ need not vanish even at a minimum (DA1 §4's $f(w)=w^2$ example).</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-4">DA1 §4</a> (why $G$), <a href="../../td/td2_6_curvature.html#td26-1">TD 2.6 §6.1</a> ($H=G+$ residual).</p>
+  </aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · Without double differentiation</p>
+  <h2>Or just take two ordinary gradients</h2>
+  <div class="eq">$$Hv\approx\frac{\nabla L(w+\epsilon v)-\nabla L(w-\epsilon v)}{2\epsilon}$$</div>
+  <p class="one fragment">Works inside any training loop. But which $\epsilon$?</p>
+  <aside class="notes"><p>Unit $v$. This is the route the 2026 paper takes under sharded training (§5).</p></aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · Two errors</p>
+  <h2>Truncation versus round-off</h2>
+  <img class="fig" src="assets/L2/fd_tradeoff.png" alt="Schematic: truncation error grows like epsilon squared, round-off like one over epsilon; their sum has a minimum">
+  <p class="figcap">Shrink $\epsilon$ and round-off grows; enlarge it and truncation grows.</p>
+  <aside class="notes">
+    <p>Granziol &amp; Juarev (2026), Thm 3.1, for unit $v$: error $\le\frac{\epsilon^2}{6}\|\nabla_w(D_v^3L)\|+O(\frac{\epsilon_{\rm mach}}{\epsilon}\|\nabla L\|)$, with $D_v^3L$ the third derivative of $L$ along $v$. Leading order; a rigorous version takes the sup of that fourth derivative over the segment. Balancing gives $\epsilon^*\propto\epsilon_{\rm mach}^{1/3}$ and best error $\propto\epsilon_{\rm mach}^{2/3}$.</p>
+    <p>Their Remark 3.2: fp32 $\epsilon^*\sim10^{-3}$–$10^{-2}$, errors $\sim10^{-5}$; bf16 $\epsilon^*\sim10^{-1}$, errors $\sim10^{-2}$.</p>
     <p>Identity: the gradient central difference is exactly the average of $H(w+tv)v$ over $t\in[-\epsilon,\epsilon]$. A large $\epsilon$ gives curvature averaged along a segment, not a noisy $Hv$. (Their Thm 3.3 is the triangular-kernel version for the second difference of $L$.)</p>
   </aside>
 </section>
 
 <section data-stage="0">
-  <p class="eyebrow">§3 · Gauss–Newton products</p>
-  <h2>$Gv$ costs one jvp and one vjp</h2>
-  <div class="eq">$$Gv=\sum_iJ_i^\top H_{y,i}\,(J_iv)$$</div>
-  <ul>
-    <li>One jvp gives every $J_iv$; multiply by the small $C\times C$ matrix $H_{y,i}$; one vjp (Schraudolph 2002).</li>
-    <li>$G$ is the matrix of DA1 §4 and of EK-FAC.</li>
-    <li>$G\succeq0$ for convex output losses, so conjugate gradients on $(G+\lambda I)x=g$ converges.</li>
-  </ul>
+  <p class="eyebrow">§1 · Measured</p>
+  <h2>On a real network you get the V</h2>
+  <img class="fig" src="assets/L2/fd_error.png" alt="Relative error of the finite-difference Hv against autodiff Hv as a function of epsilon, in fp64, fp32 and with bf16-rounded gradients">
+  <p class="figcap">The best $\epsilon$ moves with precision: sweep it against an exact $Hv$.</p>
   <aside class="notes">
-    <p>$H-G$ need not vanish even at a minimum (DA1 §4's $f(w)=w^2$ example).</p>
-    <p>Picked up in: <a href="../da1_core.html#da1-4">DA1 §4</a> (why $G$), <a href="../../td/td2_6_curvature.html#td26-1">TD 2.6 §6.1</a> (the decomposition $H=G+\text{residual}$).</p>
+    <p>Toy MLP: best $\epsilon\approx1.5\times10^{-2}$ in fp32 (error $3\times10^{-5}$); $0.2$ with bf16-rounded gradients (error $3\times10^{-3}$); autodiff $Hv$ in fp32 at $2\times10^{-7}$ (the horizontal line); fp64 finite differences reach $4\times10^{-11}$ at $\epsilon\approx2\times10^{-5}$ (not plotted). The toy agrees with Remark 3.2.</p>
+    <p>$\epsilon$ is a step along a unit vector in $\mathbb R^P$: each weight moves by about $\epsilon/\sqrt P$ (about $4\times10^{-4}$ here; about $10^{-8}$ for $\epsilon=10^{-4}$ at 160M parameters). Step sizes are not comparable across models. With bf16 weights, a $10^{-8}$ perturbation would round away, so it has to live in higher precision. The bf16 curve rounds only the two gradients.</p>
   </aside>
 </section>
 
-<!-- ===================================================================== 4 -->
-<section data-stage="1">
-  <p class="eyebrow">§4 · Solves</p>
-  <h2>Iterative IF solves can cost thousands of HVPs per query. Hence EK-FAC for IFs.</h2>
-  <ul>
-    <li><b>Solves:</b> Koh &amp; Liang (2017) used conjugate gradients and LiSSA. LiSSA "often" needs thousands of iterations, each at least a gradient (Grosse et al. 2023).</li>
-    <li><b>Power iteration:</b> $v\leftarrow Hv/\|Hv\|$ finds the largest-<em>magnitude</em> eigenpair; error $\sim|\lambda_2/\lambda_1|^k$. Slow when the top eigenvalues are close.</li>
-    <li><b>Hutchinson:</b> $\operatorname{tr}H=\mathbb E_v[v^\top Hv]$ for $\mathbb E[vv^\top]=I$. One HVP per probe.</li>
-  </ul>
-  <aside class="notes">
-    <p>Grosse et al. §2.2.1 also note that CG is a full-batch method; its iteration count depends on conditioning and tolerance. Every IF query needs its own solve. EK-FAC itself came from optimization (George et al. 2018); Grosse et al. applied it to IFs.</p>
-    <p>For i.i.d. $\pm1$ probes, $\operatorname{Var}(v^\top Hv)=2(\|H\|_F^2-\sum_jH_{jj}^2)$; Gaussian probes give $2\|H\|_F^2$. PyHessian packages power iteration, Hutchinson and SLQ for PyTorch.</p>
-    <p>Sharpness is the largest <em>algebraic</em> eigenvalue: use Lanczos targeting the top end, as TD 2.2 does.</p>
-    <p>Picked up in: <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a> (EK-FAC: one cheap approximate solve per query).</p>
-  </aside>
+<section data-stage="0" class="take">
+  <p class="eyebrow">§1 · Takeaway</p>
+  <p class="tk">$Hv$ costs a few gradients: exact by autodiff, or two gradients and a well-chosen $\epsilon$.</p>
+  <aside class="notes"><p>Everything that follows uses only this black box.</p></aside>
 </section>
 
-<!-- ===================================================================== 5 -->
+<!-- ===================================================================== §2 traces, solves, Lanczos -->
+<section data-stage="1" class="q">
+  <p class="eyebrow">§2 · What products buy</p>
+  <h2>You have a function that returns $Hv$. What can you compute with it?</h2>
+  <aside class="notes"><p>Three answers in this section: a trace (cheap), a solve (expensive), the top eigenvalues (Lanczos). Start with: how would you estimate the trace of a matrix with $10^{18}$ entries from 10 products? Hint if needed: random vectors.</p></aside>
+</section>
+
 <section data-stage="1">
-  <p class="eyebrow">§5 · Lanczos</p>
-  <h2>$m$ HVPs compress $H$ into an $m\times m$ tridiagonal matrix</h2>
-  <div class="eq">$$Hq_k=\beta_{k-1}q_{k-1}+\alpha_kq_k+\beta_kq_{k+1},\qquad Q_m^\top HQ_m=T_m=\begin{pmatrix}\alpha_1&\beta_1&\\ \beta_1&\alpha_2&\ddots\\ &\ddots&\ddots\end{pmatrix}$$</div>
-  <ul>
-    <li>Start from a unit $q_1=v$. $Q_m$ is an orthonormal basis of $\mathcal K_m=\operatorname{span}\{v,Hv,\dots,H^{m-1}v\}$.</li>
-    <li>Cost: $m$ HVPs plus $O(mP)$ vector work.</li>
-    <li>Ritz values $\theta_k$ (eigenvalues of $T_m$) approximate eigenvalues of $H$.</li>
-  </ul>
+  <p class="eyebrow">§2 · Hutchinson</p>
+  <h2>A trace from ten products</h2>
+  <div class="eq">$$\operatorname{tr}H=\mathbb E_v\big[v^\top Hv\big]\quad\text{for }\mathbb E[vv^\top]=I$$</div>
+  <p class="one fragment">Hutchinson: random $\pm1$ probes $v$, one $Hv$ each.</p>
   <aside class="notes">
-    <p>Each new HVP is orthogonalized against only the two previous vectors; symmetry of $H$ makes the rest vanish in exact arithmetic.</p>
+    <p>For i.i.d. $\pm1$ probes, $\operatorname{Var}(v^\top Hv)=2(\|H\|_F^2-\sum_jH_{jj}^2)$; Gaussian probes give $2\|H\|_F^2$. PyHessian (Yao et al. 2020) packages power iteration, Hutchinson and SLQ for PyTorch.</p>
   </aside>
 </section>
 
 <section data-stage="1">
-  <p class="eyebrow">§5 · Outside in</p>
-  <h2>Ritz values converge to the extreme eigenvalues first</h2>
-  <img class="fig" src="assets/L2/ritz.png" alt="Ritz values against Lanczos iteration, with and without reorthogonalization">
-  <p class="cap">Top five eigenvalues converged by $m\approx12$; the bulk stays a smear. Without reorthogonalization, converged eigenvalues return as "ghost" copies: four copies of $\lambda_{\max}$ by $m=60$.</p>
-  <aside class="notes">
-    <p>Why outside-in: Ritz values are optimal over polynomials of degree $m-1$, and a polynomial can single out an isolated eigenvalue far more easily than one inside a dense cluster. The Kaniel–Paige bounds (refined by Saad) use Chebyshev polynomials: the rate depends on the gap to the rest of the spectrum relative to its spread.</p>
-    <p>This asymmetry is the whole story of what SLQ can and cannot see.</p>
-    <p>Code you have seen: <a href="../../td/td2_2_edge_of_stability.html#td22-5">TD 2.2 §2.5</a>'s <code>top_eig_lanczos</code> calls scipy's <code>eigsh</code> (implicitly restarted Lanczos) on double-backward HVPs.</p>
-  </aside>
-</section>
-
-<section data-stage="1">
-  <p class="eyebrow">§5 · The memory wall</p>
-  <h2>Keeping the basis orthogonal costs memory</h2>
+  <p class="eyebrow">§2 · Solves</p>
+  <h2>Solves are the expensive question</h2>
   <ul>
-    <li>In floating point the $q_k$ lose orthogonality once a Ritz value converges.</li>
-    <li>Full reorthogonalization keeps all of $Q_m$: $m$ vectors of length $P$.</li>
-    <li>At $P=10^{11}$ in bf16, one vector is 200 GB. That rules out reorthogonalization at LLM scale; without it, $m$ must stay small.</li>
-    <li>Eigenpairs route to IFs: Schioppa et al. (2022) use Arnoldi for the top eigenpairs, then IFs in that subspace (up to a 300M ViT).</li>
+    <li class="fragment">An IF needs one solve per query.</li>
+    <li class="fragment">Iterative solvers can need thousands of $Hv$ per solve.</li>
+    <li class="fragment">That cost is why DA2 uses EK-FAC for IFs.</li>
   </ul>
   <aside class="notes">
-    <p>Full reorthogonalization also adds $O(m^2P)$ work. Arnoldi is the version for non-symmetric matrices; Schioppa et al. run it on a data subset and invert $H$ in the top-eigenvector subspace: the "eigenpairs" arrow from slide 3, used for attribution.</p>
-  </aside>
-</section>
-
-<!-- ===================================================================== 6 -->
-<section data-stage="2">
-  <p class="eyebrow">§6 · The target</p>
-  <h2>A probe sees the spectrum as a weighted measure</h2>
-  <div class="eq">$$\int f\,\rho=\frac1P\operatorname{tr}f(H),\qquad v^\top f(H)\,v=\sum_j(v\cdot u_j)^2f(\lambda_j)=\int f\,d\mu_v$$</div>
-  <ul>
-    <li>$\mu_v$: nodes at the eigenvalues $\lambda_j$, weights $(v\cdot u_j)^2$.</li>
-    <li>For $v=z/\sqrt P$ with i.i.d. $\pm1$ entries $z_j$: $\mathbb E[\mu_v]=\rho$ exactly.</li>
-    <li>So: approximate $\int f\,d\mu_v$ well for a few probes, and average.</li>
-  </ul>
-  <aside class="notes">
-    <p>$\mathbb E[(v\cdot u_j)^2]=u_j^\top\mathbb E[vv^\top]u_j=1/P$. Any probe with $\mathbb E[vv^\top]=I/P$ works; Ghorbani et al. used Gaussian probes.</p>
-  </aside>
-</section>
-
-<section data-stage="2">
-  <p class="eyebrow">§6 · Golub–Welsch</p>
-  <h2>$T_m$ matches $2m$ moments of $\mu_v$: it is a Gauss rule</h2>
-  <div class="cols wide-left">
-    <div>
-      <img class="fig" src="assets/L2/quadrature.png" alt="Cumulative weight of the spectral measure seen from one probe, against the 10-node Gauss rule from Lanczos" style="max-height:370px">
-    </div>
-    <div>
-      <div class="eq" style="font-size:26px">$$e_1^\top T_m^k e_1=v^\top H^kv,\quad k\le2m-1$$</div>
-      <div class="eq" style="font-size:26px">$$v^\top f(H)v\approx\sum_{k=1}^m\tau_k^2f(\theta_k)$$</div>
-      <ul style="font-size:25px">
-        <li>Nodes: Ritz values $\theta_k$.</li>
-        <li>Weights: $\tau_k^2=(e_1^\top y_k)^2$, from $T_my_k=\theta_ky_k$.</li>
-      </ul>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>The figure: one probe; the cumulative weight of $\mu_v$ (1,573 steps) against the 10-node Gauss rule. The rule matches moments 0 to 19 of $\mu_v$ to rounding (checked numerically).</p>
-    <p>Reference: Golub &amp; Meurant, <i>Matrices, Moments and Quadrature</i>; Wikipedia's Gaussian quadrature page has the Golub–Welsch construction.</p>
-    <p>Physicists may know this as the recursion method: the $\alpha_k,\beta_k$ are continued-fraction coefficients of a local density of states.</p>
-    <p class="room">(Room for the instructor's framing.)</p>
-  </aside>
-</section>
-
-<section data-stage="2">
-  <p class="eyebrow">§6 · Stochastic Lanczos quadrature</p>
-  <h2>Average the Gauss rules over a few probes, then smooth</h2>
-  <div class="eq">$$\hat\rho(s)=\frac1{n_v}\sum_{\text{probes}}\ \sum_{k=1}^m\tau_k^2\,\delta(s-\theta_k)\ \ \xrightarrow{\ \text{Gaussian of width }\sigma\ }\ \text{plot}$$</div>
-  <ul>
-    <li>Two error sources: quadrature ($m$ iterations) and Monte Carlo ($n_v$ probes).</li>
-    <li>Ubaru, Chen &amp; Saad (2017); Chen, Trogdon &amp; Ubaru (2021) for the error analysis.</li>
-    <li>Ghorbani et al. (2019): $m=90$. Granziol &amp; Juarev (2026): $m=10$ at 120B.</li>
-  </ul>
-  <aside class="notes">
-    <p>Moments of degree up to $2m-1$ are exact in expectation, so their error is all Monte Carlo. In the toy, the first, second and fourth moments are off by $+1.7\%$, $-2.3\%$, $-5.4\%$ at every $m$ from 10 to 90 (same probes). More iterations do not fix Monte Carlo error.</p>
-    <p>In high dimension one probe already averages over many eigenvectors. For probes uniform on the sphere, the number of probes in Chen, Trogdon &amp; Ubaru's Wasserstein bound falls roughly like $\log P/P$ at fixed accuracy (never below one). That is why huge models get away with few probes.</p>
-    <p>Code: <code>google/spectral-density</code> (Ghorbani et al., TF and JAX, archived) and PyHessian.</p>
-  </aside>
-</section>
-
-<section data-stage="2">
-  <p class="eyebrow">§6 · What SLQ sees</p>
-  <h2>Outliers come out at once; the bulk needs more iterations</h2>
-  <img class="fig" src="assets/L2/slq.png" alt="Exact spectral density against SLQ with m = 90, 30 and 10">
-  <p class="cap">Same toy, $n_v=10$ probes. Left: $m=90$ and $m=30$ match. Right: $m=10$ has the outliers right and a lumpy bulk.</p>
-  <aside class="notes">
-    <p>Dotted lines: the top $C=5$ eigenvalues. Log scale on the density: the bulk near zero holds 89% of the eigenvalues.</p>
-  </aside>
-</section>
-
-<section data-stage="2">
-  <p class="eyebrow">§6 · Resolution</p>
-  <h2>SLQ resolves the outliers, not the fine structure near zero</h2>
-  <ul>
-    <li>Resolved: the outliers and the bulk's overall shape.</li>
-    <li>The mean eigenvalue: no quadrature error, but check its spread across probes.</li>
-    <li>Not resolved: individual bulk eigenvalues. Coarsest near zero, exactly where an IF's damping acts.</li>
-  </ul>
-  <div class="box">Toy: fraction of eigenvalues with $|s|&lt;\sigma$ is 0.891 exactly, 0.890 by SLQ at $m=90$, 0.78 at $m=10$.</div>
-  <aside class="notes">
-    <p>For a spectrum dominated by a few outliers, ten probes can leave the mean uncertain by tens of percent (e.g. rank one: relative s.d. $\approx\sqrt{2/n_v}$).</p>
-    <p>Picked up in: <a href="../da1_core.html#da1-6">DA1 §6</a>. The filters act eigenvalue by eigenvalue; the density says how many eigenvalues sit where.</p>
-  </aside>
-</section>
-
-<!-- ===================================================================== 7 -->
-<section data-stage="3">
-  <p class="eyebrow">§7 · Trained classifiers</p>
-  <h2>A bulk near zero and about $C$ outliers</h2>
-  <ul>
-    <li><b>Sagun et al. (2017):</b> on $k$-cluster data, the number of outliers above the gap equals the number of classes.</li>
-    <li><b>Ghorbani et al. (2019):</b> SLQ up to ImageNet. Without BatchNorm, outliers appear fast and the gradient concentrates in their span; with it, both almost vanish.</li>
-    <li><b>Papyan (2018, 2020):</b> outliers from class means in $G$: about $C$, with a weaker $C(C-1)$ layer below. The bulk: within-class variation and $H-G$.</li>
-  </ul>
-  <aside class="notes">
-    <p>Ghorbani et al.: ResNet-18 and Inception-V3 (27M parameters) on ImageNet. Large negative eigenvalues early in training vanish within the first 1% of steps.</p>
-    <p>Papers report $C$, $C-1$ or about $C^2$ outliers, depending on what they count, the cutoff, the loss, normalization and the stage of training. Our toy ($C=5$), relative to the largest: 1, 0.97, 0.68, 0.42, 0.35, then 0.23. A real gap, not a dramatic one.</p>
-    <p>Picked up in: <a href="../../td/td2_6_curvature.html#td26-3">TD 2.6 §6.3</a> (the class-mean mechanism) and <a href="../../td/td2_6_curvature.html#td26-4">§6.4</a> (the gradient lives in the top subspace).</p>
-  </aside>
-</section>
-
-<section data-stage="3">
-  <p class="eyebrow">§7 · Language models</p>
-  <h2>For a language model, $C$ is the vocabulary</h2>
-  <ul>
-    <li>"About $C$ outliers" means tens of thousands, not a handful.</li>
-    <li>SLQ with $m=10$ nodes per probe cannot resolve $10^4$–$10^5$ outliers one by one.</li>
-    <li>Transformers are also uneven by block: Zhang et al. (2024) ran SLQ per parameter block and found very different spectra across blocks, unlike CNNs.</li>
-  </ul>
-  <aside class="notes">
-    <p>Zhang, Chen, Ding, Li, Sun &amp; Luo (NeurIPS 2024), "block heterogeneity", §3.1; a Claude-suggested extra.</p>
-    <p>The LLM spectra in §8 are among the first direct looks.</p>
-  </aside>
-</section>
-
-<!-- ===================================================================== 8 -->
-<section data-stage="3">
-  <p class="eyebrow">§8 · Granziol &amp; Juarev (2026)</p>
-  <h2>Under sharding, use the finite difference, shard by shard</h2>
-  <ul>
-    <li>FSDP (ZeRO-3): each GPU stores a slice of every parameter tensor. The authors: naive HVPs force expensive all-gathers.</li>
-    <li>Their move: perturb $w\mapsto w\pm\epsilon v$ in place on each shard; two ordinary gradient passes over the same data; restore.</li>
-    <li>Only scalar all-reduces extra. $T_{Hv}\approx2\,T_{\rm grad}$.</li>
-    <li>The gain is compatibility with the training stack, not FLOPs. Basis memory is handled by small $m$.</li>
-  </ul>
-  <aside class="notes">
-    <p>arXiv 2602.00816, §3.1 and Algorithm 1. Cost (§5.1): Qwen-0.6B on one node, 1 → 8 GPUs gives 5.74× per HVP (Table 3); Lanczos bookkeeping adds 1.3–1.8% over the HVPs (Table 2); on a 32B model, Table 5 reports about 4× over HessFormer (89.6 s at batch 32 against 22.2 s at batch 80). Multi-node scaling is shown on 32B (Table 4).</p>
-    <p>HessFormer (Granziol 2025), the previous record: Pearlmutter HVPs on one 8-GPU node, SLQ on a 70B DeepSeek distilled model.</p>
-  </aside>
-</section>
-
-<section data-stage="3">
-  <p class="eyebrow">§8 · Reading the paper</p>
-  <h2>Five things that will otherwise trip you up</h2>
-  <ul style="font-size:26px">
-    <li>"Exact" means the true $H$, not a structured approximation. The finite difference still has truncation error.</li>
-    <li>Figs 2–8 plot Ritz values against weights ("Gamma", "Ritz weights"): our $\theta_k$, $\tau_k^2$. Not smoothed densities.</li>
-    <li>"Smoothing parameter $\epsilon$" is the finite-difference step, not the plotting width $\sigma$.</li>
-    <li>Their $\theta$ is the parameters. Pearlmutter's method is called "reverse-over-forward" there.</li>
-    <li>Their loss is a dataset average: eigenvalues are $1/n$ of summed-loss ones.</li>
-  </ul>
-  <aside class="notes">
-    <p>The name for the order of the two passes varies between communities; what matters is that one pass differentiates the other.</p>
-    <p>§4's Lanczos error theorem (Thm 4.1) assumes the finite-difference errors are unbiased and independent across iterations; Thm 3.1 gives an $O(\epsilon^2)$ bias, so at least the unbiasedness assumption is optimistic. Read §4 as heuristic (it is optional reading).</p>
-  </aside>
-</section>
-
-<section data-stage="3">
-  <p class="eyebrow">§8 · Finding 1</p>
-  <h2>The step size $\epsilon$ can fake a spectrum</h2>
-  <ul>
-    <li>Pythia-160M: at $\epsilon=10^{-5}$ and at $10^{-2}$, a random-matrix-like bulk with no separated outliers. At $10^{-4}$ and $10^{-3}$, clear outliers (Figs 3–6).</li>
-    <li>The authors attribute the failures to round-off and to averaging along the segment.</li>
-    <li>But the "good" $\epsilon$ is the one that shows the expected outliers. The check from slide 6, against an exact HVP on a probe, is not reported.</li>
-    <li>They find Pythia-1.4B more stable in $\epsilon$ (Fig 8). One pair of models.</li>
-  </ul>
-  <aside class="notes">
-    <p>Tie back to the V figure: the same two failure modes, now in a picture that looks like physics. The exact-HVP check would be cheap at 160M.</p>
-    <p>Their Remark 3.2 puts the fp32 $\epsilon^*$ at $10^{-3}$–$10^{-2}$, yet their sweet spot is $10^{-4}$–$10^{-3}$ and $10^{-2}$ fails. Same lesson as slide 6: the constants, and $\sqrt P$, move the optimum.</p>
-    <p>The fp32/bf16 labels in their figures refer to how the Lanczos basis vectors are stored, not the gradients; they conclude bf16 storage with fp32 scalar arithmetic is enough. 30× more data (a 30% split instead of 1%) leaves the spectrum essentially unchanged at fixed $\epsilon$ (Fig 7). Fig 8's panels: $\epsilon=10^{-2}$, $3\times10^{-3}$, $10^{-3}$, $3\times10^{-4}$; the text claims consistency for $10^{-4}\le\epsilon\le10^{-3}$.</p>
-  </aside>
-</section>
-
-<section data-stage="3">
-  <p class="eyebrow">§8 · Finding 2</p>
-  <h2>gpt-oss-120b: large negative eigenvalues, from 10 iterations</h2>
-  <ul>
-    <li>Density on wikitext-2, sequence length 64, $\epsilon=10^{-4}$ (§7, Fig 2).</li>
-    <li>10 Lanczos iterations, no reorthogonalization, $\epsilon$ not swept at this size.</li>
-    <li>The authors call the plot "only indicative". Why 10: without reorthogonalization, ghosts appear.</li>
-    <li>Three readings: not memorised (authors); not near a minimum of this loss; numerics. The plot cannot separate them.</li>
-  </ul>
-  <aside class="notes">
-    <p>HessFormer's paper: it is prudent to stay below 20 iterations without reorthogonalization, and it often uses 10. Reorthogonalizing at 120B would need 240 GB per bf16 basis vector.</p>
-    <p>Three readings of the negative eigenvalues, side by side. The authors': the data, as tokenized, has not been memorised. Another: a pretrained checkpoint need not be near a minimum of this particular loss (wikitext-2, sequence length 64). A numerical one: no $\epsilon$ sweep, 10 iterations, no reorthogonalization. The figure cannot separate them.</p>
-    <p>Negative eigenvalues live in $H-G$ only, since $G\succeq0$: the IF's $G$ has none.</p>
-    <p>The paper gives neither the number of probes nor the hardware for this run, and no code; HessFormer's code is public.</p>
-  </aside>
-</section>
-
-<section data-stage="3">
-  <p class="eyebrow">§8 · Finding 3</p>
-  <h2>Block-diagonal curvature can be wrong by $O(1)$</h2>
-  <p>Per transformer layer $b$, true $(Hv)_b$ against the block product $H_{bb}v_b$, unit Gaussian $v$:</p>
-  <div class="eq">$$\text{rel. err.}=\frac{\|(Hv)_b-H_{bb}v_b\|}{\|(Hv)_b\|}\qquad(\text{predicting }0\text{ gives exactly }1)$$</div>
-  <ul>
-    <li>Qwen-0.6B, 28 layers: $0.94\pm0.06$; cosine $0.31\pm0.12$ (Table 6).</li>
-    <li>DeepSeek-Coder 1.3B after fine-tuning, 24 layers: $1.21\pm0.15$; cosine $0.00\pm0.13$ (Table 7).</li>
-  </ul>
-  <aside class="notes">
-    <p>Most of $(Hv)_b$ comes from the other layers. For the DeepSeek-Coder model they report a substantially higher cosine in the final block (§6.2).</p>
-    <p>The caveat that changes a conclusion: this is $H$ with random probes. EK-FAC approximates $G$, and an IF applies $(G+\lambda I)^{-1}$ to gradients, which may live in a different subspace. A warning, not a verdict on IFs. In the other direction: EK-FAC's blocks are single weight matrices, finer than a whole transformer layer, so if anything the test is generous to the block assumption.</p>
-    <p><a href="../da2_methods.html#da2-ekfac-code">DA2 Code 1</a> measures the IF-level error on a 147-parameter net: rank correlation with the exact damped GN IF is 0.65–0.73 for block-diagonal $G$, 0.26–0.45 for K-FAC and EK-FAC, across $\lambda$ from $10^{-3}$ to $10^{-1}$ times the mean eigenvalue.</p>
-    <p class="room">(Room for the instructor's framing.)</p>
-  </aside>
-</section>
-
-<section data-stage="3">
-  <p class="eyebrow">§8 · Scale (skip if late)</p>
-  <h2>Who looked at curvature, at what size</h2>
-  <table>
-    <tr><th>Paper</th><th>Largest model</th><th>Curvature access</th></tr>
-    <tr><td>Ghorbani et al. 2019</td><td>$2.7\times10^7$ (Inception-V3)</td><td>exact HVP, SLQ</td></tr>
-    <tr><td>Schioppa et al. 2022</td><td>$3\times10^8$ (ViT-L/32)</td><td>exact HVP, Arnoldi</td></tr>
-    <tr><td>Grosse et al. 2023</td><td>$5.2\times10^{10}$</td><td>EK-FAC, no HVPs</td></tr>
-    <tr><td>HessFormer 2025</td><td>$7\times10^{10}$</td><td>Pearlmutter HVP, one node, SLQ</td></tr>
-    <tr><td>Granziol &amp; Juarev 2026</td><td>$1.2\times10^{11}$ (gpt-oss-120b)</td><td>finite-difference HVP, FSDP, SLQ, $m=10$</td></tr>
-  </table>
-  <aside class="notes">
-    <p>Parameter counts as each paper states them.</p>
+    <p>Koh &amp; Liang (2017) used conjugate gradients and LiSSA (Agarwal, Bullins &amp; Hazan 2017). Grosse et al. (2023, §2.2.1): CG is full-batch; LiSSA "often" needs thousands of iterations, each at least a gradient. CG's count depends on conditioning and tolerance. EK-FAC came from optimization (George et al. 2018); Grosse et al. applied it to IFs.</p>
     <p>Picked up in: <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a>.</p>
   </aside>
 </section>
 
-<!-- ===================================================================== 9 -->
-<section data-stage="4">
-  <p class="eyebrow">§9 · Back to attribution</p>
-  <h2>Attribution wants the spectrum of $G$. It shows where $\lambda$ sits.</h2>
-  <div class="cols fig-left">
-    <div><img class="fig" src="assets/L2/filter.png" alt="Eigenvalues of the toy's Gauss-Newton matrix with the damped filter at two dampings" style="max-height:470px"></div>
-    <div>
-      <ul style="font-size:25px">
-        <li>$Gv$ is the same primitive; the 2026 paper measured $H$.</li>
-        <li>SLQ sees the outliers well; where $0.1\times$mean falls inside the bulk is what it resolves least well.</li>
-        <li>Grosse et al.: $\lambda=0.1\times$ mean eigenvalue. Toy: 78% of eigenvalues below it. Between bulk and outliers: 99.7%.</li>
-      </ul>
-    </div>
-  </div>
+<section data-stage="1" class="q">
+  <p class="eyebrow">§2 · Eigenvalues</p>
+  <h2>How do you find the top eigenvalues from $Hv$ alone?</h2>
+  <aside class="notes"><p>Most people say power iteration. Good start; it finds the largest-<em>magnitude</em> eigenpair, with error shrinking like $|\lambda_2/\lambda_1|^k$, slowly when the top eigenvalues are close, as outliers often are.</p></aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · Krylov</p>
+  <h2>Repeated multiplication tilts $v$ toward the top</h2>
+  <img class="fig" src="assets/L2/krylov.png" alt="Unit vectors v, Hv, H squared v rotating toward the top eigenvector of a 2 by 2 matrix" style="max-height:470px">
+  <p class="figcap">Keep all of $v, Hv, H^2v,\dots$: their span is the Krylov subspace.</p>
   <aside class="notes">
-    <p>The toy's $G$ (mean loss); log axis, so the bulk spans about seven decades. Grosse et al. apply the rule layer by layer to the EK-FAC eigenvalues; here it is applied to the exact $G$.</p>
-    <p>On directions with $s_k\ll\lambda$, $(G+\lambda I)^{-1}$ acts as $\lambda^{-1}$. At scale both choices of $\lambda$ are computable: the outliers come out well, and the mean has no quadrature error (check its spread across probes).</p>
-    <p>The mean eigenvalue is $\operatorname{tr}G/P$: Hutchinson gives it from a few Gauss–Newton products $Gv$ (with $Hv$ it would give $\operatorname{tr}H$, a different number). DA2's Code 1 sweeps $10^{-3}$ to $10^{-1}$ times the mean eigenvalue; DA1 §5's exercise uses the median Hessian eigenvalue.</p>
-    <p>$\lambda$ also has a meaning: DA1 §4's proximal penalty. Choosing it from the spectrum is a statement about where you trust the quadratic model; choosing it from the proximal target is a statement about the question.</p>
-    <p class="room">(Room for the instructor's framing.)</p>
-    <p>Picked up in: <a href="../da1_core.html#da1-6">DA1 §6</a>.</p>
+    <p>2×2 example with eigenvalues 3 and 1: the angle to $u_1$ goes 60°, 30°, 11°. Power iteration keeps only the last vector; Lanczos keeps the whole span $\mathcal K_m=\operatorname{span}\{v,Hv,\dots,H^{m-1}v\}$ and gets much more out of the same $m$ products.</p>
   </aside>
 </section>
 
-<section data-stage="4">
-  <p class="eyebrow">§9 · What the IF is made of</p>
-  <h2>Far below $\lambda$: a scaled gradient dot product. Near or above: curvature-weighted.</h2>
-  <div class="eq" style="font-size:28px">$$\mathcal I_i=-\sum_k\frac{(u_k\cdot\nabla\phi)(u_k\cdot\nabla L_i)}{s_k+\lambda}\approx-\frac1\lambda\!\sum_{s_k\ll\lambda}\!(u_k\cdot\nabla\phi)(u_k\cdot\nabla L_i)-\!\sum_{s_k\gtrsim\lambda}\!\frac{(u_k\cdot\nabla\phi)(u_k\cdot\nabla L_i)}{s_k+\lambda}$$</div>
+<section data-stage="1">
+  <p class="eyebrow">§2 · Lanczos</p>
+  <h2>$m$ products compress $H$ to a tridiagonal matrix</h2>
+  <div class="eq">$$T_m=Q_m^\top H Q_m=\begin{pmatrix}\alpha_1&\beta_1&\\ \beta_1&\alpha_2&\ddots\\ &\ddots&\ddots\end{pmatrix}$$</div>
+  <p class="one fragment">$H$ restricted to the Krylov basis $Q_m$; its eigenvalues, the Ritz values $\theta_k$, approximate $H$'s.</p>
+  <aside class="notes">
+    <p>$Q_m=[q_1,\dots,q_m]$ is an orthonormal basis of $\mathcal K_m$, built by the three-term recurrence $Hq_k=\beta_{k-1}q_{k-1}+\alpha_kq_k+\beta_kq_{k+1}$ from $q_1=v$. Each new $Hq_k$ is orthogonalized against only the two previous vectors; symmetry makes the rest vanish in exact arithmetic. Cost: $m$ HVPs plus $O(mP)$ vector work.</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · A 4×4 example</p>
+  <h2>A 4×4 example: watch the Ritz values</h2>
+  <div class="eq mid">$$\begin{aligned}
+    m=1:&\quad 0.55\\
+    \htmlClass{fragment}{m=2:}&\quad\htmlClass{fragment}{0.30,\ \ 4.82}\\
+    \htmlClass{fragment}{m=3:}&\quad\htmlClass{fragment}{0.23,\ \ 0.81,\ \ 5.00}\\
+    \htmlClass{fragment}{m=4:}&\quad\htmlClass{fragment}{0.2,\ \ 0.5,\ \ 1,\ \ 5}
+  \end{aligned}$$</div>
+  <p class="one fragment">True eigenvalues $0.2,\ 0.5,\ 1,\ 5$: the extremes arrive first.</p>
+  <aside class="notes">
+    <p>$H=R\,\mathrm{diag}(0.2,0.5,1,5)\,R^\top$ with a fixed random rotation $R$, $v=(1,1,1,1)/2$; numbers from <code>da/checks/L2_checks.py</code>. At $m=4=P$ Lanczos is exact.</p>
+    <p>Why outside-in: Ritz values are optimal over polynomials of degree $m-1$, and a polynomial can single out an isolated eigenvalue far more easily than one in a cluster. The Kaniel–Paige bounds (refined by Saad) make this precise with Chebyshev polynomials.</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · On a network</p>
+  <h2>Outliers converge fast; the bulk is slow</h2>
+  <img class="fig" src="assets/L2/ritz.png" alt="Ritz values against Lanczos iteration with full reorthogonalization">
+  <p class="figcap">Toy MLP: the five outliers are done by about $m=12$.</p>
+  <aside class="notes">
+    <p>Dotted lines: the top five eigenvalues of the toy Hessian. This asymmetry is the whole story of what SLQ can and cannot see.</p>
+    <p>Code you have seen: <a href="../../td/td2_2_edge_of_stability.html#td22-5">TD 2.2 §2.5</a>'s <code>top_eig_lanczos</code> calls scipy's <code>eigsh</code> (implicitly restarted Lanczos) on double-backward HVPs.</p>
+    <p>The eigenpairs route to IFs: Schioppa et al. (2022) get top eigenpairs by Arnoldi (the non-symmetric version) and compute IFs in that subspace, up to a 300M-parameter ViT.</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · Floating point</p>
+  <h2>Without reorthogonalization: ghosts</h2>
+  <img class="fig" src="assets/L2/ritz_ghosts.png" alt="Ritz values against Lanczos iteration without reorthogonalization, showing spurious copies">
+  <p class="figcap">Lost orthogonality creates spurious Ritz values and copies of converged ones.</p>
+  <aside class="notes">
+    <p>Same probe, no reorthogonalization: by $m=60$ there are four copies of $\lambda_{\max}$, and stray Ritz values between the outliers. The $q_k$ lose orthogonality once a Ritz value converges.</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · The memory wall</p>
+  <h2>Reorthogonalizing needs every basis vector</h2>
+  <div class="eq">$$\text{one vector}=P\ \text{numbers}:\quad P=10^{11}\ \text{in bf16}\ \Rightarrow\ 200\ \text{GB}$$</div>
+  <p class="one fragment">Keeping $m$ of them is out of reach at LLM scale, so $m$ stays small.</p>
+  <aside class="notes"><p>Full reorthogonalization also costs $O(m^2P)$ extra work. Without it, ghosts appear once Ritz values converge, which is why the 120B run uses $m=10$ (§5).</p></aside>
+</section>
+
+<section data-stage="1" class="take">
+  <p class="eyebrow">§2 · Takeaway</p>
+  <p class="tk">Lanczos finds the outliers in a few steps; the bulk stays a blur.</p>
+  <aside class="notes"><p>Hold on to "the bulk stays a blur": it is what the density estimate in §3 can and cannot fix.</p></aside>
+</section>
+
+<!-- ===================================================================== §3 SLQ -->
+<section data-stage="2" class="q">
+  <p class="eyebrow">§3 · The whole spectrum</p>
+  <h2>Lanczos found the outliers. Can the same $T_m$ give the whole spectrum?</h2>
+  <aside class="notes"><p>Yes, as a distribution, not eigenvalue by eigenvalue. Three steps.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Step 1</p>
+  <h2>What a single probe sees</h2>
+  <div class="eq">$$v^\top f(H)\,v=\sum_j\,(v\cdot u_j)^2\,f(\lambda_j)$$</div>
+  <p class="one fragment">Each eigenvalue, weighted by the probe's overlap with its eigenvector.</p>
+  <aside class="notes"><p>$(\lambda_j,u_j)$: eigenpairs of $H$; $v$ a unit probe. Expand $v$ in the eigenbasis and apply $f(H)$.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Step 2</p>
+  <h2>That sum is an integral against sticks</h2>
+  <img class="fig" src="assets/L2/probe.png" alt="Eigenvalue sticks whose heights are the probe weights">
+  <p class="figcap">$v^\top f(H)v=\int f\,d\mu_v$: a stick at each $\lambda_j$, height $(v\cdot u_j)^2$.</p>
+  <aside class="notes"><p>A small synthetic spectrum (twelve bulk eigenvalues, three outliers) and one random probe. The heights sum to 1 for a unit probe.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Step 3</p>
+  <h2>Lanczos gives the Gauss rule for those sticks</h2>
+  <div class="eq">$$e_1^\top f(T_m)\,e_1=\sum_{k=1}^m\tau_k^2\,f(\theta_k)$$</div>
+  <p class="one fragment">Nodes $\theta_k$: the Ritz values; weights $\tau_k^2$ from $T_m$'s eigenvectors; exact to degree $2m-1$.</p>
+  <aside class="notes">
+    <p>Golub–Welsch: nodes are the Ritz values $\theta_k$; weights $\tau_k^2=(e_1^\top y_k)^2$, the squared first components of $T_m$'s eigenvectors $y_k$. Equivalently $e_1^\top T_m^ke_1=v^\top H^kv$ for $k\le2m-1$: $T_m$ matches $2m$ moments of $\mu_v$.</p>
+    <p>Reference: Golub &amp; Meurant, <i>Matrices, Moments and Quadrature</i>; Wikipedia's Gaussian quadrature page. Physicists: this is the recursion method, with $\alpha_k,\beta_k$ the continued-fraction coefficients of a local density of states.</p>
+    <p class="muted">(Room for the instructor's framing.)</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · A tiny example</p>
+  <h2>Three sticks, two nodes</h2>
+  <img class="fig" src="assets/L2/gauss_toy.png" alt="A three-atom measure and the two-node Gauss rule from Lanczos">
+  <p class="figcap">Two nodes reproduce moments 0 to 3 of the three sticks exactly.</p>
+  <aside class="notes"><p>Atoms at 0, 1, 4 with weights 0.5, 0.3, 0.2. $T_2$ gives nodes 0.249 and 3.790 with weights 0.760 and 0.240. Moments 0–3: 1, 1.1, 3.5, 13.1 for both; moment 4: 51.5 against 49.6. Checked in <code>da/checks/L2_checks.py</code>.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Stochastic Lanczos quadrature</p>
+  <h2>Average the rules over a few random probes</h2>
+  <div class="eq">$$\hat\rho(s)=\frac1{n_v}\sum_{\text{probes}}\ \sum_{k=1}^m\tau_k^2\,\delta(s-\theta_k)$$</div>
+  <p class="one fragment">Averaging $n_v$ random probes estimates $\rho$; finite $m$ adds quadrature error.</p>
+  <aside class="notes">
+    <p>For $v=z/\sqrt P$ with i.i.d. $\pm1$ entries, $\mathbb E[(v\cdot u_j)^2]=1/P$, so $\mathbb E[\mu_v]=\rho$ exactly. Smooth with a Gaussian of width $\sigma$ to plot. Ubaru, Chen &amp; Saad (2017).</p>
+    <p>Two error sources: quadrature ($m$) and Monte Carlo ($n_v$). Moments up to degree $2m-1$ are exact in expectation; their error is all Monte Carlo. In the toy, moments 1, 2, 4 are off by $+1.7\%$, $-2.3\%$, $-5.4\%$ at every $m$ from 10 to 90 (same probes).</p>
+    <p>For probes uniform on the sphere, the number of probes in Chen, Trogdon &amp; Ubaru's (2021) Wasserstein bound falls roughly like $\log P/P$ (never below one): huge models need few probes. Ghorbani et al. (2019) used $m=90$ with Gaussian probes; Granziol &amp; Juarev $m=10$ at 120B. Code: <code>google/spectral-density</code>, PyHessian.</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · What SLQ sees</p>
+  <h2>Ten steps place the outliers; the bulk needs more</h2>
+  <img class="fig" src="assets/L2/slq.png" alt="Exact spectral density against SLQ with m = 90, 30 and 10">
+  <p class="figcap">Toy MLP: at $m=10$ the outliers are right and the bulk is lumpy.</p>
+  <aside class="notes">
+    <p>Ten probes. With $m=30$ or $90$ the SLQ curve lies on the exact one (not shown). Fraction of eigenvalues with $|s|&lt;\sigma$: 0.891 exactly, 0.890 by SLQ at $m=90$, 0.78 at $m=10$. The mass near zero, where an IF's damping acts, is where the rule is coarsest.</p>
+    <p>The mean eigenvalue has no quadrature error and is unbiased, but check its spread across probes: for a spectrum dominated by a few outliers, ten probes can leave tens of percent.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-6">DA1 §6</a> (filters act eigenvalue by eigenvalue).</p>
+  </aside>
+</section>
+
+<section data-stage="2" class="take">
+  <p class="eyebrow">§3 · Takeaway</p>
+  <p class="tk">A few probes times a few Lanczos steps give a spectral density: sharp outliers, blurry bulk.</p>
+  <aside class="notes"><p>SLQ tells you how much mass sits near zero, not its fine structure.</p></aside>
+</section>
+
+<!-- ===================================================================== §4 spectra -->
+<section data-stage="3" class="q">
+  <p class="eyebrow">§4 · Trained networks</p>
+  <h2>What does the Hessian spectrum of a trained network look like?</h2>
+  <aside class="notes"><p>Ask for guesses: Gaussian? Marchenko–Pastur? Something with structure?</p></aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Classifiers</p>
+  <h2>A bulk and a few outliers</h2>
   <ul>
-    <li>Gradient-similarity scores differ from the IF on directions with $s_k$ near or above $\lambda$.</li>
-    <li>Which directions matter depends on the projections $u_k\cdot\nabla\phi$, $u_k\cdot\nabla L_i$ and the weights; the density gives neither projection.</li>
-    <li><b>Auditing</b> EK-FAC (blocks + a Kronecker-factored eigenbasis): blocks cost $O(1)$ in $Hv$ (2026); the Kronecker step costs more at the IF level (DA2 Code 1). Measurements, not theorems.</li>
+    <li class="fragment">A bulk of eigenvalues near zero.</li>
+    <li class="fragment">About $C$ large outliers, $C$ the number of classes.</li>
+    <li class="fragment">The outliers come from class structure in $G$.</li>
   </ul>
   <aside class="notes">
-    <p>$(s_k,u_k)$: eigenpairs of $G$, as in DA1 §6. The first sum is the TracIn-like part, scaled by $1/\lambda$.</p>
-    <p>Contributions depend on both projections and on the weights $1/(s_k+\lambda)$. <a href="../../td/td2_6_curvature.html#td26-4">TD 2.6 §6.4</a> finds the gradient concentrated in the top Hessian subspace, where the weights are smallest, so concentration alone does not say which part dominates.</p>
-    <p>Picked up in: <a href="../da1_core.html#da1-6">DA1 §6</a>, <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a>, <a href="../da2_methods.html#da2-ekfac-code">DA2 Code 1</a>.</p>
+    <p>Sagun et al. (2017): on $k$-cluster data the number of outliers above the gap equals the number of classes. Ghorbani et al. (2019): SLQ up to ImageNet (ResNet-18, Inception-V3 with 27M parameters); without BatchNorm, outliers appear fast and the gradient concentrates in their span; with it, both almost vanish; large negative eigenvalues early in training vanish within 1% of steps. Papyan (2018, JMLR 2020): about $C$ outliers from class means in $G$, a weaker $C(C-1)$ layer below; the bulk from within-class variation and $H-G$.</p>
+    <p>Papers report $C$, $C-1$ or about $C^2$, depending on what they count. Our toy ($C=5$), relative to the largest: 1, 0.97, 0.68, 0.42, 0.35, then 0.23.</p>
+    <p>Picked up in: <a href="../../td/td2_6_curvature.html#td26-3">TD 2.6 §6.3</a> and <a href="../../td/td2_6_curvature.html#td26-4">§6.4</a>.</p>
   </aside>
 </section>
 
-<!-- ===================================================================== 10 -->
+<section data-stage="3">
+  <p class="eyebrow">§4 · Language models</p>
+  <h2>For a language model, $C$ is the vocabulary</h2>
+  <div class="eq">$$C=|\text{vocabulary}|\approx10^4\text{–}10^5$$</div>
+  <p class="one fragment">"A few outliers" may be tens of thousands; $m=10$ cannot resolve them.</p>
+  <aside class="notes"><p>Transformers are also uneven by block: Zhang et al. (NeurIPS 2024) ran SLQ per parameter block and found very different spectra across blocks in transformers, not in CNNs (a Claude-suggested extra). The LLM spectra in §5 are among the first direct looks.</p></aside>
+</section>
+
+<section data-stage="3" class="take">
+  <p class="eyebrow">§4 · Takeaway</p>
+  <p class="tk">Classifiers: a bulk plus about $C$ outliers. Language models: still an open case.</p>
+  <aside class="notes"><p>Which is why the 120B measurement is interesting.</p></aside>
+</section>
+
+<!-- ===================================================================== §5 120B -->
+<section data-stage="3" class="q">
+  <p class="eyebrow">§5 · Granziol &amp; Juarev (2026)</p>
+  <h2>How do you get $Hv$ from a 120B model sharded across GPUs?</h2>
+  <aside class="notes"><p>Under FSDP (ZeRO-3) each GPU stores a slice of every parameter tensor. The authors' diagnosis: naive HVPs force expensive all-gathers. arXiv 2602.00816.</p></aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§5 · The move</p>
+  <h2>Finite differences, one shard at a time</h2>
+  <img class="fig" src="assets/L2/fsdp.png" alt="Four GPUs each holding a shard; perturb in place, two gradient passes, restore">
+  <p class="figcap">Two ordinary gradient passes: a Lanczos step costs about two training steps.</p>
+  <aside class="notes">
+    <p>§3.1, Algorithm 1. The only extra communication is scalar all-reduces for norms and dot products; $T_{Hv}\approx2T_{\rm grad}$. The gain is compatibility with the training stack, not FLOPs.</p>
+    <p>Cost (§5.1): Qwen-0.6B on one node, 1 → 8 GPUs gives 5.74× per HVP (Table 3); Lanczos bookkeeping adds 1.3–1.8% (Table 2); on 32B, Table 5 reports about 4× over HessFormer (89.6 s at batch 32 against 22.2 s at batch 80). HessFormer (Granziol 2025), the previous record: Pearlmutter HVPs on one 8-GPU node, SLQ on a 70B DeepSeek distilled model.</p>
+    <p>Reading the paper: "exact" means the true $H$, not a structured approximation; Figs 2–8 plot Ritz values against weights ("Gamma", "Ritz weights"), our $\theta_k$ and $\tau_k^2$; "smoothing parameter $\epsilon$" is the finite-difference step; their $\theta$ is the parameters and Pearlmutter's method is called "reverse-over-forward"; their loss is a dataset average; §4's Thm 4.1 assumes unbiased, independent finite-difference errors, while Thm 3.1 gives an $O(\epsilon^2)$ bias, so read §4 as heuristic.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§5 · Finding 1</p>
+  <h2>The step size can fake a spectrum</h2>
+  <ul>
+    <li class="fragment">$\epsilon=10^{-5}$ or $10^{-2}$: no separated outliers.</li>
+    <li class="fragment">$\epsilon=10^{-4}$ or $10^{-3}$: clear outliers.</li>
+    <li class="fragment">Which is right? Only an exact-$Hv$ check can say.</li>
+  </ul>
+  <aside class="notes">
+    <p>Pythia-160M, §7.1, Figs 3–6; the bad ones "resemble a random matrix". The authors attribute the failures to round-off and to averaging along the segment (Thm 3.1). But the "good" $\epsilon$ is the one that shows the expected outliers, and the check from slide 14 (finite difference against an exact HVP on a probe) is not reported, though it would be cheap at 160M.</p>
+    <p>Their Remark 3.2 puts fp32 $\epsilon^*$ at $10^{-3}$–$10^{-2}$, yet their sweet spot is $10^{-4}$–$10^{-3}$: constants and $\sqrt P$ move the optimum. fp32/bf16 labels in their figures refer to Lanczos-vector storage; bf16 storage is enough. 30× more data leaves the spectrum unchanged at fixed $\epsilon$ (Fig 7). They report Pythia-1.4B more stable in $\epsilon$ (Fig 8: $3\times10^{-4}$ to $10^{-2}$): one pair of models.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§5 · Finding 2</p>
+  <h2>A 120B model shows large negative curvature</h2>
+  <ul>
+    <li class="fragment">gpt-oss-120b: ten Lanczos steps, no $\epsilon$ sweep.</li>
+    <li class="fragment">Real curvature, or an artefact of $\epsilon$ or Lanczos?</li>
+    <li class="fragment">The authors call it "only indicative".</li>
+  </ul>
+  <aside class="notes">
+    <p>§7, Fig 2: wikitext-2, sequence length 64, $\epsilon=10^{-4}$; the authors call it "only indicative". Why 10: HessFormer's paper says stay below 20 iterations without reorthogonalization, and often uses 10; reorthogonalizing would need 240 GB per bf16 basis vector at 120B.</p>
+    <p>Three readings, side by side. The authors': the data, as tokenized, has not been memorised. Another: a pretrained checkpoint need not be near a minimum of this particular loss. A numerical one: no $\epsilon$ sweep, 10 iterations, no reorthogonalization. Negative eigenvalues live in $H-G$ only, since $G\succeq0$.</p>
+    <p>No probe count, hardware or code is given for this run; HessFormer's code is public.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§5 · Finding 3</p>
+  <h2>Per-layer (block-diagonal) curvature can be wrong by $O(1)$</h2>
+  <div class="eq">$$\frac{\|(Hv)_b-H_{bb}v_b\|}{\|(Hv)_b\|}\ \approx\ 1$$</div>
+  <p class="one fragment">$b$: one transformer layer. Dropping cross-layer blocks loses about as much as it keeps.</p>
+  <aside class="notes">
+    <p>Per transformer layer $b$, unit Gaussian $v$, true Hessian (§6). Qwen-0.6B, 28 layers: $0.94\pm0.06$, cosine $0.31\pm0.12$ (Table 6). DeepSeek-Coder 1.3B after fine-tuning, 24 layers: $1.21\pm0.15$, cosine $0.00\pm0.13$ (Table 7). Predicting zero gives exactly 1. For DeepSeek-Coder they report a higher final-block cosine (§6.2).</p>
+    <p>Caveat that changes a conclusion: this is $H$ with random probes; EK-FAC approximates $G$, and an IF applies $(G+\lambda I)^{-1}$ to gradients, which may live elsewhere. A warning, not a verdict. Other direction: EK-FAC's blocks are single weight matrices, finer than a layer, so the test is if anything generous to the block assumption.</p>
+    <p class="muted">(Room for the instructor's framing.)</p>
+  </aside>
+</section>
+
+<section data-stage="3" class="take">
+  <p class="eyebrow">§5 · Takeaway</p>
+  <p class="tk">At 120B the primitive still works; its knobs still need checking.</p>
+  <aside class="notes">
+    <p>Scale, for reference (largest model in each paper): Ghorbani et al. 2019, $2.7\times10^7$, exact HVP + SLQ; Schioppa et al. 2022, $3\times10^8$, Arnoldi; Grosse et al. 2023, $5.2\times10^{10}$, EK-FAC (no HVPs); HessFormer 2025, $7\times10^{10}$, Pearlmutter HVP on one node; Granziol &amp; Juarev 2026, $1.2\times10^{11}$, finite-difference HVP under FSDP, $m=10$.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== §6 attribution -->
+<section data-stage="4" class="q">
+  <p class="eyebrow">§6 · Back to attribution</p>
+  <h2>What does the spectrum tell you about influence?</h2>
+  <aside class="notes"><p>Attribution wants the spectrum of $G$, not $H$. $Gv$ is the same primitive (slide 11), so everything applies; the 2026 paper measured $H$.</p></aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§6 · The IF in G's eigenbasis</p>
+  <h2>In $G$'s eigenbasis $(s_k,u_k)$, each direction gets its own weight</h2>
+  <div class="eq">$$\mathcal I_i=-\sum_k\frac{(u_k\cdot\nabla\phi)\,(u_k\cdot\nabla L_i)}{s_k+\lambda}$$</div>
+  <p class="one fragment">Far below $\lambda$: a scaled gradient dot product. Near or above: curvature-weighted.</p>
+  <aside class="notes">
+    <p>$(s_k,u_k)$: eigenpairs of $G$, as in DA1 §6. Directions with $s_k\ll\lambda$ contribute $-\frac1\lambda(u_k\cdot\nabla\phi)(u_k\cdot\nabla L_i)$: the TracIn-like part. At $s_k=0.9\lambda$, replacing the weight by $1/\lambda$ is already a 90% error.</p>
+    <p>Which directions matter for a given pair depends on both projections and on the weights; the density gives neither projection. TD 2.6 §6.4 finds the gradient concentrated in the top Hessian subspace, where the weights are smallest, so concentration alone does not say which part dominates.</p>
+  </aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§6 · Where λ sits</p>
+  <h2>Where $\lambda$ sits decides which directions count as curvature</h2>
+  <img class="fig" src="assets/L2/filter.png" alt="Eigenvalues of the toy's Gauss-Newton matrix with the damped filter at two dampings" style="max-height:510px">
+  <p class="figcap">Left of $\lambda$: a scaled gradient dot product. Right of it: curvature-weighted.</p>
+  <aside class="notes">
+    <p>Toy $G$ (mean loss), log axis: the bulk spans about seven decades. Grosse et al. set $\lambda=0.1\times$ the mean EK-FAC eigenvalue, layer by layer; on the toy's exact $G$ that puts 78% of eigenvalues below $\lambda$. A $\lambda$ between bulk and outliers puts 99.7% below.</p>
+    <p>At scale both are computable: SLQ sees the outliers well, and the mean $\operatorname{tr}G/P$ comes from Hutchinson on $Gv$ (check its spread). Where $0.1\times$mean falls inside the bulk is what SLQ resolves least well. DA2's Code 1 sweeps $10^{-3}$ to $10^{-1}$ times the mean eigenvalue; DA1 §5's exercise uses the median Hessian eigenvalue.</p>
+    <p>$\lambda$ also has a meaning: DA1 §4's proximal penalty. Choosing it from the spectrum is a statement about where you trust the quadratic model; choosing it from the proximal target is a statement about the question.</p>
+    <p class="muted">(Room for the instructor's framing.)</p>
+  </aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§6 · Auditing</p>
+  <h2>Check the approximation, not just the answer</h2>
+  <ul>
+    <li class="fragment">EK-FAC assumes block-diagonal curvature.</li>
+    <li class="fragment">Dropping cross-layer blocks already costs $O(1)$ in $Hv$.</li>
+    <li class="fragment">Check against exact products: $Gv$ for EK-FAC, $Hv$ for Hessians.</li>
+  </ul>
+  <aside class="notes">
+    <p>EK-FAC: blocks plus a Kronecker-factored eigenbasis with refitted eigenvalues. <a href="../da2_methods.html#da2-ekfac-code">DA2 Code 1</a> measures the IF-level error on a 147-parameter net: rank correlation with the exact damped GN IF is 0.65–0.73 for block-diagonal $G$ and 0.26–0.45 for K-FAC and EK-FAC, across $\lambda$ from $10^{-3}$ to $10^{-1}$ times the mean eigenvalue. So the Kronecker step costs more than the block step there. Both are measurements on specific models, not theorems.</p>
+    <p>Picked up in: <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="4" class="take">
+  <p class="eyebrow">§6 · Takeaway</p>
+  <p class="tk">The spectrum shows what your damping and your approximation are doing.</p>
+  <aside class="notes"><p>Next: DA2, stop 1.</p></aside>
+</section>
+
+<!-- ===================================================================== close -->
 <section data-stage="4">
   <p class="eyebrow">Summary</p>
-  <h2>One primitive, three questions, one picture, one warning</h2>
+  <h2>Three things to keep</h2>
   <ul>
-    <li><b>Primitive:</b> $v\mapsto Hv$ or $Gv$. Exact by autodiff, or two gradients and a step size.</li>
-    <li><b>Questions:</b> solve, top eigenpairs, density. Lanczos finds eigenpairs outside in; the same $T_m$ is a Gauss rule; SLQ averages it.</li>
-    <li><b>Picture:</b> a bulk near zero and about $C$ outliers.</li>
-    <li><b>Warning:</b> an approximation or a step size can give a plausible wrong answer. Check against an exact HVP on a probe.</li>
+    <li class="fragment">$v\mapsto Hv$ costs a few gradients.</li>
+    <li class="fragment">Lanczos and SLQ: outliers fast, a density from few probes.</li>
+    <li class="fragment">Check step sizes and approximations against exact products.</li>
   </ul>
-  <aside class="notes">
-    <p>Next: DA2, stop 1 first.</p>
-  </aside>
+  <aside class="notes"><p>Bulk plus outliers is the picture to remember for classifiers; for language models it is open.</p></aside>
 </section>
 
 <section data-stage="4" class="readings">
   <p class="eyebrow">Readings · Importance / Length</p>
-  <div class="cols">
-    <div>
-      <h3>Regular</h3>
-      <ul>
-        <li>Granziol &amp; Juarev 2026, <a href="https://arxiv.org/abs/2602.00816"><i>Hessian Spectral Analysis at Foundation Model Scale</i></a> <span class="dots">●●●●● / ●●●○○</span><br>§3, §5.1, §6, §7 with Figs 2–8</li>
-        <li>Ghorbani, Krishnan &amp; Xiao 2019, <a href="https://arxiv.org/abs/1901.10159"><i>Hessian Eigenvalue Density</i></a> <span class="dots">●●●●○ / ●●●○○</span><br>§2–4; <a href="https://github.com/google/spectral-density">code</a></li>
-        <li>Pearlmutter 1994, <a href="https://doi.org/10.1162/neco.1994.6.1.147"><i>Fast Exact Multiplication by the Hessian</i></a> <span class="dots">●●●○○ / ●●○○○</span></li>
-        <li>Papyan 2020, <a href="https://arxiv.org/abs/2008.11865"><i>Traces of Class/Cross-Class Structure</i></a> <span class="dots">●●●○○ / ●●●●○</span></li>
-        <li>Sagun et al. 2017, <a href="https://arxiv.org/abs/1706.04454"><i>Hessian of Over-Parametrized Networks</i></a> <span class="dots">●●○○○ / ●●○○○</span></li>
-        <li>Granziol 2025, <a href="https://arxiv.org/abs/2505.11564"><i>HessFormer</i></a> (abstract) <span class="dots">●○○○○ / ●○○○○</span></li>
-        <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Lanczos_algorithm">Lanczos</a>, <a href="https://en.wikipedia.org/wiki/Krylov_subspace">Krylov subspace</a>, <a href="https://en.wikipedia.org/wiki/Gaussian_quadrature">Gaussian quadrature</a>, <a href="https://en.wikipedia.org/wiki/Trace_(linear_algebra)#Stochastic_estimator">Hutchinson</a>, <a href="https://en.wikipedia.org/wiki/Automatic_differentiation">autodiff</a> <span class="dots">●●●●○ / ●●○○○</span></li>
-      </ul>
-    </div>
-    <div>
-      <h3>Claude-suggested extras</h3>
-      <ul>
-        <li>Ubaru, Chen &amp; Saad 2017, <a href="https://doi.org/10.1137/16M1104974">SLQ</a> <span class="dots">●●●○○ / ●●●○○</span></li>
-        <li>Chen, Trogdon &amp; Ubaru 2021, <a href="https://arxiv.org/abs/2105.06595">SLQ analysis</a> <span class="dots">●●○○○ / ●●●○○</span></li>
-        <li>Golub &amp; Meurant 2010, <i>Matrices, Moments and Quadrature</i> (book) <span class="dots">●●○○○ / ●●●●●</span></li>
-        <li>Yao et al. 2020, <a href="https://arxiv.org/abs/1912.07145">PyHessian</a> <span class="dots">●●●○○ / ●●○○○</span></li>
-        <li>Schioppa et al. 2022, <a href="https://arxiv.org/abs/2112.03052">Scaling Up Influence Functions</a> <span class="dots">●●●○○ / ●●○○○</span></li>
-        <li>Agarwal, Bullins &amp; Hazan 2017, <a href="https://arxiv.org/abs/1602.03943">LiSSA</a> <span class="dots">●○○○○ / ●●●○○</span></li>
-        <li>Zhang et al. 2024, <a href="https://arxiv.org/abs/2402.16788">Why Transformers Need Adam</a> <span class="dots">●●○○○ / ●●○○○</span></li>
-        <li>Schraudolph 2002, <a href="https://doi.org/10.1162/08997660260028683">Curvature Matrix-Vector Products</a> <span class="dots">●●○○○ / ●●○○○</span></li>
-        <li>Martens 2020, <a href="https://arxiv.org/abs/1412.1193">Natural Gradient</a> (§8, GGN) <span class="dots">●●○○○ / ●●●●○</span></li>
-      </ul>
-    </div>
-  </div>
+  <ul>
+    <li>Granziol &amp; Juarev 2026, <a href="https://arxiv.org/abs/2602.00816"><i>Hessian Spectral Analysis at Foundation Model Scale</i></a> <span class="dots">●●●●● / ●●●○○</span></li>
+    <li>Ghorbani, Krishnan &amp; Xiao 2019, <a href="https://arxiv.org/abs/1901.10159"><i>Hessian Eigenvalue Density</i></a> <span class="dots">●●●●○ / ●●●○○</span></li>
+    <li>Pearlmutter 1994, <a href="https://doi.org/10.1162/neco.1994.6.1.147"><i>Fast Exact Multiplication by the Hessian</i></a> <span class="dots">●●●○○ / ●●○○○</span></li>
+    <li>Papyan 2020, <a href="https://arxiv.org/abs/2008.11865"><i>Traces of Class/Cross-Class Structure</i></a> <span class="dots">●●●○○ / ●●●●○</span></li>
+    <li>Wikipedia: <a href="https://en.wikipedia.org/wiki/Lanczos_algorithm">Lanczos algorithm</a>, <a href="https://en.wikipedia.org/wiki/Gaussian_quadrature">Gaussian quadrature</a> <span class="dots">●●●●○ / ●●○○○</span></li>
+  </ul>
   <aside class="notes">
-    <p>Full annotations are in the outline, L2_curvature_at_scale.md.</p>
+    <p>Sections to read: Granziol &amp; Juarev §3, §5.1, §6, §7 with Figs 2–8 (§4 optional); Ghorbani §2–4 (code: github.com/google/spectral-density); Pearlmutter abstract and §1–3; Papyan's introduction.</p>
+    <p>Also regular: Sagun et al. 2017; HessFormer (Granziol 2025, abstract); Wikipedia's Krylov subspace, Trace § Stochastic estimator, Automatic differentiation. Claude-suggested extras (in the outline): Ubaru, Chen &amp; Saad 2017; Chen, Trogdon &amp; Ubaru 2021; Golub &amp; Meurant 2010; PyHessian 2020; Schioppa et al. 2022; Agarwal, Bullins &amp; Hazan 2017; Zhang et al. 2024; Schraudolph 2002; Martens 2020 §8.</p>
   </aside>
 </section>
 
@@ -573,12 +627,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <script>
   // Typeset the math first (slides and notes), then start reveal.js.
+  // \htmlClass{fragment}{...} inside display math gives step-by-step builds of equations.
   try {
     renderMathInElement(document.querySelector('.reveal .slides'), {
       delimiters: [
         { left: '$$', right: '$$', display: true },
         { left: '$', right: '$', display: false }
       ],
+      trust: (ctx) => ctx.command === "\\htmlClass",
+      strict: false,
       throwOnError: false
     });
   } catch (e) { console.error(e); }

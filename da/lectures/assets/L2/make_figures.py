@@ -8,10 +8,12 @@ Figures
   fd_error.png        relative error of the central finite-difference Hv against
                       autodiff Hv, as a function of the step eps, in fp64, fp32 and
                       "bf16" (fp32 gradients rounded to bf16).
-  ritz.png            Ritz values of Lanczos against iteration m, with and without
-                      full reorthogonalization (ghost eigenvalues without).
-  quadrature.png      one probe v: the spectral measure mu_v of H seen from v (its CDF)
-                      against the m-point Gauss rule that Lanczos produces.
+  ritz.png            Ritz values of Lanczos against iteration m, full reorthogonalization.
+  ritz_ghosts.png     the same without reorthogonalization.
+  modes.png, fd_tradeoff.png, krylov.png, probe.png, gauss_toy.png, fsdp.png
+                      schematics (forward/reverse mode; truncation vs round-off; Krylov
+                      vectors tilting to u_1; what a probe sees; a 3-atom Gauss rule;
+                      the shard-local finite difference).
   slq.png             exact spectral density (eigh) against SLQ at m = 90, 30, 10.
   filter.png          the spectrum of the Gauss-Newton matrix G with the damped-IF
                       filter at two dampings (0.1 x mean eigenvalue; between bulk and outliers).
@@ -33,12 +35,13 @@ rng = np.random.default_rng(0)
 
 # ---------------------------------------------------------------- style
 PAPER, INK, INK2, RULE = "#fcfbf7", "#1a1f26", "#4d5763", "#ddd7c9"
+PANEL = "#f3f0e8"
 BLUE, ORANGE, GREEN, PURPLE = "#1b6aa8", "#c0701a", "#0a8a5f", "#8a4fb0"
 plt.rcParams.update({
     "figure.facecolor": PAPER, "axes.facecolor": PAPER, "savefig.facecolor": PAPER,
     "axes.edgecolor": INK2, "axes.labelcolor": INK, "xtick.color": INK2, "ytick.color": INK2,
-    "text.color": INK, "font.size": 17, "axes.titlesize": 18, "axes.labelsize": 17,
-    "legend.fontsize": 15, "legend.frameon": False, "axes.spines.top": False,
+    "text.color": INK, "font.size": 18, "axes.titlesize": 19, "axes.labelsize": 20,
+    "legend.fontsize": 17, "legend.frameon": False, "axes.spines.top": False,
     "axes.spines.right": False, "axes.grid": True, "grid.color": RULE, "grid.linewidth": 0.6,
     "lines.linewidth": 2.0, "font.family": "DejaVu Sans",
 })
@@ -155,19 +158,18 @@ print(f"log-log slope, truncation branch (fp64): {sl_tr:.2f} (expect 2); "
       f"round-off branch (fp32): {sl_ro:.2f} (expect -1)")
 
 fig, ax = plt.subplots(figsize=(9.6, 5.0))
-ax.loglog(eps_grid, err["fp64"], color=INK2, ls=":", label="fp64")
 ax.loglog(eps_grid, err["fp32"], color=BLUE, label="fp32")
 ax.loglog(eps_grid, err["bf16"], color=ORANGE, ls="--", label="bf16 gradients")
 ax.axhline(ad32, color=BLUE, lw=1, alpha=0.6)
-ax.text(1.3e-8, ad32 * 2.0, "autodiff $Hv$ in fp32", color=INK2, fontsize=13)
+ax.text(1.3e-8, ad32 * 2.0, "autodiff $Hv$ in fp32", color=INK2, fontsize=16)
 for k, c in [("fp32", BLUE), ("bf16", ORANGE)]:
     i = int(np.argmin(err[k]))
     ax.plot(eps_grid[i], err[k][i], "o", color=c, ms=9, mec=PAPER, mew=2)
-ax.text(4e-8, 3e-4, r"round-off $\propto \epsilon_{\rm mach}/\epsilon$", color=INK2, fontsize=13)
-ax.text(8e-2, 1e-6, r"truncation $\propto\epsilon^2$", color=INK2, fontsize=13)
+ax.text(4e-8, 3e-4, r"round-off $\propto \epsilon_{\rm mach}/\epsilon$", color=INK2, fontsize=16)
+ax.text(8e-2, 1e-6, r"truncation $\propto\epsilon^2$", color=INK2, fontsize=16)
 ax.set_xlabel(r"finite-difference step $\epsilon$  ($\|v\|=1$)")
 ax.set_ylabel(r"relative error of $Hv$")
-ax.set_ylim(1e-9, 1e2)
+ax.set_ylim(1e-8, 1e2)
 ax.legend(loc="upper right")
 save(fig, "fd_error.png")
 
@@ -210,31 +212,38 @@ T_ = np.diag(a_) + np.diag(b_, 1) + np.diag(b_, -1)
 print(f"Lanczos m=30: |Q^T H Q - T|_max = {np.abs(Q_.T @ Hn @ Q_ - T_).max():.1e}, "
       f"|Q^T Q - I|_max = {np.abs(Q_.T @ Q_ - np.eye(30)).max():.1e}")
 
-# ================================================================ Figure 2: Ritz values vs m
+# ================================================================ Figure 2: Ritz values vs m (two figures)
 M_RITZ = 60
 q1 = rng.standard_normal(P)
-fig, axs = plt.subplots(1, 2, figsize=(12.4, 4.9), sharey=True)
 ghost_report = {}
-for ax, reorth, title in [(axs[0], True, "full reorthogonalization"),
-                          (axs[1], False, "no reorthogonalization")]:
+for reorth, name, col in [(True, "ritz.png", BLUE), (False, "ritz_ghosts.png", ORANGE)]:
+    fig, ax = plt.subplots(figsize=(9.6, 5.0))
     a_, b_, _ = lanczos(matvec, q1, M_RITZ, reorth=reorth)
     for m in range(1, M_RITZ + 1):
         th = np.linalg.eigvalsh(np.diag(a_[:m]) + np.diag(b_[:m - 1], 1) + np.diag(b_[:m - 1], -1))
-        ax.plot(np.full_like(th, m), th, "o", ms=3.2, color=BLUE if reorth else ORANGE, mew=0)
+        ax.plot(np.full_like(th, m), th, "o", ms=4, color=col, mew=0)
     th = np.linalg.eigvalsh(np.diag(a_) + np.diag(b_, 1) + np.diag(b_, -1))
-    # count copies of the top eigenvalue
-    ghost_report[title] = int(np.sum(np.abs(th - lam[-1]) < 1e-6 * lam[-1]))
+    ghost_report[name] = int(np.sum(np.abs(th - lam[-1]) < 1e-6 * lam[-1]))  # copies of lambda_max
     for e in lam[-n_out:]:
-        ax.axhline(e, color=INK2, lw=0.7, ls=":")
-    ax.axhline(lam[0], color=INK2, lw=0.7, ls=":")
-    ax.set_title(title)
+        ax.axhline(e, color=INK2, lw=0.8, ls=":")
     ax.set_xlabel("Lanczos iteration $m$")
-axs[0].set_ylabel(r"Ritz values (eigenvalues of $T_m$)")
+    ax.set_ylabel(r"Ritz values $\theta_k$")
+    ax.set_ylim(-0.05, 1.5)
+    for lo, hi, lab in [(lam[-n_out], lam[-1], "outliers"), (lam[0], lam[-n_out - 1], "bulk")]:
+        ax.plot([62, 63, 63, 62], [lo, lo, hi, hi], color=INK2, lw=1.4)
+        ax.text(64, (lo + hi) / 2, lab, va="center", fontsize=19, color=INK2)
+    if not reorth:  # mark spurious Ritz values: above the bulk and far from every true eigenvalue
+        for m in range(15, M_RITZ + 1):
+            th = np.linalg.eigvalsh(np.diag(a_[:m]) + np.diag(b_[:m - 1], 1) + np.diag(b_[:m - 1], -1))
+            far = th[(th > lam[-n_out - 1] + 0.05) & (np.min(np.abs(th[:, None] - lam[None, -n_out:]), 1) > 0.02)]
+            ax.plot(np.full_like(far, m), far, "o", ms=14, mfc="none", mec=INK, mew=1.6)
+        ax.text(1, 1.1, "circled: spurious Ritz values", fontsize=19, color=INK)
+    ax.set_xlim(0, 76)
+    fig.tight_layout()
+    save(fig, name)
 print(f"copies of lambda_max among the Ritz values at m={M_RITZ}: {ghost_report}")
-fig.tight_layout()
-save(fig, "ritz.png")
 
-# ================================================================ Figure 3: quadrature for one probe
+# ================================================================ Gauss rule check on the toy (no figure)
 m_q = 10
 vq = rng.standard_normal(P)
 vq /= np.linalg.norm(vq)
@@ -247,17 +256,7 @@ mom_err = max(abs(np.sum(tau2 * theta ** k) - np.sum(wts * lam ** k)) / max(abs(
 mom_2m = abs(np.sum(tau2 * theta ** (2 * m_q)) - np.sum(wts * lam ** (2 * m_q))) / np.sum(wts * lam ** (2 * m_q))
 print(f"Gauss rule m={m_q}: max relative moment error for degree 0..{2 * m_q - 1}: {mom_err:.1e}; "
       f"degree {2 * m_q}: {mom_2m:.1e}")
-fig, ax = plt.subplots(figsize=(9.6, 4.8))
-ax.step(lam, np.cumsum(wts), where="post", color=INK2, lw=1.4,
-        label=rf"$\mu_v$: {P} nodes $\lambda_j$, weights $(v\cdot u_j)^2$")
-ax.step(np.r_[lam[0], theta, lam[-1]], np.r_[0, np.cumsum(tau2), 1], where="post", color=BLUE,
-        label=rf"Gauss rule from $T_{{{m_q}}}$: nodes $\theta_k$, weights $\tau_k^2$")
-ax.plot(theta, np.cumsum(tau2), "o", color=BLUE, ms=7, mec=PAPER, mew=1.5)
-ax.set_xscale("symlog", linthresh=0.05)
-ax.set_xlabel(r"eigenvalue $s$ of $H$ (symlog axis)")
-ax.set_ylabel("cumulative weight")
-ax.legend(loc="lower right")
-save(fig, "quadrature.png")
+
 
 # ================================================================ Figure 4: SLQ vs exact
 grid = np.linspace(lam[0] - 0.05 * (lam[-1] - lam[0]), lam[-1] + 0.05 * (lam[-1] - lam[0]), 3000)
@@ -296,21 +295,17 @@ for m, (nd, wt) in slq_runs.items():
     msg.append(f"mass |lambda|<{SIG:.2g}: SLQ {wt[np.abs(nd) < SIG].sum():.3f} exact {np.mean(np.abs(lam) < SIG):.3f}")
     print(f"SLQ m={m}, n_v=10: " + "; ".join(msg))
 
-fig, axs = plt.subplots(1, 2, figsize=(13.2, 5.0), sharey=True)
-for ax, ms_ in [(axs[0], (90, 30)), (axs[1], (10,))]:
-    ax.semilogy(grid, rho_exact, color=INK, lw=2.6, label="exact (eigh)")
-    for m, c, ls in [(90, BLUE, "-"), (30, GREEN, "--"), (10, PURPLE, "-")]:
-        if m in ms_:
-            ax.semilogy(grid, smooth(*slq_runs[m]), color=c, ls=ls, lw=1.8, label=f"SLQ $m={m}$, $n_v=10$")
-    for e in lam[-n_out:]:
-        ax.axvline(e, color=ORANGE, lw=0.8, ls=":")
-    ax.set_ylim(1e-5, rho_exact.max() * 3)
-    ax.set_xlabel(r"eigenvalue $s$ of $H$")
-    ax.legend(loc="upper right")
-axs[0].set_ylabel(r"density $\rho(s)$, Gaussian-smoothed")
-axs[0].set_title("enough iterations: bulk and outliers")
-axs[1].set_title("$m=10$: outliers right, bulk coarse")
-fig.tight_layout()
+fig, ax = plt.subplots(figsize=(9.6, 5.2))
+ax.semilogy(grid, rho_exact, color=INK, lw=2.8, label="exact")
+ax.semilogy(grid, smooth(*slq_runs[10]), color=PURPLE, lw=2.2, label="SLQ, $m=10$, ten probes")
+ax.set_ylim(1e-4, rho_exact.max() * 3)
+ax.set_xlabel(r"eigenvalue $s$ of $H$")
+ax.set_ylabel(r"density $\rho(s)$ (log)")
+ax.legend(loc="upper right")
+ax.annotate("outliers", xy=(1.33, 2e-2), xytext=(1.0, 1.0), fontsize=19, color=INK2,
+            arrowprops=dict(arrowstyle="-|>", color=INK2, lw=1.2))
+ax.annotate("bulk", xy=(0.12, 0.3), xytext=(0.3, 3.0), fontsize=19, color=INK2,
+            arrowprops=dict(arrowstyle="-|>", color=INK2, lw=1.2))
 save(fig, "slq.png")
 
 # ================================================================ Figure 5: spectrum of G and two dampings
@@ -327,23 +322,140 @@ lam_gap = float(np.sqrt(sG[-C - 1] * sG[-C]))  # between the (C+1)-th and C-th l
 for name, ld in [("0.1 x mean eigenvalue", lam_mean), ("between bulk edge and outliers", lam_gap)]:
     print(f"damping {name}: lambda = {ld:.3g}; fraction of eigenvalues of G below it: {np.mean(sG < ld):.4f}")
 pos = sG[sG > 1e-9]
-fig, (ax, ax2) = plt.subplots(2, 1, figsize=(8.4, 5.8), sharex=True, gridspec_kw={"height_ratios": [3, 2]})
+fig, ax = plt.subplots(figsize=(9.6, 5.2))
 bins = np.logspace(np.log10(pos.min()), np.log10(sG[-1] * 1.5), 60)
 ax.hist(pos, bins=bins, color=BLUE, alpha=0.6)
 ax.set_xscale("log")
 ax.set_yscale("log")
 ax.set_ylabel("count")
-ax.set_title(f"eigenvalues of $G$ ({len(pos)} of {P} above $10^{{-9}}$)", fontsize=17)
-ss = np.logspace(np.log10(pos.min()), np.log10(sG[-1] * 1.5), 400)
-for ld, c, ls, lab in [(lam_mean, ORANGE, "-", r"$\lambda=0.1\times$mean eigenvalue"),
-                       (lam_gap, PURPLE, "--", r"$\lambda$ between bulk and outliers")]:
-    ax2.semilogx(ss, ld / (ss + ld), color=c, ls=ls, lw=2.4, label=lab)
-    ax.axvline(ld, color=c, ls=ls, lw=1.2)
-ax2.set_ylabel(r"$\lambda F(s)=\frac{\lambda}{s+\lambda}$")
-ax2.set_ylim(0, 1.1)
-ax2.set_xlabel(r"eigenvalue $s$")
-ax2.legend(loc="lower left")
-fig.tight_layout()
+ax.set_xlabel(r"eigenvalue $s$ of $G$ (log axis)")
+ax.set_ylim(0.7, 6000)
+for ld, c, ls, lab, yt in [(lam_mean, ORANGE, "-", "λ = 0.1 × mean eigenvalue", 2500),
+                           (lam_gap, PURPLE, "--", "λ between bulk\nand outliers", 400)]:
+    ax.axvline(ld, color=c, ls=ls, lw=2.6)
+    ax.text(ld / 1.3, yt, lab, color=c, fontsize=19, ha="right", va="center")
 save(fig, "filter.png")
+
+# ================================================================ Schematic figures
+from matplotlib.patches import FancyBboxPatch
+
+
+def box(ax, x, y, w, h, text, fc=PAPER, ec=INK2, fs=19, color=INK):
+    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0.02,rounding_size=0.08",
+                                fc=fc, ec=ec, lw=1.6))
+    ax.text(x + w / 2, y + h / 2, text, ha="center", va="center", fontsize=fs, color=color)
+
+
+def arrow(ax, x0, y0, x1, y1, color, lw=2.4):
+    ax.annotate("", xy=(x1, y1), xytext=(x0, y0),
+                arrowprops=dict(arrowstyle="-|>", color=color, lw=lw, mutation_scale=22))
+
+
+# --- forward vs reverse mode through a chain of layers
+fig, ax = plt.subplots(figsize=(11, 4.4))
+ax.set_xlim(0, 11); ax.set_ylim(0, 4.4); ax.axis("off")
+xs = [0.3, 2.9, 5.5, 8.1]
+labels = [r"$w$", r"layer 1", r"layer 2", r"output $f$"]
+for x, lab in zip(xs, labels):
+    box(ax, x, 1.7, 2.0, 1.0, lab)
+for x0, x1 in zip(xs[:-1], xs[1:]):
+    ax.annotate("", xy=(x1, 2.2), xytext=(x0 + 2.0, 2.2), arrowprops=dict(arrowstyle="-|>", color=INK2, lw=1.4))
+arrow(ax, 0.6, 3.35, 10.0, 3.35, BLUE)
+ax.text(5.3, 3.75, "forward mode (jvp): a tangent rides along",
+        ha="center", fontsize=22, color=BLUE)
+arrow(ax, 10.0, 1.0, 0.6, 1.0, ORANGE)
+ax.text(5.3, 0.25, "reverse mode (vjp): a covector flows back",
+        ha="center", fontsize=22, color=ORANGE)
+save(fig, "modes.png")
+
+# --- truncation vs round-off (schematic)
+fig, ax = plt.subplots(figsize=(9.6, 5.0))
+ee = np.logspace(-6, 0, 300)
+tr, ro = 1e-2 * ee ** 2, 1e-9 / ee
+ax.loglog(ee, tr, color=GREEN, lw=2.4)
+ax.loglog(ee, ro, color=PURPLE, lw=2.4)
+ax.loglog(ee, tr + ro, color=INK, lw=3, ls="--")
+emin = ee[np.argmin(tr + ro)]
+ax.plot(emin, (tr + ro).min(), "o", color=INK, ms=11)
+ax.text(1.5e-6, 1e-2, "round-off ∝ (machine precision) / ε", fontsize=19, color=PURPLE)
+ax.text(4e-3, 2e-9, r"truncation $\propto\epsilon^2$", fontsize=19, color=GREEN)
+ax.annotate(r"best $\epsilon^*\propto\epsilon_{\rm mach}^{1/3}$", xy=(emin, (tr + ro).min()), xytext=(3e-6, 3e-8), fontsize=21, color=INK,
+            arrowprops=dict(arrowstyle="-|>", color=INK, lw=1.4))
+ax.set_xlabel(r"step $\epsilon$ (log scale)")
+ax.set_ylabel("error (log scale)")
+ax.set_xticklabels([]); ax.set_yticklabels([])
+ax.set_ylim(1e-10, 1e-1)
+ax.tick_params(which="both", length=0)
+save(fig, "fd_tradeoff.png")
+
+# --- Krylov vectors tilting toward the top eigenvector
+ang = np.deg2rad(20)
+U2 = np.array([[np.cos(ang), -np.sin(ang)], [np.sin(ang), np.cos(ang)]])
+H2 = U2 @ np.diag([3.0, 1.0]) @ U2.T
+fig, ax = plt.subplots(figsize=(8.4, 5.6))
+ax.set_aspect("equal"); ax.axis("off")
+ax.set_xlim(-0.55, 1.75); ax.set_ylim(-0.12, 1.2)
+ax.plot([0, 1.6 * np.cos(ang)], [0, 1.6 * np.sin(ang)], ls="--", color=INK2, lw=1.6)
+ax.text(1.66, 0.22, r"top eigenvector $u_1$", fontsize=20, color=INK2, ha="right", va="top")
+vk = np.array([np.cos(np.deg2rad(80)), np.sin(np.deg2rad(80))])
+names = [r"$v$", r"$Hv$", r"$H^2v$"]
+cols = [INK, BLUE, BLUE]
+tilts = []
+for k, (nm, c) in enumerate(zip(names, cols)):
+    u = vk / np.linalg.norm(vk)
+    tilts.append(np.degrees(np.arccos(abs(u @ U2[:, 0]))))
+    ax.annotate("", xy=(u[0], u[1]), xytext=(0, 0),
+                arrowprops=dict(arrowstyle="-|>", color=c, lw=2.8, alpha=1 - 0.2 * k, mutation_scale=24))
+    ax.text(1.13 * u[0], 1.13 * u[1], nm, fontsize=24, color=c, ha="center", va="center")
+    vk = H2 @ vk
+print(f"krylov sketch (eigenvalues 3 and 1): angle to u1 for v, Hv, H^2v: {np.round(tilts, 1)} deg")
+save(fig, "krylov.png")
+
+# --- what one probe sees: eigenvalue sticks weighted by (v.u_j)^2 (a small synthetic spectrum)
+rs = np.random.default_rng(3)
+ev = np.r_[np.sort(rs.uniform(0.02, 0.6, 12)), [2.1, 2.7, 3.6]]
+wv = rs.standard_normal(len(ev)) ** 2
+wv /= wv.sum()
+fig, ax = plt.subplots(figsize=(9.6, 4.8))
+ml, sl, bl = ax.stem(ev, wv, basefmt=" ")
+plt.setp(sl, color=BLUE, lw=2.4); plt.setp(ml, color=BLUE, ms=9)
+ax.set_xlabel(r"eigenvalue $\lambda_j$")
+ax.set_ylabel(r"weight $(v\cdot u_j)^2$")
+ax.set_ylim(0, wv.max() * 1.25)
+ax.text(0.31, wv.max() * 1.12, "bulk", fontsize=19, color=INK2, ha="center")
+ax.text(2.8, wv.max() * 1.12, "outliers", fontsize=19, color=INK2, ha="center")
+save(fig, "probe.png")
+
+# --- Gauss rule on a 3-atom measure with m = 2 nodes
+at, wt3 = np.array([0.0, 1.0, 4.0]), np.array([0.5, 0.3, 0.2])
+a3, b3, _ = lanczos(lambda x: at * x, np.sqrt(wt3), 2)
+th3, t3 = gauss_rule(a3, b3[:1])
+mom = [(np.sum(wt3 * at ** k), np.sum(t3 * th3 ** k)) for k in range(5)]
+print(f"Gauss toy: nodes {np.round(th3, 3)}, weights {np.round(t3, 3)}; moments (measure, rule): "
+      f"{[(round(x, 2), round(y, 2)) for x, y in mom]}")
+fig, ax = plt.subplots(figsize=(9.6, 5.0))
+ml, sl, _ = ax.stem(at, wt3, basefmt=" ", label="3 sticks")
+plt.setp(sl, color=INK2, lw=6, alpha=0.45); plt.setp(ml, color=INK2, ms=13, alpha=0.6)
+ml, sl, _ = ax.stem(th3, t3, basefmt=" ", label="Gauss rule, 2 nodes")
+plt.setp(sl, color=BLUE, lw=2.6); plt.setp(ml, color=BLUE, ms=10)
+ax.set_xlabel(r"$\lambda$"); ax.set_ylabel("weight")
+ax.set_ylim(0, 0.95); ax.set_xlim(-0.5, 4.6)
+ax.legend(loc="upper right")
+save(fig, "gauss_toy.png")
+
+# --- the shard-local finite difference under FSDP
+fig, ax = plt.subplots(figsize=(10, 5.0))
+ax.set_xlim(0, 10); ax.set_ylim(0, 5.0); ax.axis("off")
+for g in range(4):
+    box(ax, 0.3 + g * 2.42, 3.6, 2.1, 1.2, f"shard {g + 1}\n" + rf"$w_{g + 1},\ v_{g + 1}$", fs=20)
+rows = [(r"1.  $w_k \leftarrow w_k+\epsilon v_k$;  gradient pass $\to g^+$", BLUE),
+        (r"2.  $w_k \leftarrow w_k-2\epsilon v_k$;  gradient pass $\to g^-$", BLUE),
+        (r"3.  restore;  $(Hv)_k=(g^+_k-g^-_k)/2\epsilon$", GREEN)]
+for r, (txt, c) in enumerate(rows):
+    y = 2.85 - r * 1.05
+    ax.add_patch(FancyBboxPatch((0.3, y - 0.38), 9.35, 0.76, boxstyle="round,pad=0.02,rounding_size=0.08",
+                                fc=PANEL, ec=c, lw=1.6))
+    ax.text(0.55, y, txt, fontsize=23, va="center", color=INK)
+save(fig, "fsdp.png")
 
 print(f"total runtime {time.time() - T0:.1f}s")

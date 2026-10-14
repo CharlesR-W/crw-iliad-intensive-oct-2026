@@ -195,5 +195,35 @@ check("damped IF = -(1/lambda) (bulk gradient dot product) + outlier terms",
 check("1B-parameter Hessian has 1e18 entries", (1e9) ** 2 == 1e18)
 print(f"     one bf16 vector of 1e11 params = {2 * 1e11 / 1e9:.0f} GB; of 1.2e11 = {2 * 1.2e11 / 1e9:.0f} GB")
 
+
+# ------------------------------------------------------------------ 7. the toy examples pasted on the slides
+# dual numbers: f(x1, x2) = x1 x2 + sin x1 at (1, 2), tangent (1, 0)
+xd = torch.tensor([1.0, 2.0])
+val, tan = torch.func.jvp(lambda x: x[0] * x[1] + torch.sin(x[0]), (xd,), (torch.tensor([1.0, 0.0]),))
+check("dual-number example: f = 2 + sin 1 = 2.841, eps-coefficient = 2 + cos 1 = 2.540",
+      abs(val.item() - 2.8415) < 1e-4 and abs(tan.item() - 2.5403) < 1e-4, f"({val.item():.4f}, {tan.item():.4f})")
+# 4x4 Lanczos: H = R diag(0.2, 0.5, 1, 5) R^T, start from (1,1,1,1)/2
+R4 = np.linalg.qr(np.array([[1, 2, 0, 1], [0, 1, 1, 2], [2, 0, 1, 1], [1, 1, 2, 0]], float))[0]
+H4 = R4 @ np.diag([0.2, 0.5, 1.0, 5.0]) @ R4.T
+a4, b4, _ = lanczos(H4, np.ones(4) / 2, 4)
+ritz4 = {}
+for mm in (1, 2, 3, 4):
+    T4 = np.diag(a4[:mm]) + np.diag(b4[:mm - 1], 1) + np.diag(b4[:mm - 1], -1)
+    ritz4[mm] = np.round(np.linalg.eigvalsh(T4), 2)
+print(f"     4x4 Ritz values: {ritz4}")
+check("4x4 Lanczos: m=2 -> (0.30, 4.82); m=3 -> (0.23, 0.81, 5.00); m=4 exact",
+      np.allclose(ritz4[2], [0.30, 4.82]) and np.allclose(ritz4[3], [0.23, 0.81, 5.00])
+      and np.allclose(ritz4[4], [0.2, 0.5, 1.0, 5.0]))
+# Gauss rule on a 3-atom measure: atoms 0, 1, 4 with weights .5, .3, .2; m = 2 nodes
+at, wt = np.array([0.0, 1.0, 4.0]), np.array([0.5, 0.3, 0.2])
+a3, b3, _ = lanczos(np.diag(at), np.sqrt(wt), 2)
+th3, Y3 = np.linalg.eigh(np.diag(a3) + np.diag(b3[:1], 1) + np.diag(b3[:1], -1))
+t3 = Y3[0] ** 2
+mom = [(np.sum(wt * at ** k), np.sum(t3 * th3 ** k)) for k in range(5)]
+print(f"     Gauss toy: nodes {np.round(th3, 3)}, weights {np.round(t3, 3)}, moments {[(round(x, 2), round(y, 2)) for x, y in mom]}")
+check("3-atom Gauss rule: nodes (0.249, 3.790), weights (0.760, 0.240); moments 0-3 equal (1, 1.1, 3.5, 13.1); moment 4: 51.5 vs 49.6",
+      np.allclose(th3, [0.249, 3.790], atol=1e-3) and np.allclose(t3, [0.760, 0.240], atol=1e-3)
+      and all(np.isclose(x, y) for x, y in mom[:4]) and np.isclose(mom[4][0], 51.5) and abs(mom[4][1] - 49.61) < 0.01)
+
 print("ALL PASS" if not FAIL else f"FAILED: {FAIL}")
 sys.exit(1 if FAIL else 0)
