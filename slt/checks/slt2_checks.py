@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Numerical checks of the closed forms in NB2's solutions (run: python checks/slt2_checks.py)."""
+import math
 import numpy as np
 from scipy.special import gamma
 
@@ -34,7 +35,7 @@ assert abs(np.mean(((a * b) ** 2) ** z) - 1 / (2 * z + 1) ** 2) < 2e-3
 u = np.linspace(1e-9, 60, 4_000_001)
 for lam, m in [(0.5, 1), (0.5, 2), (0.25, 3)]:
     val = np.trapz(np.exp(-(z + lam) * u) * u ** (m - 1), u)
-    assert abs(val / (np.math.factorial(m - 1) / (z + lam) ** m) - 1) < 1e-6
+    assert abs(val / (math.factorial(m - 1) / (z + lam) ** m) - 1) < 1e-6
 print("2.2.1-2 zeta of (ab)^2 and the pole lemma: ok")
 
 # Exercise 2.3.2: n* for the two-basin example.

@@ -9,9 +9,14 @@ transform (poles of zeta give the terms of the large-n expansion); 2.3 several
 basins (accuracy against volume, the critical sample size, a one-paragraph
 thermodynamic gesture).
 
-Numerical checks of the closed forms in the solutions: checks/slt2_checks.py.
+Conceptual figures (one per main idea, placed before its derivation) are drawn by
+assets/figures/make_slt2_free_energy_volume_figures.py. Numerical checks of the closed
+forms in the solutions: checks/slt2_checks.py.
 """
-from nbkit_slt import answer, book, code, code_answer, markdown, reading, references, run
+from nbkit_slt import answer, book, code, code_answer, image, markdown, reading, references, run
+
+FIG = "assets/figures/slt2_free_energy_volume_"
+POST = "https://www.lesswrong.com/posts/6g8cAftfQufLmFDYT/you-re-measuring-model-complexity-wrong"
 
 CELLS = [
     # ------------------------------------------------------------------ opening
@@ -21,52 +26,49 @@ CELLS = [
 
 **Singular Learning Theory, Iliad Intensive 2026**
 
+> **Read the blog posts first.** The best introductions to this material are blog posts, and they are probably better than these notebooks: Liam Carroll's sequence [Distilling Singular Learning Theory](https://www.lesswrong.com/s/czrXjvCLsqGepybHC) (DSLT 0–4), Jesse Hoogland's [Neural networks generalize because of this one weird trick](https://www.lesswrong.com/posts/fovfuFdpuEwQzJu2w/neural-networks-generalize-because-of-this-one-weird-trick) and, with Stan van Wingerden, [You're Measuring Model Complexity Wrong](https://www.lesswrong.com/posts/6g8cAftfQufLmFDYT/you-re-measuring-model-complexity-wrong); then Zach Furman's [Singular learning theory: exercises](https://www.lesswrong.com/posts/3HYqTAi4kD35G3BzQ/singular-learning-theory-exercises) and Olli Järviniemi's [Dialogue introduction to Singular Learning Theory](https://www.lesswrong.com/posts/CmcarN6fGgTGwGuFp/dialogue-introduction-to-singular-learning-theory). The notebooks are provided for reference: derivations, worked exercises and code to check things.
+
 *Question:* when the Hessian at the best parameter is degenerate, what replaces
 $\tfrac d2\log n$ in the free energy?
 
-Notebook 1 derived $F_n=nL_n(\hat w)+\tfrac d2\log n+O(1)$ for a model whose loss has
-a positive-definite Hessian at its minimum. Neural networks never satisfy that:
-the set of parameters that compute a given function has positive dimension, so
-some Hessian eigenvalues vanish, and Laplace's method divides by zero. This
-notebook replaces the Hessian by something that always exists, the prior volume
-of the set of parameters whose loss is within $t$ of the minimum. How that volume
-scales as $t\to0$, $V(t)\sim ct^\lambda(-\log t)^{m-1}$, is all the free energy
-needs: $\bar F_n\approx\lambda\log n-(m-1)\log\log n$. The exponent $\lambda$ is
-the *learning coefficient*; it equals $d/2$ in Notebook 1's case and is smaller
-otherwise.
+Notebook 1's $F_n=nL_n(\hat w)+\tfrac d2\log n+O(1)$ needs a positive-definite
+Hessian at the minimum. Neural networks typically have flat directions at a
+minimum (continuous families of parameters computing the same function), and
+there Laplace's method divides by zero. What always exists is
+the prior volume $V(t)$ of the parameters within loss $t$ of the minimum. If
+$V(t)\sim ct^\lambda(-\log t)^{m-1}$ as $t\to0$, then
+$\bar F_n\approx\lambda\log n-(m-1)\log\log n$. The exponent $\lambda$, the
+*learning coefficient*, is $d/2$ in Notebook 1's case and smaller otherwise.
 """
         + reading(
             "You're Measuring Model Complexity Wrong",
             "https://www.lesswrong.com/posts/6g8cAftfQufLmFDYT/you-re-measuring-model-complexity-wrong",
             "Hoogland & van Wingerden (LessWrong, 2023)",
-            "The learning coefficient as the exponent of low-loss volume, why the Hessian (and parameter count) get it wrong, and what it means for the Bayesian posterior; the same argument as §2.1 with pictures.",
+            "The learning coefficient as the exponent of low-loss volume, why the Hessian (and parameter count) get it wrong, and what it means for the Bayesian posterior; the argument of §2.1 with pictures.",
             importance=5,
             length=2,
         )
         + r"""
 **Route.**
 
-- [2.1 Volume scaling](#slt2-s1): $\bar Z_n=\int e^{-nt}v(t)\,dt$; $V(t)\sim ct^\lambda(-\log t)^{m-1}$ gives $\bar F_n\approx\lambda\log n-(m-1)\log\log n$; toy losses; $\lambda\le d/2$.
-- [2.2 The Mellin transform](#slt2-s2): $\zeta(z)=\int K^z\varphi$; its poles are the terms of the large-$n$ expansion; worked cases.
-- [2.3 Several basins](#slt2-s3): the posterior picks the basin of least free energy, accuracy against volume, and switches basin at a critical $n^*$.
+- [2.1 Volume scaling](#slt2-s1): slice parameter space by loss; $V(t)\sim ct^\lambda(-\log t)^{m-1}$ gives $\bar F_n\approx\lambda\log n-(m-1)\log\log n$; toy losses; $\lambda\le d/2$.
+- [2.2 The Mellin transform](#slt2-s2): the poles of $\zeta(z)=\int K^z\varphi$ are the terms of the large-$n$ expansion.
+- [2.3 Several basins](#slt2-s3): the posterior trades accuracy against volume and switches basin at a critical $n^*$.
 
-**Setup, repeated from Notebook 1.** Data $x_1,\dots,x_n$ i.i.d. from $q$; model
-$p(x\mid w)$, $w\in\mathbb R^d$; prior $\varphi(w)$; $\ell(x,w)=-\log p(x\mid w)$;
-$L_n$ training loss, $L$ population loss; $w_0$ a minimizer of $L$;
-$K(w)=L(w)-L(w_0)\ge0$ and $K_n(w)=L_n(w)-L_n(w_0)$ the excess losses. The posterior
-is $\pi_n\propto\varphi e^{-nL_n}$, the free energy is $F_n=-\log\int\varphi e^{-nL_n}$,
-and $F_n=nL_n(w_0)+\bar F_n$ with $\bar F_n=-\log\bar Z_n$,
-$\bar Z_n=\int\varphi e^{-nK_n}$.
+**Setup** (Notebook 1's). Model $p(x\mid w)$, $w\in\mathbb R^d$, prior $\varphi$;
+training and population losses $L_n$, $L$; $w_0$ a minimizer of $L$; excess
+losses $K=L-L(w_0)\ge0$ and $K_n=L_n-L_n(w_0)$. The free energy splits as
+$F_n=-\log\int\varphi e^{-nL_n}=nL_n(w_0)+\bar F_n$, with
+$\bar F_n=-\log\int\varphi e^{-nK_n}$.
 
-**One simplification, made once.** This notebook works with the population
-excess loss $K$ in place of the sample one $K_n$, i.e. with
-$\bar Z_n=\int\varphi(w)e^{-nK(w)}dw$. The difference $n(K_n-K)$ is a sum of $n$
-mean-zero terms, of size $\sqrt n\,\|w-w_0\|$ near $w_0$, and on the region
-that matters it stays of order one (in Notebook 1's regular case it is the
-$\tfrac n2g_n^\top H^{-1}g_n$ term, whose mean is $\tfrac12\mathrm{tr}(H^{-1}C)$).
-Watanabe's theorem is that this remains true in general: the true $\bar F_n$ is
-the one computed here plus a random $O(1)$. So the coefficients of $\log n$ and
-$\log\log n$ can be read off from $K$, and the $O(1)$ cannot.
+**One simplification.** We work with the population excess loss $K$ in place of
+$K_n$: $\bar Z_n=\int\varphi e^{-nK}$, $\bar F_n=-\log\bar Z_n$, and the
+corresponding Gibbs distribution $\propto\varphi e^{-nK}$, which we still call the
+posterior. Under Watanabe's assumptions (realizable, or more generally "relatively
+finite variance"), the free energy computed from $K_n$ differs from this one by a
+random $O(1)$ (in Notebook 1's regular case, the $\tfrac n2g_n^\top H^{-1}g_n$ term,
+of mean $\tfrac12\mathrm{tr}(H^{-1}C)$). So $K$ fixes the coefficients of $\log n$
+and $\log\log n$, not the constant.
 """
     ),
     code(
@@ -97,58 +99,84 @@ def slope(xs, ys):
 *Question:* what property of the loss landscape sets the coefficient of $\log n$
 in the free energy?
 
-*Notation:* $K(w)\ge0$ the population excess loss, zero exactly on the set
-$W_0=\{w:L(w)=L(w_0)\}$ of best parameters; $\varphi$ the prior;
+*Notation:* $K\ge0$ the excess loss; $\varphi$ the prior;
 $\bar Z_n=\int\varphi e^{-nK}$, $\bar F_n=-\log\bar Z_n$; $d$ the number of
-parameters. New:
+parameters. New: the prior volume of the *sublevel set* $\{K<t\}$ and its density,
 
 $$
 V(t)=\int_{\{w:\,K(w)<t\}}\varphi(w)\,dw ,\qquad v(t)=V'(t).
 $$
 
-$V(t)$ is the prior volume of the *sublevel set*, the parameters whose excess
-loss is below $t$; $v(t)$ is the prior volume per unit loss at loss $t$, and it
-is the honest analogue of the density of states: $v(t)\,dt$ is the weight of
-microstates with energy in $[t,t+dt]$. Slicing parameter space by the value of
-$K$ turns the $d$-dimensional integral into a one-dimensional one,
+"""
+        + image(
+            FIG + "lw_basin_volume.png",
+            r"The prior volume of a sublevel set: the region of a two-parameter loss below the threshold $\epsilon$ (blue cap) projects to the grey region of parameter space, whose volume is $V(\epsilon)$ (here $V(t)$, with the prior uniform). Figure from Jesse Hoogland and Stan van Wingerden, [*You're Measuring Model Complexity Wrong*](%s) (LessWrong, 2023)." % POST,
+            alt="A 3-D loss surface over two weights, with the part below a threshold epsilon shaded and its grey projection onto the weight plane labelled V(epsilon).",
+        )
+        + r"""
+**Slice by loss.** The integrand of $\bar Z_n$ depends on $w$ only through
+$K(w)$, so group parameters by their loss: $v(t)\,dt$ is the prior mass with
+$K\in[t,t+dt]$, and
 
 $$
-\bar Z_n=\int_0^\infty e^{-nt}\,v(t)\,dt=n\int_0^\infty e^{-nt}\,V(t)\,dt ,
+\bar Z_n=\int_0^\infty e^{-nt}\,v(t)\,dt=n\int_0^\infty e^{-nt}\,V(t)\,dt .
 $$
+"""
+        + image(
+            FIG + "slicing.svg",
+            r"Slicing by loss. The sublevel set $\{K<t\}$ (blue) has prior mass $V(t)$, the slab $\{t<K<t+dt\}$ (orange) has mass $v(t)\,dt$, and $\bar Z_n$ weights each slab by $e^{-nt}$ (right), so at large $n$ only $t\lesssim1/n$ counts.",
+            alt="A quartic loss curve with a threshold t; the interval where the loss is below t is marked on the parameter axis, and a thin band of levels just above t is marked as two short slabs; beside it, the weight e to the minus n t decays with t.",
+        )
+        + r"""
+In Notebook 1's dictionary $v$ is the density of states and this is
+$Z(\beta)=\int e^{-\beta E}g(E)\,dE$. Since $e^{-nt}$ is negligible for
+$t\gg1/n$, only the behaviour of $V$ near $t=0$ matters when $n$ is large.
 
-the Laplace transform of the density of states, exactly as $Z(\beta)=\int
-e^{-\beta E}g(E)\,dE$ in statistical mechanics. Because $e^{-nt}$ is negligible
-for $t\gg1/n$, only the behaviour of $V$ near $t=0$ matters when $n$ is large.
-If
+**The learning coefficient.** If
 
 $$
 V(t)=c\,t^{\lambda}(-\log t)^{m-1}\,(1+o(1))\quad\text{as }t\to0,
 $$
 
-then (Exercise 2.1.2)
+then (Exercise 2.1.2, with $\Gamma$ the Gamma function)
 
 $$
-\bar F_n=\lambda\log n-(m-1)\log\log n-\log\big(c\,\Gamma(\lambda+1)\big)+o(1),
+\bar F_n=\lambda\log n-(m-1)\log\log n-\log\big(c\,\Gamma(\lambda+1)\big)+o(1).
 $$
 
-where $\Gamma(\lambda+1)=\int_0^\infty e^{-s}s^\lambda ds$ is the Gamma function
-(equal to $\lambda!$ for integer $\lambda$). The exponent $\lambda$ is called
-the *learning coefficient* and $m$ the *multiplicity*. On the path through
-these notebooks this is the whole definition: $\lambda$ is the exponent with
-which low-loss volume vanishes, and it can be read off as
-$\lambda=\lim_{t\to0}\log V(t)/\log t$. Watanabe proves that for analytic $K$
-and $\varphi$ the expansion of $V$ always has this form, with $\lambda$ a
+$\lambda$ is the *learning coefficient* and $m$ the *multiplicity*. In these
+notebooks this is the whole definition: $\lambda$ is the exponent with which
+low-loss volume vanishes, $\lambda=\lim_{t\to0}\log V(t)/\log t$. Watanabe proves
+that for analytic $K$ and $\varphi$, $V$ always has this form, with $\lambda$ a
 positive rational number and $m\le d$ a positive integer; §2.2 gives the tool
 behind that theorem.
-
-In the regular case $K\approx\tfrac12(w-w_0)^\top H(w-w_0)$ and the sublevel set
-is an ellipsoid of volume $\propto t^{d/2}$, so $\lambda=d/2$ and $m=1$, and one
-recovers Notebook 1's Laplace formula including its constant (Exercise 2.1.3).
-Degenerate directions make the sublevel set fatter, $V(t)$ larger, and
-$\lambda$ smaller: $2\lambda\le d$ always (Exercise 2.1.6), with equality
-exactly when the Hessian is positive definite. One can read $2\lambda$ as the
-effective number of parameters, but it is not an integer in general, and it is
-not a count of anything: $K=w^4$ has $\lambda=\tfrac14$ with one parameter.
+"""
+        + image(
+            FIG + "sublevel2d.svg",
+            r"Sublevel sets at $t=1/4,1/16,1/64$, uniform prior on the box. Each time $t$ drops by $4$, the bowl's volume drops by $4$, that of $a^2+b^4$ by $4^{3/4}\approx2.8$, and the cross's by less still: the flatter the valley, the smaller $\lambda$.",
+            alt="Three square panels with nested shaded sublevel sets: concentric disks for the bowl, nested ovals for a squared plus b to the fourth, and a nested cross shape for (ab) squared.",
+        )
+        + image(
+            FIG + "logV.svg",
+            r"$\lambda$ is the limiting slope of $\log V$ against $\log t$. For $(ab)^2$ the factor $\log(1/t)$ ($m=2$) makes the slope approach $\tfrac12$ slowly.",
+            alt="Log of V against log of t for the three two-dimensional losses, with slope triangles 1, 3/4 and 1/2.",
+        )
+        + r"""
+"""
+        + image(
+            FIG + "lw_hessian_infinite.png",
+            r"Why the Hessian fails. Left: the sublevel set (blue) of a basin whose Hessian at the minimum is degenerate. Right: the quadratic approximation built from that Hessian is flat, so its sublevel set is an unbounded slab and Laplace's method predicts infinite volume. Figure from Jesse Hoogland and Stan van Wingerden, [*You're Measuring Model Complexity Wrong*](%s) (LessWrong, 2023)." % POST,
+            alt="Left, a degenerate loss basin with its finite sublevel set; right, the same basin with the flat quadratic approximation, whose sublevel set is an unbounded plane slab.",
+        )
+        + r"""
+**Bowl versus valley.** In the regular case $K\approx\tfrac12(w-w_0)^\top H(w-w_0)$,
+the sublevel set is an ellipsoid of volume $\propto t^{d/2}$, so $\lambda=d/2$,
+$m=1$, and Notebook 1's Laplace formula comes back, constant included
+(Exercise 2.1.3). Flat directions make the sublevel set fatter, $V(t)$ larger and
+$\lambda$ smaller: at a minimum where the prior is positive, $\lambda\le d/2$
+(Exercise 2.1.6), with equality in the regular case. One can read $2\lambda$ as an effective number of parameters, but it
+counts nothing and need not be an integer: $K=w^4$ has $\lambda=\tfrac14$ with one
+parameter.
 
 **Exercise 2.1 (Volume and free energy).** Take the prior uniform on $[-1,1]^d$ where a prior is needed.
 
@@ -157,7 +185,7 @@ not a count of anything: $K=w^4$ has $\lambda=\tfrac14$ with one parameter.
 3. Regular case: $K=\tfrac12(w-w_0)^\top H(w-w_0)$ with $H$ positive definite, and a smooth prior with $\varphi(w_0)>0$. Compute $V(t)$ to leading order (the volume of the $d$-dimensional unit ball is $\omega_d=\pi^{d/2}/\Gamma(d/2+1)$, and the ellipsoid $\{u:u^\top Au<1\}$ has volume $\omega_d(\det A)^{-1/2}$), read off $\lambda$ and $m$, and show that part 2 reproduces Notebook 1's $\bar F_n=\tfrac d2\log n+\tfrac12\log\det H-\log\varphi(w_0)-\tfrac d2\log2\pi+o(1)$.
 4. Compute $V(t)$ and hence $\lambda$ and $m$ for: (a) $K=w^2$; (b) $K=w^4$; (c) $K=w^{2k}$; (d) $K=w^2+v^4$ (two parameters); (e) $K=(ab)^2$ (two parameters, zero on both axes); (f) the cubically reparametrized quadratic $K=\tfrac12(\mu^3-\mu_0^3)^2$, for $\mu_0=0$ and for $\mu_0\ne0$. What does (f) say about whether $\lambda$ is a property of the set of distributions $\{p_w\}$?
 5. *(Sum rule.)* If $K(w,v)=K_1(w)+K_2(v)$ and $\varphi=\varphi_1(w)\varphi_2(v)$, show $\lambda=\lambda_1+\lambda_2$ and $m-1=(m_1-1)+(m_2-1)$. Check against 4(d).
-6. *(Upper bound.)* Let $w_0$ be a minimizer of $K$ and $\Lambda$ an upper bound on the eigenvalues of $\nabla^2K$ on a ball around $w_0$. Show $K(w)\le\tfrac12\Lambda\|w-w_0\|^2$ there, deduce that the sublevel set contains a ball of radius $\sqrt{2t/\Lambda}$, and conclude $\lambda\le d/2$. <details><summary>Hint</summary>Taylor's theorem with the remainder in the form $K(w)=K(w_0)+\tfrac12(w-w_0)^\top\nabla^2K(\xi)(w-w_0)$ for some $\xi$ on the segment, and $u^\top Au\le\Lambda\|u\|^2$ when $\Lambda$ bounds the eigenvalues of the symmetric matrix $A$.</details>
+6. *(Upper bound.)* Let $w_0$ be an interior minimizer of $K$ with $K(w_0)=0$, the prior continuous and positive at $w_0$, and $\Lambda$ an upper bound on the eigenvalues of $\nabla^2K$ on a ball around $w_0$. Show $K(w)\le\tfrac12\Lambda\|w-w_0\|^2$ there, deduce that the sublevel set contains a ball of radius $\sqrt{2t/\Lambda}$, and conclude $\lambda\le d/2$. <details><summary>Hint</summary>Taylor's theorem with the remainder in the form $K(w)=K(w_0)+\tfrac12(w-w_0)^\top\nabla^2K(\xi)(w-w_0)$ for some $\xi$ on the segment, and $u^\top Au\le\Lambda\|u\|^2$ when $\Lambda$ bounds the eigenvalues of the symmetric matrix $A$.</details>
 """
     ),
     answer(
@@ -168,21 +196,21 @@ not a count of anything: $K=w^4$ has $\lambda=\tfrac14$ with one parameter.
 
 **3.** The sublevel set is the ellipsoid $\{u:u^\top Hu<2t\}=\{u:u^\top(H/2t)u<1\}$, of volume $\omega_d\det(H/2t)^{-1/2}=\omega_d(2t)^{d/2}(\det H)^{-1/2}$; multiplying by $\varphi(w_0)$ (the prior is approximately constant on a set of diameter $O(\sqrt t)$), $V(t)\approx\varphi(w_0)\omega_d(\det H)^{-1/2}2^{d/2}t^{d/2}$, so $\lambda=d/2$, $m=1$, $c=\varphi(w_0)2^{d/2}\pi^{d/2}(\det H)^{-1/2}/\Gamma(d/2+1)$. Then $c\Gamma(\lambda+1)=\varphi(w_0)(2\pi)^{d/2}(\det H)^{-1/2}$ and part 2 gives $\bar F_n=\tfrac d2\log n-\log\varphi(w_0)+\tfrac12\log\det H-\tfrac d2\log2\pi$, Notebook 1's formula. Volume scaling is Laplace's method with the Hessian replaced by what is actually there.
 
-**4.** Prior density $2^{-d}$ on the box. (a) $\{w^2<t\}=(-\sqrt t,\sqrt t)$, $V=\sqrt t$ (after the factor $\tfrac12$): $\lambda=\tfrac12$, $m=1$. (b) $V=t^{1/4}$: $\lambda=\tfrac14$. (c) $V=t^{1/2k}$: $\lambda=1/2k$; the flatter the minimum, the smaller $\lambda$, although the Hessian is zero for every $k\ge2$ and cannot tell them apart. (d) $V(t)=\tfrac14\int_{|v|<t^{1/4}}2\sqrt{t-v^4}\,dv=\tfrac12t^{3/4}\int_{-1}^1\sqrt{1-u^4}\,du$ (substituting $v=t^{1/4}u$), so $\lambda=\tfrac34$, $m=1$. (e) $\{(ab)^2<t\}=\{|ab|<\sqrt t\}$. For $|a|<\sqrt t$ every $b\in[-1,1]$ qualifies; for $\sqrt t<|a|<1$ one needs $|b|<\sqrt t/|a|$. Area $=2\sqrt t\cdot2+2\int_{\sqrt t}^1\frac{2\sqrt t}{a}da=4\sqrt t+4\sqrt t\cdot\tfrac12(-\log t)=2\sqrt t(-\log t)+4\sqrt t$. Dividing by $4$: $V(t)=\tfrac12t^{1/2}(-\log t)\,(1+2/(-\log t))$, so $\lambda=\tfrac12$ and $m=2$: the zero set is two crossing lines, and where they cross the volume picks up a logarithm. (f) For $\mu_0=0$, $K=\mu^6/2$ and $V=\tfrac12\cdot2(2t)^{1/6}=(2t)^{1/6}$: $\lambda=\tfrac16$. For $\mu_0\ne0$ the minimum is at $\mu_0$ with $K''(\mu_0)=9\mu_0^4>0$, so $\lambda=\tfrac12$. The map $\theta=\mu^3$ is a bijection of $\mathbb R$, so both parametrizations describe exactly the same family of distributions, yet $\lambda$ differs: the learning coefficient is a property of the parametrization (and the prior's support), not of the set of distributions. That is not a defect: the prior lives on parameters, and it is the prior volume that Bayes integrates.
+**4.** Prior density $2^{-d}$ on the box. (a) $\{w^2<t\}=(-\sqrt t,\sqrt t)$, $V=\sqrt t$ (after the factor $\tfrac12$): $\lambda=\tfrac12$, $m=1$. (b) $V=t^{1/4}$: $\lambda=\tfrac14$. (c) $V=t^{1/2k}$: $\lambda=1/2k$; the flatter the minimum, the smaller $\lambda$, although the Hessian is zero for every $k\ge2$ and cannot tell them apart. (d) $V(t)=\tfrac14\int_{|v|<t^{1/4}}2\sqrt{t-v^4}\,dv=\tfrac12t^{3/4}\int_{-1}^1\sqrt{1-u^4}\,du$ (substituting $v=t^{1/4}u$), so $\lambda=\tfrac34$, $m=1$. (e) $\{(ab)^2<t\}=\{|ab|<\sqrt t\}$. For $|a|<\sqrt t$ every $b\in[-1,1]$ qualifies; for $\sqrt t<|a|<1$ one needs $|b|<\sqrt t/|a|$. Area $=2\sqrt t\cdot2+2\int_{\sqrt t}^1\frac{2\sqrt t}{a}da=4\sqrt t+4\sqrt t\cdot\tfrac12(-\log t)=2\sqrt t(-\log t)+4\sqrt t$. Dividing by $4$: $V(t)=\tfrac12t^{1/2}(-\log t)\,(1+2/(-\log t))$, so $\lambda=\tfrac12$ and $m=2$: the zero set is two crossing lines, and where they cross the volume picks up a logarithm. (f) For $\mu_0=0$, $K=\mu^6/2$ and $V=\tfrac12\cdot2(2t)^{1/6}=(2t)^{1/6}$: $\lambda=\tfrac16$. For $\mu_0\ne0$ the minimum is at $\mu_0$ with $K''(\mu_0)=9\mu_0^4>0$, so $\lambda=\tfrac12$. The map $\theta=\mu^3$ is a bijection of $\mathbb R$, so both parametrizations describe exactly the same family of distributions, yet $\lambda$ differs. The reason: a uniform prior on $\mu$ and a uniform prior on $\theta$ are different priors on that family. The learning coefficient belongs to the parametrization together with its prior, not to the set of distributions alone; transforming the prior along with the coordinates (with its Jacobian) leaves $V(t)$, and so $\lambda$, unchanged.
 
 **5.** $\bar Z_n=\int\varphi_1e^{-nK_1}\int\varphi_2e^{-nK_2}=\bar Z_n^{(1)}\bar Z_n^{(2)}$, so $\bar F_n=\bar F_n^{(1)}+\bar F_n^{(2)}$ and the coefficients of $\log n$ and $\log\log n$ add: $\lambda=\lambda_1+\lambda_2$, $(m-1)=(m_1-1)+(m_2-1)$. For $w^2+v^4$: $\tfrac12+\tfrac14=\tfrac34$, as in 4(d).
 
-**6.** Taylor's theorem with $\nabla K(w_0)=0$ and $K(w_0)=0$ gives $K(w)=\tfrac12(w-w_0)^\top\nabla^2K(\xi)(w-w_0)\le\tfrac12\Lambda\|w-w_0\|^2$. Hence $\|w-w_0\|<\sqrt{2t/\Lambda}$ implies $K(w)<t$: the ball of radius $r=\sqrt{2t/\Lambda}$ sits inside the sublevel set, and $V(t)\ge\varphi_{\min}\omega_dr^d=\varphi_{\min}\omega_d(2/\Lambda)^{d/2}t^{d/2}$ for small $t$ (with $\varphi_{\min}>0$ the prior's minimum on the ball). Then $\lambda=\lim\log V/\log t\le\lim\log(Ct^{d/2})/\log t=d/2$ (recall $\log t<0$, so a larger $V$ means a smaller ratio). Curvature can only make a basin narrower than a ball; the ball is the worst case, and it has $\lambda=d/2$.
+**6.** Taylor's theorem with $\nabla K(w_0)=0$ and $K(w_0)=0$ gives $K(w)=\tfrac12(w-w_0)^\top\nabla^2K(\xi)(w-w_0)\le\tfrac12\Lambda\|w-w_0\|^2$. Hence $\|w-w_0\|<\sqrt{2t/\Lambda}$ implies $K(w)<t$: the ball of radius $r=\sqrt{2t/\Lambda}$ sits inside the sublevel set, and $V(t)\ge\varphi_{\min}\omega_dr^d=\varphi_{\min}\omega_d(2/\Lambda)^{d/2}t^{d/2}$ for small $t$ (with $\varphi_{\min}>0$ the prior's minimum on the ball). Then $\lambda=\lim\log V/\log t\le\lim\log(Ct^{d/2})/\log t=d/2$ (recall $\log t<0$, so a larger $V$ means a smaller ratio). A bounded Hessian guarantees a ball inside the sublevel set, so the volume shrinks no faster than a ball's, $t^{d/2}$. (Without $\varphi(w_0)>0$ the bound fails: $K=w^2$ with prior $\tfrac32w^2$ on $[-1,1]$ has $V=t^{3/2}$.)
 """
     ),
     markdown(
         r"""
-**Code: $\bar F_n$ against $\log n$ for the toy losses.** The cell computes
-$\bar Z_n$ by a Riemann sum on a grid for the losses of Exercise 2.1.4, with the
-uniform prior on $[-1,1]^d$, and fits the slope of $\bar F_n$ against $\log n$
-over a window of large $n$. For $(ab)^2$ the slope is pulled away from $\tfrac12$
-by the $-\log\log n$ term, whose derivative $-1/(n\log n)$ decays slowly; fitting
-the full form $\lambda\log n-(m-1)\log\log n+c$ with $m=2$ reduces it. In the two-basin figure further down, $n^*$ marks where the leading terms balance; the $O(1)$ constants $c_\alpha$ shift the actual crossing by a factor of order one.
+**Code: $\bar F_n$ against $\log n$ for the toy losses.** A Riemann sum for
+$\bar Z_n$ on a grid, uniform prior on $[-1,1]^d$, for four losses of
+Exercise 2.1.4, with the slope of $\bar F_n$ against $\log n$ fitted over
+$n\ge300$. For $(ab)^2$ the $-\log\log n$ term pulls the slope below $\tfrac12$ by
+about $1/\log n$, which decays slowly; fitting the full form
+$\lambda\log n-(m-1)\log\log n+c$ with $m=2$ removes most of the bias.
 """
     ),
     code(
@@ -218,8 +246,8 @@ plt.tight_layout(); plt.show()
 
 ## 2.2 The Mellin transform
 
-*Question:* is there a way to get $\lambda$, $m$ and the corrections to the
-free energy without computing $V(t)$ by hand?
+*Question:* can we get $\lambda$, $m$ and the corrections to the free energy
+without computing $V(t)$ by hand?
 
 *Notation:* $K$, $\varphi$, $V$, $v$, $\bar Z_n$ as in §2.1. New: for a complex
 number $z$,
@@ -228,48 +256,47 @@ $$
 \zeta(z)=\int K(w)^z\,\varphi(w)\,dw=\int_0^\infty t^z\,v(t)\,dt .
 $$
 
-The second form (same slicing as Exercise 2.1.1) says $\zeta$ is the *Mellin
-transform* of the density of states: the Mellin transform of a function
-$f$ on $(0,\infty)$ is $\int_0^\infty t^{z}f(t)\,dt$ (conventions differ by a
-shift of $z$ by one), and it does for powers of $t$ what the Fourier transform
-does for exponentials. The integral converges for $\mathrm{Re}\,z>0$ (the
-integrand is bounded there, for a prior of bounded support and bounded $K$).
-As $z$ moves left the integral blows up where $t^zv(t)$ stops being integrable
-at $t=0$, and this is exactly where the small-$t$ behaviour of $v$ sits. The
-computation that makes this precise is (Exercise 2.2.1)
+The second form (the slicing of §2.1) makes $\zeta$ the *Mellin transform* of
+$v$, which does for powers of $t$ what the Fourier transform does for
+exponentials (the usual convention has $t^{z-1}$ in place of $t^z$). For bounded
+$K$ and a prior of bounded support the integral converges for $\mathrm{Re}\,z>0$.
+Moving left, it first diverges where $t^zv(t)$ stops being integrable at $t=0$,
+which the small-$t$ behaviour of $v$ decides. Precisely (Exercise 2.2.1):
 
 $$
 \int_0^1t^{z}\cdot t^{\lambda-1}(-\log t)^{m-1}\,dt=\frac{(m-1)!}{(z+\lambda)^m}:
 $$
 
-a term $ct^{\lambda-1}(-\log t)^{m-1}$ in $v(t)$ is the same thing as a pole of
-$\zeta$ at $z=-\lambda$ of order $m$. Conversely, a Mellin transform can be
-inverted, and each pole of $\zeta$ at $-\lambda_k$ of order $m_k$ gives back a
-term $c_kt^{\lambda_k-1}(-\log t)^{m_k-1}$ in $v$ and so (§2.1) a term of order
-$n^{-\lambda_k}(\log n)^{m_k-1}$ in $\bar Z_n$. In short:
+a term $ct^{\lambda-1}(-\log t)^{m-1}$ in $v(t)$ is a pole of $\zeta$ at
+$z=-\lambda$ of order $m$. Inverting the Mellin transform runs this backwards, and
+§2.1 turns each such term of $v$ into a term of order $n^{-\lambda}(\log n)^{m-1}$
+in $\bar Z_n$:
 
 $$
 \text{poles of }\zeta\ \longleftrightarrow\ \text{small-}t\text{ terms of }v\ \longleftrightarrow\ \text{large-}n\text{ terms of }\bar Z_n .
 $$
-
+"""
+        + image(
+            FIG + "poles.svg",
+            r"Each pole of $\zeta$, at $-\lambda_k$ with order $m_k$, gives terms of $v(t)$ near $t=0$ and of $\bar Z_n$ at large $n$ with power $\lambda_k$ and at most $m_k-1$ logarithms; the figure shows the highest. The integral converges to the right of the first pole, which gives $\lambda$ and $m$.",
+            alt="The real axis of the complex z-plane with poles marked at minus lambda, minus lambda two and further left; arrows connect each pole to a term of v(t) at small t and to a term of the partition function at large n.",
+        )
+        + r"""
 The pole closest to the origin (the largest, since all are negative) gives
-$\lambda$, its order gives $m$, and the further poles give the corrections. What
-Watanabe adds, and what we do not prove, is that for analytic $K$ and $\varphi$
-the function $\zeta$ extends from $\mathrm{Re}\,z>0$ to the whole plane with
-only poles, all at negative rational numbers; the proof changes variables
-locally so that $K$ becomes a monomial $u_1^{2k_1}\cdots u_d^{2k_d}$, for which
+$\lambda$, its order gives $m$, and the further poles give the corrections.
+Watanabe proves (we don't) that for analytic $K$ and $\varphi$, $\zeta$ extends to
+the whole plane with only poles, all at negative rational numbers: a local change
+of variables turns $K$ into a monomial $u_1^{2k_1}\cdots u_d^{2k_d}$, whose
 $\zeta$ is a product of one-dimensional integrals.
 
-**Why bother.** For a monomial, $\zeta$ factorizes and the poles are read off in
-one line, where computing $V(t)$ needs the case analysis of Exercise 2.1.4(e).
-The worked case is $K=(ab)^2$ with the uniform prior on $[-1,1]^2$:
+**Monomials take one line.** Where $V(t)$ needed the case analysis of
+Exercise 2.1.4(e), for $K=(ab)^2$ with the uniform prior on $[-1,1]^2$
 
 $$
 \zeta(z)=\frac14\int_{-1}^1\!\!\int_{-1}^1(ab)^{2z}\,da\,db=\frac14\Big(\frac2{2z+1}\Big)^2=\frac1{(2z+1)^2}=\frac14\cdot\frac1{(z+\tfrac12)^2},
 $$
 
-a double pole at $z=-\tfrac12$: $\lambda=\tfrac12$ and $m=2$, as found the hard
-way in §2.1.
+a double pole at $z=-\tfrac12$: $\lambda=\tfrac12$ and $m=2$.
 
 **Exercise 2.2 (Poles and exponents).** Prior uniform on $[-1,1]^d$ unless stated.
 
@@ -286,7 +313,7 @@ way in §2.1.
 
 **2.** $K=w^2$: $\zeta=\tfrac12\int_{-1}^1w^{2z}dw=\frac1{2z+1}=\frac12\cdot\frac1{z+1/2}$, simple pole at $-\tfrac12$: $\lambda=\tfrac12$, $m=1$. $K=w^4$: $\frac1{4z+1}$, pole at $-\tfrac14$. $K=w^{2k}$: $\frac1{2kz+1}$, pole at $-\frac1{2k}$. $K=\tfrac12\mu^6$: $\zeta=2^{-z}\frac1{6z+1}$, pole at $-\tfrac16$ (the factor $2^{-z}$ is entire and only changes the residue, i.e. the constant). Monomial: $\zeta=\prod_i\frac1{2k_iz+1}$, simple poles at $z=-1/2k_i$; the pole closest to $0$ is at $-\min_i1/2k_i$, so $\lambda=\min_i\frac1{2k_i}$ and $m$ is the number of $i$ attaining the minimum (coincident simple poles multiply into a pole of that order). In $d$ variables the same: $\lambda=\min_i1/2k_i$, $m=\#\{i:1/2k_i=\lambda\}$. Note that variables that do not appear ($k_i=0$) contribute a factor $1$ and nothing to $\lambda$: directions along which the loss is flat cost nothing.
 
-**3.** $V(t)=\tfrac12I\,t^{3/4}$ with $I=\int_{-1}^1\sqrt{1-u^4}du$, so $v(t)=\tfrac38I\,t^{-1/4}$ for small $t$, and $\int_0^1t^z\cdot t^{-1/4}dt=\frac1{z+3/4}$: first pole at $-\tfrac34$, $\lambda=\tfrac34$, $m=1$. (The exact $v$ has further terms at larger $t$ which give poles further left.)
+**3.** $V(t)=\tfrac12I\,t^{3/4}$ with $I=\int_{-1}^1\sqrt{1-u^4}du$, so $v(t)=\tfrac38I\,t^{-1/4}$ for small $t$, and $\int_0^1t^z\cdot t^{-1/4}dt=\frac1{z+3/4}$: first pole at $-\tfrac34$, $\lambda=\tfrac34$, $m=1$. In fact $V(t)=\tfrac12It^{3/4}$ exactly for $t\le1$, and the contribution $\int_1^2t^zv(t)\,dt$ is an entire function of $z$, so this is the only pole: here $\zeta(z)=\frac{3I/8}{z+3/4}+(\text{entire})$.
 
 **4.** $\zeta(z)=\mathbb E[w^{2z}]=2^z\Gamma(z+\tfrac12)/\sqrt\pi$. Poles of $\Gamma(z+\tfrac12)$ are at $z+\tfrac12=0,-1,-2,\dots$, i.e. $z=-\tfrac12,-\tfrac32,-\tfrac52,\dots$, all simple. The first gives $\lambda=\tfrac12$, $m=1$ as with the uniform prior. The others give the terms $n^{-3/2},n^{-5/2},\dots$ in $\bar Z_n$, i.e. the $1/n,1/n^2,\dots$ corrections to $\bar F_n$; here $\bar Z_n=\int e^{-nw^2}e^{-w^2/2}/\sqrt{2\pi}\,dw=(1+2n)^{-1/2}$ exactly, whose expansion in $1/n$ has precisely those powers.
 
@@ -303,66 +330,70 @@ way in §2.1.
 *Question:* when the loss has several minima with different depths and
 different volumes, where does the posterior go, and does that change with $n$?
 
-*Notation:* regions $U_\alpha$ of parameter space, each containing one minimum
-$w_\alpha$ of $L$ (a basin), with local free energies $F_n(U_\alpha)$ as in Notebook 1
-Exercise 1.1; $L_\alpha=L(w_\alpha)$, $\lambda_\alpha$ and $m_\alpha$ the
-learning coefficient and multiplicity of the basin, defined by the volume
-scaling of $L-L_\alpha$ inside $U_\alpha$.
-
-Applying §2.1 inside each basin,
+*Notation:* basins $U_\alpha$ (regions each containing one minimum $w_\alpha$ of
+$L$) with local free energies $F_n(U_\alpha)=-\log\int_{U_\alpha}\varphi e^{-nL_n}$
+(Notebook 1, Exercise 1.1); $L_\alpha=L(w_\alpha)$; $\lambda_\alpha$, $m_\alpha$ the
+learning coefficient and multiplicity of $L-L_\alpha$ inside $U_\alpha$.
+"""
+        + image(
+            FIG + "two_basins.svg",
+            r"Accuracy against volume: a narrow basin $U$ at excess loss $0$, a wide basin $V$ at $\Delta L$ (the code cell's loss with $\delta=0.03$), and the posterior at two sample sizes. At $n=10$ most of the mass is in the wide basin; at $n=300$ nearly all of it is in the accurate one.",
+            alt="A loss with a narrow basin at zero and a wide basin slightly higher; below, the posterior at n = 10 has most mass in the wide basin, and at n = 300 nearly all in the narrow one.",
+        )
+        + r"""
+Applying §2.1 inside each basin (population version, as throughout),
 
 $$
 F_n(U_\alpha)\approx nL_\alpha+\lambda_\alpha\log n-(m_\alpha-1)\log\log n+c_\alpha ,
 \qquad
-F_n=-\log\sum_\alpha e^{-F_n(U_\alpha)}\approx\min_\alpha F_n(U_\alpha),
+F_n=-\log\sum_\alpha e^{-F_n(U_\alpha)}\approx\min_\alpha F_n(U_\alpha)
 $$
 
-(Notebook 1, Exercise 1.1.3; here with $L_n(w_\alpha)\approx L_\alpha$ by the law of
-large numbers). The posterior mass of basin $\alpha$ is $e^{-F_n(U_\alpha)}/\sum_\beta e^{-F_n(U_\beta)}$,
-so the posterior lives in the basin of least free energy, and the free energy
-trades accuracy, $nL_\alpha$, against volume, $\lambda_\alpha\log n$. The trade
-is not static. Take two basins, $U$ accurate but narrow and $V$ less accurate but
-wide: $L_U<L_V$ and $\lambda_U>\lambda_V$. The log posterior odds are
+(Notebook 1, Exercise 1.1.3). Basin $\alpha$ holds posterior mass
+$e^{-F_n(U_\alpha)}/\sum_\beta e^{-F_n(U_\beta)}$, so the posterior sits in the
+basin of least free energy, trading accuracy, $nL_\alpha$, against volume,
+$\lambda_\alpha\log n$. (With real data, $nL_n(w_\alpha)$ fluctuates around
+$nL_\alpha$ by $O(\sqrt n)$, and between basins that compute different functions
+these fluctuations do not cancel; they blur the comparison below.)
+
+**The trade changes with $n$.** Take $U$ accurate but narrow and $V$ less accurate
+but wide: $L_U<L_V$ and $\lambda_U>\lambda_V$. The log posterior odds are
 
 $$
 \log\frac{\pi_n(U)}{\pi_n(V)}=F_n(V)-F_n(U)\approx n\,\Delta L-\Delta\lambda\,\log n,
 \qquad \Delta L=L_V-L_U>0,\ \ \Delta\lambda=\lambda_U-\lambda_V>0 .
 $$
 
-For small $n$ the logarithm wins and the posterior sits in the wide basin $V$;
-for large $n$ the linear term wins and it moves to the accurate basin $U$. The
-crossover is at the $n^*$ solving $n^*\Delta L=\Delta\lambda\log n^*$, i.e.
+Keeping only these leading terms (dropping $c_\alpha$ and the $\log\log n$
+terms), and when $\Delta\lambda/\Delta L>e$: at moderate $n$ the logarithm wins and
+the posterior sits in the wide basin $V$; at large $n$ the linear term wins and it
+moves to the accurate basin $U$. The switch is at
 
 $$
 \frac{n^*}{\log n^*}=\frac{\Delta\lambda}{\Delta L}.
 $$
 
-A small loss of accuracy against a large gain in volume keeps the posterior in
-the simpler basin for a long time. This is the same mechanism as Notebook 1's BIC
-comparison between two models, now happening between two regions of one model's
-parameter space.
+A small loss of accuracy bought with a large gain in volume keeps the posterior in
+the wide basin for a long time. This is Notebook 1's BIC comparison between two
+models, now between two regions of one model's parameter space.
 
-**The thermodynamic reading, in one paragraph.** Treating $n$ as continuous,
-$\partial\bar F_n/\partial n=\mathbb E_{\pi_n}[K]$ (Exercise 2.3.3), the
-posterior mean excess loss: the derivative of the free energy with respect to
-the "inverse temperature" $n$ is the "internal energy", as in Notebook 1 Exercise
-1.1.4. At $n^*$ the dominant basin changes, and $\partial\bar F_n/\partial n$
-jumps from about $K_V$ to about $K_U$ over a window of $n$ around $n^*$ whose
-width is set by how fast the odds change. A kink in the free energy with a
-jump in its first derivative is, in the dictionary, a first-order phase
-transition, and the jump in $\mathbb E[K]$ plays the part of a latent heat. The
-analogy stops there. There is no thermodynamic limit that makes the kink sharp
-(the window is of relative width $\sim1/\log n^*$), and the posterior has no
-dynamics, so it has no metastable states: at $n>n^*$ it is in $U$ whatever it
-was before. Metastability enters only for a procedure that moves locally, such
-as a sampler or an optimizer started in $V$, which would stay there past $n^*$
-until it crosses the barrier between the basins, for a time set by the barrier
-and not by the free energies. Whether and how that describes training is not a
-question these notebooks answer.
+**The thermodynamic reading.** Treating $n$ as continuous,
+$\partial_n\bar F_n=\mathbb E_{\pi_n}[K]$ (Exercise 2.3.3): the free energy
+differentiated in the "inverse temperature" is the "internal energy". Around $n^*$
+it drops from about $\Delta L+\lambda_V/n$ to about $\lambda_U/n$, and in the
+dictionary a jump in the first derivative of the free energy is a first-order
+phase transition. The analogy stops there. No thermodynamic limit makes the jump
+sharp: the log-odds have slope $\Delta L-\Delta\lambda/n^*$ at $n^*$, so they go from $-5$
+to $5$ over about $10/(\Delta L-\Delta\lambda/n^*)$ samples ($60$ in Exercise 2.3.2). And the posterior has no dynamics, hence no metastable states:
+past $n^*$ it is in $U$, whatever it was before. Metastability needs a procedure
+that moves locally, such as a sampler or an optimizer started in $V$, which stays
+there past $n^*$ until it crosses the barrier, on a time set by the barrier rather
+than by the free energies. Whether that describes training is not a question
+these notebooks answer.
 
 **Exercise 2.3 (Two basins).**
 
-1. Derive the log-odds formula and $n^*/\log n^*=\Delta\lambda/\Delta L$ from Notebook 1 Exercise 1.1.2 and §2.1. Show that if instead $\Delta L$ and $\Delta\lambda$ have the same sign (one basin is both more accurate and wider), there is no crossover.
+1. Derive the log-odds formula and $n^*/\log n^*=\Delta\lambda/\Delta L$ from Notebook 1 Exercise 1.1.2 and §2.1. Show that if instead $\Delta L$ and $\Delta\lambda$ have opposite signs (one basin is both more accurate and wider), these leading terms never cross.
 2. Suppose $F_n(U)\approx0.3n+20\log n$ and $F_n(V)\approx0.5n+2\log n$. Which basin is the accurate one, and which the wide one? Find $n^*$, and say what the posterior odds are at $n=100$ and at $n=2000$.
 3. Treating $n$ as a continuous variable in $\bar Z_n=\int\varphi e^{-nK}$, show $\partial_n\bar F_n=\mathbb E_{\pi_n}[K]$ and $\partial_n^2\bar F_n=-\mathrm{Var}_{\pi_n}[K]$. Conclude that the posterior mean excess loss decreases with $n$, and say what it is in a single basin with learning coefficient $\lambda$ for large $n$.
 4. *(Several basins, several scales.)* Three basins have $(L_\alpha,\lambda_\alpha)=(0,\,2),(0.01,\,1),(0.05,\,\tfrac14)$. Sketch which basin holds the posterior as $n$ runs from $10$ to $10^5$, and give the two crossover values.
@@ -370,31 +401,36 @@ question these notebooks answer.
     ),
     answer(
         r"""
-**1.** Notebook 1 Exercise 1.1.2: $\log\pi_n(U)/\pi_n(V)=F_n(V)-F_n(U)$. Insert the expansions: $F_n(V)-F_n(U)\approx n(L_V-L_U)+(\lambda_V-\lambda_U)\log n+O(\log\log n)$, which is $n\Delta L-\Delta\lambda\log n$ with the stated signs (dropping the slowly varying terms). For moderate $n$ the logarithmic term dominates and the expression is negative; for large $n$ the linear term wins and it is positive; it crosses zero where $n\Delta L=\Delta\lambda\log n$. The function $n/\log n$ is increasing for $n>e$, so the equation $n/\log n=\Delta\lambda/\Delta L$ has exactly one solution above $e$ when the right-hand side is positive. If $\Delta L$ and $\Delta\lambda$ have the same sign, the two terms have the same sign for every $n$: one basin is preferred throughout, and the odds only grow.
+**1.** Notebook 1 Exercise 1.1.2: $\log\pi_n(U)/\pi_n(V)=F_n(V)-F_n(U)$. Insert the expansions: $F_n(V)-F_n(U)\approx n(L_V-L_U)+(\lambda_V-\lambda_U)\log n+O(\log\log n)$, which is $n\Delta L-\Delta\lambda\log n$ with the stated signs (dropping the slowly varying terms). For moderate $n$ the logarithmic term dominates and the expression is negative; for large $n$ the linear term wins and it is positive; it crosses zero where $n\Delta L=\Delta\lambda\log n$. The function $n/\log n$ is increasing for $n>e$, so the equation $n/\log n=\Delta\lambda/\Delta L$ has exactly one solution above $e$ when the right-hand side exceeds $e$ (the case of interest, $\Delta\lambda\gg\Delta L$). If $\Delta L$ and $\Delta\lambda$ have opposite signs, the two terms $n\Delta L$ and $-\Delta\lambda\log n$ have the same sign for every $n>1$: one basin is preferred throughout, and the odds only grow.
 
-**2.** $U$ has the lower loss coefficient ($0.3<0.5$): it is the accurate basin, and it has the larger $\lambda$ ($20>2$): it is the narrow one. $\Delta L=0.2$, $\Delta\lambda=18$, so $n^*/\log n^*=90$, giving $n^*\approx570$ ($570/\log570=570/6.35\approx89.8$). At $n=100$: $F(V)-F(U)=0.2\cdot100-18\log100=20-82.9=-62.9$: the posterior is in $V$ by odds $e^{-63}$. At $n=2000$: $400-18\cdot7.6=263$: in $U$ by odds $e^{263}$. The crossover is sharp on the scale of the odds but it is not instantaneous in $n$: the log-odds pass through $[-5,5]$ over a window of width about $10/\Delta L=50$ samples around $n^*$.
+**2.** $U$ has the lower loss coefficient ($0.3<0.5$): it is the accurate basin, and it has the larger $\lambda$ ($20>2$): it is the narrow one. $\Delta L=0.2$, $\Delta\lambda=18$, so $n^*/\log n^*=90$, giving $n^*\approx570$ ($570/\log570=570/6.35\approx89.8$). At $n=100$: $F(V)-F(U)=0.2\cdot100-18\log100=20-82.9=-62.9$: the posterior is in $V$ by odds $e^{-63}$. At $n=2000$: $400-18\cdot7.6=263$: in $U$ by odds $e^{263}$. The crossover is sharp on the scale of the odds but it is not instantaneous in $n$: the log-odds pass through $[-5,5]$ over a window of about $60$ samples around $n^*$: the slope of the log-odds there is $\Delta L-\Delta\lambda/n^*=0.2-18/570\approx0.17$, and $10/0.17\approx60$.
 
-**3.** $\partial_n\log\bar Z_n=\frac{\int(-K)\varphi e^{-nK}}{\int\varphi e^{-nK}}=-\mathbb E_{\pi_n}[K]$, so $\partial_n\bar F_n=\mathbb E_{\pi_n}[K]$; differentiating again as in Notebook 1 Exercise 1.1.4 gives $-\mathrm{Var}_{\pi_n}[K]\le0$. So $\mathbb E_{\pi_n}[K]$ is non-increasing in $n$: more data push the posterior to lower excess loss. In a single basin, $\bar F_n\approx\lambda\log n-(m-1)\log\log n+c$ gives $\mathbb E_{\pi_n}[K]\approx\lambda/n$ (the $\log\log$ term contributes $-(m-1)/(n\log n)$, smaller): the posterior sits at excess loss $\lambda/n$, the "equipartition" of this problem, with $\lambda$ in place of $d/2$. Notebook 3 uses this identity as the definition of an estimator.
+**3.** $\partial_n\log\bar Z_n=\frac{\int(-K)\varphi e^{-nK}}{\int\varphi e^{-nK}}=-\mathbb E_{\pi_n}[K]$, so $\partial_n\bar F_n=\mathbb E_{\pi_n}[K]$; differentiating again as in Notebook 1 Exercise 1.1.4 gives $-\mathrm{Var}_{\pi_n}[K]\le0$. So $\mathbb E_{\pi_n}[K]$ is non-increasing in $n$: increasing $n$ in this fixed-$K$ Gibbs distribution lowers its mean excess loss. In a single basin, $\bar F_n\approx\lambda\log n-(m-1)\log\log n+c$ gives $\mathbb E_{\pi_n}[K]\approx\lambda/n$ (the $\log\log$ term contributes $-(m-1)/(n\log n)$, smaller): the posterior sits at excess loss $\lambda/n$, the "equipartition" of this problem, with $\lambda$ in place of $d/2$. Notebook 3 uses this identity as the definition of an estimator.
 
-**4.** Pairwise crossovers: between basins 2 and 3, $n/\log n=\tfrac34/0.04=18.75$, so $n\approx62$; between 1 and 2, $n/\log n=1/0.01=100$, so $n\approx650$; between 1 and 3 (not needed, but for consistency) $n/\log n=1.75/0.05=35$, $n\approx140$, which lies between the other two, so basin 2 really is visited. The posterior is in basin 3 (widest, worst) for $n\lesssim62$, in basin 2 for $62\lesssim n\lesssim650$, and in basin 1 (narrowest, exact) after that: a staircase of increasingly accurate, increasingly narrow basins, with the dwell time in each set by $\Delta\lambda/\Delta L$.
+**4.** Pairwise crossovers (leading terms only): between basins 2 and 3, $n/\log n=\tfrac34/0.04=18.75$, so $n\approx83$; between 1 and 2, $n/\log n=1/0.01=100$, so $n\approx650$; between 1 and 3 (not needed, but for consistency) $n/\log n=1.75/0.05=35$, $n\approx180$, which lies between the other two, so basin 2 really does take over. The posterior is in basin 3 (widest, worst) for $n\lesssim83$, in basin 2 for $83\lesssim n\lesssim650$, and in basin 1 (narrowest, exact) after that: a staircase of increasingly accurate, increasingly narrow basins, with the range of $n$ over which each dominates set by the ratios $\Delta\lambda/\Delta L$.
 """
     ),
     markdown(
         r"""
-**Code: a posterior that changes basin.** The one-dimensional loss
-$K(w)=(w+1)^2(w-1)^4+\delta\,\sigma(20w)$, with $\sigma$ the logistic function,
-has a narrow regular basin at $w=-1$ (excess loss $0$, $\lambda=\tfrac12$) and a
-wide degenerate basin at $w=+1$ (excess loss $\delta$, $\lambda=\tfrac14$). The
-first cell computes the posterior mass of $w>0$ against $n$, with
-$n^*/\log n^*=\tfrac14/\delta$ marked, together with $\bar F_n$ and its
-derivative $\mathbb E_{\pi_n}[K]$. The second is Exercise 2.3.2 as a plot.
+**Code: a posterior that changes basin.** The loss of the figure above,
+$K(w)=(w+1)^2(w-1)^4+\delta\,s(w)$, with $s$ a smooth step from $0$ (for
+$w\le-\tfrac12$) to $1$ (for $w\ge\tfrac12$), now with $\delta=0.01$: a narrow
+basin at $w=-1$ (excess loss $0$, $\lambda=\tfrac12$) and a wide one at $w=+1$
+(excess loss $\delta$, $\lambda=\tfrac14$; the step is exactly flat on both
+basins). The first cell plots the posterior mass of $w>0$, $\bar F_n$, and its
+derivative $\mathbb E_{\pi_n}[K]$ against $n$. The marked $n^*$ solves
+$n^*/\log n^*=\tfrac14/\delta$, where the leading terms balance; the $O(1)$
+constants $c_\alpha$ move the actual crossing by a factor of order one. The second
+cell is Exercise 2.3.2 as a plot.
 """
     ),
     code(
         r"""
 delta = 0.01
 w = np.linspace(-2.5, 2.5, 200_001)
-K = (w + 1) ** 2 * (w - 1) ** 4 + delta / (1 + np.exp(-20 * w))
+x = np.clip(w + 0.5, 0, 1)
+step = x**3 * (10 - 15 * x + 6 * x**2)              # smooth step: 0 for w <= -1/2, 1 for w >= 1/2
+K = (w + 1) ** 2 * (w - 1) ** 4 + delta * step
 logphi = np.full_like(w, -np.log(5.0))            # uniform prior on [-2.5, 2.5]
 dw = w[1] - w[0]
 ns = np.logspace(0.5, 3.5, 61)

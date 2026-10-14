@@ -873,6 +873,9 @@ pre.code code { font-size: 1em; }
   .solution-body { padding-left: .7rem; padding-right: .7rem; }
 }
 .figure-frame { margin: 1em 0 1.4em; }
+figure.illus { margin: 1.2em auto 1.6em; text-align: center; max-width: 40rem; }
+figure.illus img { display: block; margin: 0 auto; max-width: 100%; height: auto; background: #fff; border-radius: 6px; }
+figure.illus figcaption { margin-top: .5em; font-size: .9rem; color: var(--muted); text-align: left; }
 .figure-frame iframe {
   display: block; width: 100%; height: 80vh; min-height: 32rem; max-height: 62rem;
   border: 1px solid var(--rule); border-radius: 6px; background: #fff;

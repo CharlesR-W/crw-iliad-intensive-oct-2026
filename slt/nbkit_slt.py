@@ -92,6 +92,15 @@ def figure(path: str, what: str) -> str:
             f"(a standalone page: open the file in a web browser; some notebook viewers show it as source). {what}")
 
 
+def image(path: str, caption: str, alt: str = "") -> str:
+    """A static illustration (SVG or PNG under assets/figures/, path relative to slt/)
+    with a one-sentence caption (markdown; math allowed). Renders on the HTML page and
+    in Jupyter alike. `alt` defaults to the caption with TeX stripped."""
+    alt = alt or re.sub(r"[$\\*_`]", "", caption)
+    return (f'\n\n<figure class="illus">\n<img src="{path}" alt="{alt}">\n\n'
+            f'<figcaption>\n\n{caption}\n\n</figcaption>\n\n</figure>\n\n')
+
+
 def _cell(spec: dict, key: str, index: int, variant: str) -> dict:
     kind = spec["kind"]
     cid = hashlib.sha1(f"{key}:{index}:{kind}".encode()).hexdigest()[:12]
