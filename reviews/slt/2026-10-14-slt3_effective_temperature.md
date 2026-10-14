@@ -53,3 +53,39 @@ Codex independently reproduced the Fig 4 values (0.367, 0.117).
 1. Blog-posts block inserted verbatim after the subtitle.
 2. LessWrong images: none reused. NB3's ideas (crossover of w⁴+δw², WBIC, the tether) are not drawn in DSLT 0–4 or the two Hoogland posts, as far as I know; I did not check every image in those posts.
 3. Bayesian Renormalization reading added right after the §3.2 stub box (outside it) as "Related reading, on scale-dependent inference", importance 3, length 3, with the companion arXiv:2212.11379 as a pointer. Both abstract pages fetched. The section pointer is checked against the v3 PDF's table of contents.
+
+# Streamlining pass (afternoon, 2026-10-14; `reviews/slt/2026-10-14-streamline-brief.md`)
+
+## Numbers (tags stripped; pre/code/script/style removed)
+
+| | morning | now |
+|---|---|---|
+| page words | 3529 | 1727 (target ≤ 1800) |
+| of which main prose / solutions / captions | 2378 / 947 / 204 | ~1130 / ~450 / ~140 |
+| inline math spans (`class="math inline"`) | 446 | 211 |
+| cells | 16 | 14 |
+
+`--run`: 51 s, no failures. `--check` fresh. `checks/slt3_checks.py` (comment labels renumbered to 3.1.2, 3.2.1, 3.2.3) and `checks/slt3_effective_temperature_figures.py` pass. Figures and code cells are unchanged.
+
+## Removed
+
+- The §3.2 stub, entirely; §3.3 is now §3.2. Anchors `slt3-s2` (sibling convention) and `slt3-2` (as asked) are both on the heading; §3.1 likewise. Exercise labels are now 3.2.x.
+- Every reading: the keystone pair at the top, Bayesian Renormalization, the closing Readings section, the Watanabe book reference; the reading/references/book imports. Watanabe 2013 and Lau et al. 2023 are now cited as bare links in one clause each.
+- "Resolution scale", effective-theory and CRW phrasing everywhere, including the docstring and the builder comment.
+- Top block replaced by "These notebooks are a backup", verbatim.
+- Exercise 3.1: dropped the identity λ_eff = nE[K] (it is NB2 Exercise 2.3.3) and cut part 4 (now 3.1.3) to its δ=0 core. Exercise 3.3: dropped part 2 (γ drops out as nβ→∞; the statement stays as one line in the knobs list). Three parts each, with shortened solutions.
+- §3.1's in-text scaling derivation. The result is stated in one line pointing to Exercise 3.1.2, which carries the derivation.
+- "Setup" restatement, the opening paragraph, "the formula has two uses", and the code-cell prose (now one line each). Captions are one sentence each.
+
+## Codex (effort medium) — all accepted
+
+- "A continuous Z̄_n has a discontinuous limit" was wrong (Z̄_n → 0): it is now "the limiting exponent jumps although every finite-n integral is continuous in δ".
+- The δ=0 prediction had lost the sign case: it now says "a regular minimum or a shallow double well, depending on its sign", and drops the claim that the curves look alike.
+- The SGLD stationary density is now stated only in the small-step, full-gradient limit.
+- Exercise 3.2.3 is restricted to positive-definite basins, with H and d defined.
+- Restored conditions: "prior roughly constant near 0", "approaches ¼ / ½", definitions of V(t) and L_n, β in the notation lines.
+- Removed duplication: the scaling derivation in the text; "the formula has two uses".
+
+## Not mine to fix (for the coordinator)
+
+`slt/README.md` still describes NB3 §3.2 as the stub and lists it under "Open items"; it also says "Notebook 3 §3.3" for the linear-network exercise (now §3.2) and mentions `reading(...)`/`references(...)`. No sibling builder or `index.html` links to NB3 section anchors or exercise numbers (grepped).

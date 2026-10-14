@@ -43,3 +43,25 @@ Codex verified the §4.2 identity (sign, factor $\beta$), its §4.3 use, the thr
 ## Prose length
 
 Strip-tags word count, excluding figures and the blog block: 1224 before, 1318 after (sections only: 987 → 1106). The page is slightly longer: the shared identity (one display) and its normalisation sentence, and Codex's correctness qualifications, outweigh the cuts.
+
+## Streamlining pass (2026-10-14 afternoon; `reviews/slt/2026-10-14-streamline-brief.md`)
+
+Counts (strip tags, figures removed, from the `<h1>` on; includes headings, paper titles and author lines; inline math = `math inline` spans on the page):
+
+| | words | inline math | display |
+|---|---|---|---|
+| after morning pass | 1323 | 38 | 1 |
+| after this pass | 898 | 11 | 1 |
+
+Removed:
+- §4.6 "Background for the whole day" (Hinton & van Camp, Watanabe 2022 survey, WBIC, Wei et al., Furman exercises) and the Watanabe books (`references(book(...))`); `book`/`references` imports dropped.
+- "Read the blog posts first" block replaced by the "These notebooks are a backup" block, verbatim from the brief.
+- Annotations cut to one line each; symbols in annotations replaced by words ("the LLC", "the posterior covariance of per-sample losses"); intro notation down to one symbol; captions cut to one sentence.
+- §4.3 text no longer repeats the formula; it points to §4.2's identity in words. §4.5 pitch reduced to one sentence.
+- No pointers to NB3 §3.2, effective theory or "CRW's argument" existed in NB4 (grep clean); NB4 references NB3 only as "Notebook 3". Map unchanged (it never showed §4.6).
+
+Kept: all ten application papers with their ratings, the §4.2 identity (one display), the map, the DSLT 4 figure, the LLC sketch. `checks/slt4_applications_identities.py` unchanged and passing.
+
+Critique (Codex, `--effort medium`, read-only): all ten annotations still match the abstracts. Applied: §4.4 code-length sentence regains "for continuous data, up to a fixed-precision term"; §4.2 display regains "∝", names β and φ, and says Baker et al. divide *the derivative* by nβ, leaving minus the covariance with the change in average loss; Chen annotation narrowed to "its polygon-shaped critical points"; two padding phrases deleted ("One line per paper, grouped by…", "Listed for completeness; not on the day's path").
+
+Build, `--check`, `--run` (0 code cells, 0 s) pass.

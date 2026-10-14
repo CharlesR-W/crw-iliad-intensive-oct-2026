@@ -49,29 +49,29 @@ for n, lo, hi in [(10, 0.7, 0.9), (300, 0.0, 0.005)]:
 assert abs(((-1 + 1e-3 + 1) ** 2 * (-1 + 1e-3 - 1) ** 4) / (16e-6) - 1) < 0.01
 assert abs(((1 + 1e-2 + 1) ** 2 * (1e-2) ** 4) / (4e-8) - 1) < 0.02
 
-# thermodynamic paragraph: log-odds 0.2 n - 18 log n pass from -5 to 5 over about 10/Delta L = 50 samples
+# Solution 2.3.1: log-odds 0.2 n - 18 log n pass from -5 to 5 over about 10/Delta L = 50 samples
 f = lambda n: 0.2 * n - 18 * np.log(n)
 ns = np.linspace(300, 1000, 700001)
 lo, hi = ns[np.argmin(abs(f(ns) + 5))], ns[np.argmin(abs(f(ns) - 5))]
 assert 50 < hi - lo < 60, hi - lo
-print(f"Exercise 2.3.2 window: log-odds -5..5 over n in [{lo:.0f}, {hi:.0f}], width {hi - lo:.0f}")
+print(f"Exercise 2.3.1 window: log-odds -5..5 over n in [{lo:.0f}, {hi:.0f}], width {hi - lo:.0f}")
 
-# Exercise 2.3.4 crossovers (leading terms): n/log n = 18.75, 100, 35 -> n ~ 83, 650, 180
+# Exercise 2.3.3 crossovers (leading terms): n/log n = 18.75, 100, 35 -> n ~ 83, 650, 180
 from scipy.optimize import brentq
 for target, expect in [(18.75, 83), (100, 650), (35, 180)]:
     nx = brentq(lambda n: n / np.log(n) - target, 3, 1e6)
     assert abs(nx / expect - 1) < 0.02, (target, nx)
-print("Exercise 2.3.4 crossovers 83, 647, 182: ok")
-# Exercise 2.2.3: for K = w^2 + v^4 on [-1,1]^2, V(t) = I t^{3/4} / 2 exactly for t <= 1 (region inside the box)
+print("Exercise 2.3.3 crossovers 83, 647, 182: ok")
+# (morning pass, Solution 2.2.3; kept as a check of the code-cell loss) for K = w^2 + v^4 on [-1,1]^2, V(t) = I t^{3/4} / 2 exactly for t <= 1 (region inside the box)
 t = 0.9
 assert abs(np.mean(a**2 + b**4 < t) / (0.5 * I * t**0.75) - 1) < 0.01
-print("2.2.3 V exact for t<=1: ok")
+print("w^2+v^4 V exact for t<=1: ok")
 # Prior positivity matters for lambda <= d/2: K = w^2, prior 3w^2/2 on [-1,1] gives V(t) = t^{3/2}
 u = np.linspace(-1, 1, 2_000_001); t = 1e-2
 assert abs(np.trapezoid(np.where(u**2 < t, 1.5 * u**2, 0), u) / t**1.5 - 1) < 1e-3
 print("prior 3w^2/2: V = t^(3/2): ok")
 
-# Exercise 2.3.1 sign: with Delta L > 0 and Delta lambda < 0 (opposite signs) there is no crossover
+# Exercise 2.3 (leading terms): with Delta L > 0 and Delta lambda < 0 (opposite signs) there is no crossover
 f2 = lambda n: 0.2 * n + 3 * np.log(n)
 assert np.all(f2(np.linspace(1.01, 1e5, 10000)) > 0)
-print("Exercise 2.3.1 opposite signs -> no crossover: ok")
+print("Opposite signs -> no crossover: ok")

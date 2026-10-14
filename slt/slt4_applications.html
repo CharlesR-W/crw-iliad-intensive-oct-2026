@@ -278,7 +278,6 @@ article details.code > summary:hover { color: var(--fg); }
 <li><a href="#43-bayesian-influence-functions">4.3 Bayesian influence functions</a></li>
 <li><a href="#44-minimum-description-length-and-compressibility">4.4 Minimum description length and compressibility</a></li>
 <li><a href="#45-programs-and-singularities">4.5 Programs and singularities</a></li>
-<li><a href="#46-background-for-the-whole-day">4.6 Background for the whole day</a></li>
 </ol>
 </details>
 <div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
@@ -290,43 +289,43 @@ article details.code > summary:hover { color: var(--fg); }
 <p class="run-note">To run the code, open <a href='slt4_applications.ipynb'><code>slt4_applications.ipynb</code></a> in Jupyter (CPU only; needs Python 3). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
 
 <blockquote>
-<p><strong>Read the blog posts first.</strong> The best introductions to this material are blog posts, and they are probably better than these notebooks: Liam Carroll’s sequence <a href="https://www.lesswrong.com/s/czrXjvCLsqGepybHC">Distilling Singular Learning Theory</a> (DSLT 0–4), Jesse Hoogland’s <a href="https://www.lesswrong.com/posts/fovfuFdpuEwQzJu2w/neural-networks-generalize-because-of-this-one-weird-trick">Neural networks generalize because of this one weird trick</a> and, with Stan van Wingerden, <a href="https://www.lesswrong.com/posts/6g8cAftfQufLmFDYT/you-re-measuring-model-complexity-wrong">You’re Measuring Model Complexity Wrong</a>; then Zach Furman’s <a href="https://www.lesswrong.com/posts/3HYqTAi4kD35G3BzQ/singular-learning-theory-exercises">Singular learning theory: exercises</a> and Olli Järviniemi’s <a href="https://www.lesswrong.com/posts/CmcarN6fGgTGwGuFp/dialogue-introduction-to-singular-learning-theory">Dialogue introduction to Singular Learning Theory</a>. The notebooks are provided for reference: derivations, worked exercises and code to check things.</p>
+<p><strong>These notebooks are a backup.</strong> Read the blog posts first: Liam Carroll’s <a href="https://www.lesswrong.com/s/czrXjvCLsqGepybHC">Distilling Singular Learning Theory</a> (DSLT 0–4), Jesse Hoogland’s <a href="https://www.lesswrong.com/posts/fovfuFdpuEwQzJu2w/neural-networks-generalize-because-of-this-one-weird-trick">Neural networks generalize because of this one weird trick</a> and, with Stan van Wingerden, <a href="https://www.lesswrong.com/posts/6g8cAftfQufLmFDYT/you-re-measuring-model-complexity-wrong">You’re Measuring Model Complexity Wrong</a>; then Zach Furman’s <a href="https://www.lesswrong.com/posts/3HYqTAi4kD35G3BzQ/singular-learning-theory-exercises">Singular learning theory: exercises</a>. Come here for a derivation, a worked exercise, or code to check something.</p>
 </blockquote>
 <p><em>Question:</em> what has been done with the local learning coefficient and the sampler of Notebook 3?</p>
-<p>A reading list: one sentence per paper on what it does and which idea from Notebooks 1–3 it uses. <em>Notation:</em> the tempered posterior <span class="math inline">\pi_{n,\beta}\propto\varphi\,e^{-\beta nL_n}</span>, localised near trained weights <span class="math inline">w^*</span>; SGLD (stochastic gradient Langevin dynamics) samples it; <span class="math inline">\hat\lambda</span> is the local learning coefficient (LLC) estimated from those samples.</p>
+<p><em>Notation:</em> <span class="math inline">\hat\lambda</span> is the local learning coefficient (LLC), estimated from SGLD samples of the tempered posterior near the trained weights (Notebook 3).</p>
 <figure class="illus">
 <img src="assets/figures/slt4_applications_map.svg" alt="Diagram: Notebook 1 leads to Notebook 2 leads to Notebook 3; arrows from Notebook 3 to stagewise development, susceptibilities, Bayesian influence functions and compressibility; a dashed arrow from Notebook 2 to programs and singularities.">
 
 <figcaption>
 
-<p>Where each application comes from. Sections 4.1–4.4 all compute something from SGLD samples of the local posterior (Notebook 3); 4.2 and 4.3 also extend Notebook 1 §1.1’s derivative identities: the derivative of a posterior average is minus a covariance. Section 4.5 is a separate line of work on the loss geometry of Notebook 2.</p>
+<p>Sections 4.1–4.4 each compute something from SGLD samples of the local posterior (Notebook 3); 4.5 is a separate line of work on loss geometry.</p>
 </figcaption>
 
 </figure>
 
-<p><strong>Route.</strong> <a href="#slt4-s1">4.1 Stagewise development</a> · <a href="#slt4-s2">4.2 Susceptibilities</a> · <a href="#slt4-s3">4.3 Bayesian influence functions</a> · <a href="#slt4-s4">4.4 Compressibility</a> · <a href="#slt4-s5">4.5 Programs and singularities</a> · <a href="#slt4-s6">4.6 Background for the whole day</a></p>
+<p><strong>Route.</strong> <a href="#slt4-s1">4.1 Stagewise development</a> · <a href="#slt4-s2">4.2 Susceptibilities</a> · <a href="#slt4-s3">4.3 Bayesian influence functions</a> · <a href="#slt4-s4">4.4 Compressibility</a> · <a href="#slt4-s5">4.5 Programs and singularities</a></p>
 
 <details class="sec sec2" data-sec="41-stagewise-development-and-phase-transitions">
 <summary><h2 id="41-stagewise-development-and-phase-transitions">4.1 Stagewise development and phase transitions</h2></summary>
 <div class="sec-body">
 <a id="slt4-s1"></a>
-<p><em>What this is:</em> the posterior switches basin at a critical sample size, where a basin with lower loss but larger <span class="math inline">\lambda</span> takes over (Notebook 2 §2.3). The first paper compares such switches with SGD training in a toy model. The second estimates <span class="math inline">\hat\lambda</span> at checkpoints of a training run and puts stage boundaries where the <span class="math inline">\hat\lambda</span> curve is flat; the third follows <span class="math inline">\hat\lambda</span> of single components across those stages.</p>
+<p><em>What this is:</em> the posterior switches basin at a critical sample size, where a basin with lower loss but a larger learning coefficient takes over (Notebook 2 §2.3). These papers look for such switches, and for stages in training.</p>
 <figure class="illus">
 <img src="assets/figures/slt4_applications_lw_free_energy_crossover.png" alt="Two free-energy curves against n cross at a critical sample size n_c; the lower curve is highlighted on each side of the crossing.">
 
 <figcaption>
 
-<p>Figure from Liam Carroll, <a href="https://www.lesswrong.com/posts/aKBAYN5LpaQMrPqMj/dslt-4-phase-transitions-in-neural-networks"><em>DSLT 4. Phase Transitions in Neural Networks</em></a> (LessWrong, 2023): the free energies <span class="math inline">F_n(\mathcal W_{\pm1})</span> of two regions of parameter space against <span class="math inline">n</span>. The posterior concentrates on the region with the lower free energy (highlighted), and the two swap at the critical sample size <span class="math inline">n_c</span>.</p>
+<p>Figure from Liam Carroll, <a href="https://www.lesswrong.com/posts/aKBAYN5LpaQMrPqMj/dslt-4-phase-transitions-in-neural-networks"><em>DSLT 4. Phase Transitions in Neural Networks</em></a> (LessWrong, 2023): the free energies of two regions cross at a critical sample size <span class="math inline">n_c</span>, and the posterior moves to the lower one.</p>
 </figcaption>
 
 </figure>
 
 <figure class="illus">
-<img src="assets/figures/slt4_applications_llc_curve.svg" alt="Schematic: loss falls in steps over training; the estimated LLC rises in steps, with one stage where it falls; dashed lines mark stage boundaries at the flat parts of the LLC curve.">
+<img src="assets/figures/slt4_applications_llc_curve.svg" alt="Schematic: test loss falls in steps over training; the estimated LLC rises in steps, with one stage where it falls; dashed lines mark stage boundaries at the flat parts of the LLC curve.">
 
 <figcaption>
 
-<p>A sketch, not data, of the measurement in Hoogland et al.: <span class="math inline">\hat\lambda</span> at checkpoints along one training run. Stage boundaries (dashed) sit where the <span class="math inline">\hat\lambda</span> curve is flat; within a stage <span class="math inline">\hat\lambda</span> usually rises and sometimes falls, while the loss keeps decreasing.</p>
+<p>A sketch, not data: the LLC estimated along one training run, with stage boundaries (dashed) where its curve is flat.</p>
 </figcaption>
 
 </figure>
@@ -334,19 +333,19 @@ article details.code > summary:hover { color: var(--fg); }
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2310.06301">Dynamical versus Bayesian Phase Transitions in a Toy Model of Superposition</a></strong>, Chen, Lau, Mendel, Wei &amp; Murfet (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>In a small autoencoder whose critical points are regular polygons, predicts from each polygon’s loss and learning coefficient where the posterior switches basin as <span class="math inline">n</span> grows, and finds that the same critical points organise SGD training.</p>
+<p>In a toy autoencoder, predicts the posterior’s basin switches from the loss and learning coefficient of its polygon-shaped critical points, and finds that the same critical points organise SGD training.</p>
 </div>
 
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2402.02364">Loss Landscape Degeneracy and Stagewise Development in Transformers</a></strong>, Hoogland, Wang, Farrugia-Roberts, Carroll, Wei &amp; Murfet (TMLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Estimates <span class="math inline">\hat\lambda</span> (Notebook 3) at checkpoints of a small language model and an in-context regression transformer, and splits training into stages at the plateaus of the <span class="math inline">\hat\lambda</span> curve, which line up with changes in what the model computes.</p>
+<p>Estimates the LLC at checkpoints of two small transformers and splits training into stages at its plateaus, which line up with changes in what the model computes.</p>
 </div>
 
 <div class="reading">
 
 <p><strong><a href="https://openreview.net/forum?id=SUc1UOWndp">Differentiation and Specialization of Attention Heads via the Refined Local Learning Coefficient</a></strong>, Wang, Hoogland, van Wingerden, Furman &amp; Murfet (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Restricts the <span class="math inline">\hat\lambda</span> estimator to the weights of one component, or to a chosen subset of the data (the refined LLC), and uses it to follow attention heads as they take on separate roles during training. Also on arXiv as <a href="https://arxiv.org/abs/2410.02984">2410.02984</a>.</p>
+<p>Restricts the LLC to one component’s weights or to a subset of the data, and follows attention heads as they specialise (also <a href="https://arxiv.org/abs/2410.02984">arXiv:2410.02984</a>).</p>
 </div>
 </div>
 </details>
@@ -354,22 +353,22 @@ article details.code > summary:hover { color: var(--fg); }
 <summary><h2 id="42-susceptibilities">4.2 Susceptibilities</h2></summary>
 <div class="sec-body">
 <a id="slt4-s2"></a>
-<p><em>What this is:</em> how much does a posterior average move when the data shift slightly? Add a small term <span class="math inline">h\,\Delta(w)</span> to the energy <span class="math inline">nL_n</span>; differentiating as in Notebook 1 §1.1 gives, for any observable <span class="math inline">O(w)</span>,</p>
+<p><em>What this is:</em> how much does a posterior average move when the data shift slightly? Add a small term <span class="math inline">h\Delta</span> to the energy <span class="math inline">nL_n</span> and differentiate, as in Notebook 1 §1.1. For any observable <span class="math inline">O</span> the answer is a covariance:</p>
 <p><span class="math display">
 \frac{\partial}{\partial h}\,\mathbb E_h[O]\Big|_{h=0}=-\beta\,\mathrm{Cov}_\beta(O,\Delta),
-\qquad \mathbb E_h \text{ taken under } \propto\varphi\,e^{-\beta(nL_n+h\Delta)} .
+\qquad \mathbb E_h \text{ under } \propto\varphi\,e^{-\beta(nL_n+h\Delta)} ,
 </span></p>
-<p>This response is a susceptibility. Shifting the data toward a distribution with loss <span class="math inline">L&#39;</span> gives <span class="math inline">\Delta=n\,\Delta L</span> with <span class="math inline">\Delta L=L&#39;-L</span>, and Baker et al. normalise by <span class="math inline">n\beta</span>: <span class="math inline">\chi=-\mathrm{Cov}_\beta(O,\Delta L)</span>, estimated with SGLD on the local posterior.</p>
+<p>with <span class="math inline">\beta</span> the inverse temperature and <span class="math inline">\varphi</span> the prior, both held fixed. This response is a susceptibility. For a shift in the data, the perturbation is <span class="math inline">n</span> times the change in average loss; Baker et al. divide the derivative by <span class="math inline">n\beta</span>, which leaves minus the covariance with that change. It is estimated with SGLD.</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2504.18274">Structural Inference: Interpreting Small Language Models with Susceptibilities</a></strong>, Baker, Wang, Hoogland &amp; Murfet (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Computes susceptibilities for each component of a small transformer to shifts toward different kinds of data; the low-rank structure of the resulting matrix separates functional modules.</p>
+<p>Measures the susceptibility of each component of a small transformer to shifts toward different kinds of data; the low-rank structure of the result separates functional modules.</p>
 </div>
 
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2601.12703">Towards Spectroscopy: Susceptibility Clusters in Language Models</a></strong>, Gordon, Baker, Wang, Snell, van Wingerden &amp; Murfet (2026) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Takes the shift to be an upweighting of one token in one context, and clusters tokens by their susceptibilities, which groups tokens predicted for similar reasons; applied to a 14M-parameter model.</p>
+<p>Upweights one token in one context and clusters tokens by their susceptibilities, grouping tokens predicted for similar reasons, in a 14M-parameter model.</p>
 </div>
 </div>
 </details>
@@ -377,17 +376,17 @@ article details.code > summary:hover { color: var(--fg); }
 <summary><h2 id="43-bayesian-influence-functions">4.3 Bayesian influence functions</h2></summary>
 <div class="sec-body">
 <a id="slt4-s3"></a>
-<p><em>What this is:</em> which training samples does a quantity depend on? The classical influence function needs an inverse Hessian, which does not exist when the Hessian is degenerate. Setting <span class="math inline">\Delta=\ell_i</span>, the loss on training sample <span class="math inline">i</span>, in the identity of §4.2 gives a Hessian-free version, <span class="math inline">-\beta\,\mathrm{Cov}(O,\ell_i)</span>.</p>
+<p><em>What this is:</em> which training samples does a quantity depend on? The classical influence function needs an inverse Hessian, which does not exist when the Hessian is degenerate. Taking the perturbation in §4.2 to be the loss on one training sample gives a covariance, with no Hessian.</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2509.26544">Bayesian Influence Functions for Hessian-Free Data Attribution</a></strong>, Kreer, Wu, Adam, Furman &amp; Hoogland (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Replaces the inverse Hessian of the classical influence function by this covariance, estimated with SGLD (Notebook 3), so that it is defined when the Hessian is singular and scales to large models.</p>
+<p>Defines this Bayesian influence function, estimates it with SGLD, and scales it to large models.</p>
 </div>
 
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2509.26537">The Loss Kernel: A Geometric Probe for Deep Learning Interpretability</a></strong>, Adam, Furman &amp; Hoogland (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Uses the matrix <span class="math inline">\mathrm{Cov}(\ell_i,\ell_j)</span> under the local posterior as a similarity between data points, and compares it with the hierarchy of ImageNet classes.</p>
+<p>Uses the posterior covariance of per-sample losses as a similarity between data points, and compares it with the ImageNet class hierarchy.</p>
 </div>
 </div>
 </details>
@@ -395,11 +394,11 @@ article details.code > summary:hover { color: var(--fg); }
 <summary><h2 id="44-minimum-description-length-and-compressibility">4.4 Minimum description length and compressibility</h2></summary>
 <div class="sec-body">
 <a id="slt4-s4"></a>
-<p><em>What this is:</em> at <span class="math inline">\beta=1</span>, <span class="math inline">F_n=-\log Z_n</span> is the length, in nats, of the data encoded with the Bayesian mixture code (for continuous data, at a fixed precision), so the <span class="math inline">\lambda\log n</span> term of Notebook 2 is a description-length cost. Does <span class="math inline">\hat\lambda</span> then predict how far a trained network can be compressed?</p>
+<p><em>What this is:</em> at <span class="math inline">\beta=1</span> the free energy is the length of the data under the Bayesian mixture code (for continuous data, up to a fixed-precision term), so the <span class="math inline">\lambda\log n</span> term of Notebook 2 is a description-length cost. Does the LLC predict how far a trained network can be compressed?</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2510.12077">Compressibility Measures Complexity: Minimum Description Length Meets Singular Learning Theory</a></strong>, Urdshals, Lau, Hoogland, van Wingerden &amp; Murfet (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Extends the minimum description length principle to models with degenerate minima, where <span class="math inline">\lambda</span> sets the <span class="math inline">\log n</span> term, and reports on the Pythia models that <span class="math inline">\hat\lambda</span> tracks (sometimes linearly) how compressible a network is.</p>
+<p>Extends minimum description length to models with degenerate minima and reports, on the Pythia models, that the LLC tracks (sometimes linearly) how compressible a network is.</p>
 </div>
 </div>
 </details>
@@ -407,58 +406,17 @@ article details.code > summary:hover { color: var(--fg); }
 <summary><h2 id="45-programs-and-singularities">4.5 Programs and singularities</h2></summary>
 <div class="sec-body">
 <a id="slt4-s5"></a>
-<p><em>What this is:</em> a line of work relating the structure of a Turing machine to the local geometry of the loss of a statistical model that encodes it. Listed for completeness; it is not on the day’s path.</p>
+<p><em>What this is:</em> a line of work relating the structure of a Turing machine to the loss geometry of a model that encodes it.</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2103.16080">Geometry of Program Synthesis</a></strong>, Clift, Murfet &amp; Wallbridge (2021) <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>Sets up the synthesis of Turing machines as Bayesian inference over a smooth parameter space, so that programs appear as singularities of the loss, with small experiments.</p>
+<p>Sets up the synthesis of Turing machines as Bayesian inference, so that programs appear as singularities of the loss.</p>
 </div>
 
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2504.08075">Programs as Singularities</a></strong>, Murfet &amp; Troiani (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>Sets up a correspondence between the structure of a Turing machine and the Taylor expansion of a negative log-likelihood at the critical point that encodes it.</p>
-</div>
-</div>
-</details>
-<details class="sec sec2" data-sec="46-background-for-the-whole-day">
-<summary><h2 id="46-background-for-the-whole-day">4.6 Background for the whole day</h2></summary>
-<div class="sec-body">
-<a id="slt4-s6"></a>
-<p>Readings that serve any of Notebooks 1–3.</p>
-<div class="reading">
-
-<p><strong><a href="https://www.cs.toronto.edu/~hinton/absps/colt93.pdf">Keeping neural networks simple by minimizing the description length of the weights</a></strong>, Hinton &amp; van Camp (COLT 1993) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Trains networks with Gaussian noise on the weights, trading prediction error against the information needed to encode the weights: the Occam factor of Notebook 1 §1.3 read as a code length.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2211.10049">Recent Advances in Algebraic Geometry and Bayesian Statistics</a></strong>, Watanabe (2022) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>The author’s survey of the theory behind Notebook 2: the free energy expansion, the poles of <span class="math inline">\zeta</span>, and the generalization error.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://jmlr.org/papers/v14/watanabe13a.html">A Widely Applicable Bayesian Information Criterion</a></strong>, Watanabe (JMLR 2013) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The source of Notebook 3’s identity <span class="math inline">\mathbb E_{1/\log n}[nL_n]\approx F_n</span>.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2010.11560">Deep Learning is Singular, and That’s Good</a></strong>, Wei, Murfet, Gong, Li, Gell-Redman &amp; Quella (2020) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The case that neural networks are not regular models and that this is the right starting point for a theory of them.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://www.lesswrong.com/posts/3HYqTAi4kD35G3BzQ/singular-learning-theory-exercises">Singular learning theory: exercises</a></strong>, Furman (LessWrong, 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>A problem set on the volume computations of Notebook 2, with the same toy losses.</p>
-</div>
-
-<div class="refs">
-
-<p><strong>For reference (books):</strong> <a href="https://doi.org/10.1017/CBO9780511800474">Algebraic Geometry and Statistical Learning Theory</a>, Watanabe (Cambridge University Press, 2009), the theory of Notebook 2 with proofs; <a href="https://doi.org/10.1201/9781315373010">Mathematical Theory of Bayesian Statistics</a>, Watanabe (CRC Press, 2018), the regular case of Notebook 1 and the general case, with the WBIC.</p>
+<p>Relates the structure of a Turing machine to the Taylor expansion of the loss at the critical point that encodes it.</p>
 </div>
 </div>
 </details>

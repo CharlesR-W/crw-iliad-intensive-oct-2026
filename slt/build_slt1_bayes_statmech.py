@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """Build SLT Notebook 1, "Bayesian inference as statistical mechanics" (slt1_bayes_statmech).
 
-Shape (SLT_SPECS_v1.md, 2026-10-09): a question, the keystone reading, a one-line
-route. Each `##` section opens with its question and restates its notation, shows a
-conceptual figure where its idea is introduced, gives a short default text, then
-its exercises with worked solutions in `answer()` cells, and small CPU code cells.
-Sections: 1.1 the dictionary; 1.2 posterior concentration (the CLT); 1.3 Laplace
-and the BIC; 1.4 the Bayes generalization error and the MLE-vs-Bayes comparison.
+Shape (SLT_SPECS_v1.md; streamlined 2026-10-14): the question, a one-line route, a
+setup table. Each `##` section opens with its question and a one-line notation
+restatement, shows its illustration, states the result in a display or two, then
+one exercise (two to four parts) with worked solutions in `answer()` cells, and the
+small CPU code cells. Sections: 1.1 the dictionary; 1.2 posterior concentration;
+1.3 Laplace and the BIC; 1.4 the Bayes generalization error.
 
 Figures: assets/figures/make_slt1_bayes_statmech_figures.py (run it from slt/).
-Numerical checks of the closed forms used in the solutions: checks/slt1_checks.py.
+Numerical checks: checks/slt1_checks.py, checks/slt1_bayes_statmech_*.py.
 """
-from nbkit_slt import answer, book, code, code_answer, image, markdown, reading, references, run
+from nbkit_slt import answer, code, code_answer, image, markdown, run
 
 FIG = "assets/figures/slt1_bayes_statmech_"
 
@@ -23,56 +23,32 @@ CELLS = [
 
 **Singular Learning Theory, Iliad Intensive 2026**
 
-> **Read the blog posts first.** The best introductions to this material are blog posts, and they are probably better than these notebooks: Liam Carroll's sequence [Distilling Singular Learning Theory](https://www.lesswrong.com/s/czrXjvCLsqGepybHC) (DSLT 0–4), Jesse Hoogland's [Neural networks generalize because of this one weird trick](https://www.lesswrong.com/posts/fovfuFdpuEwQzJu2w/neural-networks-generalize-because-of-this-one-weird-trick) and, with Stan van Wingerden, [You're Measuring Model Complexity Wrong](https://www.lesswrong.com/posts/6g8cAftfQufLmFDYT/you-re-measuring-model-complexity-wrong); then Zach Furman's [Singular learning theory: exercises](https://www.lesswrong.com/posts/3HYqTAi4kD35G3BzQ/singular-learning-theory-exercises) and Olli Järviniemi's [Dialogue introduction to Singular Learning Theory](https://www.lesswrong.com/posts/CmcarN6fGgTGwGuFp/dialogue-introduction-to-singular-learning-theory). The notebooks are provided for reference: derivations, worked exercises and code to check things.
+> **These notebooks are a backup.** Read the blog posts first: Liam Carroll's [Distilling Singular Learning Theory](https://www.lesswrong.com/s/czrXjvCLsqGepybHC) (DSLT 0–4), Jesse Hoogland's [Neural networks generalize because of this one weird trick](https://www.lesswrong.com/posts/fovfuFdpuEwQzJu2w/neural-networks-generalize-because-of-this-one-weird-trick) and, with Stan van Wingerden, [You're Measuring Model Complexity Wrong](https://www.lesswrong.com/posts/6g8cAftfQufLmFDYT/you-re-measuring-model-complexity-wrong); then Zach Furman's [Singular learning theory: exercises](https://www.lesswrong.com/posts/3HYqTAi4kD35G3BzQ/singular-learning-theory-exercises). Come here for a derivation, a worked exercise, or code to check something.
 
-*Question:* what does Bayes do with $n$ samples, and how much does it generalize?
+*Question:* what does Bayes do with $n$ samples, and how well does it generalize?
 
-Bayes' rule has the form of a Boltzmann distribution, with the training loss as
-the energy and the sample size $n$ as the inverse temperature. This notebook sets
-up that dictionary and uses it to answer the question for *regular* models, the
-case classical statistics covers. Notebook 2 asks what changes when the model is
-not regular. The matching blog post is
-[DSLT 1](https://www.lesswrong.com/posts/4eZtmwaqhAgdJQDEg/dslt-1-the-rlct-measures-the-effective-dimension-of-neural),
-sections "Preliminaries of SLT" and "Deriving the Bayesian Information Criterion".
-"""
-        + reading(
-            "Bayesian Interpolation",
-            "https://doi.org/10.1162/neco.1992.4.3.415",
-            "MacKay (Neural Computation 1992)",
-            "The evidence $Z_n$ as the quantity Bayes uses to compare models, and the *Occam factor*: the evidence is the best-fit likelihood times the fraction of the prior volume the data leave standing, so a model with more parameters pays for them by volume (§1.3).",
-            "Sections 1–4 are what matters here. The same text is chapter 2 of MacKay's thesis, [free as a PDF](https://www.inference.org.uk/mackay/thesis.pdf).",
-            importance=5,
-            length=3,
-        )
-        + r"""
-**Route.**
+**Route.** [1.1](#slt1-s1) Bayes' rule is a Boltzmann distribution.
+[1.2](#slt1-s2) The posterior becomes a Gaussian of width $n^{-1/2}$.
+[1.3](#slt1-s3) The free energy is the best fit plus $\tfrac d2\log n$.
+[1.4](#slt1-s4) Bayes generalizes with error $d/2n$; how maximum likelihood compares.
 
-- [1.1 The dictionary](#slt1-s1): posterior as Boltzmann distribution, evidence as partition function, free energy; where the analogy is only formal.
-- [1.2 Posterior concentration](#slt1-s2): for large $n$ the posterior is a Gaussian of width $n^{-1/2}$ around the maximum-likelihood estimate.
-- [1.3 Laplace and the BIC](#slt1-s3): $F_n = nL_n(\hat w)+\tfrac d2\log n+O(1)$; the Occam factor is a volume ratio.
-- [1.4 Bayes generalization error](#slt1-s4): $d/2n$ for the Bayes predictor, $d/n$ for one posterior sample, and how maximum likelihood compares when the model is wrong.
+**Setup.** Data $x_1,\dots,x_n$ are drawn i.i.d. from an unknown density $q$. A
+model $p(x\mid w)$ has $d$ parameters and a smooth positive prior $\varphi(w)$.
 
-**Setup used throughout.** Data $x_1,\dots,x_n$ are drawn i.i.d. from an unknown
-density $q(x)$ (for supervised learning, $x$ is an input–output pair; nothing
-changes). A *model* is a family of densities $p(x\mid w)$, $w\in\mathbb R^d$, with
-a smooth positive *prior* density $\varphi(w)$. The per-sample loss is
-$\ell(x,w)=-\log p(x\mid w)$, and
+| symbol | meaning |
+|---|---|
+| $\ell(x,w)=-\log p(x\mid w)$ | per-sample loss |
+| $L_n(w)=\frac1n\sum_i\ell(x_i,w)$ | training loss |
+| $L(w)=\mathbb E_q\,\ell(x,w)$ | population loss, $=S+\mathrm{KL}(q\,\|\,p_w)$ |
+| $S=-\mathbb E_q\log q$ | entropy of the data |
+| $w_0$, $\hat w$ | minimizers of $L$ and of $L_n$ |
+| $K_n=L_n-L_n(w_0)$ | excess training loss |
 
-$$
-L_n(w)=\frac1n\sum_{i=1}^n\ell(x_i,w)\quad\text{(training loss)},\qquad
-L(w)=\mathbb E_{x\sim q}[\ell(x,w)]\quad\text{(population loss)}.
-$$
-
-With $S=-\mathbb E_q[\log q(x)]$ the entropy of the data,
-$L(w)=S+\mathrm{KL}(q\,\|\,p_w)$: minimizing $L$ finds the model closest to $q$.
-Let $w_0$ minimize $L$; the *excess* losses are $K(w)=L(w)-L(w_0)\ge0$ and
-$K_n(w)=L_n(w)-L_n(w_0)$. The model is *well specified* if $q=p_{w_0}$ (then $K$
-is the KL divergence to the truth), and *misspecified* otherwise.
+The model is *well specified* if $q=p_{w_0}$ and *misspecified* otherwise.
 """
     ),
     code(
-        r"""
-import numpy as np
+        r"""import numpy as np
 import matplotlib.pyplot as plt
 from scipy.special import logsumexp
 
@@ -84,8 +60,7 @@ def log_trapz(logf, x):
     # log of the trapezoid-rule integral of exp(logf) over the 1-D grid x,
     # computed in log space so that very small integrands do not underflow
     m = np.logaddexp(logf[:-1], logf[1:]) - np.log(2)
-    return logsumexp(m + np.log(np.diff(x)))
-"""
+    return logsumexp(m + np.log(np.diff(x)))"""
     ),
     # ------------------------------------------------------------------ 1.1
     markdown(
@@ -94,88 +69,78 @@ def log_trapz(logf, x):
 
 ## 1.1 The dictionary
 
-*Question:* what does Bayes' rule look like in the language of statistical
-mechanics, and which parts of the correspondence are more than notation?
+*Question:* what does Bayes' rule look like in the language of statistical mechanics?
 
-*Notation:* $p(x\mid w)$ model, $\varphi(w)$ prior, $\ell(x,w)=-\log p(x\mid w)$,
-$L_n$ training loss, $L$ population loss, $K=L-L(w_0)$ (see the setup above).
+*Notation:* prior $\varphi$, training loss $L_n$, population optimum $w_0$.
 """
         + image(
             FIG + "dictionary.svg",
-            r"Bayes' rule as a Boltzmann weight: prior times $e^{-\text{energy}}$ gives an unnormalized weight whose total area is the partition function $Z_n$ (dividing by it gives the posterior) and whose area over a region $U$ is $Z_n(U)$; the well $U$ is deeper but, being narrower, holds less mass than $V$.",
+            r"Prior times $e^{-\text{energy}}$ gives an unnormalized weight whose total area is the partition function; the narrow well $U$ is deeper but holds less mass than the wide well $V$.",
         )
         + r"""
-Bayes' rule multiplies the prior by the likelihood of the data and normalizes:
+The likelihood of the data is $e^{-nL_n(w)}$, so Bayes' rule reads
 
 $$
-\pi_n(w)=\frac{\varphi(w)\prod_{i=1}^np(x_i\mid w)}{Z_n},
+\pi_n(w)=\frac{\varphi(w)\,e^{-nL_n(w)}}{Z_n},
 \qquad
-Z_n=\int\varphi(w)\prod_{i=1}^np(x_i\mid w)\,dw .
+Z_n=\int\varphi(w)\,e^{-nL_n(w)}\,dw,
+\qquad
+F_n=-\log Z_n .
 $$
 
-Since $\prod_ip(x_i\mid w)=e^{-nL_n(w)}$, the posterior $\pi_n\propto\varphi\,e^{-nL_n}$
-is a Boltzmann distribution with energy $nL_n(w)$ at inverse temperature $1$ (or
-energy $L_n$ at inverse temperature $n$). The normalizer $Z_n$, the *evidence* or
-*marginal likelihood* (the probability of the data under the model and prior), is
-the partition function. Its negative logarithm $F_n=-\log Z_n$ is the *free
-energy*: lower $F_n$ means the model gave the data higher probability.
+This is a Boltzmann distribution. The total training loss $nL_n$ is the energy and the prior
+weights the states. The evidence $Z_n$ is the partition function, and the free
+energy is low when the model gave the data high probability.
 
-Two additions. The *tempered posterior*
-$\pi_{n,\beta}\propto\varphi\,e^{-\beta nL_n}$, with partition function $Z_n(\beta)$
-and free energy $F_n(\beta)=-\log Z_n(\beta)$, adds an inverse-temperature knob:
-$\beta=1$ is Bayes, and other values are a device Notebook 3 needs. And factoring
-out the best achievable fit, with $K_n=L_n-L_n(w_0)$,
+Two variants are useful. A power $\beta$ on the likelihood is an inverse
+temperature, with Bayes at $\beta=1$. Factoring out the loss at the population
+optimum, with $K_n=L_n-L_n(w_0)$, leaves a free energy that measures how much
+prior mass fits the data nearly as well as $w_0$:
 
 $$
-Z_n=e^{-nL_n(w_0)}\,\bar Z_n,\qquad \bar Z_n=\int\varphi(w)e^{-nK_n(w)}\,dw,
-\qquad F_n=nL_n(w_0)+\bar F_n ,
+\pi_{n,\beta}\propto\varphi\,e^{-\beta nL_n},
+\qquad
+F_n=nL_n(w_0)+\bar F_n,
+\qquad
+\bar F_n=-\log\int\varphi\,e^{-nK_n}\,dw .
 $$
 
-separates $nL_n(w_0)$, the loss of the population-optimal parameter on this data
-set, from $\bar F_n=-\log\bar Z_n$, which measures how much prior mass fits the data
-nearly as well as $w_0$.
+| Bayesian statistics | statistical mechanics |
+|---|---|
+| parameter $w$ | microstate |
+| prior | a priori weight |
+| $nL_n(w)$ | energy |
+| $\beta$ | inverse temperature |
+| posterior | Boltzmann distribution |
+| evidence $Z_n$ | partition function |
+| $F_n$ | free energy (units of $k_BT$) |
+| posterior mean of $nL_n$ | internal energy |
 
-| Bayesian statistics | symbol | statistical mechanics |
-|---|---|---|
-| parameter vector $w$ | | microstate |
-| prior density $\varphi(w)$ | | a priori weight on microstates |
-| $nL_n(w)$ (or $L_n(w)$) | $E(w)$ | energy |
-| $\beta$ (or $\beta n$); Bayes is $\beta=1$ | $\beta=1/k_BT$ | inverse temperature |
-| posterior $\pi_{n,\beta}\propto\varphi\,e^{-\beta nL_n}$ | | Boltzmann distribution $e^{-\beta E}/Z$ |
-| evidence $Z_n(\beta)$ | $Z$ | partition function |
-| $F_n(\beta)=-\log Z_n(\beta)$ | $\beta F$ | free energy, in units of $k_BT$ |
-| posterior mean of $nL_n$ | $\langle E\rangle$ | internal energy |
+The analogy is formal: the energy is random because it depends on the sample,
+$n$ is not a system size, and the real analogue of the density of states is the
+volume of parameters at a given loss (Notebook 2). The algebra, though, is exact.
 
-**Where the dictionary is only formal.**
+**Exercise 1.1 (Free-energy bookkeeping).** For a region $U$ of parameter space let
+$F_n(U)=-\log\int_U\varphi e^{-nL_n}$.
 
-- *The energy is random.* $nL_n(w)$ depends on the sample (quenched disorder, as in a spin glass rather than a fixed Hamiltonian), so every statement about $F_n$ is about a random variable.
-- *No thermodynamic limit.* $n$ is not a system size: $d$ stays fixed while $n$ grows.
-- *Temperature is not a physical knob.* $\beta\ne1$ is not Bayesian inference.
-- *No dynamics.* The posterior is a static distribution; nothing equilibrates.
-- *The prior is not the density of states.* It weights parameters; the analogue of the density of states is the prior volume of parameters at a given loss, which Notebook 2 introduces.
-
-What holds exactly is the algebra: identities of the form "derivative of $\log Z$
-equals a posterior average" are the same as in statistical mechanics. Exercise 1.1
-derives the first of them.
-
-**Exercise 1.1 (Posterior as a Boltzmann distribution).** Let $U\subseteq\mathbb R^d$ be a region of parameter space, and define the *local* partition function and free energy
-$Z_n(U)=\int_U\varphi(w)e^{-nL_n(w)}dw$ and $F_n(U)=-\log Z_n(U)$.
-
-1. Show that $\pi_n(w)=\varphi(w)e^{-nL_n(w)}/Z_n$ with $Z_n=\int\varphi e^{-nL_n}$, i.e. that the likelihood is $e^{-nL_n}$.
-2. Show that the posterior mass of $U$ is $\pi_n(U)=Z_n(U)/Z_n$, and that for two regions $\log\frac{\pi_n(U)}{\pi_n(V)}=F_n(V)-F_n(U)$: posterior odds are exponential in free-energy differences.
-3. If $U_1,\dots,U_k$ partition parameter space, show $F_n=-\log\sum_je^{-F_n(U_j)}$, and that if $F_n(U_1)$ is the smallest then $F_n(U_1)-\log k\le F_n\le F_n(U_1)$. So the total free energy is set by the region of lowest free energy, up to $\log k$.
-4. Show that $\partial_\beta F_n(\beta)=n\,\mathbb E_{\pi_{n,\beta}}[L_n(w)]$ and $\partial^2_\beta F_n(\beta)=-n^2\mathrm{Var}_{\pi_{n,\beta}}[L_n(w)]$. (In the dictionary: the derivative of the free energy with respect to inverse temperature is the internal energy, and $F_n(\beta)$ is concave.)
+1. Show that the log posterior odds of two regions are $F_n(V)-F_n(U)$.
+2. If $k$ regions partition parameter space and $U_1$ has the lowest free energy, show $F_n(U_1)-\log k\le F_n\le F_n(U_1)$.
+3. Show that $\partial_\beta F_n(\beta)$ is the internal energy $n\,\mathbb E_\beta[L_n]$, and that $F_n(\beta)$ is concave.
 """
     ),
     answer(
         r"""
-**1.** $\prod_ip(x_i\mid w)=\exp\sum_i\log p(x_i\mid w)=\exp(-\sum_i\ell(x_i,w))=e^{-nL_n(w)}$. Substituting into Bayes' rule gives the stated form, and $Z_n$ is whatever makes $\pi_n$ integrate to one.
+**1.** The posterior mass of $U$ is $e^{-F_n(U)}/Z_n$. The $Z_n$ cancels in the ratio.
 
-**2.** $\pi_n(U)=\int_U\pi_n=\frac1{Z_n}\int_U\varphi e^{-nL_n}=Z_n(U)/Z_n$. Then $\pi_n(U)/\pi_n(V)=Z_n(U)/Z_n(V)=e^{-F_n(U)}/e^{-F_n(V)}$, and taking logs gives $F_n(V)-F_n(U)$.
+**2.** $Z_n=\sum_je^{-F_n(U_j)}$ lies between its largest term $e^{-F_n(U_1)}$ and $k$ times that term. Take $-\log$. Equal masses attain the lower bound.
 
-**3.** The integral over a disjoint union is the sum of the integrals, so $Z_n=\sum_jZ_n(U_j)=\sum_je^{-F_n(U_j)}$; take $-\log$. For the bounds: the sum is at least its largest term $e^{-F_n(U_1)}$ and at most $k$ times it, so $e^{-F_n(U_1)}\le Z_n\le ke^{-F_n(U_1)}$, which after $-\log$ is the stated sandwich. (The upper bound is strict as soon as another region has nonzero mass; the lower bound is attained when all $k$ regions have equal mass.)
+**3.** Differentiate $Z_n(\beta)=\int\varphi e^{-\beta nL_n}$:
 
-**4.** $Z_n(\beta)=\int\varphi e^{-\beta nL_n}$, so $\partial_\beta Z_n=-\int nL_n\,\varphi e^{-\beta nL_n}$ and $\partial_\beta F_n=-\partial_\beta Z_n/Z_n=n\,\mathbb E_{\pi_{n,\beta}}[L_n]$. Differentiating once more, $\partial_\beta\mathbb E_\beta[nL_n]=\partial_\beta\frac{\int nL_n\varphi e^{-\beta nL_n}}{\int\varphi e^{-\beta nL_n}}=-\mathbb E_\beta[(nL_n)^2]+\mathbb E_\beta[nL_n]^2=-n^2\mathrm{Var}_\beta[L_n]$. A variance is nonnegative, so $F_n(\beta)$ is concave in $\beta$. These are the usual relations $\langle E\rangle=\partial_\beta(\beta F)$ and $\mathrm{Var}(E)=-\partial_\beta\langle E\rangle$; Notebook 3 turns the first one into an estimator.
+$$
+\partial_\beta F_n=-\frac{\partial_\beta Z_n}{Z_n}=\mathbb E_\beta[nL_n],
+\qquad
+\partial^2_\beta F_n=-\big(\mathbb E_\beta[(nL_n)^2]-\mathbb E_\beta[nL_n]^2\big)=-\mathrm{Var}_\beta[nL_n]\le0 .
+$$
 """
     ),
     # ------------------------------------------------------------------ 1.2
@@ -187,64 +152,70 @@ $Z_n(U)=\int_U\varphi(w)e^{-nL_n(w)}dw$ and $F_n(U)=-\log Z_n(U)$.
 
 *Question:* what does the posterior look like when $n$ is large?
 
-*Notation:* $\hat w$ is the *maximum-likelihood estimate*, a minimizer of the
-training loss $L_n$; $w_0$ minimizes the population loss $L$;
-$H=\nabla^2L(w_0)$ and $H_n=\nabla^2L_n(\hat w)$ are Hessians;
-$C=\mathrm{Cov}_{x\sim q}[\nabla_w\ell(x,w_0)]$ is the covariance of the
-per-sample gradient at $w_0$. The model is *regular* at $w_0$: $w_0$ is the
-unique minimizer of $L$ and $H$ is positive definite (plus the usual technical
-conditions: $\ell$ smooth near $w_0$, gradients with finite second moments, a prior
-continuous and positive at $w_0$).
+*Notation:* $H=\nabla^2L(w_0)$ and $H_n=\nabla^2L_n(\hat w)$ are Hessians;
+$C=\mathrm{Cov}_q[\nabla\ell(x,w_0)]$ is the gradient covariance. The model is
+*regular*: $w_0$ is the unique minimizer and $H$ is positive definite (plus the
+usual smoothness and moment conditions).
 """
         + image(
             FIG + "concentration.svg",
-            r"Schematic: the posterior's Gaussian approximation for $n=5,50,500$ (ellipses at two standard deviations, covariance $(nH)^{-1}$) over the prior (grey); each tenfold increase in $n$ shrinks the widths by $\sqrt{10}$, and the centre $\hat w$ (dots) settles near $w_0$ (cross).",
+            r"Schematic: the posterior's Gaussian approximation for $n=5,50,500$ shrinks by $\sqrt{10}$ per tenfold increase in $n$, and its centre settles near $w_0$.",
         )
         + r"""
-For large $n$ the factor $e^{-nL_n}$ sharpens while the prior stays fixed, so the
-posterior is squeezed onto the minimizer $\hat w$ of $L_n$, where only the
-quadratic part of $L_n$ matters. Separately, $\hat w$ is random, because $L_n$ is
-built from a random sample, and the central limit theorem says how it scatters
-around $w_0$. The first statement is the Bernstein–von Mises theorem, the second
-the asymptotic normality of the maximum-likelihood estimate:
+As $n$ grows the likelihood sharpens while the prior stays fixed. The posterior
+is squeezed onto $\hat w$, where only the quadratic part of the loss matters. The
+centre $\hat w$ is itself random, since the training loss depends on the sample.
+Two Gaussian statements follow: the Bernstein–von Mises theorem, and the
+asymptotic normality of the maximum-likelihood estimate.
 
 $$
-\pi_n(w)\approx\mathcal N\!\big(\hat w,\,(nH_n)^{-1}\big),
+\pi_n\approx\mathcal N\big(\hat w,\,(nH_n)^{-1}\big),
 \qquad
-\hat w-w_0\approx\mathcal N\!\big(0,\,\tfrac1n H^{-1}CH^{-1}\big).
+\hat w-w_0\approx\mathcal N\big(0,\,\tfrac1nH^{-1}CH^{-1}\big).
 $$
 
-Both widths scale as $n^{-1/2}$. The first is what the posterior believes; the
-second is how $\hat w$ actually fluctuates from one data set to the next. In a
-well-specified model $C=H$ and the two agree. In a misspecified one they differ,
-and the posterior is overconfident or underconfident depending on $H^{-1}C$.
+The first is what the posterior believes. The second is how the estimate
+actually varies between data sets. Both have width $n^{-1/2}$, and they agree
+when the model is well specified, because then $C=H$. Otherwise the posterior is
+over- or under-confident.
 """
         + image(
             FIG + "covariances.svg",
-            r"Model $\mathcal N(\mu,e^{2s})$ with $w=(\mu,s)$, $s$ the log standard deviation, $n=400$, axes scaled by $\sqrt n$: the posterior's ellipse (shaded, covariance $H^{-1}$ in these coordinates, drawn at $w_0$) against $\hat w$ on 600 independent data sets (dots), which agree when the model is well specified and disagree for skewed data, where the posterior is overconfident about $s$.",
+            r"Model $\mathcal N(\mu,e^{2s})$, $n=400$, axes scaled by $\sqrt n$: the posterior's ellipse (shaded, drawn at $w_0$) against the estimate on 600 data sets (dots), which agree when well specified and not for skewed data.",
         )
         + r"""
-You may use the central limit theorem in this form: the average of $n$
-independent copies of a random vector with mean zero and covariance $C$ is
-approximately $\mathcal N(0,C/n)$ for large $n$.
-
 **Exercise 1.2 (The Gaussian posterior).**
 
-1. Expand $nL_n(w)$ to second order about $\hat w$ (note $\nabla L_n(\hat w)=0$) and show that, if the prior is replaced by the constant $\varphi(\hat w)$, the posterior is exactly $\mathcal N(\hat w,(nH_n)^{-1})$.
-2. Why can the prior be replaced by a constant, and why does the cubic term of the Taylor expansion not matter, for large $n$? Argue by scaling: write $w=\hat w+u/\sqrt n$ and look at the size of each term.
-3. Show that $\hat w-w_0\approx-H^{-1}\nabla L_n(w_0)$, and that $\nabla L_n(w_0)$ is an average of $n$ independent mean-zero vectors with covariance $C$. Conclude the second display above. (Why is the mean zero?)
-4. *(The information identity.)* Suppose the model is well specified, $q=p_{w_0}$. Show that $C=H$. <details><summary>Hint</summary>Start from $\int p(x\mid w)\,dx=1$ for every $w$ and differentiate twice with respect to $w$; use $\nabla^2p=p\,(\nabla^2\log p+\nabla\log p\,\nabla\log p^\top)$.</details>
+1. Expand $nL_n$ to second order about $\hat w$, freeze the prior at its value there, and show that the posterior is the first Gaussian above. Writing $w=\hat w+u/\sqrt n$, show that the neglected terms are $O(n^{-1/2})$.
+2. Show that $\hat w-w_0\approx-H^{-1}\nabla L_n(w_0)$, and use the central limit theorem to get the second Gaussian.
+3. Show that $C=H$ when the model is well specified. <details><summary>Hint</summary>Differentiate $\int p(x\mid w)\,dx=1$ twice with respect to $w$.</details>
 """
     ),
     answer(
         r"""
-**1.** $nL_n(w)=nL_n(\hat w)+\tfrac n2(w-\hat w)^\top H_n(w-\hat w)+R$, with $R$ cubic and higher. Dropping $R$ and setting $\varphi\equiv\varphi(\hat w)$, the posterior is proportional to $\exp[-\tfrac12(w-\hat w)^\top(nH_n)(w-\hat w)]$, which is the density of $\mathcal N(\hat w,(nH_n)^{-1})$ up to its normalizing constant.
+**1.** With $\delta=w-\hat w$ and a vanishing gradient at $\hat w$,
 
-**2.** With $w=\hat w+u/\sqrt n$ the quadratic term is $\tfrac12u^\top H_nu$, of order one, so $u$ ranges over an $O(1)$ region: the posterior has width $n^{-1/2}$ in $w$. The cubic term is $n\cdot O(|w-\hat w|^3)=O(n\cdot n^{-3/2})=O(n^{-1/2})$ on that region, and higher terms are smaller still. A smooth prior changes by $O(n^{-1/2})$ across a region of width $n^{-1/2}$. So both corrections vanish as $n\to\infty$, at rate $n^{-1/2}$. (This is the regular case: if $H_n$ had a zero eigenvalue the quadratic term would not confine $u$ in that direction, and the higher terms would decide the width. That is Notebook 2.)
+$$
+nL_n(w)=nL_n(\hat w)+\tfrac12\delta^\top(nH_n)\delta+O(n|\delta|^3).
+$$
 
-**3.** $0=\nabla L_n(\hat w)\approx\nabla L_n(w_0)+\nabla^2L_n(w_0)(\hat w-w_0)$, and $\nabla^2L_n(w_0)\to H$ by the law of large numbers, so $\hat w-w_0\approx-H^{-1}\nabla L_n(w_0)$. Now $\nabla L_n(w_0)=\frac1n\sum_i\nabla\ell(x_i,w_0)$ is an average of independent copies of the vector $g=\nabla\ell(x,w_0)$. Its mean is $\mathbb E_q[\nabla\ell(x,w_0)]=\nabla L(w_0)=0$ because $w_0$ minimizes $L$ (interchange of gradient and expectation), and its covariance is $C$ by definition. The central limit theorem gives $\nabla L_n(w_0)\approx\mathcal N(0,C/n)$, and a linear image $-H^{-1}(\cdot)$ of a Gaussian is Gaussian with covariance $H^{-1}(C/n)H^{-1}$.
+Dropping the cubic term and freezing the prior leaves a Gaussian with covariance $(nH_n)^{-1}$. At $\delta=u/\sqrt n$ the quadratic term is of order one, so the width is $n^{-1/2}$. On that scale the cubic term is $n\cdot n^{-3/2}=n^{-1/2}$, and a smooth prior also varies by $O(n^{-1/2})$.
 
-**4.** Differentiate $\int p(x\mid w)dx=1$ once: $\int\nabla p=0$, i.e. $\mathbb E_{p_w}[\nabla\log p(x\mid w)]=0$. Differentiate again: $\int\nabla^2p=0$, and with the hint $\mathbb E_{p_w}[\nabla^2\log p]+\mathbb E_{p_w}[\nabla\log p\,\nabla\log p^\top]=0$. Evaluate at $w=w_0$ with $q=p_{w_0}$. Since $\ell=-\log p$, the first term is $-\mathbb E_q[\nabla^2\ell(x,w_0)]=-H$ and the second is $\mathbb E_q[\nabla\ell\nabla\ell^\top]$, which equals $C$ because the mean of $\nabla\ell(x,w_0)$ is zero. Hence $H=C$. Under misspecification the two derivatives are taken under $p_{w_0}$ but the expectations defining $H$ and $C$ are under $q$, and the argument fails; in general $H\ne C$.
+**2.** Expand the first-order condition about $w_0$, with $\nabla^2L_n(w_0)\to H$:
+
+$$
+0=\nabla L_n(\hat w)\approx\nabla L_n(w_0)+H(\hat w-w_0).
+$$
+
+The gradient at $w_0$ is an average of $n$ i.i.d. vectors with mean $\nabla L(w_0)=0$ and covariance $C$. By the central limit theorem it is approximately $\mathcal N(0,C/n)$, and multiplying by $-H^{-1}$ gives the covariance $H^{-1}CH^{-1}/n$.
+
+**3.** One derivative gives $\mathbb E_{p_w}[\nabla\log p]=0$. A second, with $\nabla^2p=p\,(\nabla^2\log p+\nabla\log p\,\nabla\log p^\top)$, gives
+
+$$
+\mathbb E_{p_w}[\nabla^2\log p]+\mathbb E_{p_w}[\nabla\log p\,\nabla\log p^\top]=0 .
+$$
+
+At $w_0$ with $q=p_{w_0}$ the first term is $-H$ and the second is $C$. Under misspecification $H$ and $C$ are expectations under $q$, not $p_{w_0}$, and the identity fails.
 """
     ),
     # ------------------------------------------------------------------ 1.3
@@ -254,92 +225,70 @@ approximately $\mathcal N(0,C/n)$ for large $n$.
 
 ## 1.3 Laplace and the BIC
 
-*Question:* what is the free energy $F_n=-\log Z_n$ for large $n$, and what does
-it reward and penalize?
+*Question:* what is the free energy for large $n$, and what does it penalize?
 
-*Notation:* as in §1.2: $\hat w$ minimizes $L_n$, $H_n=\nabla^2L_n(\hat w)$ is
-positive definite, $d$ is the number of parameters.
-
+*Notation:* $\hat w$ minimizes $L_n$, $H_n$ is the Hessian there (positive definite: the model is regular, §1.2), $d$ is the number of parameters.
 """
         + image(
             FIG + "occam.svg",
-            r"With a uniform prior the Occam factor is $V_{\rm post}/V_\varphi$, the area under $e^{-n(L_n(w)-L_n(\hat w))}$ over the prior volume (right: a schematic posterior contour); quadrupling $n$ halves each width and so multiplies the factor by $2^{-d}$, which is where $\tfrac d2\log n$ comes from.",
+            r"With a uniform prior the Occam factor is the posterior volume over the prior volume; quadrupling $n$ halves each width, which is where $\tfrac d2\log n$ comes from.",
         )
         + r"""
-*Laplace's method:* for large $n$ an integral $\int g(w)e^{-nf(w)}dw$ is dominated
-by the neighbourhood of the minimum of $f$. Replace $f$ there by its quadratic
-expansion and $g$ by its value at the minimum, and use the Gaussian integral
-
-$$
-\int_{\mathbb R^d}\exp\!\big(-\tfrac12u^\top Au\big)\,du=(2\pi)^{d/2}(\det A)^{-1/2}
-\qquad(A\text{ positive definite}).
-$$
-
-Applied to $Z_n=\int\varphi(w)e^{-nL_n(w)}dw$ this gives
-
-$$
-Z_n\approx\varphi(\hat w)\,e^{-nL_n(\hat w)}\Big(\frac{2\pi}n\Big)^{d/2}(\det H_n)^{-1/2},
-$$
+Laplace's method replaces the integrand of $Z_n$ by a Gaussian around $\hat w$
+(Exercise 1.3). The result is
 
 $$
 F_n=nL_n(\hat w)+\frac d2\log n+\frac12\log\det H_n-\log\varphi(\hat w)-\frac d2\log2\pi+o(1).
 $$
 
-The first two terms are the *Bayesian information criterion* (BIC): the best
-training loss plus half a $\log n$ per parameter. The rest is $O(1)$: it depends on
-the curvature and the prior, and can change the ranking of two models whose leading
-terms are close.
+The first two terms are the *Bayesian information criterion* (BIC): the best fit
+plus half a $\log n$ per parameter. The rest is of order one; it depends on the
+curvature and the prior.
 
-MacKay reads the same formula as $Z_n=(\text{best-fit likelihood})\times
-(\text{Occam factor})$, with Occam factor
-$\varphi(\hat w)(2\pi/n)^{d/2}(\det H_n)^{-1/2}$. For a prior spread evenly over a
-volume $V_\varphi$ this is $V_{\rm post}/V_\varphi$, the fraction of prior volume
-the data leave standing (figure above). An extra parameter can buy a better fit,
-but the evidence pays for the shrinkage of its width to about $n^{-1/2}$. No
-held-out data enter; the penalty is volume alone.
+[MacKay (1992)](https://doi.org/10.1162/neco.1992.4.3.415) reads this as the
+best-fit likelihood times an *Occam factor*. For a uniform prior, the Occam
+factor is the fraction of prior volume that still fits the data. Each
+parameter's width shrinks to about $n^{-1/2}$, and the evidence pays for the
+shrinkage. No held-out data are involved.
 
-**Exercise 1.3 (Laplace's method and the Occam factor).**
+**Exercise 1.3 (Laplace, BIC and the Occam factor).**
 
-1. Derive the two displayed formulas for $Z_n$ and $F_n$ from the Gaussian integral.
-2. Suppose the prior is uniform over a box of volume $V_\varphi$ containing $\hat w$. Define the *posterior volume* $V_{\rm post}=\int_{\rm box} e^{-n(L_n(w)-L_n(\hat w))}dw$ (the volume of parameter space, weighted by how much worse than the best fit each point is). Show that $Z_n=e^{-nL_n(\hat w)}\,V_{\rm post}/V_\varphi$ exactly, and that Laplace's method gives $V_{\rm post}\approx(2\pi/n)^{d/2}(\det H_n)^{-1/2}$. This is the Occam factor as a volume ratio.
-3. Two models $A$ and $B$ have $d_A<d_B$ parameters and best training losses $L_n^A\ge L_n^B$ (the larger model fits at least as well). Using only the BIC terms, when does Bayes prefer the smaller model? Express the condition as a bound on the improvement in fit per sample.
-4. *(A case where everything is exact.)* Model $p(x\mid w)=\mathcal N(x;w,1)$ with prior $\varphi=\mathcal N(0,\tau^2)$. Compute $Z_n$ exactly, write $F_n$ in the form $nL_n(\hat w)+\tfrac12\log n+(\text{rest})$, and compare with the Laplace formula. Show that the two differ by $O(1/n)$. <details><summary>Hint</summary>$\sum_i(x_i-w)^2=\sum_i(x_i-\bar x)^2+n(w-\bar x)^2$, so $nL_n(w)=nL_n(\bar x)+\tfrac n2(w-\bar x)^2$ exactly; the integral against the Gaussian prior is then one Gaussian integral.</details>
+1. Using $\int e^{-\frac12u^\top Au}\,du=(2\pi)^{d/2}(\det A)^{-1/2}$ for positive definite $A$, derive the formula for $F_n$.
+2. Take a uniform prior on a box of volume $V_\varphi$, and let $V_{\rm post}=\int_{\rm box}e^{-n(L_n(w)-L_n(\hat w))}dw$. Show that $Z_n=e^{-nL_n(\hat w)}\,V_{\rm post}/V_\varphi$ exactly.
+3. Model $B$ has more parameters than model $A$ and fits better. Using the BIC, how much must $B$ lower the per-sample training loss to be preferred? Compare with what fitting pure noise gains, about $\tfrac1{2n}$ per extra parameter.
 """
     ),
     answer(
         r"""
-**1.** Expand $nL_n(w)=nL_n(\hat w)+\tfrac12(w-\hat w)^\top(nH_n)(w-\hat w)+\dots$ (the gradient vanishes at $\hat w$), set $\varphi(w)\approx\varphi(\hat w)$, and apply the Gaussian integral with $A=nH_n$: $(2\pi)^{d/2}(\det nH_n)^{-1/2}=(2\pi/n)^{d/2}(\det H_n)^{-1/2}$, using $\det(nH_n)=n^d\det H_n$. Taking $-\log$ gives $F_n$. The $o(1)$ collects the prior's variation and the cubic terms, both $O(n^{-1/2})$ by Exercise 1.2.2, together with the $O(1/n)$ corrections to the Gaussian integral itself.
+**1.** Expand to second order at $\hat w$ and freeze the prior:
 
-**2.** With $\varphi=1/V_\varphi$ on the box (and the box containing all the posterior mass that matters), $Z_n=\frac1{V_\varphi}\int e^{-nL_n(w)}dw=\frac{e^{-nL_n(\hat w)}}{V_\varphi}\int e^{-n(L_n(w)-L_n(\hat w))}dw$, which is the claim. Laplace's method on $V_{\rm post}$ is part 1 with $\varphi\equiv1$. So the evidence is the best-fit likelihood times $V_{\rm post}/V_\varphi$: the fraction of prior volume that remains compatible with the data. Each parameter contributes a factor (posterior width)/(prior width) $\sim n^{-1/2}/\text{(prior width)}$, which is where $\tfrac d2\log n$ comes from.
+$$
+Z_n\approx\varphi(\hat w)\,e^{-nL_n(\hat w)}\int e^{-\frac12\delta^\top(nH_n)\delta}\,d\delta
+=\varphi(\hat w)\,e^{-nL_n(\hat w)}\Big(\frac{2\pi}n\Big)^{d/2}(\det H_n)^{-1/2},
+$$
 
-**3.** $F^A-F^B\approx n(L_n^A-L_n^B)-\frac{d_B-d_A}2\log n$. Bayes prefers $A$ (lower free energy) when $L_n^A-L_n^B<\frac{d_B-d_A}{2n}\log n$: the larger model must improve the per-sample fit by more than $\frac{\log n}{2n}$ per extra parameter to be preferred. For fixed losses the right-hand side goes to zero, so any genuine improvement eventually wins; but a model that only fits noise improves the per-sample loss by $O(1/n)$ (the fit improvement from $\Delta d$ extra parameters is about $\frac{\Delta d}{2n}$, Exercise 1.4.3), which is smaller than $\frac{\Delta d}{2n}\log n$. That is the sense in which the BIC penalty rejects parameters that only fit noise.
+using $\det(nH_n)=n^d\det H_n$. Take $-\log$. The error terms are those of Exercise 1.2.
 
-**4.** By the hint, $\prod_ip(x_i\mid w)=e^{-nL_n(\bar x)}e^{-\frac n2(w-\bar x)^2}$ with $\hat w=\bar x$ and $nL_n(\bar x)=\frac n2\log2\pi+\frac12\sum_i(x_i-\bar x)^2$. Then
+**2.** On the box the prior is $1/V_\varphi$; pull $e^{-nL_n(\hat w)}$ out of the integral. Laplace then gives $V_{\rm post}\approx(2\pi/n)^{d/2}(\det H_n)^{-1/2}$, a width of order $n^{-1/2}$ per parameter.
+
+**3.** The BIC difference is
+
 $$
-Z_n=e^{-nL_n(\bar x)}\int\frac{e^{-w^2/2\tau^2}}{\sqrt{2\pi\tau^2}}e^{-\frac n2(w-\bar x)^2}dw
-=e^{-nL_n(\bar x)}\,\frac1{\sqrt{1+n\tau^2}}\exp\!\Big(-\frac{n\bar x^2}{2(1+n\tau^2)}\Big),
+F^A-F^B\approx n\big(L_n^A-L_n^B\big)-\frac{d_B-d_A}2\log n .
 $$
-(complete the square: the product of the two Gaussians in $w$ has precision $n+1/\tau^2$, and the leftover constant is a Gaussian in $\bar x$ with variance $\tau^2+1/n$). So
-$$
-F_n^{\rm exact}=nL_n(\bar x)+\tfrac12\log n+\tfrac12\log\!\big(\tau^2+\tfrac1n\big)+\frac{\bar x^2}{2(\tau^2+1/n)} .
-$$
-Laplace: $H_n=1$, $d=1$, $-\log\varphi(\hat w)=\tfrac12\log(2\pi\tau^2)+\bar x^2/2\tau^2$, so $F_n^{\rm Lap}=nL_n(\bar x)+\tfrac12\log n+\tfrac12\log\tau^2+\frac{\bar x^2}{2\tau^2}$. The difference is $\tfrac12\log(1+\tfrac1{n\tau^2})+\frac{\bar x^2}2\big(\frac1{\tau^2+1/n}-\frac1{\tau^2}\big)=\frac1{2n\tau^2}-\frac{\bar x^2}{2\tau^2(n\tau^2+1)}+O(n^{-2})=O(1/n)$. Laplace is exact up to the $1/n$ corrections from the prior's curvature, as it should be: here the likelihood is exactly Gaussian in $w$ and the only approximation is $\varphi\approx\varphi(\hat w)$.
+
+So $B$ wins only if it lowers the per-sample loss by more than $\frac{\log n}{2n}$ per extra parameter. Fitting noise gains about $\frac1{2n}$, smaller by a factor $\log n$, so the BIC rejects parameters that only fit noise. A real improvement of fixed size wins once $n$ is large.
 """
     ),
     markdown(
         r"""
-**Code: the free energy by quadrature, against Laplace and the BIC.** The first
-cell checks the conjugate model of Exercise 1.3.4 by numerical integration against
-its closed form. The second uses a model with no closed form,
-$p(x\mid\mu,s)=\mathcal N(x;\mu,e^{2s})$ with standard normal priors on $\mu$ and
-$s$, and computes $F_n$ on a grid for a range of $n$. Against $\log n$,
-$F_n-nL_n(\hat w)$ should have slope $d/2=1$, and Laplace should add the right
-constant.
+**Code.** The first cell checks Laplace against the exact free energy of the
+conjugate model $\mathcal N(w,1)$ with a Gaussian prior; the second computes $F_n$
+by quadrature for $\mathcal N(\mu,e^{2s})$ and checks the slope $d/2=1$ in $\log n$.
 """
     ),
     code(
-        r"""
-# 1-D conjugate model: x ~ N(w, 1), prior w ~ N(0, tau^2). Exact Z_n vs quadrature vs Laplace.
+        r"""# 1-D conjugate model: x ~ N(w, 1), prior w ~ N(0, tau^2). Exact Z_n vs quadrature vs Laplace.
 tau2, n = 4.0, 50
 x = rng.normal(1.0, 1.0, size=n)
 xbar = x.mean()
@@ -356,12 +305,10 @@ F_quad = -log_trapz(log_integrand, w)
 print(f"F_n exact     {F_exact:.4f}")
 print(f"F_n quadrature{F_quad:.4f}")
 print(f"F_n Laplace   {F_laplace:.4f}   (difference {F_laplace - F_exact:+.4f}, predicted O(1/n) ~ {1/(2*n*tau2):.4f})")
-print(f"F_n BIC terms {F_bic:.4f}")
-"""
+print(f"F_n BIC terms {F_bic:.4f}")"""
     ),
     code(
-        r"""
-# 2-D model: x ~ N(mu, exp(2 s)), priors mu ~ N(0,1), s ~ N(0,1). Data from N(1, 0.5^2).
+        r"""# 2-D model: x ~ N(mu, exp(2 s)), priors mu ~ N(0,1), s ~ N(0,1). Data from N(1, 0.5^2).
 mu_true, sigma_true = 1.0, 0.5
 N_all = 3000
 x_all = rng.normal(mu_true, sigma_true, size=N_all)
@@ -402,8 +349,7 @@ plt.plot(rows[:, 0], rows[:, 3], ":", label=r"BIC: $\frac{d}{2}\log n$")
 plt.xscale("log"); plt.xlabel("n"); plt.ylabel(r"$F_n - nL_n(\hat w)$")
 plt.title("2-parameter Gaussian model: free energy above the best fit"); plt.legend(); plt.tight_layout(); plt.show()
 print("slope of the exact curve against log n over the last four points:",
-      np.polyfit(np.log(rows[-4:, 0]), rows[-4:, 1], 1)[0].round(3), " (d/2 = 1)")
-"""
+      np.polyfit(np.log(rows[-4:, 0]), rows[-4:, 1], 1)[0].round(3), " (d/2 = 1)")"""
     ),
     # ------------------------------------------------------------------ 1.4
     markdown(
@@ -412,113 +358,107 @@ print("slope of the exact curve against log n over the last four points:",
 
 ## 1.4 The Bayes generalization error
 
-*Question:* how well does the posterior predict the next sample, and how does
-that compare with using the maximum-likelihood fit?
+*Question:* how well does the posterior predict the next sample, compared with
+the maximum-likelihood fit?
 
-*Notation:* $q$ data distribution with entropy $S$; $\pi_n$ posterior;
-$\hat w$ maximum-likelihood estimate; $w_0=\arg\min L$, $H=\nabla^2L(w_0)$,
-$C=\mathrm{Cov}_q[\nabla\ell(x,w_0)]$;
-$L_{\min}=L(w_0)-S=\min_w\mathrm{KL}(q\|p_w)$, the smallest loss the model can
-reach, zero if well specified.
+*Notation:* $L$ is the population loss, minimized at $w_0$; $\hat w$ minimizes the
+training loss; $S$ is the entropy of the data; $\pi_n$ is the posterior and $F_n$
+the free energy (§1.1); $H$ and $C$ are the Hessian and gradient covariance at
+$w_0$; $L_{\min}=L(w_0)-S$ is the best excess loss the model can reach (zero if
+well specified).
 """
         + image(
             FIG + "predictors.svg",
-            r"Maximum likelihood predicts with the fitted member $p(x\mid\hat w)$, Gibbs with one random member, and Bayes with the posterior average of all members; here averaging widens the predictive variance from $1$ to $1+1/n=1.25$ (Exercise 1.4.4: model $\mathcal N(x;w,1)$, flat prior, data variance 2, $n=4$, $\hat w=\bar x=0.4$).",
+            r"Maximum likelihood predicts with the fitted member, Gibbs with one random member, and Bayes with the posterior average, which here is wider than either (Exercise 1.4.3 at $n=4$).",
         )
         + r"""
-The three predictors are the *Bayes predictive* $p^*(x)=\int p(x\mid w)\,\pi_n(w)\,dw$,
-the *Gibbs* predictor $p(x\mid w)$ for one draw $w\sim\pi_n$, and the
-*maximum-likelihood* predictor $p(x\mid\hat w)$. Each one's generalization error
-is its expected loss on a fresh sample minus the entropy $S$, the part no
-predictor can remove:
+There are three predictors. *Bayes* averages the model over the posterior,
+giving the predictive density $p^*$. *Gibbs* uses one posterior sample.
+*Maximum likelihood* uses $\hat w$. Each one's generalization error $G_n$ is its
+expected loss on a fresh sample minus the entropy, which no predictor can remove.
+The results below also average over training sets.
+
+The free energy enters through an exact identity (Exercise 1.4.1):
 
 $$
-\begin{aligned}
-G_n^{\rm Bayes}&=\mathbb E_{x\sim q}[-\log p^*(x)]-S=\mathrm{KL}(q\,\|\,p^*),\\
-G_n^{\rm Gibbs}&=\mathbb E_{w\sim\pi_n}[L(w)]-S,\\
-G_n^{\rm MLE}&=L(\hat w)-S .
-\end{aligned}
+p^*(x)=\int p(x\mid w)\,\pi_n(w)\,dw,
+\qquad
+-\log p^*(x_{n+1})=F_{n+1}-F_n .
 $$
 
-All three are random through the training sample; the statements below are about
-their expectations. The free energy enters through an exact identity: appending
-one more sample $x_{n+1}$ to the data set,
+In the regular case, up to $o(1/n)$:
 
-$$
--\log p^*(x_{n+1})=F_{n+1}-F_n ,
-\qquad\text{so}\qquad
-\mathbb E[G_n^{\rm Bayes}]=\mathbb E[F_{n+1}]-\mathbb E[F_n]-S .
-$$
-
-The Bayes generalization error is the free-energy cost of one more datum, minus
-the entropy. So the large-$n$ behaviour of $\mathbb E[F_n]$, including Notebook 2's
-volume exponent, carries over to generalization, provided the remainder terms are
-controlled (Exercise 1.4.2 says where this needs care). In the regular case:
-
-| predictor | expected generalization error, regular model |
+| predictor | expected generalization error |
 |---|---|
-| Bayes predictive | $L_{\min}+\dfrac{d}{2n}$ |
-| Gibbs (one posterior sample) | $L_{\min}+\dfrac{d+\mathrm{tr}(H^{-1}C)}{2n}$ |
+| Bayes | $L_{\min}+\dfrac{d}{2n}$ |
+| Gibbs | $L_{\min}+\dfrac{d+\mathrm{tr}(H^{-1}C)}{2n}$ |
 | maximum likelihood | $L_{\min}+\dfrac{\mathrm{tr}(H^{-1}C)}{2n}$ |
 
-up to $o(1/n)$. Well specified, $C=H$ and $\mathrm{tr}(H^{-1}C)=d$: Bayes and
-maximum likelihood both pay $d/2n$, and a single posterior sample pays twice that.
-Misspecified, Bayes still pays $d/2n$ above the best the model can do, while
-maximum likelihood pays $\mathrm{tr}(H^{-1}C)/2n$, which can be larger or smaller
-than $d/2n$ (Gibbs pays the sum of the two). So "Bayes generalizes better than
-maximum likelihood" is not a theorem even for regular models; what averaging over
-the posterior does is remove the dependence on $C$.
+When the model is well specified the trace is $d$. Bayes and maximum likelihood
+then tie, and one posterior sample pays twice as much. Under misspecification
+Bayes still pays $d/2n$, while maximum likelihood can pay more or less. So Bayes
+does not always generalize better; what posterior averaging removes is the
+dependence on $C$.
 
-**Exercise 1.4 (Generalization error from the free energy).**
+**Exercise 1.4 (Three generalization errors).**
 
-1. Prove $-\log p^*(x_{n+1})=F_{n+1}-F_n$, where $F_{n+1}$ is the free energy of the data set with $x_{n+1}$ appended.
-2. Using the Laplace expansion of §1.3 and the fluctuation of $\hat w$ from §1.2, show $\mathbb E[F_n]=nL(w_0)-\tfrac12\mathrm{tr}(H^{-1}C)+\tfrac d2\log n+c+o(1)$ for a constant $c$, and deduce $\mathbb E[G_n^{\rm Bayes}]\approx L_{\min}+\tfrac d{2n}$. Say which step is a step of faith at this level of rigour. <details><summary>Hint</summary>$nL_n(\hat w)=nL_n(w_0)-\tfrac n2 g_n^\top H^{-1}g_n+\dots$ with $g_n=\nabla L_n(w_0)$; use $\mathbb E[nL_n(w_0)]=nL(w_0)$ and $\mathbb E[g_ng_n^\top]=C/n$.</details>
-3. Derive the three rows of the table directly, without the free energy. For the Bayes row, write $w=\hat w+\delta$ with $\delta\sim\mathcal N(0,(nH)^{-1})$, expand $\log p(x\mid w)$ to second order in $\delta$, and use $\log\mathbb E[e^Y]\approx\mathbb E[Y]+\tfrac12\mathrm{Var}[Y]$ for a random variable $Y$ that is small. You will need $\mathbb E_q[\nabla\ell\,\nabla\ell^\top]=C$ and $\mathbb E_q[\nabla^2\ell]=H$ at $w_0$, and $\mathbb E[L(\hat w)]-L(w_0)\approx\tfrac1{2n}\mathrm{tr}(H^{-1}C)$ (prove this last one first).
-4. *(One misspecified example.)* Model $\mathcal N(x;w,1)$, flat prior, data actually $\mathcal N(0,\sigma^2)$ with $\sigma^2\neq1$. Compute all three generalization errors exactly as functions of $\bar x$ and $n$, take expectations, and compare with the table. For which $\sigma^2$ does the Bayes predictive beat maximum likelihood?
+1. Prove $-\log p^*(x_{n+1})=F_{n+1}-F_n$.
+2. Derive the table. Start from the fluctuation of $\hat w$ (§1.2) for the maximum-likelihood row, then add the posterior spread for Gibbs. For Bayes, expand $\log p(x\mid w)$ to second order about $\hat w$ and use $\log\mathbb E[e^Y]\approx\mathbb E[Y]+\tfrac12\mathrm{Var}[Y]$.
+3. *(Misspecified.)* Model $\mathcal N(x;w,1)$, flat prior, data $\mathcal N(0,\sigma^2)$. Compute the three expected errors exactly. When does Bayes beat maximum likelihood?
 """
     ),
     answer(
         r"""
-**1.** $Z_{n+1}=\int\varphi(w)\prod_{i=1}^{n+1}p(x_i\mid w)dw=\int p(x_{n+1}\mid w)\,\varphi(w)\prod_{i\le n}p(x_i\mid w)\,dw=Z_n\int p(x_{n+1}\mid w)\pi_n(w)dw=Z_np^*(x_{n+1})$. Take $-\log$. Averaging over $x_{n+1}\sim q$ and over the first $n$ samples gives $\mathbb E[-\log p^*(x_{n+1})]=\mathbb E[F_{n+1}]-\mathbb E[F_n]$, and subtracting $S$ gives the Bayes generalization error.
+**1.** Adding a point multiplies the integrand by $p(x_{n+1}\mid w)$, so $Z_{n+1}=Z_n\int p(x_{n+1}\mid w)\,\pi_n(w)\,dw=Z_n\,p^*(x_{n+1})$. Take $-\log$.
 
-**2.** From §1.3, $F_n=nL_n(\hat w)+\tfrac d2\log n+\tfrac12\log\det H_n-\log\varphi(\hat w)-\tfrac d2\log2\pi+o(1)$. Expand $L_n$ about $w_0$ instead of $\hat w$: with $g_n=\nabla L_n(w_0)$ and $\hat w-w_0\approx-H^{-1}g_n$, $nL_n(\hat w)\approx nL_n(w_0)+ng_n^\top(\hat w-w_0)+\tfrac n2(\hat w-w_0)^\top H(\hat w-w_0)=nL_n(w_0)-\tfrac n2g_n^\top H^{-1}g_n$. Now $\mathbb E[nL_n(w_0)]=nL(w_0)$ exactly, and $\mathbb E[ng_n^\top H^{-1}g_n]=n\,\mathrm{tr}(H^{-1}\mathbb E[g_ng_n^\top])=\mathrm{tr}(H^{-1}C)$. The remaining terms converge to constants, giving $c$. Then $\mathbb E[F_{n+1}]-\mathbb E[F_n]=L(w_0)+\tfrac d2\log\frac{n+1}n+o(1)\text{-difference}=L(w_0)+\tfrac d{2n}+\dots$, so $\mathbb E[G_n^{\rm Bayes}]\approx L(w_0)-S+\tfrac d{2n}=L_{\min}+\tfrac d{2n}$. The step of faith is that the difference of the $o(1)$ remainders between $n$ and $n+1$ is $o(1/n)$; a term like $\mathbb E[\log\det H_n]$ does change by $O(1/n)$ between $n$ and $n+1$, so this needs the direct computation of part 3 (or Watanabe's theorems) to be trusted. Part 3 confirms the result.
+**2.** *Maximum likelihood.* Expand $L$ about $w_0$ and use the covariance of $\hat w$:
 
-**3.** *Fluctuation of the fit.* $L(\hat w)-L(w_0)\approx\tfrac12(\hat w-w_0)^\top H(\hat w-w_0)$, and with $\hat w-w_0\approx\mathcal N(0,H^{-1}CH^{-1}/n)$ its expectation is $\tfrac12\mathrm{tr}(H\cdot H^{-1}CH^{-1}/n)=\tfrac1{2n}\mathrm{tr}(H^{-1}C)$. This is already the **MLE row**: $\mathbb E[G^{\rm MLE}_n]=L(w_0)-S+\tfrac1{2n}\mathrm{tr}(H^{-1}C)$.
+$$
+\mathbb E[L(\hat w)]-L(w_0)\approx\tfrac12\,\mathbb E\big[(\hat w-w_0)^\top H(\hat w-w_0)\big]=\frac{\mathrm{tr}(H^{-1}C)}{2n}.
+$$
 
-*Gibbs.* $\mathbb E_{\pi_n}[L(w)]\approx L(\hat w)+\tfrac12\mathbb E[\delta^\top H\delta]=L(\hat w)+\tfrac12\mathrm{tr}(H(nH)^{-1})=L(\hat w)+\tfrac d{2n}$. Adding the fluctuation of the fit gives the **Gibbs row**, $L_{\min}+\frac{d+\mathrm{tr}(H^{-1}C)}{2n}$.
+*Gibbs.* A posterior sample sits a further $\delta\sim\mathcal N(0,(nH)^{-1})$ from $\hat w$, which adds $\tfrac12\mathbb E[\delta^\top H\delta]=\frac d{2n}$.
 
-*Bayes.* First average over the posterior, holding the training data fixed. Write $\log p(x\mid w)=-\ell(x,\hat w)+s^\top\delta+\tfrac12\delta^\top M\delta+\dots$ with $s=-\nabla\ell(x,\hat w)$ and $M=-\nabla^2\ell(x,\hat w)$. Then $\log p^*(x)=-\ell(x,\hat w)+\log\mathbb E_\delta[e^{Y}]$ with $Y=s^\top\delta+\tfrac12\delta^\top M\delta$, and
-$$
-\log\mathbb E[e^Y]\approx\mathbb E[Y]+\tfrac12\mathrm{Var}[Y]=\tfrac12\mathrm{tr}(M(nH)^{-1})+\tfrac12s^\top(nH)^{-1}s+O(n^{-2}),
-\qquad\text{so}\qquad
--\log p^*(x)\approx\ell(x,\hat w)-\frac1{2n}\big[s^\top H^{-1}s+\mathrm{tr}(H^{-1}M)\big].
-$$
-Next average over a fresh observation $x\sim q$ (with $\hat w\approx w_0$ inside the $1/n$ terms): $\mathbb E_q[ss^\top]=C$ and $\mathbb E_q[M]=-H$, so
-$$
-\mathbb E_x[-\log p^*(x)]\approx L(\hat w)-\frac1{2n}\big[\mathrm{tr}(H^{-1}C)-d\big].
-$$
-Finally average over training sets using the fluctuation of the fit: $L(w_0)+\frac1{2n}\mathrm{tr}(H^{-1}C)-\frac1{2n}\mathrm{tr}(H^{-1}C)+\frac d{2n}$. The two terms involving $C$ cancel, and the **Bayes row** is $L_{\min}+\frac d{2n}$.
+*Bayes.* Write $\log p(x\mid\hat w+\delta)\approx-\ell(x,\hat w)+s^\top\delta+\tfrac12\delta^\top M\delta$, with $s$ and $M$ the gradient and Hessian of $\log p$ at $\hat w$. Average over the posterior, then over $x\sim q$; inside the $1/n$ terms replace $\hat w$ by $w_0$, where $\mathbb E_q[ss^\top]=C$ and $\mathbb E_q[M]=-H$:
 
-**4.** With a flat prior the posterior is $\mathcal N(\bar x,1/n)$ and the predictive is $\mathcal N(\bar x,1+1/n)$. For $x\sim\mathcal N(0,\sigma^2)$, $S=\tfrac12\log(2\pi e\sigma^2)$ and $L(w)-S=\tfrac12(\sigma^2+w^2)-\tfrac12-\tfrac12\log\sigma^2=\tfrac12(w^2+\sigma^2-1-\log\sigma^2)$, so $L_{\min}=\tfrac12(\sigma^2-1-\log\sigma^2)$, which is $\ge0$ with equality only at $\sigma^2=1$. Then, writing $v=1/n$ and $G$ for the error minus $L_{\min}$:
 $$
-G^{\rm MLE}=\tfrac12\bar x^2,\qquad
-G^{\rm Gibbs}=\tfrac12\big(\bar x^2+v\big),\qquad
-G^{\rm Bayes}=\tfrac12\log(1+v)+\frac{\sigma^2+\bar x^2}{2(1+v)}-\frac{\sigma^2}{2}.
+-\log p^*(x)\approx\ell(x,\hat w)-\frac{s^\top H^{-1}s+\mathrm{tr}(H^{-1}M)}{2n},
+\qquad
+\mathbb E_x[-\log p^*(x)]\approx L(\hat w)-\frac{\mathrm{tr}(H^{-1}C)-d}{2n}.
 $$
-(The Bayes value is $\mathbb E_x[-\log\mathcal N(x;\bar x,1+v)]-S-L_{\min}$.) Taking expectations with $\mathbb E[\bar x^2]=\sigma^2/n$: $\mathbb E[G^{\rm MLE}]=\frac{\sigma^2}{2n}$, $\mathbb E[G^{\rm Gibbs}]=\frac{\sigma^2+1}{2n}$, and $\mathbb E[G^{\rm Bayes}]=\tfrac12\log(1+\tfrac1n)+\frac{\sigma^2(1+1/n)}{2(1+1/n)}-\frac{\sigma^2}2=\tfrac12\log(1+\tfrac1n)=\frac1{2n}+O(n^{-2})$. Here $d=1$, $H=1$ (the Hessian of $\tfrac12(x-w)^2$) and $C=\mathrm{Var}(x)=\sigma^2$, so $\mathrm{tr}(H^{-1}C)=\sigma^2$: the maximum-likelihood and Gibbs rows of the table are reproduced exactly, and the Bayes row to leading order. To leading order the Bayes predictive beats maximum likelihood when $\sigma^2>1$ (the data are noisier than the model believes, and averaging hedges) and loses when $\sigma^2<1$ (the model is too cautious already, and hedging makes it worse). Exactly, Bayes wins iff $\tfrac12\log(1+\tfrac1n)<\frac{\sigma^2}{2n}$, i.e. $\sigma^2>n\log(1+\tfrac1n)$, a threshold slightly below $1$ (0.89 at $n=4$); so at $\sigma^2=1$ the two agree only to leading order, with Bayes strictly better at finite $n$.
+
+Averaging over training sets adds the maximum-likelihood term. The two trace terms cancel, leaving $L(w_0)+\frac d{2n}$.
+
+**3.** The posterior is $\mathcal N(\bar x,1/n)$ and the predictive is $\mathcal N(\bar x,1+1/n)$. Here $H=1$, $C=\sigma^2$, and
+
+$$
+L(w)-S=\tfrac12\big(w^2+\sigma^2-1-\log\sigma^2\big),
+\qquad
+L_{\min}=\tfrac12\big(\sigma^2-1-\log\sigma^2\big).
+$$
+
+With $\mathbb E[\bar x^2]=\sigma^2/n$, the expected errors above $L_{\min}$ are
+
+$$
+\text{MLE: }\frac{\sigma^2}{2n},
+\qquad
+\text{Gibbs: }\frac{\sigma^2+1}{2n},
+\qquad
+\text{Bayes: }\tfrac12\log\big(1+\tfrac1n\big)=\frac1{2n}+O(n^{-2}).
+$$
+
+Bayes beats maximum likelihood when $\sigma^2>n\log(1+1/n)$, a threshold just below 1. Averaging helps when the data are noisier than the model assumes.
 """
     ),
     markdown(
         r"""
-**Code: the three generalization errors in the misspecified example.** The cell
-simulates Exercise 1.4.4 with a wide proper prior and plots $n$ times each
-expected error against $n$, so the table's predictions are horizontal lines. Set
-`sigma2` below 1 to see Bayes and maximum likelihood swap order.
+**Code.** Simulates Exercise 1.4.3 and plots $n$ times each expected error; the
+dotted lines are the table. Set `sigma2` below 1 to see Bayes and maximum
+likelihood swap.
 """
     ),
     code_answer(
-        r"""
-sigma2 = 2.0          # variance of the data; the model assumes 1
+        r"""sigma2 = 2.0          # variance of the data; the model assumes 1
 tau2 = 100.0          # prior variance (wide, so the prior barely matters)
 ns = np.array([5, 10, 20, 50, 100, 200, 500])
 trials = 4000
@@ -530,10 +470,8 @@ def errors(xbar, n):
     # posterior: N(m, v) with v = 1 / (n + 1/tau2), m = v * n * xbar; predictive: N(m, 1 + v)
     raise NotImplementedError
 
-# then: average over trials for each n and plot n * G against n, with the three predicted lines
-""",
-        r"""
-sigma2 = 2.0          # variance of the data; the model assumes 1
+# then: average over trials for each n and plot n * G against n, with the three predicted lines""",
+        r"""sigma2 = 2.0          # variance of the data; the model assumes 1
 tau2 = 100.0          # prior variance (wide, so the prior barely matters)
 ns = np.array([5, 10, 20, 50, 100, 200, 500])
 trials = 4000
@@ -561,38 +499,7 @@ for j, (lab, pred) in enumerate([("Bayes predictive", 0.5), ("Gibbs (one sample)
     plt.plot(ns, ns * means[:, j], "o-", color=f"C{j}", label=lab)
     plt.axhline(pred, color=f"C{j}", ls=":")
 plt.xscale("log"); plt.xlabel("n"); plt.ylabel(r"$n\,\mathbb{E}[G_n - L_{\min}]$")
-plt.title(f"model N(w,1), data N(0,{sigma2}); dotted = table"); plt.legend(loc="center right"); plt.tight_layout(); plt.show()
-""",
-    ),
-    # ------------------------------------------------------------------ readings
-    markdown(
-        r"""
-<a id="slt1-readings"></a>
-
-## Readings
-
-The keystone is MacKay's *Bayesian Interpolation* (top of the page). Optional
-background:
-"""
-        + reading(
-            "Keeping neural networks simple by minimizing the description length of the weights",
-            "https://www.cs.toronto.edu/~hinton/absps/colt93.pdf",
-            "Hinton & van Camp (COLT 1993)",
-            "The same volume argument as the Occam factor, read as a code length: a posterior that is broad in some parameter directions costs fewer bits to transmit, which is the minimum-description-length side of §1.3.",
-            importance=2,
-            length=2,
-        )
-        + reading(
-            "Deep Learning is Singular, and That's Good",
-            "https://arxiv.org/abs/2010.11560",
-            "Wei, Murfet, Gong, Li, Gell-Redman & Quella (2020)",
-            "Why the regular-model results of this notebook (Laplace, BIC, $d/2n$) do not apply to neural networks, as an invitation to the rest of the day; read the introduction and Section 2 now, the rest after Notebook 2.",
-            importance=3,
-            length=3,
-        )
-        + references(
-            book("Mathematical Theory of Bayesian Statistics", "https://doi.org/10.1201/9781315373010", "Watanabe (CRC Press, 2018)", "chapter 3 for the regular case in this notebook, chapters 5–6 for the general one"),
-        )
+plt.title(f"model N(w,1), data N(0,{sigma2}); dotted = table"); plt.legend(loc="center right"); plt.tight_layout(); plt.show()""",
     ),
 ]
 

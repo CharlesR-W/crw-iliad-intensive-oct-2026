@@ -32,7 +32,7 @@ for k in [2, 4]:
     assert abs(np.log(V(t2) / V(t1)) / np.log(t2 / t1) - 1 / k) < 1e-12
 print("fig 2(c): lambda = 1/(log-log slope) in 1-D: ok")
 
-# Figure 3: E_beta[nK] = lambda/beta for V = c t^lambda (exact; see slt3_checks 3.3.1), so the mean of n L_n is
+# Figure 3: E_beta[nK] = lambda/beta for V = c t^lambda (exact; see slt3_checks 3.2.1), so the mean of n L_n is
 # linear in 1/beta with slope lambda, equals nL(w*) + lambda at beta = 1 and nL(w*) + lambda log n at beta = 1/log n.
 from scipy.integrate import quad
 lam, n = 0.75, 1000.0

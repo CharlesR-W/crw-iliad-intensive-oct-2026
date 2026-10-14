@@ -37,3 +37,34 @@ My own fixes before the critique: Exercise 2.3.1 said "same sign" where the defi
 ## Word count
 
 Page prose, with code and captions stripped from the HTML: 4016 → 3924. Builder markdown outside the exercise statements: 2050 → 1854. That includes about 95 words for the required blog block and about 100 words of caveats added after the critique, so the original prose itself was cut by about 15%. Captions add 310 words. Exercises and worked solutions are kept in full.
+
+## Streamlining pass (2026-10-14, afternoon)
+
+Brief: `reviews/slt/2026-10-14-streamline-brief.md`.
+
+**Size.** Page text, with code stripped and captions included: 4250 → 1965 words (target ≤ 2200). Inline-math spans: 578 → 223 (display equations kept, and some added so the sentences around them can be words).
+
+**What was removed.**
+- All reading recommendations: the keystone `reading()` in the opening, the closing Readings section (Furman's exercises, the Watanabe survey, and both books). The `reading`/`references`/`book` imports are gone too.
+- The "Read the blog posts first" block, replaced by the brief's "These notebooks are a backup" wording.
+- The setup paragraph, cut to a one-line notation plus one display; the population-vs-empirical caveat, cut to two sentences.
+- The Mellin section's convention remarks and its explanation of the proof strategy.
+- The thermodynamics paragraph, cut to one short paragraph that names where the analogy breaks in one line.
+- The code-cell prose, cut to one line per cell.
+- Exercises, going from 6/5/4 parts to 3/4/3:
+  - 2.1: removed the w^{2k}, w²+v⁴ and sum-rule parts; merged the slicing and power-law parts; removed the regular-case constant (the text states λ = d/2).
+  - 2.2: removed the w²+v⁴ pole part and the prior-change part; folded the cubic reparametrization in here from 2.1.
+  - 2.3: removed the derivation of the log-odds (it is now in the text) and the "no crossover" variant.
+- Solutions are cut to their key steps.
+
+**What was kept.** All seven figures (captions now one sentence each), all four code cells, and the corrections from this morning's critique.
+
+**EFT hangers.** NB2 had no pointer to NB3 §3.2 or to an effective theory. The one NB3 mention ("Notebook 3's estimator is built on this identity") carries no section number.
+
+**Checks.** `slt2_checks.py` and `slt2_free_energy_volume_presentation.py` now use the new exercise labels and both still pass. Some of their checks (for example the w²+v⁴ volume) now guard only the code cell. Build, `--check` and `--run` pass (run: 4.4 s).
+
+**Critique (Codex, effort medium) and what changed.** I accepted all of its points:
+- Restored conditions the cuts had dropped: Δλ/ΔL > e for the switch; +o(1) and "near t = 0" in Exercise 2.1.1; "interior minimum, continuous positive prior, small t" in Exercise 2.1.3; "multiplicity one" where the log log n term is dropped in §2.3.
+- "Training loss fluctuates by O(√n)" now reads "summed training loss".
+- Defined π_n and c_α in §2.3's notation line, and Γ in Exercise 2.1.1.
+- Deleted one sentence that repeated the definition of λ.

@@ -12,7 +12,7 @@ Figures (one per idea, placed where the idea is introduced):
                  vs misspecified, simulated for the model N(mu, e^{2s}) (§1.2)
   occam          the Occam factor as a ratio of two volumes, 1-D and 2-D (§1.3)
   predictors     Bayes / Gibbs / maximum-likelihood predictive densities in the misspecified
-                 example of Exercise 1.4.4 (§1.4)
+                 example of Exercise 1.4.3 (§1.4)
 """
 from pathlib import Path
 
@@ -33,12 +33,12 @@ plt.rcParams.update({
     "font.size": 11, "mathtext.fontset": "cm", "font.family": "DejaVu Sans",
     "axes.edgecolor": MUTED, "axes.labelcolor": INK, "xtick.color": MUTED, "ytick.color": MUTED,
     "axes.spines.top": False, "axes.spines.right": False, "svg.fonttype": "path",
-    "savefig.bbox": "tight", "savefig.pad_inches": 0.05, "figure.facecolor": "white",
+    "savefig.bbox": "tight", "savefig.pad_inches": 0.05, "figure.facecolor": "white", "svg.hashsalt": "slt1",
 })
 
 
 def save(fig, name):
-    fig.savefig(OUT / f"{STEM}_{name}.svg")
+    fig.savefig(OUT / f"{STEM}_{name}.svg", metadata={"Date": None})  # reproducible output
     plt.close(fig)
 
 
@@ -217,7 +217,7 @@ def fig_occam():
 
 # ---------------------------------------------------------------------------- predictors
 def fig_predictors():
-    """Exercise 1.4.4: model N(x; w, 1), flat prior, data q = N(0, 2), n = 4 (small, so the effect shows)."""
+    """Exercise 1.4.3: model N(x; w, 1), flat prior, data q = N(0, 2), n = 4 (small, so the effect shows)."""
     n, sigma2, xbar, w_gibbs = 4, 2.0, 0.4, 1.05
     v = 1.0 / n
     fig, axs = plt.subplots(1, 2, figsize=(7.4, 3.6), gridspec_kw={"width_ratios": [1, 1.3], "wspace": 0.12})

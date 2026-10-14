@@ -6,7 +6,6 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-10-14T10:59:30.237456</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -43,11 +42,11 @@ L 203.408757 173.192
 L 203.408757 62.312 
 L 29.662012 62.312 
 z
-" clip-path="url(#pc01acac933)" style="fill: #b8b8b8; opacity: 0.35; stroke: #777777; stroke-linejoin: miter"/>
+" clip-path="url(#pbbf44e462f)" style="fill: #b8b8b8; opacity: 0.35; stroke: #777777; stroke-linejoin: miter"/>
    </g>
    <g id="FillBetweenPolyCollection_1">
     <defs>
-     <path id="m3a4069bd39" d="M 3.6 -18.245938 
+     <path id="m26e7595c85" d="M 3.6 -18.245938 
 L 3.6 -18.245938 
 L 3.788226 -18.245938 
 L 3.976451 -18.245938 
@@ -2454,8 +2453,8 @@ L 3.6 -18.245938
 z
 "/>
     </defs>
-    <g clip-path="url(#pc01acac933)">
-     <use xlink:href="#m3a4069bd39" x="0" y="191.437937" style="fill: #2f6ea8; fill-opacity: 0.5"/>
+    <g clip-path="url(#pbbf44e462f)">
+     <use xlink:href="#m26e7595c85" x="0" y="191.437937" style="fill: #2f6ea8; fill-opacity: 0.5"/>
     </g>
    </g>
    <g id="matplotlib.axis_1">
@@ -2585,7 +2584,7 @@ L 178.461621 173.151763
 L 187.684677 173.191458 
 L 229.470769 173.192 
 L 229.470769 173.192 
-" clip-path="url(#pc01acac933)" style="fill: none; stroke: #2f6ea8; stroke-width: 1.4; stroke-linecap: square"/>
+" clip-path="url(#pbbf44e462f)" style="fill: none; stroke: #2f6ea8; stroke-width: 1.4; stroke-linecap: square"/>
    </g>
    <g id="line2d_2">
     <path d="M 3.6 173.192 
@@ -2633,7 +2632,7 @@ L 161.333087 173.18429
 L 179.402749 173.192 
 L 229.470769 173.192 
 L 229.470769 173.192 
-" clip-path="url(#pc01acac933)" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #222222"/>
+" clip-path="url(#pbbf44e462f)" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #222222"/>
    </g>
    <g id="patch_4">
     <path d="M 3.6 173.192 
@@ -3829,7 +3828,7 @@ L 402.403077 152.043692
 L 402.403077 39.108308 
 L 289.467692 39.108308 
 z
-" clip-path="url(#pc440d6b37a)" style="fill: #b8b8b8; opacity: 0.35; stroke: #777777; stroke-linejoin: miter"/>
+" clip-path="url(#p0f0de57ecc)" style="fill: #b8b8b8; opacity: 0.35; stroke: #777777; stroke-linejoin: miter"/>
    </g>
    <g id="patch_10">
     <path d="M 357.209931 82.506783 
@@ -3842,7 +3841,7 @@ C 372.300989 82.838064 372.846618 80.884092 372.09281 79.664406
 C 371.339003 78.444721 369.347305 78.058903 366.556365 78.591925 
 C 363.765424 79.124947 360.403109 80.53329 357.209931 82.506783 
 z
-" clip-path="url(#pc440d6b37a)" style="fill: #2f6ea8; opacity: 0.6; stroke: #2f6ea8; stroke-linejoin: miter"/>
+" clip-path="url(#p0f0de57ecc)" style="fill: #2f6ea8; opacity: 0.6; stroke: #2f6ea8; stroke-linejoin: miter"/>
    </g>
    <g id="matplotlib.axis_3">
     <g id="text_7">
@@ -4091,10 +4090,10 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pc01acac933">
+  <clipPath id="pbbf44e462f">
    <rect x="3.6" y="17.96" width="225.870769" height="155.232"/>
   </clipPath>
-  <clipPath id="pc440d6b37a">
+  <clipPath id="p0f0de57ecc">
    <rect x="275.350769" y="24.991385" width="141.169231" height="141.169231"/>
   </clipPath>
  </defs>

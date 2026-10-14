@@ -44,3 +44,50 @@ Not done: Codex suggested a §1.4 diagram of Z_{n+1} = Z_n p*(x). I judged that 
 ## Addenda
 - 1: the blog-post block was added verbatim after the subtitle. The opening paragraph also points to DSLT 1, sections "Preliminaries of SLT" and "Deriving the BIC".
 - 2: I looked at the DSLT 1 and DSLT 2 images and reused none. They show singular sets and basin switching (NB2/NB3 material), and the one regular-model picture (a polynomial overfit) adds little to the Occam figure.
+
+## Streamlining pass (afternoon, 2026-10-14; brief: reviews/slt/2026-10-14-streamline-brief.md)
+
+**Counts** (page prose with code stripped, solutions included):
+- Words: 4408 → 2122 (target ≤ 2200).
+- Inline-math spans: 459 → 206.
+- Display equations went up a little, because derivations moved out of sentences into displays.
+
+**Removed**
+- All readings: the MacKay keystone, Hinton & van Camp, Wei et al., the Watanabe book, the closing Readings section, and the DSLT 1 pointer. MacKay (1992) stays as a one-clause bare citation in §1.3.
+- Imports of `reading`, `references` and `book`.
+- The "Read the blog posts first" block, replaced by the "These notebooks are a backup" block (verbatim).
+- The setup paragraphs, now a six-row notation table. The route is now four one-liners.
+- §1.1: the five-bullet "only formal" list (now one sentence) and the paragraph on the tempered posterior (now one sentence and one display).
+- §1.2: the "you may use the CLT" paragraph.
+- §1.3: the Laplace-method paragraph and the Gaussian-integral display (both now in Exercise 1.3.1), and the separate Z_n display.
+- §1.4: the bulleted predictor definitions, the G_n display and the paragraph after the table, all cut down.
+- Exercise parts:
+  - 1.1.1 (likelihood = e^{-nL_n}): already in the text.
+  - Old 1.2.1 and 1.2.2: merged into one part.
+  - 1.3.4 (exact conjugate free energy): the first code cell already checks it.
+  - 1.4.2 (generalization via the free-energy expansion, the "step of faith" route): a second derivation of the table that 1.4.2 (formerly 1.4.3) derives directly.
+  - Each section now has one exercise with three parts. Solutions are cut to their key steps and displays.
+- Captions cut to one sentence each. Code-cell prose cut to one line per block.
+- NB3 pointers ("a device Notebook 3 needs", "Notebook 3 turns the first one into an estimator") removed. NB1 had no EFT or §3.2 hangers.
+
+**Kept**
+- All five illustrations, all four code cells, and the dictionary table.
+- The §1.4 regular-case table and the misspecified example, with its exact Bayes-vs-MLE threshold.
+
+**Check label updates**
+- In `checks/slt1_checks.py`, only the labels and comments changed for the renumbered exercises: 1.3.4 → "conjugate model", 1.4.4 → 1.4.3, 1.4.3 → 1.4.2. The asserts are unchanged.
+- The same relabelling was applied to `checks/slt1_bayes_statmech_solutions.py` and to the figure script's docstrings.
+
+**Verification**
+- Build, `--check` and `--run` pass (1.4 s).
+- All three slt1 check scripts pass.
+- Page rendered headless and inspected.
+
+**Codex critique** (`--effort medium`; all five points held and were applied):
+1. Restored "positive definite" for H_n and for A in Laplace's formula.
+2. Restored the "replace ŵ by w₀ inside the 1/n terms" qualification in the Bayes-row solution.
+3. "The total training loss nL_n is the energy", consistent with the table.
+4. §1.4 notation is restated in full, and K_n is defined at its first use in §1.1.
+5. Cut a padded sentence after the free-energy identity.
+
+**Not verified:** nothing new. No new formulas were introduced; the remaining ones are covered by the existing checks.
