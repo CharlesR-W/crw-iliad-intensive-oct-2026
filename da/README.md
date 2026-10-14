@@ -18,7 +18,7 @@ Each notebook comes as two files:
 | DA1 | **Core.** The question (counterfactuals, overdetermination, Shapley); targets and conventions; the classical influence function and exact deletion in linear regression; what breaks for neural networks (damping, Gauss–Newton, PBRF); how to check an attribution (LOO, LDS); a lens relating the methods (interactive filter explorer) | [da1_core.html](da1_core.html) | [.ipynb](da1_core.ipynb) |
 | DA2 | **Methods, an ordered tour.** IFs at scale (EK-FAC); unrolling (TracIn, SOURCE, MAGIC); Bayesian influence functions; influence over training in deep linear networks; datamodels and TRAK; open problems | [da2_methods.html](da2_methods.html) | [.ipynb](da2_methods.ipynb) |
 
-The opening lecture outline is in [`lectures/L1_attribution.md`](lectures/L1_attribution.md).
+The opening lecture outline is in [`lectures/L1_attribution.md`](lectures/L1_attribution.md). The second lecture, on Hessian-vector products, Lanczos and stochastic Lanczos quadrature up to a 120B-parameter spectrum, is [`lectures/L2_curvature_at_scale.html`](lectures/L2_curvature_at_scale.html) (slides) with its outline and speaker notes in [`lectures/L2_curvature_at_scale.md`](lectures/L2_curvature_at_scale.md).
 
 ## For maintainers
 
