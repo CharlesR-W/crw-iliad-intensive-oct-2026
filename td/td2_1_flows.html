@@ -270,12 +270,12 @@ article details.code > summary:hover { color: var(--fg); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
+<li><a href="#readings">Readings</a></li>
 <li><a href="#11-stability-on-a-quadratic">1.1 Stability on a quadratic</a></li>
 <li><a href="#12-backward-error-analysis">1.2 Backward error analysis</a></li>
 <li><a href="#13-is-the-expansion-valid">1.3 Is the expansion valid?</a></li>
 <li><a href="#14-the-sgd-version-shuffled-minibatches">1.4 The SGD version: shuffled minibatches</a></li>
 <li><a href="#15-momentum">1.5 Momentum</a></li>
-<li><a href="#readings">Readings</a></li>
 </ol>
 </details>
 <div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 14 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
@@ -287,19 +287,7 @@ article details.code > summary:hover { color: var(--fg); }
 <p class="run-note">To run the code, open <a href='td2_1_flows.ipynb'><code>td2_1_flows.ipynb</code></a> in Jupyter (CPU only; needs numpy and matplotlib). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
 
 <p>Continuous-time stories about training replace gradient descent (GD) by gradient flow. <em>Backward error analysis</em> recovers what that drops: GD follows a slightly different flow, whose first correction penalizes the squared gradient norm (<em>implicit gradient regularization</em>, IGR). This notebook derives that correction, its SGD and momentum versions, and where the expansion stops being trustworthy.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2009.11162">Implicit gradient regularization</a></strong>, Barrett &amp; Dherin (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>To first order in the step size <span class="math inline">\eta</span>, GD follows gradient flow on <span class="math inline">L+\frac\eta4\|\nabla L\|^2</span>; the paper derives this (Theorem 3.1) and tests the resulting preference for flat minima on a two-parameter model and on deep nets. Section 3 is §1.2 below.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2101.12176">On the origin of implicit regularization in stochastic gradient descent</a></strong>, Smith, Dherin, Barrett &amp; De (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The same calculation for shuffled minibatch SGD (§1.4): an extra implicit penalty on the spread of minibatch gradients, scaling like learning rate over batch size, with experiments showing that adding it explicitly recovers much of the benefit of a large learning rate.</p>
-</div>
-
-<p><strong>Route.</strong> <span class="math inline">S</span> is the sharpness (the largest Hessian eigenvalue). Each section’s derivations, exercises and code are in its optional walkthrough.</p>
+<p><strong>Route.</strong> The <a href="#td21-readings">Readings</a> come first: every paper of the notebook, grouped by section. The sections after them are the derivations and walkthrough (exercises with worked solutions, and code), for whoever wants them. <span class="math inline">S</span> is the sharpness (the largest Hessian eigenvalue).</p>
 <ul>
 <li><a href="#td21-s1">1.1 Stability on a quadratic</a>: GD converges iff <span class="math inline">\eta S&lt;2</span>.</li>
 <li><a href="#td21-s2">1.2 Backward error analysis</a>: GD follows gradient flow on <span class="math inline">L+\tfrac\eta4\|\nabla L\|^2</span>, to first order.</li>
@@ -348,17 +336,65 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 
+<details class="sec sec2" data-sec="readings" open>
+<summary><h2 id="readings">Readings</h2></summary>
+<div class="sec-body">
+<a id="td21-readings"></a>
+<p><strong>Backward error analysis (<a href="#td21-s2">§1.2</a>).</strong> The paper this notebook is built on.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2009.11162">Implicit gradient regularization</a></strong>, Barrett &amp; Dherin (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>To first order in the step size <span class="math inline">\eta</span>, GD follows gradient flow on <span class="math inline">L+\frac\eta4\|\nabla L\|^2</span>; the paper derives this (Theorem 3.1) and tests the resulting preference for flat minima on a two-parameter model and on deep nets. Section 3 is §1.2.</p>
+</div>
+
+<p><strong>Is the expansion valid? (<a href="#td21-s3">§1.3</a>).</strong> Why the series diverges, and where training actually sits.</p>
+<div class="reading">
+
+<p><strong><a href="https://archive-ouverte.unige.ch/unige:12439">Asymptotic expansions and backward analysis for numerical integrators</a></strong>, Hairer &amp; Lubich (2000) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
+<p>A short open-access account, by two of the textbook’s authors, of why modified equations diverge and what truncating them still guarantees, on exactly solvable examples.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2103.00065">Gradient descent on neural networks typically occurs at the edge of stability</a></strong>, Cohen, Kaur, Li, Kolter &amp; Talwalkar (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Under full-batch GD the sharpness typically rises until <span class="math inline">\eta S\approx2</span> and stays there (<span class="math inline">2(1+\beta)</span> with heavy-ball momentum), so full-batch training usually leaves the regime where the modified flow is accurate; exceptions are discussed.</p>
+</div>
+
+<p><strong>Shuffled-minibatch SGD (<a href="#td21-s4">§1.4</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2101.12176">On the origin of implicit regularization in stochastic gradient descent</a></strong>, Smith, Dherin, Barrett &amp; De (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The same calculation for shuffled minibatch SGD (§1.4): an extra implicit penalty on the spread of minibatch gradients, scaling like learning rate over batch size, with experiments showing that adding it explicitly recovers much of the benefit of a large learning rate.</p>
+</div>
+
+<p><strong>Momentum (<a href="#td21-s5">§1.5</a>).</strong> Goh’s first section also does §1.1’s quadratic case.</p>
+<div class="reading">
+
+<p><strong><a href="https://distill.pub/2017/momentum/">Why momentum really works</a></strong>, Goh (Distill, 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Interactive: heavy ball on a convex quadratic, eigendirection by eigendirection, with the stability region, critical damping, the optimal tuning and the <span class="math inline">\sqrt\kappa</span> speedup that this section skips.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2302.00849">Implicit regularization in heavy-ball momentum accelerated stochastic gradient descent</a></strong>, Ghosh, Lyu, Zhang &amp; Wang (ICLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The heavy-ball modified flow with an <span class="math inline">O(\eta^2)</span> bound for the method started from rest (their Theorem 4.1, with explicit <span class="math inline">\beta^k</span> transient terms), and the SGD-with-momentum version, whose extra noise term mirrors §1.4.</p>
+</div>
+
+<p><strong>Also:</strong> <a href="https://arxiv.org/abs/2302.01952">Rosca, Wu, Qin &amp; Dherin, a continuous-time model of GD and instability</a> (the complex “principal flow”, exact on quadratics; Exercise 1.2.c); <a href="https://www.jmlr.org/papers/v22/19-466.html">Kovachki &amp; Stuart, continuous-time analysis of momentum methods</a> (the damped ODE and slow manifold of §1.5; see the sign-error note there); <a href="https://arxiv.org/abs/2309.00079">Cattaneo, Klusowski &amp; Shigida, on the implicit bias of Adam</a> (backward error analysis for Adam and RMSProp; end of §1.5).</p>
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="https://doi.org/10.1007/3-540-30666-8_9">Geometric Numerical Integration</a>, Hairer, Lubich &amp; Wanner (Springer, 2nd ed. 2006), ch. IX (backward error analysis; §IX.7 for optimal truncation).</p>
+</div>
+</div>
+</details>
 <details class="sec sec2" data-sec="11-stability-on-a-quadratic">
 <summary><h2 id="11-stability-on-a-quadratic">1.1 Stability on a quadratic</h2></summary>
 <div class="sec-body">
 <a id="td21-s1"></a>
-<p>On a quadratic loss, gradient descent with step size <span class="math inline">\eta</span> converges iff <span class="math inline">\eta S&lt;2</span>, where the <em>sharpness</em> <span class="math inline">S</span> is the largest eigenvalue of the Hessian <span class="math inline">H</span>. Near a minimum the same holds for the linearization, so minima sharper than <span class="math inline">2/\eta</span> repel GD, while gradient flow (<span class="math inline">\dot\theta=-\nabla L</span>) converges to them. This threshold recurs in the rest of the notebook and in <code>td2_2_edge_of_stability</code>.</p>
-<p>The first section of Goh’s <a href="https://distill.pub/2017/momentum/">Why momentum really works</a> (the lead reading of §1.5) does this case with interactive pictures.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
+<p>On a quadratic loss, gradient descent with step size <span class="math inline">\eta</span> converges iff <span class="math inline">\eta S&lt;2</span>, where the <em>sharpness</em> <span class="math inline">S</span> is the largest eigenvalue of the Hessian <span class="math inline">H</span>. Near a minimum the same holds for the linearization, so minima sharper than <span class="math inline">2/\eta</span> repel GD, while gradient flow (<span class="math inline">\dot\theta=-\nabla L</span>) converges to them. This threshold recurs in the rest of the notebook and in <code>td2_3_edge_of_stability</code>.</p>
+<p>The first section of Goh’s <em>Why momentum really works</em> (in the <a href="#td21-readings">Readings</a>, under §1.5) does this case with interactive pictures.</p>
 <a id="td21-s1-walkthrough"></a>
-<p><em>Notation:</em> GD is <span class="math inline">\theta_{k+1}=\theta_k-\eta\nabla L(\theta_k)</span>; gradient flow uses time <span class="math inline">t=k\eta</span>, so one step advances time by <span class="math inline">\eta</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> GD is <span class="math inline">\theta_{k+1}=\theta_k-\eta\nabla L(\theta_k)</span>; gradient flow uses time <span class="math inline">t=k\eta</span>, so one step advances time by <span class="math inline">\eta</span>.</p>
 <p>On <span class="math inline">L(\theta)=\tfrac12\theta^\top H\theta</span> with <span class="math inline">H</span> symmetric positive semidefinite, GD is linear, <span class="math inline">\theta_{k+1}=(I-\eta H)\theta_k</span>. In the eigenbasis <span class="math inline">Hu_i=\lambda_iu_i</span> each coordinate <span class="math inline">c_i=u_i^\top\theta</span> evolves on its own:</p>
 <p><span class="math display">
 c_i^{(k)}=(1-\eta\lambda_i)^k\,c_i^{(0)},
@@ -397,9 +433,6 @@ c_i(t)=e^{-\lambda_it}c_i(0),\quad t=k\eta .
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="12-backward-error-analysis">
 <summary><h2 id="12-backward-error-analysis">1.2 Backward error analysis</h2></summary>
 <div class="sec-body">
@@ -409,13 +442,10 @@ c_i(t)=e^{-\lambda_it}c_i(0),\quad t=k\eta .
 \dot\theta=-\nabla\tilde L,\qquad \tilde L=L+\frac\eta4\|\nabla L\|^2 ,
 </span></p>
 <p>with time <span class="math inline">t=k\eta</span>. The extra term penalizes the squared gradient norm: this is <em>implicit gradient regularization</em> (IGR).</p>
-<p><strong>Paper:</strong> Barrett &amp; Dherin, <a href="https://arxiv.org/abs/2009.11162">Implicit gradient regularization</a> (card at the top), Section 3. The method is standard numerical analysis: Hairer, Lubich and Wanner, <em>Geometric Numerical Integration</em>, ch. IX (see Readings).</p>
+<p><strong>Paper:</strong> Barrett &amp; Dherin, <em>Implicit gradient regularization</em>, Section 3 (see <a href="#td21-readings">Readings</a>). The method is standard numerical analysis: Hairer, Lubich and Wanner, <em>Geometric Numerical Integration</em>, ch. IX.</p>
 <p><strong>Core idea.</strong> Write <span class="math inline">g=\nabla L</span> and <span class="math inline">H</span> for the Hessian. Over a time <span class="math inline">\eta</span>, gradient flow moves by <span class="math inline">-\eta g+\tfrac{\eta^2}2Hg+O(\eta^3)</span>, because the gradient changes along the way. GD uses the gradient from the start of the step and moves by exactly <span class="math inline">-\eta g</span>, overshooting by <span class="math inline">-\tfrac{\eta^2}2Hg</span>. A flow that reproduces GD must add that overshoot as a drift, <span class="math inline">-\tfrac\eta2Hg=-\nabla\big(\tfrac\eta4\|g\|^2\big)</span>. Near a minimum <span class="math inline">\|\nabla L\|^2\approx\delta^\top H^2\delta</span> for a displacement <span class="math inline">\delta</span>, so the penalty is heaviest in sharp directions. It vanishes at every critical point, so local minima of <span class="math inline">L</span> stay local minima of <span class="math inline">\tilde L</span> and IGR does not help GD escape them. It matters when the minima form a family, as in overparametrized models, where it changes <em>which</em> minimum GD reaches (Exercise 1.2.d). That GD ends at flatter minima in general is Barrett and Dherin’s prediction, supported by experiments, not a theorem.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-2">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-2">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td21-s2-walkthrough"></a>
-<p><em>Notation:</em> loss <span class="math inline">L</span>, <span class="math inline">g=\nabla L</span>, <span class="math inline">H=\nabla^2L</span>, step <span class="math inline">\eta</span>; GD is <span class="math inline">\theta_{k+1}=\theta_k-\eta g(\theta_k)</span> and <span class="math inline">t=k\eta</span>. For a general one-step numerical method the state is <span class="math inline">y</span> and the step is <span class="math inline">h</span>; for GD, <span class="math inline">y=\theta</span> and <span class="math inline">h=\eta</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> loss <span class="math inline">L</span>, <span class="math inline">g=\nabla L</span>, <span class="math inline">H=\nabla^2L</span>, step <span class="math inline">\eta</span>; GD is <span class="math inline">\theta_{k+1}=\theta_k-\eta g(\theta_k)</span> and <span class="math inline">t=k\eta</span>. For a general one-step numerical method the state is <span class="math inline">y</span> and the step is <span class="math inline">h</span>; for GD, <span class="math inline">y=\theta</span> and <span class="math inline">h=\eta</span>.</p>
 <p><em>Forward error</em> asks how far the iterates are from the true flow; <em>backward error</em> asks which nearby ODE reproduces them exactly. The difference between that ODE and the original says what the discretization does. (Implicit biases of gradient flow itself, such as max-margin solutions, are a different story.)</p>
 <p><strong>The setup.</strong> A one-step method with step <span class="math inline">h</span> maps <span class="math inline">y\mapsto\Phi_h(y)</span>, with</p>
 <p><span class="math display">
@@ -525,7 +555,7 @@ f_3=\Big(-\tfrac13xy^3-\tfrac7{12}x^3y,\ \ -\tfrac5{12}x^2y^2-\tfrac16x^4\Big),
 a=\frac{\log(1-\eta\lambda)}{\eta}=-\lambda\Big(1+\frac{\eta\lambda}{2}+\frac{(\eta\lambda)^2}{3}+\frac{(\eta\lambda)^3}{4}+\cdots\Big)=-\lambda\sum_{j\ge0}\frac{(\eta\lambda)^j}{j+1}.
 </span></p>
 <p>The <span class="math inline">O(\eta)</span> term <span class="math inline">-\tfrac12\eta\lambda^2x</span> is <span class="math inline">\eta f_2=-\tfrac\eta2Hg</span> with <span class="math inline">H=\lambda</span>, <span class="math inline">g=\lambda x</span>. The <span class="math inline">O(\eta^2)</span> term <span class="math inline">-\tfrac13\eta^2\lambda^3x</span> is <span class="math inline">\eta^2f_3=-\tfrac{\eta^2}{3}H^2g</span> (the third-derivative term vanishes for a quadratic). For <span class="math inline">\eta\lambda&lt;1</span> the exact modified equation is the gradient flow of <span class="math inline">-\tfrac{a}{2}x^2</span>: on a quadratic with <span class="math inline">\eta S&lt;1</span>, GD <em>is</em> a gradient flow, with a step-dependent curvature <span class="math inline">-a&gt;\lambda</span>.</p>
-<p><strong>2.</strong> The series <span class="math inline">\sum_jz^j/(j+1)=-\log(1-z)/z</span> converges for <span class="math inline">|z|&lt;1</span>, so the modified equation converges only for <span class="math inline">\eta\lambda&lt;1</span>. At <span class="math inline">\eta\lambda=1</span> the rate <span class="math inline">a</span> diverges, because GD reaches <span class="math inline">0</span> in one step and a flow can only approach it asymptotically. For <span class="math inline">1&lt;\eta\lambda&lt;2</span>, <span class="math inline">1-\eta\lambda&lt;0</span> and <span class="math inline">\log(1-\eta\lambda)</span> is complex: GD flips the sign of <span class="math inline">x</span> every step. No real ODE <span class="math inline">\dot x=F(x)</span> can do that. If <span class="math inline">F</span> is smooth and <span class="math inline">F(0)=0</span> (as it must be, since <span class="math inline">0</span> is a fixed point of GD), uniqueness of solutions forbids a trajectory from crossing <span class="math inline">0</span>. So for <span class="math inline">\eta\lambda&gt;1</span> no real one-dimensional modified equation exists. In <span class="math inline">d</span> dimensions a linear gradient flow <span class="math inline">\dot x=-Ax</span> (<span class="math inline">A</span> symmetric) has time-<span class="math inline">\eta</span> map <span class="math inline">e^{-\eta A}</span>, which is positive definite, so it cannot produce a negative multiplier either. (A non-gradient flow can, e.g. one that rotates a two-dimensional block by <span class="math inline">\pi</span> per step while shrinking it, but that is no longer a “modified loss”.) The literature has two ways out. One is to allow complex flows (<a href="https://arxiv.org/abs/2302.01952">Rosca et al.</a>’s “principal flow”, <span class="math inline">\dot\theta=\sum_i\frac{\log(1-\eta\lambda_i)}{\eta\lambda_i}(g^\top u_i)u_i</span>, exact on quadratics). The other is to model only the two-step map or a time average, whose multiplier <span class="math inline">(1-\eta\lambda)^2</span> is positive; that is the route of the central flows in <code>td2_2_edge_of_stability</code>.</p>
+<p><strong>2.</strong> The series <span class="math inline">\sum_jz^j/(j+1)=-\log(1-z)/z</span> converges for <span class="math inline">|z|&lt;1</span>, so the modified equation converges only for <span class="math inline">\eta\lambda&lt;1</span>. At <span class="math inline">\eta\lambda=1</span> the rate <span class="math inline">a</span> diverges, because GD reaches <span class="math inline">0</span> in one step and a flow can only approach it asymptotically. For <span class="math inline">1&lt;\eta\lambda&lt;2</span>, <span class="math inline">1-\eta\lambda&lt;0</span> and <span class="math inline">\log(1-\eta\lambda)</span> is complex: GD flips the sign of <span class="math inline">x</span> every step. No real ODE <span class="math inline">\dot x=F(x)</span> can do that. If <span class="math inline">F</span> is smooth and <span class="math inline">F(0)=0</span> (as it must be, since <span class="math inline">0</span> is a fixed point of GD), uniqueness of solutions forbids a trajectory from crossing <span class="math inline">0</span>. So for <span class="math inline">\eta\lambda&gt;1</span> no real one-dimensional modified equation exists. In <span class="math inline">d</span> dimensions a linear gradient flow <span class="math inline">\dot x=-Ax</span> (<span class="math inline">A</span> symmetric) has time-<span class="math inline">\eta</span> map <span class="math inline">e^{-\eta A}</span>, which is positive definite, so it cannot produce a negative multiplier either. (A non-gradient flow can, e.g. one that rotates a two-dimensional block by <span class="math inline">\pi</span> per step while shrinking it, but that is no longer a “modified loss”.) The literature has two ways out. One is to allow complex flows (<a href="https://arxiv.org/abs/2302.01952">Rosca et al.</a>’s “principal flow”, <span class="math inline">\dot\theta=\sum_i\frac{\log(1-\eta\lambda_i)}{\eta\lambda_i}(g^\top u_i)u_i</span>, exact on quadratics). The other is to model only the two-step map or a time average, whose multiplier <span class="math inline">(1-\eta\lambda)^2</span> is positive; that is the route of the central flows in <code>td2_3_edge_of_stability</code>.</p>
 <p><strong>3.</strong> Linearize at <span class="math inline">\theta^*</span>. If <span class="math inline">\tilde F</span> is the modified field, its time-<span class="math inline">\eta</span> flow fixes <span class="math inline">\theta^*</span>, and the Jacobian of that flow map at <span class="math inline">\theta^*</span> is <span class="math inline">e^{\eta\,D\tilde F(\theta^*)}</span>. As formal series in <span class="math inline">\eta</span> this must equal the Jacobian of the GD map, <span class="math inline">I-\eta H^*</span>. So <span class="math inline">D\tilde F(\theta^*)=\frac1\eta\log(I-\eta H^*)=-\sum_{j\ge0}\frac{\eta^j}{j+1}(H^*)^{j+1}</span>, which is item 1 applied eigendirection by eigendirection. Truncating at any order leaves a sum of negative semidefinite terms (negative definite when <span class="math inline">H^*\succ0</span>), so every truncation makes <span class="math inline">\theta^*</span> stable, whatever <span class="math inline">\eta</span> is. The GD instability at <span class="math inline">\eta S^*&gt;2</span> is a threshold of the discrete map. It does not grow smoothly from <span class="math inline">\eta=0</span>, so no finite truncation contains it.</p>
 </div>
 </details>
@@ -660,31 +690,14 @@ eta=0.35  eta*S_init=1.43  final S: GF 4.463, GD 4.125;  IGR flow captures 16% o
 <p>The slopes come out at 1 and 2: the IGR flow tracks GD one order better than gradient flow. The second printout is more sobering. The IGR flow accounts for most of GD’s displacement from the gradient-flow endpoint at <span class="math inline">\eta S\approx0.2</span>, less than half at <span class="math inline">\eta S\approx0.8</span>, and a small fraction at <span class="math inline">\eta S\approx1.4</span>. The first-order correction gets the <em>direction</em> of the effect right (toward balance and flatness) well before it gets the <em>size</em> right. §1.3 asks why.</p>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="13-is-the-expansion-valid">
 <summary><h2 id="13-is-the-expansion-valid">1.3 Is the expansion valid?</h2></summary>
 <div class="sec-body">
 <a id="td21-s3"></a>
 <p>Only as an asymptotic series. The modified equation of §1.2 is a power series in the step size <span class="math inline">\eta</span> that usually diverges; truncations come with rigorous error bounds, controlled roughly by <span class="math inline">\eta S</span> (step size times sharpness, the largest Hessian eigenvalue). The kept first correction degrades as <span class="math inline">\eta S</span> approaches 1, and no truncation sees the GD instability at <span class="math inline">\eta S=2</span>, which is where full-batch training of neural networks typically sits.</p>
-<div class="reading">
-
-<p><strong><a href="https://archive-ouverte.unige.ch/unige:12439">Asymptotic expansions and backward analysis for numerical integrators</a></strong>, Hairer &amp; Lubich (2000) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 1/5: under 15 minutes (a short post, or one section of a paper)">Length <span class="on">●</span><span class="off">○○○○</span></span></span></p>
-<p>A short open-access account, by two of the textbook’s authors, of why modified equations diverge and what truncating them still guarantees, on exactly solvable examples.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2103.00065">Gradient descent on neural networks typically occurs at the edge of stability</a></strong>, Cohen, Kaur, Li, Kolter &amp; Talwalkar (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Under full-batch GD the sharpness typically rises until <span class="math inline">\eta S\approx2</span> and stays there (<span class="math inline">2(1+\beta)</span> with heavy-ball momentum), so full-batch training usually leaves the regime where the modified flow is accurate; exceptions are discussed.</p>
-</div>
-
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-3">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-3">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
+<p><strong>Papers:</strong> Hairer &amp; Lubich (2000) on asymptotic expansions; Cohen et al. (2021) on the edge of stability (see <a href="#td21-readings">Readings</a>).</p>
 <a id="td21-s3-walkthrough"></a>
-<p><em>Notation:</em> GD with step <span class="math inline">\eta</span> on <span class="math inline">L</span>, gradient <span class="math inline">g</span>, Hessian <span class="math inline">H</span>, sharpness <span class="math inline">S</span>. A one-step method <span class="math inline">y\mapsto y+hf(y)+O(h^2)</span> has modified field <span class="math inline">\tilde f=f+hf_2+h^2f_3+\cdots</span> (§1.2) and truncation <span class="math inline">\tilde f_{[r]}=f+\dots+h^{r-1}f_r</span>. For GD, <span class="math inline">h=\eta</span>, <span class="math inline">f=-g</span>, <span class="math inline">f_2=-\tfrac12Hg</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> GD with step <span class="math inline">\eta</span> on <span class="math inline">L</span>, gradient <span class="math inline">g</span>, Hessian <span class="math inline">H</span>, sharpness <span class="math inline">S</span>. A one-step method <span class="math inline">y\mapsto y+hf(y)+O(h^2)</span> has modified field <span class="math inline">\tilde f=f+hf_2+h^2f_3+\cdots</span> (§1.2) and truncation <span class="math inline">\tilde f_{[r]}=f+\dots+h^{r-1}f_r</span>. For GD, <span class="math inline">h=\eta</span>, <span class="math inline">f=-g</span>, <span class="math inline">f_2=-\tfrac12Hg</span>.</p>
 <p><strong>It usually diverges.</strong> Even for analytic <span class="math inline">f</span> the series typically has zero radius of convergence; the quadratic of Exercise 1.2.c is the exception. For GD on <span class="math inline">L=y^3/3</span> (Exercise 1.3.a and the code below) the coefficients grow like <span class="math inline">(k-1)!/(2\pi)^k</span> over 70 computed orders.</p>
 <p><strong>What a truncation guarantees.</strong></p>
 <ol type="1">
@@ -698,7 +711,7 @@ eta=0.35  eta*S_init=1.43  final S: GF 4.463, GD 4.125;  IGR flow captures 16% o
 <li><em>No gradient flow reproduces the step</em> once a quadratic multiplier <span class="math inline">1-\eta\lambda</span> is <span class="math inline">\le0</span> (Exercise 1.2.c). For <span class="math inline">y^3/3</span> the GD map stops being invertible where <span class="math inline">\Phi_h&#39;(y)=1-2hy=1-\eta S=0</span>, and the truncation errors in the code below deteriorate as <span class="math inline">\eta S\to1</span>.</li>
 <li><em>Divergence.</em> Harmless in practice: optimally truncated, the series is extremely accurate when <span class="math inline">\eta S</span> is small (least term <span class="math inline">e^{-4\pi/(\eta S)}</span> for <span class="math inline">y^3/3</span>, Exercise 1.3.b), and nobody uses high orders anyway.</li>
 </ol>
-<p><strong>Where training sits.</strong> Beyond <span class="math inline">\eta S=2</span> a minimum is unstable for GD (Exercise 1.1), a threshold invisible to every truncation (Exercise 1.2.c, item 3). Full-batch training typically sits at <span class="math inline">\eta S\approx2</span> (Cohen et al.), where the expansion parameter is about 2 in the sharpest direction but still small for a much flatter bulk; <code>td2_2_edge_of_stability</code> treats the oscillating directions separately. Under minibatch SGD the full-batch sharpness settles below <span class="math inline">2/\eta</span>, while a batch-level curvature, <span class="math inline">\mathbb E_B\big[g_B^\top H_Bg_B/\|g_B\|^2\big]</span> with <span class="math inline">g_B</span>, <span class="math inline">H_B</span> the gradient and Hessian of a random minibatch’s loss, hovers near <span class="math inline">2/\eta</span> (<a href="https://arxiv.org/abs/2412.20553">Andreyev and Beneventano</a>, v5).</p>
+<p><strong>Where training sits.</strong> Beyond <span class="math inline">\eta S=2</span> a minimum is unstable for GD (Exercise 1.1), a threshold invisible to every truncation (Exercise 1.2.c, item 3). Full-batch training typically sits at <span class="math inline">\eta S\approx2</span> (Cohen et al.), where the expansion parameter is about 2 in the sharpest direction but still small for a much flatter bulk; <code>td2_3_edge_of_stability</code> treats the oscillating directions separately. Under minibatch SGD the full-batch sharpness settles below <span class="math inline">2/\eta</span>, while a batch-level curvature, <span class="math inline">\mathbb E_B\big[g_B^\top H_Bg_B/\|g_B\|^2\big]</span> with <span class="math inline">g_B</span>, <span class="math inline">H_B</span> the gradient and Hessian of a random minibatch’s loss, hovers near <span class="math inline">2/\eta</span> (<a href="https://arxiv.org/abs/2412.20553">Andreyev and Beneventano</a>, v5).</p>
 <p><strong>Exercise 1.3.a — A divergent modified equation.</strong></p>
 <p>Take GD on <span class="math inline">L(y)=y^3/3</span> for <span class="math inline">y&gt;0</span>, i.e. explicit Euler for <span class="math inline">\dot y=-y^2</span>: <span class="math inline">\Phi_h(y)=y-hy^2</span>.</p>
 <ol type="1">
@@ -832,9 +845,6 @@ eta*S=0.9: best one-step error 1.0e-04 at n=28;  exp(-2 pi/h) = 8.6e-07;  9 orde
 <p>The error first falls with the truncation order, then stops improving and grows; gaps are orders whose truncated field points the wrong way. The step starts at <span class="math inline">y_0=1</span>, where <span class="math inline">S=2</span>, so the least-term estimate of Exercise 1.3.b is <span class="math inline">e^{-2\pi/h}</span>. Up to <span class="math inline">\eta S=0.8</span> the best error lands within a factor of a few of it: consistent with the exponent, not a confirmation of the prefactor (the left panel shows how far the coefficients sit from the fitted curve). At <span class="math inline">\eta S=0.9</span> the best error is far above the estimate, as the step approaches the point where it is no longer invertible.</p>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="14-the-sgd-version-shuffled-minibatches">
 <summary><h2 id="14-the-sgd-version-shuffled-minibatches">1.4 The SGD version: shuffled minibatches</h2></summary>
 <div class="sec-body">
@@ -844,13 +854,10 @@ eta*S=0.9: best one-step error 1.0e-04 at n=28;  exp(-2 pi/h) = 8.6e-07;  9 orde
 \mathbb E\,\tilde L_{\rm SGD}=L+\frac\eta4\|\nabla L\|^2+\frac{N-B}{N-1}\,\frac{\eta}{4B}\,\mathrm{tr}\,\Sigma ,
 </span></p>
 <p>with <span class="math inline">N</span> examples, batch size <span class="math inline">B</span>, and <span class="math inline">\Sigma</span> the covariance of per-example gradients. The first correction is GD’s implicit gradient regularization (§1.2) and depends on <span class="math inline">\eta</span> alone; the second penalizes the spread of per-example gradients and scales like <span class="math inline">\eta/B</span>.</p>
-<p><strong>Paper:</strong> Smith, Dherin, Barrett &amp; De, <a href="https://arxiv.org/abs/2101.12176">On the origin of implicit regularization in SGD</a> (card at the top).</p>
+<p><strong>Paper:</strong> Smith, Dherin, Barrett &amp; De, <em>On the origin of implicit regularization in SGD</em> (see <a href="#td21-readings">Readings</a>).</p>
 <p><strong>Core idea.</strong> To first order in <span class="math inline">\eta</span>, one epoch of SGD equals one GD step of size <span class="math inline">m\eta</span> (<span class="math inline">m=N/B</span> batches): with each example used once per epoch, the gradient noise cancels at <span class="math inline">O(\eta)</span> and first shows up at <span class="math inline">O(\eta^2)</span>, as the bias above. The result is about the <em>mean</em> iterate over batch orders, and it needs the epoch length <span class="math inline">m\eta</span> times the <em>minibatch</em> curvatures to be small, a much stronger condition than for GD.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-4">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-4">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td21-s4-walkthrough"></a>
-<p><strong>Setup.</strong> <span class="math inline">N</span> examples with losses <span class="math inline">\ell_i</span>, <span class="math inline">L=\frac1N\sum_i\ell_i</span>, split into <span class="math inline">m=N/B</span> minibatches of size <span class="math inline">B</span> with losses <span class="math inline">\hat L_k=\frac1B\sum_{i\in\text{batch }k}\ell_i</span>, so <span class="math inline">L=\frac1m\sum_k\hat L_k</span>. One epoch of SGD with <em>random shuffling</em> visits each batch once, in a random order <span class="math inline">\pi</span>: <span class="math inline">\theta_{j+1}=\theta_j-\eta\nabla\hat L_{\pi(j)}(\theta_j)</span>. Per-example gradient covariance: <span class="math inline">\Sigma=\frac1N\sum_i(\nabla\ell_i-\nabla L)(\nabla\ell_i-\nabla L)^\top</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Setup:</em> <span class="math inline">N</span> examples with losses <span class="math inline">\ell_i</span>, <span class="math inline">L=\frac1N\sum_i\ell_i</span>, split into <span class="math inline">m=N/B</span> minibatches of size <span class="math inline">B</span> with losses <span class="math inline">\hat L_k=\frac1B\sum_{i\in\text{batch }k}\ell_i</span>, so <span class="math inline">L=\frac1m\sum_k\hat L_k</span>. One epoch of SGD with <em>random shuffling</em> visits each batch once, in a random order <span class="math inline">\pi</span>: <span class="math inline">\theta_{j+1}=\theta_j-\eta\nabla\hat L_{\pi(j)}(\theta_j)</span>. Per-example gradient covariance: <span class="math inline">\Sigma=\frac1N\sum_i(\nabla\ell_i-\nabla L)(\nabla\ell_i-\nabla L)^\top</span>.</p>
 <p>Smith et al. apply backward error analysis to a whole epoch. Averaged over batch orders (batches held fixed), the iterate after one epoch follows, up to <span class="math inline">O(m^3\eta^3)</span>, gradient flow for time <span class="math inline">m\eta</span> on</p>
 <p><span class="math display">
 \tilde L_{\rm SGD}=L+\frac{\eta}{4m}\sum_{k=0}^{m-1}\|\nabla\hat L_k\|^2
@@ -917,7 +924,7 @@ f_2=-\frac1{2m}\sum_k\hat H_k\hat g_k=-\nabla\Big(\frac1{4m}\sum_k\|\nabla\hat L
 \mathbb E\|\nabla\hat L-\nabla L\|^2=\frac{N\,\mathrm{tr}\,\Sigma}{B^2}\cdot\frac BN\Big(1-\frac{B-1}{N-1}\Big)=\frac{N-B}{N-1}\,\frac{\mathrm{tr}\,\Sigma}{B}.
 </span></p>
 <p>Each of the <span class="math inline">m</span> batches in a random partition is marginally such a uniform subset, so <span class="math inline">\mathbb E\frac1m\sum_k\|\nabla\hat L_k-\nabla L\|^2</span> takes the same value, which gives <span class="math inline">\mathbb E\,\tilde L_{\rm SGD}</span>. The factor <span class="math inline">\frac{N-B}{N-1}</span> is the finite-population correction: the term vanishes at <span class="math inline">B=N</span>.</p>
-<p><strong>2.</strong> The IGR term <span class="math inline">\frac\eta4\|\nabla L\|^2</span> does not change. The noise term <span class="math inline">\frac{N-B}{N-1}\frac{\eta}{4B}\mathrm{tr}\,\Sigma</span> is multiplied by <span class="math inline">2\frac{N-B/2}{N-B}</span>: a bit more than 2 when <span class="math inline">B\ll N</span>, and much more as <span class="math inline">B</span> approaches <span class="math inline">N</span> (where the term vanishes). Smaller batches strengthen the implicit penalty on gradient spread. Under linear scaling (<span class="math inline">\eta\to2\eta</span>, <span class="math inline">B\to2B</span>, <span class="math inline">B\ll N</span>) the noise term is unchanged but the IGR term doubles. So linear scaling preserves the modified loss only when the noise term dominates, <span class="math inline">\mathrm{tr}\,\Sigma/B\gg\|\nabla L\|^2</span>, the regime Smith et al. assume. <code>td2_3_sgd_sde</code> meets the same <span class="math inline">\eta</span> versus <span class="math inline">\eta/B</span> split in the stochastic modified equation.</p>
+<p><strong>2.</strong> The IGR term <span class="math inline">\frac\eta4\|\nabla L\|^2</span> does not change. The noise term <span class="math inline">\frac{N-B}{N-1}\frac{\eta}{4B}\mathrm{tr}\,\Sigma</span> is multiplied by <span class="math inline">2\frac{N-B/2}{N-B}</span>: a bit more than 2 when <span class="math inline">B\ll N</span>, and much more as <span class="math inline">B</span> approaches <span class="math inline">N</span> (where the term vanishes). Smaller batches strengthen the implicit penalty on gradient spread. Under linear scaling (<span class="math inline">\eta\to2\eta</span>, <span class="math inline">B\to2B</span>, <span class="math inline">B\ll N</span>) the noise term is unchanged but the IGR term doubles. So linear scaling preserves the modified loss only when the noise term dominates, <span class="math inline">\mathrm{tr}\,\Sigma/B\gg\|\nabla L\|^2</span>, the regime Smith et al. assume. <code>td2_2_sgd_sde</code> meets the same <span class="math inline">\eta</span> versus <span class="math inline">\eta/B</span> split in the stochastic modified equation.</p>
 </div>
 </details>
 
@@ -1036,31 +1043,14 @@ flow on L_SGD                    slope 2.98   errors [3.5e-04 4.5e-05 5.7e-06 7.
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="15-momentum">
 <summary><h2 id="15-momentum">1.5 Momentum</h2></summary>
 <div class="sec-body">
 <a id="td21-s5"></a>
 <p>Heavy-ball momentum, <span class="math inline">\theta_{k+1}=\theta_k-\eta\nabla L(\theta_k)+\beta(\theta_k-\theta_{k-1})</span> with <span class="math inline">\beta\in[0,1)</span>, does three things relative to GD with step <span class="math inline">\eta</span>. On a quadratic it stays stable up to <span class="math inline">\eta S&lt;2(1+\beta)</span> (<span class="math inline">S</span> the sharpness). For small steps it follows gradient flow sped up by <span class="math inline">1/(1-\beta)</span>: an <em>effective learning rate</em> <span class="math inline">\eta/(1-\beta)</span>. And at matched effective learning rate its implicit gradient penalty is <span class="math inline">(1+\beta)/(1-\beta)</span> times GD’s (19 times at <span class="math inline">\beta=0.9</span>), though only for curvatures far smaller than those where GD’s applies.</p>
-<div class="reading">
-
-<p><strong><a href="https://distill.pub/2017/momentum/">Why momentum really works</a></strong>, Goh (Distill, 2017) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Interactive: heavy ball on a convex quadratic, eigendirection by eigendirection, with the stability region, critical damping, the optimal tuning and the <span class="math inline">\sqrt\kappa</span> speedup that this section skips.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2302.00849">Implicit regularization in heavy-ball momentum accelerated stochastic gradient descent</a></strong>, Ghosh, Lyu, Zhang &amp; Wang (ICLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The heavy-ball modified flow with an <span class="math inline">O(\eta^2)</span> bound for the method started from rest (their Theorem 4.1, with explicit <span class="math inline">\beta^k</span> transient terms), and the SGD-with-momentum version, whose extra noise term mirrors §1.4.</p>
-</div>
-
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-5">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-5">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
+<p><strong>Papers:</strong> Goh (Distill, 2017); Ghosh, Lyu, Zhang &amp; Wang (2023) (see <a href="#td21-readings">Readings</a>).</p>
 <a id="td21-s5-walkthrough"></a>
-<p><em>Notation:</em> loss <span class="math inline">L</span>, gradient <span class="math inline">g=\nabla L</span>, Hessian <span class="math inline">H</span>, sharpness <span class="math inline">S=\lambda_{\max}(H)</span>, step <span class="math inline">\eta</span>, momentum <span class="math inline">\beta\in[0,1)</span>, time <span class="math inline">t=k\eta</span>. Recall from §1.1–1.2: for GD (<span class="math inline">\beta=0</span>) a quadratic direction of curvature <span class="math inline">\lambda</span> is stable iff <span class="math inline">0&lt;\eta\lambda&lt;2</span>, and to first order GD follows gradient flow on <span class="math inline">L+\tfrac\eta4\|\nabla L\|^2</span> (IGR).</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> loss <span class="math inline">L</span>, gradient <span class="math inline">g=\nabla L</span>, Hessian <span class="math inline">H</span>, sharpness <span class="math inline">S=\lambda_{\max}(H)</span>, step <span class="math inline">\eta</span>, momentum <span class="math inline">\beta\in[0,1)</span>, time <span class="math inline">t=k\eta</span>. Recall from §1.1–1.2: for GD (<span class="math inline">\beta=0</span>) a quadratic direction of curvature <span class="math inline">\lambda</span> is stable iff <span class="math inline">0&lt;\eta\lambda&lt;2</span>, and to first order GD follows gradient flow on <span class="math inline">L+\tfrac\eta4\|\nabla L\|^2</span> (IGR).</p>
 <p>Heavy ball (<a href="https://doi.org/10.1016/0041-5553%2864%2990137-5">Polyak 1964</a>) keeps a velocity <span class="math inline">v</span>:</p>
 <p><span class="math display">
 v_{k+1}=\beta v_k-\eta\,g(\theta_k),\qquad \theta_{k+1}=\theta_k+v_{k+1}.
@@ -1261,20 +1251,6 @@ modified flow, start from rest         slope (smallest 4 eta) 0.86</pre>
 <p>Read the slopes, not the heights. From a slow-manifold start the rescaled gradient flow is off by <span class="math inline">O(\eta)</span> and the modified flow by <span class="math inline">O(\eta^2)</span>. From rest, the modified flow carries the <span class="math inline">O(\eta)</span> start-up offset derived above. Its constant happens to be small here, so the from-rest curve sits <em>below</em> the slow-start curve at larger <span class="math inline">\eta</span> and only overtakes it at the smallest steps, where its slope of about 1 shows.</p>
 
 <p><strong>Adam (quoted, not derived).</strong> <a href="https://arxiv.org/abs/2309.00079">Cattaneo, Klusowski and Shigida</a> apply the same machinery to Adam. For full-batch Adam after the bias-correction transient, with gradient components large compared with <span class="math inline">\sqrt\epsilon</span>, they find a sign-like flow on <span class="math inline">L+\frac\eta2\big(\frac{1+\beta}{1-\beta}-\frac{1+\rho}{1-\rho}\big)\|\nabla L\|_1</span> (their eq. (5); <span class="math inline">\beta</span>, <span class="math inline">\rho</span> the first- and second-moment parameters). With the usual <span class="math inline">\rho&gt;\beta</span> the coefficient is negative: Adam <em>anti</em>-penalizes the <span class="math inline">\ell_1</span> norm of the gradient.</p>
-</div>
-</details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="readings">
-<summary><h2 id="readings">Readings</h2></summary>
-<div class="sec-body">
-<a id="td21-readings"></a>
-<p>Each section’s lead papers are at its top. Also: <a href="https://arxiv.org/abs/2302.01952">Rosca, Wu, Qin &amp; Dherin, a continuous-time model of GD and instability</a> (the complex “principal flow”, exact on quadratics; Exercise 1.2.c); <a href="https://www.jmlr.org/papers/v22/19-466.html">Kovachki &amp; Stuart, continuous-time analysis of momentum methods</a> (the damped ODE and slow manifold of §1.5; see the sign-error note there); <a href="https://arxiv.org/abs/2309.00079">Cattaneo, Klusowski &amp; Shigida, on the implicit bias of Adam</a> (backward error analysis for Adam and RMSProp).</p>
-<div class="refs">
-
-<p><strong>For reference (books):</strong> <a href="https://doi.org/10.1007/3-540-30666-8_9">Geometric Numerical Integration</a>, Hairer, Lubich &amp; Wanner (Springer, 2nd ed. 2006), ch. IX (backward error analysis; §IX.7 for optimal truncation).</p>
-</div>
 </div>
 </details>
 

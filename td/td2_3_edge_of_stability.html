@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="htmlkit_td.py (td2_2_edge_of_stability); do not edit by hand">
-<title>NB2 §2 — The edge of stability</title>
+<meta name="generator" content="htmlkit_td.py (td2_3_edge_of_stability); do not edit by hand">
+<title>NB2 §3 — The edge of stability</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
@@ -270,41 +270,36 @@ article details.code > summary:hover { color: var(--fg); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
-<li><a href="#21-phenomenology">2.1 Phenomenology</a></li>
-<li><a href="#22-self-stabilization">2.2 Self-stabilization</a></li>
-<li><a href="#23-the-central-flow">2.3 The central flow</a></li>
-<li><a href="#24-rod-flow-and-principal-flow">2.4 Rod Flow and principal flow</a></li>
-<li><a href="#25-adaptive-optimizers">2.5 Adaptive optimizers</a></li>
-<li><a href="#26-the-edge-of-stochastic-stability">2.6 The edge of stochastic stability</a></li>
-<li><a href="#27-the-catapult">2.7 The catapult</a></li>
-<li><a href="#28-warmup-and-wsd">2.8 Warmup and WSD</a></li>
+<li><a href="#readings">Readings</a></li>
+<li><a href="#31-phenomenology">3.1 Phenomenology</a></li>
+<li><a href="#32-self-stabilization">3.2 Self-stabilization</a></li>
+<li><a href="#33-the-central-flow">3.3 The central flow</a></li>
+<li><a href="#34-rod-flow-and-principal-flow">3.4 Rod Flow and principal flow</a></li>
+<li><a href="#35-adaptive-optimizers">3.5 Adaptive optimizers</a></li>
+<li><a href="#36-the-edge-of-stochastic-stability">3.6 The edge of stochastic stability</a></li>
+<li><a href="#37-the-catapult">3.7 The catapult</a></li>
+<li><a href="#38-warmup-and-wsd">3.8 Warmup and WSD</a></li>
 </ol>
 </details>
 <div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 12 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
 </nav>
 <main>
 <article>
-<h1 id="nb2-2--the-edge-of-stability">NB2 §2 — The edge of stability</h1>
+<h1 id="nb2-3--the-edge-of-stability">NB2 §3 — The edge of stability</h1>
 <p><strong>Training Dynamics, Iliad Intensive 2026</strong></p>
-<p class="run-note">To run the code, open <a href='td2_2_edge_of_stability.ipynb'><code>td2_2_edge_of_stability.ipynb</code></a> in Jupyter (CPU only; needs numpy, matplotlib, scipy and torch). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
+<p class="run-note">To run the code, open <a href='td2_3_edge_of_stability.ipynb'><code>td2_3_edge_of_stability.ipynb</code></a> in Jupyter (CPU only; needs numpy, matplotlib, scipy and torch). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
 
 <p>Gradient descent with step <span class="math inline">\eta</span> on a quadratic of curvature <span class="math inline">S</span> is stable only if <span class="math inline">\eta S&lt;2</span>. Neural networks trained with full-batch gradient descent push their sharpness <span class="math inline">S</span> (the top Hessian eigenvalue) <em>up</em> to <span class="math inline">2/\eta</span> and then stay there, at the <em>edge of stability</em> (EoS), while the loss keeps falling on average. Below: why, a flow for the averaged trajectory, and the same idea in Adam, SGD, the <em>catapult</em>, and warmup and decay schedules.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2103.00065">Gradient descent on neural networks typically occurs at the edge of stability</a></strong>, Cohen, Kaur, Li, Kolter, Talwalkar (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The key paper: progressive sharpening and the edge of stability across architectures, losses and datasets, with momentum thresholds and an appendix of caveats (cross-entropy, batch norm, ReLU).</p>
-</div>
-
-<p><strong>Route.</strong> Each section gives its question, paper and core idea; derivations, exercises and code (CPU, under a minute per cell) are in its optional walkthrough. Short path: 2.1 → 2.2 → 2.3.</p>
+<p><strong>Route.</strong> The <a href="#td23-readings">Readings</a> come first: every paper of the notebook, grouped by section. The sections after them are the derivations and walkthrough (exercises with worked solutions, and code: CPU, under a minute per cell), for whoever wants them. Short path: 3.1 → 3.2 → 3.3.</p>
 <ul>
-<li><a href="#td22-1">2.1 Phenomenology</a>: sharpness rises to <span class="math inline">2/\eta</span> and stays; no small-step flow can do this.</li>
-<li><a href="#td22-2">2.2 Self-stabilization</a>: the oscillation pushes the sharpness back down; solved in a two-parameter toy.</li>
-<li><a href="#td22-3">2.3 The central flow</a>: an ODE for the time-averaged iterate, and the loss it predicts.</li>
-<li><a href="#td22-4">2.4 Rod Flow and principal flow</a>: two other continuous-time models.</li>
-<li><a href="#td22-5">2.5 Adaptive optimizers</a>: Adam’s edge is a preconditioned sharpness at <span class="math inline">38/\eta</span>.</li>
-<li><a href="#td22-6">2.6 The edge of stochastic stability</a>: SGD’s edge is <em>batch sharpness</em>.</li>
-<li><a href="#td22-7">2.7 The catapult</a>: a step too large from the start, solved exactly in a wide two-layer model.</li>
-<li><a href="#td22-8">2.8 Warmup and WSD</a>: why ramping <span class="math inline">\eta</span> up helps, and what the decay phase reveals.</li>
+<li><a href="#td23-1">3.1 Phenomenology</a>: sharpness rises to <span class="math inline">2/\eta</span> and stays; no small-step flow can do this.</li>
+<li><a href="#td23-2">3.2 Self-stabilization</a>: the oscillation pushes the sharpness back down; solved in a two-parameter toy.</li>
+<li><a href="#td23-3">3.3 The central flow</a>: an ODE for the time-averaged iterate, and the loss it predicts. Companion site: <a href="https://centralflows.github.io/">centralflows.github.io</a>.</li>
+<li><a href="#td23-4">3.4 Rod Flow and principal flow</a>: two other continuous-time models.</li>
+<li><a href="#td23-5">3.5 Adaptive optimizers</a>: Adam’s edge is a preconditioned sharpness at <span class="math inline">38/\eta</span>.</li>
+<li><a href="#td23-6">3.6 The edge of stochastic stability</a>: SGD’s edge is <em>batch sharpness</em>.</li>
+<li><a href="#td23-7">3.7 The catapult</a>: a step too large from the start, solved exactly in a wide two-layer model.</li>
+<li><a href="#td23-8">3.8 Warmup and WSD</a>: why ramping <span class="math inline">\eta</span> up helps, and what the decay phase reveals.</li>
 </ul>
 
 <div class="cell">
@@ -323,19 +318,97 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 
-<details class="sec sec2" data-sec="21-phenomenology">
-<summary><h2 id="21-phenomenology">2.1 Phenomenology</h2></summary>
+<details class="sec sec2" data-sec="readings" open>
+<summary><h2 id="readings">Readings</h2></summary>
 <div class="sec-body">
-<a id="td22-1"></a>
+<a id="td23-readings"></a>
+<p><strong>Phenomenology (<a href="#td23-1">§3.1</a>).</strong> The notebook’s key paper.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2103.00065">Gradient descent on neural networks typically occurs at the edge of stability</a></strong>, Cohen, Kaur, Li, Kolter, Talwalkar (ICLR 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The key paper: progressive sharpening and the edge of stability across architectures, losses and datasets, with momentum thresholds and an appendix of caveats (cross-entropy, batch norm, ReLU).</p>
+</div>
+
+<p><strong>Self-stabilization (<a href="#td23-2">§3.2</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2209.15594">Self-stabilization: the implicit bias of gradient descent at the edge of stability</a></strong>, Damian, Nichani, Lee (ICLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The mechanism, the four-stage cycle, and a theorem that gradient descent tracks projected gradient descent on <span class="math inline">\min L</span> s.t. <span class="math inline">S\le2/\eta</span> for a bounded number of steps. Appendix B has the toy of §3.2.</p>
+</div>
+
+<p><strong>The central flow (<a href="#td23-3">§3.3</a>).</strong> Start with the companion site, then the paper.</p>
+<div class="reading">
+
+<p><strong><a href="https://centralflows.github.io/">Central flows (companion site)</a></strong>, Cohen, Damian, Talwalkar, Kolter, Lee (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The best introduction to the edge of stability and the central flow: three short illustrated parts on <a href="https://centralflows.github.io/part1/">gradient descent</a>, <a href="https://centralflows.github.io/part2/">scalar RMSProp</a> and <a href="https://centralflows.github.io/part3/">RMSProp</a>. Read Part I before §3.3.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2410.24206">Understanding optimization in deep learning with central flows</a></strong>, Cohen, Damian, Talwalkar, Kolter, Lee (ICLR 2025; arXiv v2 is the full version) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>The central flow for one and several unstable directions (the <span class="math inline">\max(0,\cdot)</span> form is in App. A.2.2), its loss prediction, and the RMSProp version, whose stationary preconditioner solves a convex program; extensive comparisons with real gradient descent.</p>
+</div>
+
+<p><strong>Rod Flow and principal flow (<a href="#td23-4">§3.4</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2602.01480">Rod Flow: a continuous-time model for gradient descent at the edge of stability</a></strong>, Regis, Chewi (2026) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Exact midpoint dynamics of the rod, an explicit ODE needing only gradients and Hessian-vector products, the quadratic threshold and quartic self-stabilization, and the central flow as a Taylor approximation.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2302.01952">On a continuous time model of gradient descent dynamics and instability in deep learning</a></strong>, Rosca, Wu, Qin, Dherin (TMLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The principal flow: Exercise 3.1 for every Hessian eigendirection; explains the onset of instability, not the stabilization.</p>
+</div>
+
+<p>Also: <a href="https://arxiv.org/abs/2605.06821">A Rod Flow model for Adam at the edge of stability</a> (follow-up for momentum methods and Adam).</p>
+<p><strong>Adaptive optimizers (<a href="#td23-5">§3.5</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2207.14484">Adaptive gradient methods at the edge of stability</a></strong>, Cohen, Ghorbani, Krishnan, Agarwal, et al. (2022 preprint; cite v2, which corrects Adam’s preconditioner formula) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Adam’s preconditioned sharpness sits at <span class="math inline">38/\eta</span> while raw sharpness keeps rising; the preconditioner-feedback mechanism, and how minibatching changes the picture.</p>
+</div>
+
+<p><strong>The edge of stochastic stability (<a href="#td23-6">§3.6</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2412.20553">Edge of Stochastic Stability: revisiting the edge of stability for SGD</a></strong>, Andreyev, Beneventano (arXiv v5, Dec 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Batch sharpness (their Definition 3) plateaus at <span class="math inline">2/\eta</span> for every batch size while <span class="math inline">\lambda_{\max}</span> settles lower; App. J compares other candidate quantities. Use v5: v1 used <span class="math inline">\mathbb E_B\lambda_{\max}(H_B)</span>, and v2–v4 wrote the ratio of expectations in the definition while their experiments measured the expectation of the ratio.</p>
+</div>
+
+<p>Also: <a href="https://proceedings.mlr.press/v306/andreyev26a.html">Momentum further constrains sharpness at the edge of stochastic stability</a> (ICML 2026; with momentum <span class="math inline">\beta</span>, batch sharpness plateaus at <span class="math inline">2(1-\beta)/\eta</span> for small batches and <span class="math inline">2(1+\beta)/\eta</span> for large ones); <a href="https://arxiv.org/abs/2604.21016">SGD at the edge of stability: the stochastic sharpness gap</a> (2026; predicts a <span class="math inline">\lambda_{\max}</span> gap of roughly <span class="math inline">1/b</span>, quantitatively untested).</p>
+<p><strong>The catapult (<a href="#td23-7">§3.7</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2003.02218">The large learning rate phase of deep learning: the catapult mechanism</a></strong>, Lewkowycz, Bahri, Dyer, Sohl-Dickstein, Gur-Ari (2020) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The exact maps and three phases, the empirical <span class="math inline">12/\lambda_0</span> edge for ReLU networks, and evidence that the catapult phase often generalizes best.</p>
+</div>
+
+<p><strong>Warmup and WSD (<a href="#td23-8">§3.8</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2406.09405">Why warmup the learning rate? Underlying mechanisms and improvements</a></strong>, Kalra, Barkeshli (NeurIPS 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Warmup works by moving the network to flatter regions that tolerate the target step; two regimes set by initialization; a catapult-based choice of the initial step; a second-moment initialization for Adam.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2410.05192">Understanding warmup-stable-decay learning rates: a river valley loss landscape perspective</a></strong>, Wen, Li, Wang, Hall, Liang, Ma (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The river-valley picture of WSD schedules: noise-driven oscillation across the valley hides progress along it until the decay phase; proposes WSD-S.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="31-phenomenology">
+<summary><h2 id="31-phenomenology">3.1 Phenomenology</h2></summary>
+<div class="sec-body">
+<a id="td23-1"></a>
 <p>What happens to the sharpness <span class="math inline">S=\lambda_{\max}(H)</span>, the top eigenvalue of the loss Hessian <span class="math inline">H</span>, during full-batch gradient descent with step <span class="math inline">\eta</span>? It rises (<em>progressive sharpening</em>) to <span class="math inline">2/\eta</span>, the quadratic stability limit, and hovers there while the loss keeps falling, non-monotonically.</p>
-<p><strong>Paper:</strong> Cohen et al. 2021, the key paper above (networks of several kinds, mostly on a 5,000-example CIFAR-10 subset).</p>
-<p>Above <span class="math inline">2/\eta</span> a quadratic analysis predicts divergence along the top eigenvector <span class="math inline">u</span>. Instead <span class="math inline">S</span> stays at or just above <span class="math inline">2/\eta</span> (further above with cross-entropy); with heavy-ball momentum <span class="math inline">\beta</span> the ceiling is <span class="math inline">(2+2\beta)/\eta</span>. The sharpness <em>adapts to the learning rate</em>, which gradient flow, having no <span class="math inline">\eta</span> in it, cannot do; Exercise 2.1 shows its small-<span class="math inline">\eta</span> corrections cannot either. Why sharpening happens is a separate, partly open question, taken as given here (a tangent-kernel view: <a href="td2_6_curvature.html#td26-2"><code>td2_6_curvature</code>, §6.2</a>).</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-1-walkthrough"></a>
-<p><em>Prerequisites.</em> Gradient descent on <span class="math inline">\tfrac12\lambda x^2</span> is <span class="math inline">x_{k+1}=(1-\eta\lambda)x_k</span>: it converges iff <span class="math inline">0&lt;\eta\lambda&lt;2</span>, and for <span class="math inline">\eta\lambda&gt;2</span> it flips sign every step and grows. On a positive-definite quadratic this holds along each Hessian eigenvector, so the constraint is <span class="math inline">\eta S&lt;2</span>. Time is <span class="math inline">t=k\eta</span> after <span class="math inline">k</span> steps, so gradient flow is <span class="math inline">\dot\theta=-\nabla L</span>. A Hessian-vector product <span class="math inline">Hv=\nabla_\theta\langle\nabla L,v\rangle</span> costs about two gradients; <em>power iteration</em> <span class="math inline">v\leftarrow Hv/\|Hv\|</span> then estimates <span class="math inline">S</span> as <span class="math inline">v^\top Hv</span> (fine here, where the top eigenvalue is positive and dominant).</p>
-<p><strong>The experiment.</strong> A two-hidden-layer tanh MLP (width 64) fits 256 random <span class="math inline">\pm1</span> labels in <span class="math inline">\mathbb R^8</span> with MSE (random labels make sharpening fast), by full-batch gradient descent at three step sizes, with <span class="math inline">S</span> measured every <span class="math inline">\Delta t=1.25</span>. In <span class="math inline">t=k\eta</span> all three runs follow the same gradient-flow curve until their own <span class="math inline">2/\eta</span>. Each then overshoots (to about <span class="math inline">1.5\times2/\eta</span> at <span class="math inline">\eta=0.2</span>), falls below with a loss spike, and settles into shrinking oscillations around <span class="math inline">2/\eta</span>: the self-stabilization cycle of §2.2 at full size.</p>
+<p><strong>Paper:</strong> Cohen et al. 2021, <em>Gradient descent on neural networks typically occurs at the edge of stability</em>, the notebook’s key paper (see <a href="#td23-readings">Readings</a>; networks of several kinds, mostly on a 5,000-example CIFAR-10 subset).</p>
+<p>Above <span class="math inline">2/\eta</span> a quadratic analysis predicts divergence along the top eigenvector <span class="math inline">u</span>. Instead <span class="math inline">S</span> stays at or just above <span class="math inline">2/\eta</span> (further above with cross-entropy); with heavy-ball momentum <span class="math inline">\beta</span> the ceiling is <span class="math inline">(2+2\beta)/\eta</span>. The sharpness <em>adapts to the learning rate</em>, which gradient flow, having no <span class="math inline">\eta</span> in it, cannot do; Exercise 3.1 shows its small-<span class="math inline">\eta</span> corrections cannot either. Why sharpening happens is a separate, partly open question, taken as given here (a tangent-kernel view: <a href="td2_6_curvature.html#td26-2"><code>td2_6_curvature</code>, §6.2</a>).</p>
+<a id="td23-1-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>Prerequisites:</em> Gradient descent on <span class="math inline">\tfrac12\lambda x^2</span> is <span class="math inline">x_{k+1}=(1-\eta\lambda)x_k</span>: it converges iff <span class="math inline">0&lt;\eta\lambda&lt;2</span>, and for <span class="math inline">\eta\lambda&gt;2</span> it flips sign every step and grows. On a positive-definite quadratic this holds along each Hessian eigenvector, so the constraint is <span class="math inline">\eta S&lt;2</span>. Time is <span class="math inline">t=k\eta</span> after <span class="math inline">k</span> steps, so gradient flow is <span class="math inline">\dot\theta=-\nabla L</span>. A Hessian-vector product <span class="math inline">Hv=\nabla_\theta\langle\nabla L,v\rangle</span> costs about two gradients; <em>power iteration</em> <span class="math inline">v\leftarrow Hv/\|Hv\|</span> then estimates <span class="math inline">S</span> as <span class="math inline">v^\top Hv</span> (fine here, where the top eigenvalue is positive and dominant).</p>
+<p><strong>The experiment.</strong> A two-hidden-layer tanh MLP (width 64) fits 256 random <span class="math inline">\pm1</span> labels in <span class="math inline">\mathbb R^8</span> with MSE (random labels make sharpening fast), by full-batch gradient descent at three step sizes, with <span class="math inline">S</span> measured every <span class="math inline">\Delta t=1.25</span>. In <span class="math inline">t=k\eta</span> all three runs follow the same gradient-flow curve until their own <span class="math inline">2/\eta</span>. Each then overshoots (to about <span class="math inline">1.5\times2/\eta</span> at <span class="math inline">\eta=0.2</span>), falls below with a loss spike, and settles into shrinking oscillations around <span class="math inline">2/\eta</span>: the self-stabilization cycle of §3.2 at full size.</p>
 
 <div class="cell">
 <details class="code"><summary>Code (52 lines)</summary>
@@ -421,7 +494,7 @@ eta =  0.2: reaches 2/eta =   10 at t =  34.8; peak S =  15.2; S over the second
 </div>
 </div>
 
-<p><strong>Exercise 2.1 — The exact modified flow on a quadratic.</strong> Why can’t a small-step flow, however many correction terms it keeps, describe gradient descent at the edge? (If you did Exercise 1.2.c of <a href="td2_1_flows.html#td21-s2"><code>td2_1_flows</code></a>, this is the same calculation; only the last paragraph of the solution is new.) Background: for small <span class="math inline">\eta</span>, one gradient step is, to <span class="math inline">O(\eta^3)</span>, a time-<span class="math inline">\eta</span> step of the <em>modified flow</em> <span class="math inline">\dot\theta=-\nabla\big(L+\tfrac\eta4\|\nabla L\|^2\big)</span> (implicit gradient regularization). Take gradient descent on <span class="math inline">L(x)=\tfrac12\lambda x^2</span> with <span class="math inline">\lambda&gt;0</span>, and <span class="math inline">t=k\eta</span>.</p>
+<p><strong>Exercise 3.1 — The exact modified flow on a quadratic.</strong> Why can’t a small-step flow, however many correction terms it keeps, describe gradient descent at the edge? (If you did Exercise 1.2.c of <a href="td2_1_flows.html#td21-s2"><code>td2_1_flows</code></a>, this is the same calculation; only the last paragraph of the solution is new.) Background: for small <span class="math inline">\eta</span>, one gradient step is, to <span class="math inline">O(\eta^3)</span>, a time-<span class="math inline">\eta</span> step of the <em>modified flow</em> <span class="math inline">\dot\theta=-\nabla\big(L+\tfrac\eta4\|\nabla L\|^2\big)</span> (implicit gradient regularization). Take gradient descent on <span class="math inline">L(x)=\tfrac12\lambda x^2</span> with <span class="math inline">\lambda&gt;0</span>, and <span class="math inline">t=k\eta</span>.</p>
 <ol type="1">
 <li>For <span class="math inline">0&lt;\eta\lambda&lt;1</span>, find the constant <span class="math inline">a(\eta\lambda)</span> such that the linear flow <span class="math inline">\dot x=a\,x</span>, run for time <span class="math inline">\eta</span>, reproduces one gradient step <em>exactly</em>.</li>
 <li>Expand <span class="math inline">a</span> in powers of <span class="math inline">\eta</span>. Identify the first two terms with gradient flow and with the implicit-gradient-regularization correction <span class="math inline">-\tfrac\eta4\nabla\|\nabla L\|^2</span>. What is the radius of convergence of the series in <span class="math inline">\eta\lambda</span>?</li>
@@ -450,19 +523,19 @@ a(\eta\lambda)=\frac1\eta\log(1-\eta\lambda)
 </span></p>
 <p>Since <span class="math inline">\nabla\big(\tfrac\eta4\|\nabla L\|^2\big)=\tfrac\eta4\cdot2H\nabla L=\tfrac\eta2H\nabla L</span>, the first two terms are <span class="math inline">-\nabla\big(L+\tfrac\eta4\|\nabla L\|^2\big)</span>: gradient flow plus implicit gradient regularization. The series for <span class="math inline">\log(1-z)</span> converges for <span class="math inline">|z|&lt;1</span>, so the expansion converges only for <span class="math inline">\eta\lambda&lt;1</span>.</p>
 <p><strong>3.</strong> For <span class="math inline">1&lt;\eta\lambda&lt;2</span>: <span class="math inline">1-\eta\lambda\in(-1,0)</span>, and <span class="math inline">\log(1-\eta\lambda)=\log|1-\eta\lambda|+i\pi</span>. The real part is negative (the magnitude still decays), but the imaginary part <span class="math inline">i\pi/\eta</span> rotates the solution by <span class="math inline">\pi</span> per step: the sign flip. For <span class="math inline">\eta\lambda&gt;2</span>: the real part <span class="math inline">\frac1\eta\log(\eta\lambda-1)</span> is <em>positive</em>, so the magnitude grows: the instability.</p>
-<p>No real 1-D autonomous ODE can do this for <span class="math inline">\eta\lambda&gt;1</span>. Two solutions of <span class="math inline">\dot x=F(x)</span> cannot cross (uniqueness), so if <span class="math inline">x_0&lt;x_0&#39;</span> then <span class="math inline">x(\eta)&lt;x&#39;(\eta)</span>: the time-<span class="math inline">\eta</span> map is increasing. The gradient-descent map <span class="math inline">x\mapsto(1-\eta\lambda)x</span> is decreasing when <span class="math inline">\eta\lambda&gt;1</span>. (The exact interpolating flow needs a second real dimension: the complex phase, or equivalently a period-2 structure. Rod Flow in §2.4 adds that dimension explicitly.)</p>
-<p>So the networks, sitting at <span class="math inline">\eta S\approx2</span> without diverging, need something beyond the quadratic: the curvature changing along the oscillation must feed back. And any truncation of the modified-flow series is a smooth real flow, analytic in <span class="math inline">\eta\lambda</span> around <span class="math inline">0</span>: it cannot represent the sign flip, and at <span class="math inline">\eta S\approx2</span> the series has already diverged. A flow for EoS must be built differently (§2.3, §2.4). Applied eigendirection by eigendirection, this exact flow is the <em>principal flow</em> of §2.4.</p>
+<p>No real 1-D autonomous ODE can do this for <span class="math inline">\eta\lambda&gt;1</span>. Two solutions of <span class="math inline">\dot x=F(x)</span> cannot cross (uniqueness), so if <span class="math inline">x_0&lt;x_0&#39;</span> then <span class="math inline">x(\eta)&lt;x&#39;(\eta)</span>: the time-<span class="math inline">\eta</span> map is increasing. The gradient-descent map <span class="math inline">x\mapsto(1-\eta\lambda)x</span> is decreasing when <span class="math inline">\eta\lambda&gt;1</span>. (The exact interpolating flow needs a second real dimension: the complex phase, or equivalently a period-2 structure. Rod Flow in §3.4 adds that dimension explicitly.)</p>
+<p>So the networks, sitting at <span class="math inline">\eta S\approx2</span> without diverging, need something beyond the quadratic: the curvature changing along the oscillation must feed back. And any truncation of the modified-flow series is a smooth real flow, analytic in <span class="math inline">\eta\lambda</span> around <span class="math inline">0</span>: it cannot represent the sign flip, and at <span class="math inline">\eta S\approx2</span> the series has already diverged. A flow for EoS must be built differently (§3.3, §3.4). Applied eigendirection by eigendirection, this exact flow is the <em>principal flow</em> of §3.4.</p>
 </div>
 </details>
 
-<p><strong>Code exercise 2.1 — Is the oscillation really along <span class="math inline">u</span>?</strong> §2.2 assumes that at EoS the iterate oscillates with period 2 along the top Hessian eigenvector <span class="math inline">u</span>. Check this in the MLP: train at <span class="math inline">\eta=0.2</span> for 1000 steps (into EoS), compute <span class="math inline">u</span> by power iteration, run 40 more steps, and look at the projections <span class="math inline">\langle\theta_k-\bar\theta,u\rangle</span>, where <span class="math inline">\bar\theta</span> is the mean of those 40 iterates. Also report what fraction of each step <span class="math inline">\theta_{k+1}-\theta_k</span> (in squared norm) lies along <span class="math inline">u</span>.</p>
+<p><strong>Code exercise 3.1 — Is the oscillation really along <span class="math inline">u</span>?</strong> §3.2 assumes that at EoS the iterate oscillates with period 2 along the top Hessian eigenvector <span class="math inline">u</span>. Check this in the MLP: train at <span class="math inline">\eta=0.2</span> for 1000 steps (into EoS), compute <span class="math inline">u</span> by power iteration, run 40 more steps, and look at the projections <span class="math inline">\langle\theta_k-\bar\theta,u\rangle</span>, where <span class="math inline">\bar\theta</span> is the mean of those 40 iterates. Also report what fraction of each step <span class="math inline">\theta_{k+1}-\theta_k</span> (in squared norm) lies along <span class="math inline">u</span>.</p>
 <details class="hint"><summary>Hint</summary>
 
 <p><code>torch.nn.utils.parameters_to_vector(net.parameters())</code> flattens the parameters in the same order as <code>list(net.parameters())</code>, so <code>torch.cat([t.flatten() for t in v])</code> turns the vector returned by <code>sharpness</code> into a flat <span class="math inline">u</span> (normalize it).</p>
 </details>
 
 <div class="cell cell-stub">
-<pre class="code"><code class="language-python"><span class="c1"># Code exercise 2.1: train at eta = 0.2 for 1000 steps, get u, then record 40 more iterates.</span>
+<pre class="code"><code class="language-python"><span class="c1"># Code exercise 3.1: train at eta = 0.2 for 1000 steps, get u, then record 40 more iterates.</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parameters_to_vector</span> <span class="k">as</span> <span class="n">p2v</span>
 <span class="c1"># ...</span></code></pre>
 </div>
@@ -501,34 +574,23 @@ fraction of |step|^2 along u: 0.45</pre>
 <details class="solution">
 <summary>Solution</summary>
 <div class="solution-body">
-<p>The projections alternate in sign with nearly constant magnitude, about <span class="math inline">\pm0.04</span> in this run: a period-2 oscillation along <span class="math inline">u</span>, with <span class="math inline">S</span> within about 1% of <span class="math inline">2/\eta</span>. About half of each step’s squared length lies along the single direction <span class="math inline">u</span>, out of about 4,800 parameters; the rest is the slow drift that actually reduces the loss. That is the picture the §2.2 toy encodes: one oscillating coordinate <span class="math inline">x</span> along <span class="math inline">u</span>, plus slow coordinates.</p>
+<p>The projections alternate in sign with nearly constant magnitude, about <span class="math inline">\pm0.04</span> in this run: a period-2 oscillation along <span class="math inline">u</span>, with <span class="math inline">S</span> within about 1% of <span class="math inline">2/\eta</span>. About half of each step’s squared length lies along the single direction <span class="math inline">u</span>, out of about 4,800 parameters; the rest is the slow drift that actually reduces the loss. That is the picture the §3.2 toy encodes: one oscillating coordinate <span class="math inline">x</span> along <span class="math inline">u</span>, plus slow coordinates.</p>
 </div>
 </details>
 </div>
 </details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="22-self-stabilization">
-<summary><h2 id="22-self-stabilization">2.2 Self-stabilization</h2></summary>
+<details class="sec sec2" data-sec="32-self-stabilization">
+<summary><h2 id="32-self-stabilization">3.2 Self-stabilization</h2></summary>
 <div class="sec-body">
-<a id="td22-2"></a>
+<a id="td23-2"></a>
 <p>Once <span class="math inline">\eta S&gt;2</span>, why doesn’t the iterate blow up along the top eigenvector <span class="math inline">u</span>? Because the oscillation lowers the sharpness: through the third derivative of the loss, an oscillation of size <span class="math inline">x</span> along <span class="math inline">u</span> also moves the iterate by <span class="math inline">-\tfrac\eta2x^2\nabla S</span> per step, down the gradient of the sharpness <span class="math inline">S</span>.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2209.15594">Self-stabilization: the implicit bias of gradient descent at the edge of stability</a></strong>, Damian, Nichani, Lee (ICLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The mechanism, the four-stage cycle, and a theorem that gradient descent tracks projected gradient descent on <span class="math inline">\min L</span> s.t. <span class="math inline">S\le2/\eta</span> for a bounded number of steps. Appendix B has the toy.</p>
-</div>
-
+<p><strong>Paper:</strong> Damian, Nichani &amp; Lee, <em>Self-stabilization</em> (see <a href="#td23-readings">Readings</a>).</p>
 <p>The push is even in <span class="math inline">x</span>, so it survives averaging over the period-2 bounce. When <span class="math inline">\eta S&gt;2</span> the oscillation grows, the push grows with it, and <span class="math inline">S</span> is driven back to <span class="math inline">2/\eta</span>. It all fits in a two-parameter toy, <span class="math inline">L(x,y)=\tfrac12S(y)x^2+\ell(y)</span> with <span class="math inline">S&#39;&gt;0&gt;\ell&#39;</span>: <span class="math inline">x</span> oscillates along <span class="math inline">u</span>, and <span class="math inline">y</span> is a slow coordinate along which the loss falls as the sharpness rises.</p>
 <p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/eos_toy_and_catapult.html"><code>eos_toy_and_catapult.html</code></a> (opens full page). Panel 1 is this toy, with sliders for <span class="math inline">\eta</span> and the initial sharpness and an optional warmup ramp (its noise uses a different random generator, so runs near a survival boundary can differ from the notebook’s).</p>
 <div class="figure-frame"><iframe src="assets/interactive/eos_toy_and_catapult.html" title="Interactive figure: eos_toy_and_catapult.html" loading="lazy"></iframe></div>
 
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-2">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-2">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-2-walkthrough"></a>
-<p><em>Notation.</em> Parameters <span class="math inline">\theta</span>, Hessian <span class="math inline">H</span>, sharpness <span class="math inline">S(\theta)=\lambda_{\max}(H)</span> with unit top eigenvector <span class="math inline">u</span>, <span class="math inline">\nabla S</span> its gradient with respect to <span class="math inline">\theta</span>. <span class="math inline">\nabla^3L[a,b]</span> is the third-derivative tensor contracted with two vectors (a vector). Write the iterate as a centre plus an oscillation along <span class="math inline">u</span>: <span class="math inline">\theta=\bar\theta+xu</span>.</p>
+<a id="td23-2-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> Parameters <span class="math inline">\theta</span>, Hessian <span class="math inline">H</span>, sharpness <span class="math inline">S(\theta)=\lambda_{\max}(H)</span> with unit top eigenvector <span class="math inline">u</span>, <span class="math inline">\nabla S</span> its gradient with respect to <span class="math inline">\theta</span>. <span class="math inline">\nabla^3L[a,b]</span> is the third-derivative tensor contracted with two vectors (a vector). Write the iterate as a centre plus an oscillation along <span class="math inline">u</span>: <span class="math inline">\theta=\bar\theta+xu</span>.</p>
 <p><strong>The expansion.</strong> To second order, <span class="math inline">\nabla L(\bar\theta+\delta)=\nabla L+H\delta+\tfrac12\nabla^3L[\delta,\delta]+O(\delta^3)</span>; with <span class="math inline">\delta=xu</span> this gives <span class="math inline">xSu</span> and <span class="math inline">\tfrac12x^2\nabla^3L[u,u]</span>. By first-order eigenvalue perturbation (<span class="math inline">S=u^\top Hu</span>; the variation of the unit eigenvector drops out), <span class="math inline">\partial_iS=u^\top(\partial_iH)u</span>, so <span class="math inline">\nabla S=\nabla^3L[u,u]</span> (Damian et al., Lemma 2; needs <span class="math inline">S</span> simple), and</p>
 <p><span class="math display">
 \nabla L(\bar\theta+xu)=\nabla L(\bar\theta)+x\,S\,u+\tfrac12x^2\,\nabla S(\bar\theta)+O(x^3).
@@ -536,8 +598,8 @@ fraction of |step|^2 along u: 0.45</pre>
 <p>The last term is even in <span class="math inline">x</span>, so each step moves <span class="math inline">\bar\theta</span> by <span class="math inline">-\tfrac\eta2x^2\nabla S</span>.</p>
 <p><strong>The four-stage cycle</strong> (Damian et al. §4). With <span class="math inline">S\approx2/\eta+s</span>: (1) <em>progressive sharpening</em> raises <span class="math inline">s</span> by about <span class="math inline">\eta\alpha</span> per step, where <span class="math inline">\alpha=-\langle\nabla L,\nabla S\rangle&gt;0</span>, while <span class="math inline">x</span> is small; (2) <em>blowup</em>: once <span class="math inline">s&gt;0</span>, <span class="math inline">|x|</span> grows geometrically with alternating sign; (3) <em>self-stabilization</em>: the <span class="math inline">\tfrac12x^2\nabla S</span> term drives <span class="math inline">s</span> below <span class="math inline">0</span>; (4) <em>return to stability</em>: <span class="math inline">|x|</span> shrinks, and the cycle repeats.</p>
 <p>Their theorem (one unstable eigenvalue, progressive sharpening, bounded higher derivatives): gradient descent tracks <em>projected</em> gradient descent onto <span class="math inline">\{S\le2/\eta,\ \nabla L\cdot u=0\}</span>, with loss <span class="math inline">L(\theta^\dagger)+x^2/\eta</span> for <span class="math inline">\theta^\dagger</span> the projected iterate. It implicitly solves <span class="math inline">\min L</span> subject to <span class="math inline">S\le2/\eta</span>.</p>
-<p><strong>The toy, concretely.</strong> Damian et al. (Appendix B) use linear <span class="math inline">S</span> and <span class="math inline">\ell</span> plus a third coordinate. For the code we take <span class="math inline">S(y)=y</span> and <span class="math inline">\ell(y)=c\,y^{-5}</span>, <span class="math inline">c=62.5</span>: the loss keeps falling, with diminishing returns, as the sharpness grows (Exercise 2.2′ says why not linear <span class="math inline">\ell</span>). Near <span class="math inline">x=0</span> the Hessian is <span class="math inline">\operatorname{diag}(y,\ell&#39;&#39;(y))</span>, so <span class="math inline">y</span> is the top eigenvalue while <span class="math inline">y&gt;30c\,y^{-7}</span>, i.e. <span class="math inline">y\gtrsim2.6</span>; all runs start at <span class="math inline">y_0\ge3</span>.</p>
-<p><strong>Exercise 2.2 — Self-stabilization in the toy.</strong> Use <span class="math inline">L(x,y)=\tfrac12S(y)x^2+\ell(y)</span> with <span class="math inline">S&#39;&gt;0</span> and <span class="math inline">\ell&#39;&lt;0</span>.</p>
+<p><strong>The toy, concretely.</strong> Damian et al. (Appendix B) use linear <span class="math inline">S</span> and <span class="math inline">\ell</span> plus a third coordinate. For the code we take <span class="math inline">S(y)=y</span> and <span class="math inline">\ell(y)=c\,y^{-5}</span>, <span class="math inline">c=62.5</span>: the loss keeps falling, with diminishing returns, as the sharpness grows (Exercise 3.2′ says why not linear <span class="math inline">\ell</span>). Near <span class="math inline">x=0</span> the Hessian is <span class="math inline">\operatorname{diag}(y,\ell&#39;&#39;(y))</span>, so <span class="math inline">y</span> is the top eigenvalue while <span class="math inline">y&gt;30c\,y^{-7}</span>, i.e. <span class="math inline">y\gtrsim2.6</span>; all runs start at <span class="math inline">y_0\ge3</span>.</p>
+<p><strong>Exercise 3.2 — Self-stabilization in the toy.</strong> Use <span class="math inline">L(x,y)=\tfrac12S(y)x^2+\ell(y)</span> with <span class="math inline">S&#39;&gt;0</span> and <span class="math inline">\ell&#39;&lt;0</span>.</p>
 <p>(a) Write the gradient-descent maps for <span class="math inline">(x,y)</span>. Show that when <span class="math inline">\eta S(y)&gt;2</span>, <span class="math inline">|x|</span> grows with alternating sign, and that the <span class="math inline">y</span>-update gains a term that lowers <span class="math inline">S</span> and depends on <span class="math inline">x</span> only through <span class="math inline">x^2</span>.</p>
 <p>(b) Find the period-2 orbits <span class="math inline">(x^*,y^*)\to(-x^*,y^*)\to(x^*,y^*)</span>. Show <span class="math inline">S(y^*)=2/\eta</span> and</p>
 <p><span class="math display">
@@ -613,7 +675,7 @@ eta = 0.5: mean S (last 1000 steps) = 3.9998, 2/eta = 4.0000;  mean x^2 = 0.1526
 </div>
 </div>
 
-<p><strong>Exercise 2.2′ (optional) — When does the orbit attract?</strong> These parts explain what “hovers at <span class="math inline">2/\eta</span>” means. Take the toy with <span class="math inline">S(y)=y</span>. Its period-2 orbit, from Exercise 2.2(b), is <span class="math inline">(\pm x^*,y^*)</span> with <span class="math inline">y^*=2/\eta</span> and <span class="math inline">x^{*2}=2|\ell&#39;(y^*)|</span>. Write <span class="math inline">P=|\ell&#39;(y^*)|</span>, <span class="math inline">C=\ell&#39;&#39;(y^*)</span>, <span class="math inline">D=\eta C</span>, <span class="math inline">Q=\eta^2x^{*2}=2\eta^2P</span>.</p>
+<p><strong>Exercise 3.2′ (optional) — When does the orbit attract?</strong> These parts explain what “hovers at <span class="math inline">2/\eta</span>” means. Take the toy with <span class="math inline">S(y)=y</span>. Its period-2 orbit, from Exercise 3.2(b), is <span class="math inline">(\pm x^*,y^*)</span> with <span class="math inline">y^*=2/\eta</span> and <span class="math inline">x^{*2}=2|\ell&#39;(y^*)|</span>. Write <span class="math inline">P=|\ell&#39;(y^*)|</span>, <span class="math inline">C=\ell&#39;&#39;(y^*)</span>, <span class="math inline">D=\eta C</span>, <span class="math inline">Q=\eta^2x^{*2}=2\eta^2P</span>.</p>
 <p>(d) Linearize the two-step map at the period-2 orbit. Show that the orbit is linearly (exponentially) attracting iff <span class="math inline">|1-D+Q|&lt;1</span>, <span class="math inline">\;2-D+\tfrac Q2&gt;0</span> and <span class="math inline">(D-\tfrac Q2)^2+\tfrac{Q^2}4-2D+2&gt;0</span>, which for small <span class="math inline">D,Q</span> reduces to</p>
 <p><span class="math display">
 \ell&#39;&#39;(y^*)&gt;2\eta\,|\ell&#39;(y^*)| .
@@ -656,38 +718,27 @@ y_K-y_0=-\eta\sum_{k&lt;K}\big(\tfrac12x_k^2-P\big)\quad\Longrightarrow\quad\fra
 </details>
 </div>
 </details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="23-the-central-flow">
-<summary><h2 id="23-the-central-flow">2.3 The central flow</h2></summary>
+<details class="sec sec2" data-sec="33-the-central-flow">
+<summary><h2 id="33-the-central-flow">3.3 The central flow</h2></summary>
 <div class="sec-body">
-<a id="td22-3"></a>
+<a id="td23-3"></a>
 <p>At the edge the iterate bounces every step, but its time average moves smoothly. Can we write an ODE for that average, and predict the loss we measure? Yes: average the gradient over the oscillation, and choose the oscillation’s size so that the sharpness stays at <span class="math inline">2/\eta</span>.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2410.24206">Understanding optimization in deep learning with central flows</a></strong>, Cohen, Damian, Talwalkar, Kolter, Lee (ICLR 2025; arXiv v2 is the full version) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>The central flow for one and several unstable directions (the <span class="math inline">\max(0,\cdot)</span> form is in App. A.2.2), its loss prediction, and the RMSProp version, whose stationary preconditioner solves a convex program; extensive comparisons with real gradient descent.</p>
-</div>
-
+<p><strong>Paper:</strong> Cohen, Damian, Talwalkar, Kolter &amp; Lee, <em>Understanding optimization in deep learning with central flows</em> (see <a href="#td23-readings">Readings</a>). Start with their <a href="https://centralflows.github.io/">companion site</a>, Part I in particular.</p>
 <p>Let <span class="math inline">w(t)</span> be the time-averaged iterate (with <span class="math inline">t=k\eta</span>), <span class="math inline">S(w)</span> its sharpness, <span class="math inline">\nabla S</span> the sharpness gradient, and <span class="math inline">\sigma^2</span> the variance of the oscillation along the top eigenvector. While <span class="math inline">S&lt;2/\eta</span> the central flow is gradient flow. Once <span class="math inline">S</span> reaches <span class="math inline">2/\eta</span>,</p>
 <p><span class="math display">
 \frac{dw}{dt}=-\Big[\nabla L(w)+\tfrac12\sigma^2(t)\,\nabla S(w)\Big],\qquad
 \sigma^2=\max\!\Big(0,\ \frac{-2\langle\nabla L,\nabla S\rangle}{\|\nabla S\|^2}\Big).
 </span></p>
 <p>On the edge, <span class="math inline">w</span> follows gradient flow projected orthogonally to <span class="math inline">\nabla S</span>, sliding along the surface <span class="math inline">S=2/\eta</span>, and the predicted time-averaged loss is <span class="math inline">L(w)+\sigma^2/\eta</span>. It is a heuristic, tested on real networks over long runs (full batch, no momentum; better for MSE than cross-entropy; degrading as <span class="math inline">\eta</span> grows; possibly poor for ReLU; blind to large loss spikes).</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-3">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-3">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-3-walkthrough"></a>
-<p><em>From §2.2.</em> With <span class="math inline">u</span> the unit top eigenvector at <span class="math inline">w</span>, <span class="math inline">\nabla L(w+xu)=\nabla L(w)+xSu+\tfrac12x^2\nabla S(w)+O(x^3)</span>. Cohen et al. count time in steps, so they write <span class="math inline">dw/dt=-\eta[\nabla L+\tfrac12\sigma^2\nabla S]</span>.</p>
+<a id="td23-3-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>From §3.2:</em> With <span class="math inline">u</span> the unit top eigenvector at <span class="math inline">w</span>, <span class="math inline">\nabla L(w+xu)=\nabla L(w)+xSu+\tfrac12x^2\nabla S(w)+O(x^3)</span>. Cohen et al. count time in steps, so they write <span class="math inline">dw/dt=-\eta[\nabla L+\tfrac12\sigma^2\nabla S]</span>.</p>
 <p><strong>Several unstable directions.</strong> Then <span class="math inline">\sigma^2</span> becomes the oscillation’s covariance <span class="math inline">\Sigma\succeq0</span>, the drift is <span class="math inline">-\nabla L-\tfrac12\nabla\operatorname{tr}(H\Sigma)</span> (gradient with <span class="math inline">\Sigma</span> fixed), and the loss is <span class="math inline">L+\operatorname{tr}\Sigma/\eta</span>. <span class="math inline">\Sigma</span> lives only in directions whose eigenvalue sits at <span class="math inline">2/\eta</span> and keeps them from crossing it: a <em>complementarity problem</em>, the matrix version of “either <span class="math inline">\sigma^2=0</span> or the constraint is tight”.</p>
-<p><strong>Exercise 2.3 — Derive the one-direction central flow.</strong> Let <span class="math inline">w</span> be the centre of the oscillation, and suppose the oscillation is <span class="math inline">\delta=xu</span> with <span class="math inline">\mathbb E[x]=0</span> and <span class="math inline">\mathbb E[x^2]=\sigma^2</span>.</p>
+<p><strong>Exercise 3.3 — Derive the one-direction central flow.</strong> Let <span class="math inline">w</span> be the centre of the oscillation, and suppose the oscillation is <span class="math inline">\delta=xu</span> with <span class="math inline">\mathbb E[x]=0</span> and <span class="math inline">\mathbb E[x^2]=\sigma^2</span>.</p>
 <p>(a) Show that <span class="math inline">\mathbb E\,\nabla L(w+\delta)=\nabla L(w)+\tfrac12\sigma^2\nabla S(w)+O(\mathbb E|x|^3)</span>. Gradient descent moves <span class="math inline">w</span> by <span class="math inline">-\eta</span> times this per step: write the flow in <span class="math inline">t=k\eta</span>.</p>
 <p>(b) Suppose <span class="math inline">S(w)=2/\eta</span>. Find the <span class="math inline">\sigma^2</span> for which <span class="math inline">\frac{d}{dt}S(w(t))=0</span>. Show <span class="math inline">\sigma^2\ge0</span> iff <span class="math inline">\langle\nabla L,\nabla S\rangle\le0</span>, i.e. iff plain gradient flow would increase <span class="math inline">S</span>. What should the flow do when this fails?</p>
 <p>(c) Show that while the constraint is active the flow is <span class="math inline">\dot w=-\Pi^\perp\nabla L</span>, with <span class="math inline">\Pi^\perp=I-\nabla S\nabla S^\top/\|\nabla S\|^2</span>, and that <span class="math inline">L(w(t))</span> is non-increasing.</p>
 <p>(d) Show that the time-averaged loss is <span class="math inline">\mathbb E\,L(w+\delta)\approx L(w)+\sigma^2/\eta</span>.</p>
-<p>(e) Evaluate <span class="math inline">\sigma^2</span> for the §2.2 toy <span class="math inline">L(x,y)=\tfrac12S(y)x^2+\ell(y)</span> at <span class="math inline">(0,y^*)</span>, where <span class="math inline">S(y^*)=2/\eta</span>, and compare with the orbit amplitude <span class="math inline">x^{*2}=-2\ell&#39;(y^*)/S&#39;(y^*)</span> from Exercise 2.2(b).</p>
+<p>(e) Evaluate <span class="math inline">\sigma^2</span> for the §3.2 toy <span class="math inline">L(x,y)=\tfrac12S(y)x^2+\ell(y)</span> at <span class="math inline">(0,y^*)</span>, where <span class="math inline">S(y^*)=2/\eta</span>, and compare with the orbit amplitude <span class="math inline">x^{*2}=-2\ell&#39;(y^*)/S&#39;(y^*)</span> from Exercise 3.2(b).</p>
 <details class="hint"><summary>Hint</summary>
 
 <p>(b) <span class="math inline">\frac{dS}{dt}=\langle\nabla S,\dot w\rangle</span>. (c) Substitute your <span class="math inline">\sigma^2</span>; then <span class="math inline">\frac{dL}{dt}=\langle\nabla L,\dot w\rangle</span> and <span class="math inline">\Pi^\perp</span> is a symmetric idempotent matrix. (d) Expand <span class="math inline">L</span> to second order around <span class="math inline">w</span> and use <span class="math inline">u^\top Hu=S=2/\eta</span>.</p>
@@ -716,7 +767,7 @@ y_K-y_0=-\eta\sum_{k&lt;K}\big(\tfrac12x_k^2-P\big)\quad\Longrightarrow\quad\fra
 \mathbb E\,L(w+\delta)\approx L(w)+\tfrac12\sigma^2S(w)=L(w)+\frac{\sigma^2}{\eta}.
 </span></p>
 <p>The measured loss sits above the loss at the centre by <span class="math inline">\sigma^2/\eta</span> (compare Damian et al.’s <span class="math inline">L(\theta^\dagger)+x^2/\eta</span>).</p>
-<p><strong>(e)</strong> In the toy at <span class="math inline">(0,y)</span>: <span class="math inline">\nabla L=(0,\ell&#39;(y))</span> and <span class="math inline">\nabla S=(0,S&#39;(y))</span>, so <span class="math inline">\sigma^2=-2\ell&#39;(y)/S&#39;(y)</span>, and at <span class="math inline">y^*</span> this is exactly <span class="math inline">x^{*2}</span> from 2.2(b): the central flow’s oscillation variance is the squared amplitude of the period-2 orbit. (When the iterates circle the orbit instead of settling, 2.2′(e) shows the long-run average of <span class="math inline">x_k^2</span> is still <span class="math inline">x^{*2}</span>, exactly in the linear model and approximately otherwise.) The central flow of the 2-D toy is trivial (it stops at <span class="math inline">y^*</span>); the code below adds a third coordinate so that it has somewhere to go.</p>
+<p><strong>(e)</strong> In the toy at <span class="math inline">(0,y)</span>: <span class="math inline">\nabla L=(0,\ell&#39;(y))</span> and <span class="math inline">\nabla S=(0,S&#39;(y))</span>, so <span class="math inline">\sigma^2=-2\ell&#39;(y)/S&#39;(y)</span>, and at <span class="math inline">y^*</span> this is exactly <span class="math inline">x^{*2}</span> from 3.2(b): the central flow’s oscillation variance is the squared amplitude of the period-2 orbit. (When the iterates circle the orbit instead of settling, 3.2′(e) shows the long-run average of <span class="math inline">x_k^2</span> is still <span class="math inline">x^{*2}</span>, exactly in the linear model and approximately otherwise.) The central flow of the 2-D toy is trivial (it stops at <span class="math inline">y^*</span>); the code below adds a third coordinate so that it has somewhere to go.</p>
 </div>
 </details>
 
@@ -789,43 +840,25 @@ t =  1200 (1000-step window): y 7.756 vs CF 7.749; z -1.186 vs -1.182; x^2 0.002
 <p>Late in the run, 1000-step averages of all four quantities agree with the central flow to a few percent; just after the first excursion, variance and loss are off by about 10%. The measured loss is more than twice <span class="math inline">L(w)</span>: much of what you see during EoS is the oscillation. The toy satisfies the flow’s assumptions by construction, so this checks the derivation, not the claim about networks.</p>
 </div>
 </details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="24-rod-flow-and-principal-flow">
-<summary><h2 id="24-rod-flow-and-principal-flow">2.4 Rod Flow and principal flow</h2></summary>
+<details class="sec sec2" data-sec="34-rod-flow-and-principal-flow">
+<summary><h2 id="34-rod-flow-and-principal-flow">3.4 Rod Flow and principal flow</h2></summary>
 <div class="sec-body">
-<a id="td22-4"></a>
-<p>The central flow needs the top eigenvector, the sharpness gradient and, with several unstable directions, a constrained matrix problem. Is there a continuous-time model of the edge needing only gradients and Hessian-vector products? <em>Rod Flow</em> is one. And <em>principal flow</em> is what the small-step modified-flow series of §2.1 becomes if every order is kept.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2602.01480">Rod Flow: a continuous-time model for gradient descent at the edge of stability</a></strong>, Regis, Chewi (2026) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Exact midpoint dynamics of the rod, an explicit ODE needing only gradients and Hessian-vector products, the quadratic threshold and quartic self-stabilization, and the central flow as a Taylor approximation.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2302.01952">On a continuous time model of gradient descent dynamics and instability in deep learning</a></strong>, Rosca, Wu, Qin, Dherin (TMLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The principal flow: Exercise 2.1 for every Hessian eigendirection; explains the onset of instability, not the stabilization.</p>
-</div>
-
-<p>Also: <a href="https://arxiv.org/abs/2605.06821">A Rod Flow model for Adam at the edge of stability</a> (follow-up for momentum methods and Adam).</p>
-<p>Rod Flow tracks the <em>rod</em> joining two consecutive iterates (midpoint and half-length) instead of the iterate: at the edge the iterates jump back and forth, but the rod moves smoothly, and its length carries the instability. Principal flow applies the exact quadratic flow of Exercise 2.1, rate <span class="math inline">\frac1\eta\log(1-\eta\lambda)</span>, eigendirection by eigendirection; it captures the onset of instability but, having no third derivatives, not the stabilization.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-4">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-4">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-4-walkthrough"></a>
-<p><em>Notation.</em> Gradient-descent iterates <span class="math inline">w_{k+1}=w_k-\eta\nabla L(w_k)</span>, continuous time <span class="math inline">t=k\eta</span>, rod midpoint <span class="math inline">\bar w_k=\tfrac12(w_{k+1}+w_k)</span>, half-length <span class="math inline">\delta_k=\tfrac12(w_{k+1}-w_k)=-\tfrac\eta2\nabla L(w_k)</span>, and <span class="math inline">\Sigma_k=\delta_k\delta_k^\top</span> (the rod’s squared length, as a matrix). The midpoint’s update is <em>exact</em>,</p>
+<a id="td23-4"></a>
+<p>The central flow needs the top eigenvector, the sharpness gradient and, with several unstable directions, a constrained matrix problem. Is there a continuous-time model of the edge needing only gradients and Hessian-vector products? <em>Rod Flow</em> is one. And <em>principal flow</em> is what the small-step modified-flow series of §3.1 becomes if every order is kept.</p>
+<p><strong>Papers:</strong> Regis &amp; Chewi, <em>Rod Flow</em> (2026); Rosca, Wu, Qin &amp; Dherin, the principal flow (2023) (see <a href="#td23-readings">Readings</a>).</p>
+<p>Rod Flow tracks the <em>rod</em> joining two consecutive iterates (midpoint and half-length) instead of the iterate: at the edge the iterates jump back and forth, but the rod moves smoothly, and its length carries the instability. Principal flow applies the exact quadratic flow of Exercise 3.1, rate <span class="math inline">\frac1\eta\log(1-\eta\lambda)</span>, eigendirection by eigendirection; it captures the onset of instability but, having no third derivatives, not the stabilization.</p>
+<a id="td23-4-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> Gradient-descent iterates <span class="math inline">w_{k+1}=w_k-\eta\nabla L(w_k)</span>, continuous time <span class="math inline">t=k\eta</span>, rod midpoint <span class="math inline">\bar w_k=\tfrac12(w_{k+1}+w_k)</span>, half-length <span class="math inline">\delta_k=\tfrac12(w_{k+1}-w_k)=-\tfrac\eta2\nabla L(w_k)</span>, and <span class="math inline">\Sigma_k=\delta_k\delta_k^\top</span> (the rod’s squared length, as a matrix). The midpoint’s update is <em>exact</em>,</p>
 <p><span class="math display">
 \bar w_{k+1}-\bar w_k=-\tfrac\eta2\big[\nabla L(\bar w_k+\delta_k)+\nabla L(\bar w_k-\delta_k)\big],
 </span></p>
-<p>with gradients at the rod’s ends, where the iterates are, not Taylor-expanded around the centre. <span class="math inline">\Sigma_k</span> also obeys an exact identity (Exercise 2.4(a)). As ODEs, with one backward-error correction for the midpoint, in <span class="math inline">t=k\eta</span> and with <span class="math inline">L_\pm=L(\bar w\pm\delta)</span>:</p>
+<p>with gradients at the rod’s ends, where the iterates are, not Taylor-expanded around the centre. <span class="math inline">\Sigma_k</span> also obeys an exact identity (Exercise 3.4(a)). As ODEs, with one backward-error correction for the midpoint, in <span class="math inline">t=k\eta</span> and with <span class="math inline">L_\pm=L(\bar w\pm\delta)</span>:</p>
 <p><span class="math display">
 \frac{d\bar w}{dt}=-\tfrac12\big[\nabla L_++\nabla L_-\big]-\tfrac\eta8\big[\nabla^2L_++\nabla^2L_-\big]\big[\nabla L_++\nabla L_-\big],\qquad
 \frac{d\Sigma}{dt}=\tfrac\eta4\big[\nabla L_+\nabla L_+^\top+\nabla L_-\nabla L_-^\top\big]-\tfrac2\eta\Sigma .
 </span></p>
-<p>To close the system, <span class="math inline">\delta</span> is <span class="math inline">\sqrt{\lambda_{\max}(\Sigma)}</span> times <span class="math inline">\Sigma</span>’s top eigenvector (the authors observe <span class="math inline">\Sigma</span> stays nearly rank one). On a quadratic this reproduces the <span class="math inline">2/\eta</span> threshold (Exercise 2.4), on a quartic it gives a finite stable rod length, and expanding <span class="math inline">\nabla L_\pm</span> to second order heuristically recovers the central flow.</p>
-<p><strong>Exercise 2.4 — Rod Flow on a quadratic.</strong></p>
+<p>To close the system, <span class="math inline">\delta</span> is <span class="math inline">\sqrt{\lambda_{\max}(\Sigma)}</span> times <span class="math inline">\Sigma</span>’s top eigenvector (the authors observe <span class="math inline">\Sigma</span> stays nearly rank one). On a quadratic this reproduces the <span class="math inline">2/\eta</span> threshold (Exercise 3.4), on a quartic it gives a finite stable rod length, and expanding <span class="math inline">\nabla L_\pm</span> to second order heuristically recovers the central flow.</p>
+<p><strong>Exercise 3.4 — Rod Flow on a quadratic.</strong></p>
 <p>(a) Verify the exact midpoint update above, and <span class="math inline">\delta_k=-\tfrac\eta2\nabla L(w_k)</span>. Then show that <span class="math inline">\Sigma_k=\delta_k\delta_k^\top</span> satisfies, exactly,</p>
 <p><span class="math display">
 \Sigma_{k+1}-\Sigma_k=\tfrac{\eta^2}4\big[\nabla L_+\nabla L_+^\top+\nabla L_-\nabla L_-^\top\big]-2\Sigma_k,\qquad L_\pm=L(\bar w_k\pm\delta_k),
@@ -855,33 +888,22 @@ t =  1200 (1000-step window): y 7.756 vs CF 7.749; z -1.186 vs -1.182; x^2 0.002
 <p><span class="math display">
 \frac{d\Sigma}{dt}=\frac\eta4\cdot2S^2\Sigma-\frac2\eta\Sigma=\Big(\frac{\eta S^2}2-\frac2\eta\Big)\Sigma ,
 </span></p>
-<p>which grows iff <span class="math inline">\eta S^2/2&gt;2/\eta</span>, i.e. <span class="math inline">\eta S&gt;2</span>. (In the paper’s step-counting time this is <span class="math inline">d\Sigma/d\tau=(\eta^2S^2/2-2)\Sigma</span>, their §5.2.) The rod’s length, not its midpoint, carries the instability: Rod Flow escapes the obstruction of Exercise 2.1 because it has a second real variable.</p>
+<p>which grows iff <span class="math inline">\eta S^2/2&gt;2/\eta</span>, i.e. <span class="math inline">\eta S&gt;2</span>. (In the paper’s step-counting time this is <span class="math inline">d\Sigma/d\tau=(\eta^2S^2/2-2)\Sigma</span>, their §5.2.) The rod’s length, not its midpoint, carries the instability: Rod Flow escapes the obstruction of Exercise 3.1 because it has a second real variable.</p>
 <p><strong>(c)</strong> At <span class="math inline">\delta=0</span>, <span class="math inline">\nabla L_\pm=\nabla L</span> and <span class="math inline">\nabla^2L_\pm=H</span>, so <span class="math inline">\dot{\bar w}=-\tfrac12\cdot2\nabla L-\tfrac\eta8\cdot2H\cdot2\nabla L=-\nabla L-\tfrac\eta2H\nabla L=-\nabla\big(L+\tfrac\eta4\|\nabla L\|^2\big)</span>: the implicit-gradient-regularization flow. But <span class="math inline">\delta=0</span> is not consistent away from a stationary point: at <span class="math inline">\Sigma=0</span>, <span class="math inline">d\Sigma/dt=\tfrac\eta2\nabla L\nabla L^\top\neq0</span>. Away from the edge the rod relaxes to a small length set by the step itself (<span class="math inline">\delta=-\tfrac\eta2\nabla L</span>; on a linear loss <span class="math inline">L=-b^\top w</span> the equilibrium is <span class="math inline">\Sigma_*=\tfrac{\eta^2}4bb^\top</span>, the paper’s §5.1 example). So the IGR flow is the leading behaviour when the rod is short compared with the scale on which <span class="math inline">\nabla L</span> varies, not an exact sub-case.</p>
 </div>
 </details>
 </div>
 </details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="25-adaptive-optimizers">
-<summary><h2 id="25-adaptive-optimizers">2.5 Adaptive optimizers</h2></summary>
+<details class="sec sec2" data-sec="35-adaptive-optimizers">
+<summary><h2 id="35-adaptive-optimizers">3.5 Adaptive optimizers</h2></summary>
 <div class="sec-body">
-<a id="td22-5"></a>
+<a id="td23-5"></a>
 <p>Does Adam have an edge of stability? Yes, but in the <em>preconditioned</em> sharpness <span class="math inline">\lambda_{\max}(P^{-1}H)</span>, where <span class="math inline">H</span> is the loss Hessian and <span class="math inline">P</span> is Adam’s diagonal preconditioner. In full-batch training with <span class="math inline">\beta_1=0.9</span> it sits at <span class="math inline">38/\eta</span> while the raw sharpness keeps rising.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2207.14484">Adaptive gradient methods at the edge of stability</a></strong>, Cohen, Ghorbani, Krishnan, Agarwal, et al. (2022 preprint; cite v2, which corrects Adam’s preconditioner formula) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Adam’s preconditioned sharpness sits at <span class="math inline">38/\eta</span> while raw sharpness keeps rising; the preconditioner-feedback mechanism, and how minibatching changes the picture.</p>
-</div>
-
+<p><strong>Paper:</strong> Cohen, Ghorbani, Krishnan, Agarwal et al., <em>Adaptive gradient methods at the edge of stability</em> (v2; see <a href="#td23-readings">Readings</a>).</p>
 <p>With <span class="math inline">P</span> frozen, Adam on a quadratic is heavy-ball momentum on a rescaled problem, stable iff <span class="math inline">\lambda_{\max}(P^{-1}H)&lt;2(1+\beta_1)/\big((1-\beta_1)\eta\big)=38/\eta</span>. The edge holds because the instability’s large gradients inflate <span class="math inline">P</span>, pulling the preconditioned sharpness back down. With minibatches it sits below the threshold, more so for small batches (and at very small <span class="math inline">\eta</span>, even in full batch).</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-5">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-5">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-5-walkthrough"></a>
-<p><em>Prerequisites.</em> Heavy-ball momentum is <span class="math inline">x_{k+1}=x_k-\eta\nabla L(x_k)+\beta(x_k-x_{k-1})</span>. On <span class="math inline">\tfrac12\lambda x^2</span> its characteristic polynomial is <span class="math inline">z^2-(1+\beta-\eta\lambda)z+\beta</span>, and for <span class="math inline">0\le\beta&lt;1</span> both roots lie inside the unit circle iff <span class="math inline">0&lt;\eta\lambda&lt;2(1+\beta)</span> (derivation and pictures: <a href="https://distill.pub/2017/momentum/">Goh, <em>Why momentum really works</em></a>). Adam with gradient <span class="math inline">g_k</span>: first moment <span class="math inline">m_k=\beta_1m_{k-1}+(1-\beta_1)g_k</span> (an exponential moving average, EMA), second moment <span class="math inline">v_k=\beta_2v_{k-1}+(1-\beta_2)g_k^2</span> (coordinatewise), step <span class="math inline">\theta_{k+1}=\theta_k-\eta P_k^{-1}m_k</span> with <span class="math inline">P_k=\operatorname{diag}(\sqrt{v_k})+\epsilon I</span>.</p>
-<p><strong>Exercise 2.5 — The <span class="math inline">38/\eta</span> threshold.</strong></p>
+<a id="td23-5-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>Prerequisites:</em> Heavy-ball momentum is <span class="math inline">x_{k+1}=x_k-\eta\nabla L(x_k)+\beta(x_k-x_{k-1})</span>. On <span class="math inline">\tfrac12\lambda x^2</span> its characteristic polynomial is <span class="math inline">z^2-(1+\beta-\eta\lambda)z+\beta</span>, and for <span class="math inline">0\le\beta&lt;1</span> both roots lie inside the unit circle iff <span class="math inline">0&lt;\eta\lambda&lt;2(1+\beta)</span> (derivation and pictures: <a href="https://distill.pub/2017/momentum/">Goh, <em>Why momentum really works</em></a>). Adam with gradient <span class="math inline">g_k</span>: first moment <span class="math inline">m_k=\beta_1m_{k-1}+(1-\beta_1)g_k</span> (an exponential moving average, EMA), second moment <span class="math inline">v_k=\beta_2v_{k-1}+(1-\beta_2)g_k^2</span> (coordinatewise), step <span class="math inline">\theta_{k+1}=\theta_k-\eta P_k^{-1}m_k</span> with <span class="math inline">P_k=\operatorname{diag}(\sqrt{v_k})+\epsilon I</span>.</p>
+<p><strong>Exercise 3.5 — The <span class="math inline">38/\eta</span> threshold.</strong></p>
 <p>(a) Show that EMA momentum, <span class="math inline">m_k=\beta_1m_{k-1}+(1-\beta_1)\nabla L(\theta_k)</span>, <span class="math inline">\theta_{k+1}=\theta_k-\eta m_k</span>, is heavy-ball momentum with step <span class="math inline">\eta(1-\beta_1)</span> and momentum <span class="math inline">\beta_1</span>. Deduce that on <span class="math inline">\tfrac12\lambda\theta^2</span> with <span class="math inline">\lambda&gt;0</span> it is stable iff <span class="math inline">\lambda&lt;2(1+\beta_1)/\big((1-\beta_1)\eta\big)</span>, and evaluate this at <span class="math inline">\beta_1=0.9</span>.</p>
 <p>(b) Now use a fixed positive diagonal preconditioner, <span class="math inline">\theta_{k+1}=\theta_k-\eta P^{-1}m_k</span>, on <span class="math inline">\tfrac12\theta^\top H\theta</span> with <span class="math inline">H</span> positive definite. Show that stability is governed by the eigenvalues of <span class="math inline">P^{-1}H</span>, which are real and positive even though <span class="math inline">P^{-1}H</span> is not symmetric, and that the condition is <span class="math inline">\lambda_{\max}(P^{-1}H)&lt;38/\eta</span>.</p>
 <p>(c) Explain why, if Adam’s raw sharpness keeps rising, its preconditioned sharpness can stay at <span class="math inline">38/\eta</span> instead of overshooting and diverging. Be careful about <em>which</em> direction is unstable.</p>
@@ -903,7 +925,7 @@ t =  1200 (1000-step window): y 7.756 vs CF 7.749; z -1.186 vs -1.182; x^2 0.002
 </span></p>
 <p>The extra room compared with plain heavy ball comes entirely from the factor <span class="math inline">1-\beta_1</span> on the gradient.</p>
 <p><strong>(b)</strong> Set <span class="math inline">z=P^{1/2}\theta</span> and <span class="math inline">\mu=P^{-1/2}m</span>. Then <span class="math inline">z_{k+1}=z_k-\eta P^{1/2}P^{-1}m_k=z_k-\eta\mu_k</span>, and <span class="math inline">\mu_k=\beta_1\mu_{k-1}+(1-\beta_1)P^{-1/2}H\theta_k=\beta_1\mu_{k-1}+(1-\beta_1)\tilde Hz_k</span> with <span class="math inline">\tilde H=P^{-1/2}HP^{-1/2}</span>. So in <span class="math inline">z</span> coordinates this is EMA momentum on the quadratic <span class="math inline">\tfrac12z^\top\tilde Hz</span>, which decouples along the eigenvectors of the symmetric positive-definite matrix <span class="math inline">\tilde H</span>; each mode is stable iff its eigenvalue lies in <span class="math inline">(0,38/\eta)</span>. Finally <span class="math inline">\tilde H=P^{1/2}(P^{-1}H)P^{-1/2}</span> is similar to <span class="math inline">P^{-1}H</span>, so they share eigenvalues, which are real and positive because <span class="math inline">\tilde H</span> is symmetric positive definite. Hence the condition is <span class="math inline">\lambda_{\max}(P^{-1}H)&lt;38/\eta</span>. (Cohen et al. prove the same equivalence in their App. A.2. Without positive definiteness one also needs every eigenvalue positive.)</p>
-<p><strong>(c)</strong> <span class="math inline">P</span> is not frozen: <span class="math inline">v_k</span> is a moving average of squared gradients. Let <span class="math inline">q</span> be the top eigenvector of <span class="math inline">\tilde H</span>, with eigenvalue <span class="math inline">\lambda_{\rm eff}=\lambda_{\max}(P^{-1}H)</span>. The unstable displacement is <span class="math inline">\delta\theta=x\,P^{-1/2}q</span>, which in general is <em>not</em> the raw top eigenvector <span class="math inline">u</span> (for <span class="math inline">H=\operatorname{diag}(2,1)</span>, <span class="math inline">P=\operatorname{diag}(100,1)</span> the raw and preconditioned sharpest directions are different coordinates). It changes the gradient by <span class="math inline">H\delta\theta=x\lambda_{\rm eff}\,P^{1/2}q</span>. When <span class="math inline">\lambda_{\rm eff}</span> crosses <span class="math inline">38/\eta</span>, <span class="math inline">|x|</span> grows geometrically and so does this gradient; its coordinatewise square inflates <span class="math inline">v</span>, and hence <span class="math inline">P</span>, in exactly the coordinates where <span class="math inline">P^{1/2}q</span> has weight. Increasing <span class="math inline">P</span> there lowers <span class="math inline">\lambda_{\max}(P^{-1}H)</span>; the growth stops once it is back below <span class="math inline">38/\eta</span>, the large gradients die out, <span class="math inline">v</span> decays at rate <span class="math inline">1-\beta_2</span>, and progressive sharpening pushes the preconditioned sharpness back up. This negative feedback equilibrates at the threshold. Raw sharpness can keep growing because each increase in <span class="math inline">H</span> along the unstable mode is matched by an increase in <span class="math inline">P</span>. So Adam has two stabilizing channels: the third-derivative push of §2.2, and the more direct response of <span class="math inline">P</span> to large gradients.</p>
+<p><strong>(c)</strong> <span class="math inline">P</span> is not frozen: <span class="math inline">v_k</span> is a moving average of squared gradients. Let <span class="math inline">q</span> be the top eigenvector of <span class="math inline">\tilde H</span>, with eigenvalue <span class="math inline">\lambda_{\rm eff}=\lambda_{\max}(P^{-1}H)</span>. The unstable displacement is <span class="math inline">\delta\theta=x\,P^{-1/2}q</span>, which in general is <em>not</em> the raw top eigenvector <span class="math inline">u</span> (for <span class="math inline">H=\operatorname{diag}(2,1)</span>, <span class="math inline">P=\operatorname{diag}(100,1)</span> the raw and preconditioned sharpest directions are different coordinates). It changes the gradient by <span class="math inline">H\delta\theta=x\lambda_{\rm eff}\,P^{1/2}q</span>. When <span class="math inline">\lambda_{\rm eff}</span> crosses <span class="math inline">38/\eta</span>, <span class="math inline">|x|</span> grows geometrically and so does this gradient; its coordinatewise square inflates <span class="math inline">v</span>, and hence <span class="math inline">P</span>, in exactly the coordinates where <span class="math inline">P^{1/2}q</span> has weight. Increasing <span class="math inline">P</span> there lowers <span class="math inline">\lambda_{\max}(P^{-1}H)</span>; the growth stops once it is back below <span class="math inline">38/\eta</span>, the large gradients die out, <span class="math inline">v</span> decays at rate <span class="math inline">1-\beta_2</span>, and progressive sharpening pushes the preconditioned sharpness back up. This negative feedback equilibrates at the threshold. Raw sharpness can keep growing because each increase in <span class="math inline">H</span> along the unstable mode is matched by an increase in <span class="math inline">P</span>. So Adam has two stabilizing channels: the third-derivative push of §3.2, and the more direct response of <span class="math inline">P</span> to large gradients.</p>
 </div>
 </details>
 
@@ -937,7 +959,7 @@ t =  1200 (1000-step window): y 7.756 vs CF 7.749; z -1.186 vs -1.182; x^2 0.002
 </div>
 </div>
 
-<p><strong>Code: Adam’s edge in the MLP.</strong> Full-batch Adam on the §2.1 network (<span class="math inline">\beta_1=0.9</span>, <span class="math inline">\beta_2=0.999</span>, <span class="math inline">\epsilon=10^{-7}</span>, no bias correction, as in Cohen et al.) at two step sizes. Every 100 steps we freeze <span class="math inline">P</span> and compute <span class="math inline">\lambda_{\max}(P^{-1/2}HP^{-1/2})</span> and the raw <span class="math inline">S</span> by Lanczos on Hessian-vector products.</p>
+<p><strong>Code: Adam’s edge in the MLP.</strong> Full-batch Adam on the §3.1 network (<span class="math inline">\beta_1=0.9</span>, <span class="math inline">\beta_2=0.999</span>, <span class="math inline">\epsilon=10^{-7}</span>, no bias correction, as in Cohen et al.) at two step sizes. Every 100 steps we freeze <span class="math inline">P</span> and compute <span class="math inline">\lambda_{\max}(P^{-1/2}HP^{-1/2})</span> and the raw <span class="math inline">S</span> by Lanczos on Hessian-vector products.</p>
 
 <div class="cell">
 <details class="code"><summary>Code (50 lines)</summary>
@@ -1003,32 +1025,20 @@ eta = 0.003, steps 600-1500: eta * lambda_max(P^-1 H) mean 37.4, range [36.0, 38
 <p>At both step sizes <span class="math inline">\eta\lambda_{\max}(P^{-1}H)</span> hovers near 38 (about 36 to 38.6), while <span class="math inline">\eta S</span> is a few hundredths: the edge is in the preconditioned quantity. A caveat on <em>how</em> it gets there: here the loss is near zero after a few hundred steps, so <span class="math inline">v</span> (hence <span class="math inline">P</span>) decays, raising <span class="math inline">\lambda_{\max}(P^{-1}H)</span> toward the edge, and each renewed oscillation’s gradient burst pushes it back. That is not progressive sharpening; in Cohen et al.’s longer runs Adam is still training at the edge while the raw sharpness climbs.</p>
 </div>
 </details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="26-the-edge-of-stochastic-stability">
-<summary><h2 id="26-the-edge-of-stochastic-stability">2.6 The edge of stochastic stability</h2></summary>
+<details class="sec sec2" data-sec="36-the-edge-of-stochastic-stability">
+<summary><h2 id="36-the-edge-of-stochastic-stability">3.6 The edge of stochastic stability</h2></summary>
 <div class="sec-body">
-<a id="td22-6"></a>
+<a id="td23-6"></a>
 <p>Under minibatch SGD, does the sharpness still rise to <span class="math inline">2/\eta</span>? The full-batch <span class="math inline">\lambda_{\max}</span> settles lower, by a gap that grows as the batch size <span class="math inline">b</span> shrinks. What sits at <span class="math inline">2/\eta</span>, for every batch size, is the <strong>batch sharpness</strong></p>
 <p><span class="math display">
 \mathrm{BS}(\theta)=\mathbb E_B\!\left[\frac{g_B^\top H_B\,g_B}{\|g_B\|^2}\right],
 </span></p>
 <p>where a minibatch <span class="math inline">B</span> has gradient <span class="math inline">g_B</span> and Hessian <span class="math inline">H_B</span>: each minibatch’s curvature along its own gradient, with the expectation <em>outside</em> the ratio.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2412.20553">Edge of Stochastic Stability: revisiting the edge of stability for SGD</a></strong>, Andreyev, Beneventano (arXiv v5, Dec 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Batch sharpness (their Definition 3) plateaus at <span class="math inline">2/\eta</span> for every batch size while <span class="math inline">\lambda_{\max}</span> settles lower; App. J compares other candidate quantities. Use v5: v1 used <span class="math inline">\mathbb E_B\lambda_{\max}(H_B)</span>, and v2–v4 wrote the ratio of expectations in the definition while their experiments measured the expectation of the ratio.</p>
-</div>
-
-<p>Also: <a href="https://proceedings.mlr.press/v306/andreyev26a.html">Momentum further constrains sharpness at the edge of stochastic stability</a> (ICML 2026; with momentum <span class="math inline">\beta</span>, batch sharpness plateaus at <span class="math inline">2(1-\beta)/\eta</span> for small batches and <span class="math inline">2(1+\beta)/\eta</span> for large ones); <a href="https://arxiv.org/abs/2604.21016">SGD at the edge of stability: the stochastic sharpness gap</a> (2026; predicts a <span class="math inline">\lambda_{\max}</span> gap of roughly <span class="math inline">1/b</span>, quantitatively untested).</p>
-<p>The subtlety is which average: requiring the <em>expected</em> batch-loss change to be negative gives a ratio of expectations instead, which also stabilizes, but above <span class="math inline">2/\eta</span> and at a batch-size-dependent level. Why batch sharpness settles <em>at</em> <span class="math inline">2/\eta</span> (an SGD analogue of §2.2) is open.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-6">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-6">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-6-walkthrough"></a>
-<p><em>Notation.</em> A minibatch <span class="math inline">B</span> of size <span class="math inline">b</span> has loss <span class="math inline">L_B</span>, gradient <span class="math inline">g_B=\nabla L_B</span> and Hessian <span class="math inline">H_B</span>; the SGD step is <span class="math inline">\theta&#39;=\theta-\eta g_B</span>; <span class="math inline">S_B=g_B^\top H_Bg_B/\|g_B\|^2</span>, so <span class="math inline">\mathrm{BS}=\mathbb E[S_B]</span>. The paper’s theory is one-sided; Exercise 2.6(c–d) examines what it shows.</p>
-<p><strong>Exercise 2.6 — Which average?</strong> Fix <span class="math inline">\theta</span> and draw a minibatch <span class="math inline">B</span>.</p>
+<p><strong>Paper:</strong> Andreyev &amp; Beneventano, <em>Edge of Stochastic Stability</em> (v5; see <a href="#td23-readings">Readings</a>).</p>
+<p>The subtlety is which average: requiring the <em>expected</em> batch-loss change to be negative gives a ratio of expectations instead, which also stabilizes, but above <span class="math inline">2/\eta</span> and at a batch-size-dependent level. Why batch sharpness settles <em>at</em> <span class="math inline">2/\eta</span> (an SGD analogue of §3.2) is open.</p>
+<a id="td23-6-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> A minibatch <span class="math inline">B</span> of size <span class="math inline">b</span> has loss <span class="math inline">L_B</span>, gradient <span class="math inline">g_B=\nabla L_B</span> and Hessian <span class="math inline">H_B</span>; the SGD step is <span class="math inline">\theta&#39;=\theta-\eta g_B</span>; <span class="math inline">S_B=g_B^\top H_Bg_B/\|g_B\|^2</span>, so <span class="math inline">\mathrm{BS}=\mathbb E[S_B]</span>. The paper’s theory is one-sided; Exercise 3.6(c–d) examines what it shows.</p>
+<p><strong>Exercise 3.6 — Which average?</strong> Fix <span class="math inline">\theta</span> and draw a minibatch <span class="math inline">B</span>.</p>
 <p>(a) Expand <span class="math inline">L_B(\theta&#39;)</span> to second order. Show that the step decreases its own batch loss iff <span class="math inline">S_B&lt;2/\eta</span>.</p>
 <p>(b) Show that <span class="math inline">\mathbb E_B\big[L_B(\theta&#39;)-L_B(\theta)\big]&lt;0</span> (to the same order) iff <span class="math inline">\mathbb E[g_B^\top H_Bg_B]/\mathbb E\|g_B\|^2&lt;2/\eta</span>. Write this ratio of expectations as a weighted average of the <span class="math inline">S_B</span>. When does it differ from <span class="math inline">\mathrm{BS}=\mathbb E[S_B]</span>?</p>
 <p>(c) Treat <span class="math inline">L_B</span> as exactly quadratic near <span class="math inline">\theta</span>. Show that the same batch’s gradient after its own step satisfies <span class="math inline">\|\nabla L_B(\theta&#39;)\|^2/\|g_B\|^2\ge(1-\eta S_B)^2</span>, and deduce <span class="math inline">\mathbb E_B\big[\|\nabla L_B(\theta&#39;)\|^2/\|g_B\|^2\big]\ge(1-\eta\,\mathrm{BS})^2</span>.</p>
@@ -1060,7 +1070,7 @@ eta = 0.003, steps 600-1500: eta * lambda_max(P^-1 H) mean 37.4, range [36.0, 38
 </div>
 </details>
 
-<p><strong>Code: batch sharpness in the MLP.</strong> SGD at <span class="math inline">\eta=0.3</span> (<span class="math inline">2/\eta\approx6.67</span>) on the §2.1 network, batch sizes <span class="math inline">b=16</span> and <span class="math inline">64</span>. Every 100 steps: full-batch <span class="math inline">\lambda_{\max}</span>, <span class="math inline">\mathrm{BS}</span>, and the ratio of expectations from Exercise 2.6(b), each expectation over 32 random batches. A small, noisy run.</p>
+<p><strong>Code: batch sharpness in the MLP.</strong> SGD at <span class="math inline">\eta=0.3</span> (<span class="math inline">2/\eta\approx6.67</span>) on the §3.1 network, batch sizes <span class="math inline">b=16</span> and <span class="math inline">64</span>. Every 100 steps: full-batch <span class="math inline">\lambda_{\max}</span>, <span class="math inline">\mathrm{BS}</span>, and the ratio of expectations from Exercise 3.6(b), each expectation over 32 random batches. A small, noisy run.</p>
 
 <div class="cell">
 <details class="code"><summary>Code (44 lines)</summary>
@@ -1120,32 +1130,21 @@ b = 64, steps 3600-6000: lambda_max 6.57, batch sharpness 6.88 (+-0.49), ratio o
 <p>The run shows the gap clearly: <span class="math inline">\lambda_{\max}</span> is about 4.0 at <span class="math inline">b=16</span> and 6.6 at <span class="math inline">b=64</span>. It cannot tell batch sharpness from the ratio of expectations (6.2 and 7.1 at <span class="math inline">b=16</span>; 6.9 and 7.05 at <span class="math inline">b=64</span>; fluctuations about <span class="math inline">\pm0.5</span>); that needs longer, larger runs (the paper’s App. J).</p>
 </div>
 </details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="27-the-catapult">
-<summary><h2 id="27-the-catapult">2.7 The catapult</h2></summary>
+<details class="sec sec2" data-sec="37-the-catapult">
+<summary><h2 id="37-the-catapult">3.7 The catapult</h2></summary>
 <div class="sec-body">
-<a id="td22-7"></a>
+<a id="td23-7"></a>
 <p>What if the step is too large for the curvature <span class="math inline">\lambda_0</span> already at initialization, <span class="math inline">\eta\lambda_0&gt;2</span>? In a wide two-layer linear network the dynamics reduce to two exact scalar maps with three phases: <em>lazy</em> (<span class="math inline">\eta\lambda_0&lt;2</span>), <em>catapult</em> (<span class="math inline">2&lt;\eta\lambda_0&lt;4</span>: the loss spikes, the curvature drops below <span class="math inline">2/\eta</span>, and training converges somewhere flatter) and <em>divergent</em> (<span class="math inline">\eta\lambda_0&gt;4</span>).</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2003.02218">The large learning rate phase of deep learning: the catapult mechanism</a></strong>, Lewkowycz, Bahri, Dyer, Sohl-Dickstein, Gur-Ari (2020) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The exact maps and three phases, the empirical <span class="math inline">12/\lambda_0</span> edge for ReLU networks, and evidence that the catapult phase often generalizes best.</p>
-</div>
-
-<p>Like self-stabilization (§2.2), this is “oscillation squared lowers curvature”, but with no sharpening pressure pushing back, so the drop is one-shot. The coupling is weak, <span class="math inline">O(1/n)</span> at width <span class="math inline">n</span>, so the loss must grow to order <span class="math inline">n</span> (about <span class="math inline">\log n</span> steps) before the drop: the spike is part of the mechanism. Cohen et al. 2021 suggest EoS may be a series of micro-catapults; the first drop in the §2.1 plot resembles one. The edge <span class="math inline">4/\lambda_0</span> is specific to this model: ReLU networks tolerate up to about <span class="math inline">12/\lambda_0</span> (tanh, closer to <span class="math inline">4/\lambda_0</span>).</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-7">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-7">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-7-walkthrough"></a>
-<p><strong>The model.</strong> <span class="math inline">f=v^\top u/\sqrt n</span> with weights <span class="math inline">u,v\in\mathbb R^n</span> (here <span class="math inline">u</span> is a weight vector, not the eigenvector of earlier sections; their <span class="math inline">f(x)=n^{-1/2}v^\top ux</span> with a single input <span class="math inline">x=1</span>), target <span class="math inline">0</span>, loss <span class="math inline">L=\tfrac12f^2</span>, and the neural tangent kernel <span class="math inline">\lambda=\|\nabla f\|^2=(\|u\|^2+\|v\|^2)/n</span>, which at a minimum (<span class="math inline">f=0</span>) is the sharpness. With standard initialization <span class="math inline">u,v\sim\mathcal N(0,I)</span>, <span class="math inline">f_0=O(1)</span> and <span class="math inline">\lambda_0\approx2</span>. One gradient step with constant <span class="math inline">\eta</span> gives, exactly,</p>
+<p><strong>Paper:</strong> Lewkowycz, Bahri, Dyer, Sohl-Dickstein &amp; Gur-Ari, <em>The catapult mechanism</em> (see <a href="#td23-readings">Readings</a>).</p>
+<p>Like self-stabilization (§3.2), this is “oscillation squared lowers curvature”, but with no sharpening pressure pushing back, so the drop is one-shot. The coupling is weak, <span class="math inline">O(1/n)</span> at width <span class="math inline">n</span>, so the loss must grow to order <span class="math inline">n</span> (about <span class="math inline">\log n</span> steps) before the drop: the spike is part of the mechanism. Cohen et al. 2021 suggest EoS may be a series of micro-catapults; the first drop in the §3.1 plot resembles one. The edge <span class="math inline">4/\lambda_0</span> is specific to this model: ReLU networks tolerate up to about <span class="math inline">12/\lambda_0</span> (tanh, closer to <span class="math inline">4/\lambda_0</span>).</p>
+<a id="td23-7-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>The model:</em> <span class="math inline">f=v^\top u/\sqrt n</span> with weights <span class="math inline">u,v\in\mathbb R^n</span> (here <span class="math inline">u</span> is a weight vector, not the eigenvector of earlier sections; their <span class="math inline">f(x)=n^{-1/2}v^\top ux</span> with a single input <span class="math inline">x=1</span>), target <span class="math inline">0</span>, loss <span class="math inline">L=\tfrac12f^2</span>, and the neural tangent kernel <span class="math inline">\lambda=\|\nabla f\|^2=(\|u\|^2+\|v\|^2)/n</span>, which at a minimum (<span class="math inline">f=0</span>) is the sharpness. With standard initialization <span class="math inline">u,v\sim\mathcal N(0,I)</span>, <span class="math inline">f_0=O(1)</span> and <span class="math inline">\lambda_0\approx2</span>. One gradient step with constant <span class="math inline">\eta</span> gives, exactly,</p>
 <p><span class="math display">
 f_{k+1}=f_k\Big(1-\eta\lambda_k+\frac{\eta^2f_k^2}n\Big),\qquad \lambda_{k+1}=\lambda_k+\frac{\eta f_k^2}n\big(\eta\lambda_k-4\big).
 </span></p>
-<p>The <span class="math inline">\lambda</span>-update is driven by <span class="math inline">f^2</span> as the toy’s <span class="math inline">y</span> is driven by <span class="math inline">x^2</span> in §2.2. The phase boundaries are sharp as <span class="math inline">n\to\infty</span> with <span class="math inline">\eta\lambda_0</span> held away from <span class="math inline">2</span> and <span class="math inline">4</span>.</p>
+<p>The <span class="math inline">\lambda</span>-update is driven by <span class="math inline">f^2</span> as the toy’s <span class="math inline">y</span> is driven by <span class="math inline">x^2</span> in §3.2. The phase boundaries are sharp as <span class="math inline">n\to\infty</span> with <span class="math inline">\eta\lambda_0</span> held away from <span class="math inline">2</span> and <span class="math inline">4</span>.</p>
 <p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/eos_toy_and_catapult.html"><code>eos_toy_and_catapult.html</code></a> (opens full page). Panel 2 iterates these maps, with sliders for <span class="math inline">\eta\lambda_0</span> and the width <span class="math inline">n</span>.</p>
-<p><strong>Exercise 2.7 — The catapult maps.</strong></p>
+<p><strong>Exercise 3.7 — The catapult maps.</strong></p>
 <p>(a) Derive the two maps from one gradient step on <span class="math inline">(u,v)</span>.</p>
 <p>(b) Show that at <span class="math inline">f=0</span> the Hessian of <span class="math inline">L</span> is <span class="math inline">\nabla f\,\nabla f^\top</span> and its top eigenvalue is <span class="math inline">\lambda</span>, so <span class="math inline">\eta\lambda&lt;2</span> is the quadratic stability condition.</p>
 <p>(c) Read the three phases off the maps, for large <span class="math inline">n</span> and <span class="math inline">f_0=O(1)</span>. In the catapult phase, estimate how many steps the growth lasts, and say why a run that converges must end with <span class="math inline">\eta\lambda_\infty\le2</span>. In the lazy phase, how far does <span class="math inline">\lambda</span> move?</p>
@@ -1170,7 +1169,7 @@ f&#39;=f-\eta f\lambda+\frac{\eta^2f^3}n=f\Big(1-\eta\lambda+\frac{\eta^2f^2}n\B
 <p><span class="math display">
 n\lambda&#39;=n\lambda-4\eta f^2+\eta^2f^2\lambda\quad\Longrightarrow\quad\lambda&#39;=\lambda+\frac{\eta f^2}n(\eta\lambda-4).
 </span></p>
-<p>(A sympy check is in <code>td/checks/td2_2_edge_of_stability_sympy.py</code>; the code below checks the maps against explicit gradient descent on <span class="math inline">(u,v)</span>.)</p>
+<p>(A sympy check is in <code>td/checks/td2_3_edge_of_stability_sympy.py</code>; the code below checks the maps against explicit gradient descent on <span class="math inline">(u,v)</span>.)</p>
 <p><strong>(b)</strong> <span class="math inline">\nabla^2L=\nabla f\nabla f^\top+f\,\nabla^2f</span>, and at <span class="math inline">f=0</span> the second term vanishes. A rank-one matrix <span class="math inline">aa^\top</span> has top eigenvalue <span class="math inline">\|a\|^2</span>, here <span class="math inline">\|\nabla f\|^2=(\|v\|^2+\|u\|^2)/n=\lambda</span>. So gradient descent near the minimum is stable iff <span class="math inline">\eta\lambda&lt;2</span>, and <span class="math inline">\lambda</span> is the sharpness at the minimum.</p>
 <p><strong>(c)</strong> With <span class="math inline">a=\eta\lambda</span>, <span class="math inline">b=\eta^2f^2/n</span>: <span class="math inline">f&#39;=f(1-a+b)</span> and <span class="math inline">a&#39;=a+b(a-4)</span>, and <span class="math inline">b_0=\eta^2f_0^2/n\ll1</span>.</p>
 <p><em>Lazy</em> (<span class="math inline">a_0&lt;2</span>): <span class="math inline">|1-a+b|\approx|1-a|&lt;1</span>, so <span class="math inline">f</span> decays geometrically. The total change in <span class="math inline">a</span> is <span class="math inline">\sum_kb_k(a_k-4)</span>, a geometric sum of size <span class="math inline">O(b_0)</span>, so <span class="math inline">\lambda</span> moves only by <span class="math inline">O(1/n)</span>: the kernel is frozen and the network behaves as its linearization.</p>
@@ -1240,36 +1239,19 @@ n\lambda&#39;=n\lambda-4\eta f^2+\eta^2f^2\lambda\quad\Longrightarrow\quad\lambd
 <p><strong>The right-hand plot</strong> (with <span class="math inline">a=\eta\lambda</span>, <span class="math inline">b=\eta^2f^2/n</span>): the catapult over-flattens. For <span class="math inline">\eta\lambda_0</span> between about 3 and 4 the final <span class="math inline">\eta\lambda</span> is often far below 2, sometimes below 0.1, in lobes set by how the <span class="math inline">O(1)</span>-per-step drop of <span class="math inline">a</span> happens to end. Runs landing at very small <span class="math inline">a</span> converge slowly (red crosses): <span class="math inline">\|u\|^2+\|v\|^2\ge2|u^\top v|</span> gives <span class="math inline">a\ge2\sqrt b</span>, so at <span class="math inline">a\approx0</span> the multiplier <span class="math inline">1-a+b</span> is close to <span class="math inline">1</span>. They are simply very flat, not near a phase boundary.</p>
 </div>
 </details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="28-warmup-and-wsd">
-<summary><h2 id="28-warmup-and-wsd">2.8 Warmup and WSD</h2></summary>
+<details class="sec sec2" data-sec="38-warmup-and-wsd">
+<summary><h2 id="38-warmup-and-wsd">3.8 Warmup and WSD</h2></summary>
 <div class="sec-body">
-<a id="td22-8"></a>
+<a id="td23-8"></a>
 <p>Why does ramping the learning rate up at the start (<em>warmup</em>) help, and why does the loss drop sharply in the final decay of a warmup–stable–decay (WSD) schedule? Both have readings in terms of oscillation across sharp directions.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2406.09405">Why warmup the learning rate? Underlying mechanisms and improvements</a></strong>, Kalra, Barkeshli (NeurIPS 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Warmup works by moving the network to flatter regions that tolerate the target step; two regimes set by initialization; a catapult-based choice of the initial step; a second-moment initialization for Adam.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2410.05192">Understanding warmup-stable-decay learning rates: a river valley loss landscape perspective</a></strong>, Wen, Li, Wang, Hall, Liang, Ma (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The river-valley picture of WSD schedules: noise-driven oscillation across the valley hides progress along it until the decay phase; proposes WSD-S.</p>
-</div>
-
-<p><em>Warmup:</em> a large step from a sharp start throws the network into a catapult (§2.7) or divergence; ramping <span class="math inline">\eta</span> up lets the sharpness follow <span class="math inline">2/\eta</span> down to where the target step is tolerable. <em>WSD:</em> the loss is a <em>river valley</em>, a flat river between steep hillsides. At a large step the iterate bounces between the hillsides while progressing along the river; the bouncing hides the progress, and the decay removes it.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-8">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-8">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
-<a id="td22-8-walkthrough"></a>
-<p><em>Notation.</em> <span class="math inline">\eta_k</span> is the step at step <span class="math inline">k</span>, <span class="math inline">\eta_{\rm trgt}</span> the target step after warmup, <span class="math inline">S</span> the sharpness (top Hessian eigenvalue), and time <span class="math inline">t=\sum_{j&lt;k}\eta_j</span>.</p>
-<p><strong>Warmup.</strong> Kalra and Barkeshli use the linear version of the §2.2 model: <span class="math inline">x_{k+1}=(1-\eta_k\lambda_k)x_k</span>, <span class="math inline">\lambda_{k+1}=\lambda_k+\eta_k(\alpha-\beta x_k^2)</span>, with <span class="math inline">x</span> the displacement along the top eigenvector, <span class="math inline">\lambda</span> the sharpness, <span class="math inline">\alpha&gt;0</span> a sharpening rate and <span class="math inline">\beta&gt;0</span> the strength of the <span class="math inline">x^2</span> kick. Exercise 2.8(a) runs the experiment in our toy. (For Adam an earlier, compatible explanation is that its second-moment average starts from few gradients, so the adaptive step has high variance until warmup lets it settle: <a href="https://arxiv.org/abs/1908.03265">Liu et al.’s RAdam paper (ICLR 2020)</a>.)</p>
-<p><strong>WSD.</strong> In Wen et al. the bouncing comes from SGD noise (Exercise 2.8(b)); with full-batch small-step gradient descent their iterates track the river. A deterministic analogue, from §2.3 (a connection neither paper makes): at the edge the measured loss is <span class="math inline">L(w)+\sigma^2/\eta</span> (<span class="math inline">w</span> the averaged iterate, <span class="math inline">\sigma^2</span> the oscillation variance), and decaying <span class="math inline">\eta</span> raises the edge <span class="math inline">2/\eta</span>, so the oscillation and its excess loss die out until sharpening reaches the new edge. For the SGD side, see <a href="td2_3_sgd_sde.html">NB2 §3</a>.</p>
-<p><strong>Exercise 2.8 — Warmup in the toy, and a river valley.</strong></p>
-<p><strong>(a) Code.</strong> Start the §2.2 toy (<span class="math inline">L=\tfrac12yx^2+c\,y^{-5}</span>, <span class="math inline">c=62.5</span>, sharpness <span class="math inline">S=y</span>) sharp, at <span class="math inline">y_0=8</span>, and train at <span class="math inline">\eta_{\rm trgt}=0.4</span>, so <span class="math inline">2/\eta_{\rm trgt}=5</span>. Compare jumping straight to <span class="math inline">\eta_{\rm trgt}</span> with linear warmups <span class="math inline">\eta_k=\eta_{\rm trgt}\min\big(1,(k+1)/T\big)</span> for <span class="math inline">T\in\{100,400,1600\}</span>, using <code>toy_run</code> with 4000 steps. For each, plot <span class="math inline">S_k=y_k</span> and <span class="math inline">2/\eta_k</span> against <span class="math inline">t</span>, and report whether it diverged and its peak loss. Then repeat from <span class="math inline">y_0=5.5</span>: when does warmup help, and can it hurt? Panel 1 of the interactive figure in §2.2 has the same experiment with sliders.</p>
+<p><strong>Papers:</strong> Kalra &amp; Barkeshli, <em>Why warmup the learning rate?</em>; Wen et al., <em>Understanding warmup-stable-decay learning rates</em> (see <a href="#td23-readings">Readings</a>).</p>
+<p><em>Warmup:</em> a large step from a sharp start throws the network into a catapult (§3.7) or divergence; ramping <span class="math inline">\eta</span> up lets the sharpness follow <span class="math inline">2/\eta</span> down to where the target step is tolerable. <em>WSD:</em> the loss is a <em>river valley</em>, a flat river between steep hillsides. At a large step the iterate bounces between the hillsides while progressing along the river; the bouncing hides the progress, and the decay removes it.</p>
+<a id="td23-8-walkthrough"></a>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> <span class="math inline">\eta_k</span> is the step at step <span class="math inline">k</span>, <span class="math inline">\eta_{\rm trgt}</span> the target step after warmup, <span class="math inline">S</span> the sharpness (top Hessian eigenvalue), and time <span class="math inline">t=\sum_{j&lt;k}\eta_j</span>.</p>
+<p><strong>Warmup.</strong> Kalra and Barkeshli use the linear version of the §3.2 model: <span class="math inline">x_{k+1}=(1-\eta_k\lambda_k)x_k</span>, <span class="math inline">\lambda_{k+1}=\lambda_k+\eta_k(\alpha-\beta x_k^2)</span>, with <span class="math inline">x</span> the displacement along the top eigenvector, <span class="math inline">\lambda</span> the sharpness, <span class="math inline">\alpha&gt;0</span> a sharpening rate and <span class="math inline">\beta&gt;0</span> the strength of the <span class="math inline">x^2</span> kick. Exercise 3.8(a) runs the experiment in our toy. (For Adam an earlier, compatible explanation is that its second-moment average starts from few gradients, so the adaptive step has high variance until warmup lets it settle: <a href="https://arxiv.org/abs/1908.03265">Liu et al.’s RAdam paper (ICLR 2020)</a>.)</p>
+<p><strong>WSD.</strong> In Wen et al. the bouncing comes from SGD noise (Exercise 3.8(b)); with full-batch small-step gradient descent their iterates track the river. A deterministic analogue, from §3.3 (a connection neither paper makes): at the edge the measured loss is <span class="math inline">L(w)+\sigma^2/\eta</span> (<span class="math inline">w</span> the averaged iterate, <span class="math inline">\sigma^2</span> the oscillation variance), and decaying <span class="math inline">\eta</span> raises the edge <span class="math inline">2/\eta</span>, so the oscillation and its excess loss die out until sharpening reaches the new edge. For the SGD side, see <a href="td2_2_sgd_sde.html">NB2 §2</a>.</p>
+<p><strong>Exercise 3.8 — Warmup in the toy, and a river valley.</strong></p>
+<p><strong>(a) Code.</strong> Start the §3.2 toy (<span class="math inline">L=\tfrac12yx^2+c\,y^{-5}</span>, <span class="math inline">c=62.5</span>, sharpness <span class="math inline">S=y</span>) sharp, at <span class="math inline">y_0=8</span>, and train at <span class="math inline">\eta_{\rm trgt}=0.4</span>, so <span class="math inline">2/\eta_{\rm trgt}=5</span>. Compare jumping straight to <span class="math inline">\eta_{\rm trgt}</span> with linear warmups <span class="math inline">\eta_k=\eta_{\rm trgt}\min\big(1,(k+1)/T\big)</span> for <span class="math inline">T\in\{100,400,1600\}</span>, using <code>toy_run</code> with 4000 steps. For each, plot <span class="math inline">S_k=y_k</span> and <span class="math inline">2/\eta_k</span> against <span class="math inline">t</span>, and report whether it diverged and its peak loss. Then repeat from <span class="math inline">y_0=5.5</span>: when does warmup help, and can it hurt? Panel 1 of the interactive figure in §3.2 has the same experiment with sliders.</p>
 <p><strong>(b) Derivation.</strong> Take <span class="math inline">L(h,r)=\tfrac12\gamma h^2-r</span>: a hill coordinate <span class="math inline">h</span> with curvature <span class="math inline">\gamma</span> and a river coordinate <span class="math inline">r</span> along which the loss falls at unit slope. Run SGD with noise only in the hill direction: <span class="math inline">h_{k+1}=h_k-\eta\gamma h_k+\eta\xi_k</span>, <span class="math inline">\xi_k\sim\mathcal N(0,s^2)</span> i.i.d. (so <span class="math inline">s^2</span> is the noise variance), and <span class="math inline">r_{k+1}=r_k+\eta</span>. Find the stationary mean of the hill loss <span class="math inline">\tfrac12\gamma h^2</span> at constant <span class="math inline">\eta</span>, for <span class="math inline">0&lt;\eta\gamma&lt;2</span> (exactly, and for <span class="math inline">\eta\gamma\ll1</span>). Then explain what a WSD schedule (long constant phase at <span class="math inline">\eta_{\max}</span>, short decay to <span class="math inline">\eta_{\min}</span>) achieves compared with (i) <span class="math inline">\eta_{\max}</span> throughout, (ii) <span class="math inline">\eta_{\min}</span> throughout.</p>
 <details class="hint"><summary>Hint</summary>
 
@@ -1277,7 +1259,7 @@ n\lambda&#39;=n\lambda-4\eta f^2+\eta^2f^2\lambda\quad\Longrightarrow\quad\lambd
 </details>
 
 <div class="cell cell-stub">
-<pre class="code"><code class="language-python"><span class="c1"># Exercise 2.8(a): warmup in the toy. Use toy_run and toy_loss from §2.2.</span>
+<pre class="code"><code class="language-python"><span class="c1"># Exercise 3.8(a): warmup in the toy. Use toy_run and toy_loss from §3.2.</span>
 <span class="n">eta_trgt</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">y0</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mf">8.0</span>
 <span class="n">schedules</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;no warmup&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">eta_trgt</span><span class="p">)}</span>
 <span class="c1"># add linear warmups for T in (100, 400, 1600), run each, and plot y_k and 2/eta_k against t = cumsum(eta)</span></code></pre>
@@ -1325,8 +1307,8 @@ y0 = 5.5, warmup T=1600   : peak loss = 1.57, S at crossing = 6.61, max eta*S af
 <details class="solution">
 <summary>Solution</summary>
 <div class="solution-body">
-<p><strong>(a)</strong> From <span class="math inline">y_0=8</span> with <span class="math inline">\eta=0.4</span>, <span class="math inline">\eta S_0=3.2</span>: the oscillation grows by a factor of about <span class="math inline">2.2</span> per step, its <span class="math inline">x^2</span> kick throws <span class="math inline">y</span> far below <span class="math inline">2/\eta</span> and through zero, and the run diverges. A short warmup (<span class="math inline">T=100</span>) crosses the edge before the sharpness can move, and diverges here (it is near the survival boundary: with other noise seeds some runs survive with a large spike). Longer warmups let the sharpness follow <span class="math inline">2/\eta(t)</span> down, not smoothly: from the edge (at <span class="math inline">\eta\approx2/8</span>) on, <span class="math inline">S</span> circles <span class="math inline">2/\eta(t)</span> in small catapults, because the target moves faster than the slow attraction of the period-2 orbit (Exercise 2.2′(f)); this is Kalra and Barkeshli’s persistent cycle. The peak loss falls as <span class="math inline">T</span> grows (about 15 at <span class="math inline">T=400</span>, 2.6 at <span class="math inline">T=1600</span>), and the run ends at <span class="math inline">S=2/\eta_{\rm trgt}=5</span>.</p>
-<p>From <span class="math inline">y_0=5.5</span> (<span class="math inline">\eta S_0=2.2</span>) the run survives without warmup, with a peak loss of about <span class="math inline">2.7</span>. Short warmups do not help here and can hurt (about <span class="math inline">3.8</span> at <span class="math inline">T=100</span>, <span class="math inline">3.5</span> at <span class="math inline">T=400</span>); only <span class="math inline">T=1600</span> lowers the peak (about <span class="math inline">1.6</span>). Two things set the spike size: how far <span class="math inline">\eta S</span> overshoots 2 before the <span class="math inline">x^2</span> kick arrives (printed max <span class="math inline">\eta S</span> after the crossing: about 2.2–2.3 for no or short warmup, 2.1 for <span class="math inline">T=1600</span>), and the sharpness at the crossing, which is higher after a warmup because the toy keeps sharpening while <span class="math inline">\eta</span> is small (<span class="math inline">\ell&#39;&lt;0</span> never switches off). A slow ramp crosses gently; a short one adds sharpening without the gentleness. So warmup pays when <span class="math inline">\eta_{\rm trgt}S_0</span> is well above 2. In the toy, what moves the network to where <span class="math inline">\eta_{\rm trgt}</span> is tolerable is the edge of stability itself. (Numbers are for the displayed noise seed.)</p>
+<p><strong>(a)</strong> From <span class="math inline">y_0=8</span> with <span class="math inline">\eta=0.4</span>, <span class="math inline">\eta S_0=3.2</span>: the oscillation grows by a factor of about <span class="math inline">2.2</span> per step, its <span class="math inline">x^2</span> kick throws <span class="math inline">y</span> far below <span class="math inline">2/\eta</span> and through zero, and the run diverges. A short warmup (<span class="math inline">T=100</span>) crosses the edge before the sharpness can move, and diverges here (it is near the survival boundary: with other noise seeds some runs survive with a large spike). Longer warmups let the sharpness follow <span class="math inline">2/\eta(t)</span> down, not smoothly: from the edge (at <span class="math inline">\eta\approx2/8</span>) on, <span class="math inline">S</span> circles <span class="math inline">2/\eta(t)</span> in small catapults, because the target moves faster than the slow attraction of the period-2 orbit (Exercise 3.2′(f)); this is Kalra and Barkeshli’s persistent cycle. The peak loss falls as <span class="math inline">T</span> grows (about 15 at <span class="math inline">T=400</span>, 3.6 at <span class="math inline">T=1600</span>), and the run ends at <span class="math inline">S=2/\eta_{\rm trgt}=5</span>.</p>
+<p>From <span class="math inline">y_0=5.5</span> (<span class="math inline">\eta S_0=2.2</span>) the run survives without warmup, with a peak loss of about <span class="math inline">2.7</span>. Short warmups do not help here and can hurt (about <span class="math inline">3.8</span> at <span class="math inline">T=100</span>, <span class="math inline">3.5</span> at <span class="math inline">T=400</span>); only <span class="math inline">T=1600</span> lowers the peak (about <span class="math inline">1.6</span>). Two things set the spike size: how far <span class="math inline">\eta S</span> overshoots 2 before the <span class="math inline">x^2</span> kick arrives (printed max <span class="math inline">\eta S</span> after the crossing: about 2.2–2.3 for no or short warmup, 3.1 for <span class="math inline">T=1600</span>), and the sharpness at the crossing, which is higher after a warmup because the toy keeps sharpening while <span class="math inline">\eta</span> is small (<span class="math inline">\ell&#39;&lt;0</span> never switches off). A slow ramp crosses gently; a short one adds sharpening without the gentleness. So warmup pays when <span class="math inline">\eta_{\rm trgt}S_0</span> is well above 2. In the toy, what moves the network to where <span class="math inline">\eta_{\rm trgt}</span> is tolerable is the edge of stability itself. (Numbers are for the displayed noise seed.)</p>
 <p><strong>(b)</strong> At stationarity <span class="math inline">\operatorname{Var}h=(1-\eta\gamma)^2\operatorname{Var}h+\eta^2s^2</span>, so for <span class="math inline">0&lt;\eta\gamma&lt;2</span></p>
 <p><span class="math display">
 \operatorname{Var}h=\frac{\eta^2s^2}{1-(1-\eta\gamma)^2}=\frac{\eta s^2}{\gamma(2-\eta\gamma)},\qquad
@@ -1336,9 +1318,6 @@ y0 = 5.5, warmup T=1600   : peak loss = 1.57, S at crossing = 6.61, max eta*S af
 <p>(i) Constant <span class="math inline">\eta_{\max}</span>: fast river progress, but the hill term <span class="math inline">\eta_{\max}s^2/4</span> never goes away and hides part of it. (ii) Constant <span class="math inline">\eta_{\min}</span>: small hill term, but river progress per step is smaller by <span class="math inline">\eta_{\max}/\eta_{\min}</span>. WSD gets both: the long stable phase accumulates nearly all the area, and the decay lowers the hill term. The decay is not instantaneous: <span class="math inline">v_{k+1}=(1-\eta_k\gamma)^2v_k+\eta_k^2s^2</span>, so the old variance takes about <span class="math inline">1/(2\eta\gamma)</span> steps per e-fold at the current <span class="math inline">\eta</span>, and a decay to a very small <span class="math inline">\eta_{\min}</span> must be long enough (in <span class="math inline">\sum\eta\gamma</span>) for the hill to follow. The loss drop during the decay is the hill term disappearing, revealing progress made earlier. This is Wen et al.’s mechanism; their theorems cover more general valleys, and their constants are not reproduced here.</p>
 </div>
 </details>
-</div>
-</details>
-
 </div>
 </details>
 
@@ -1397,7 +1376,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (location.hash) reveal();
   // Sections are folded; remember which ones this viewer has open.
   var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
-  var secKey = "open-sections:td2_2_edge_of_stability", saved = null;
+  var secKey = "open-sections:td2_3_edge_of_stability", saved = null;
   try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
   if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
   var secBtn = document.getElementById("toggle-sections");

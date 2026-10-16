@@ -7,7 +7,7 @@ Run from anywhere:  python td/assets/interactive/checks/eos_toy_and_catapult_che
    under Node for several parameter sets, and compares every iterate with
    a Python port (same PRNG, same update order).
 2. Checks that the Python port of the toy map is the map used in the notebook
-   (the `toy_run` code cell of td/build_td2_2_edge_of_stability.py), by running
+   (the `toy_run` code cell of td/build_td2_3_edge_of_stability.py), by running
    both noise-free and comparing.
 3. Checks the catapult maps against explicit gradient descent on (u, v).
 4. Checks the physics the figure's captions state: S hovers at 2/eta with
@@ -25,7 +25,7 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 HTML = HERE.parent / "eos_toy_and_catapult.html"
-BUILDER = HERE.parents[2] / "build_td2_2_edge_of_stability.py"
+BUILDER = HERE.parents[2] / "build_td2_3_edge_of_stability.py"
 C = 62.5
 fails = 0
 
@@ -139,7 +139,7 @@ ns = {}
 src = BUILDER.read_text()
 sys.path.insert(0, str(BUILDER.parent))
 spec = {}
-exec(compile(src.replace('raise SystemExit(run(CELLS, "td2_2_edge_of_stability", "td2_2_edge_of_stability"))', "pass"), str(BUILDER), "exec"), spec)
+exec(compile(src.replace('raise SystemExit(run(CELLS, "td2_3_edge_of_stability", "td2_3_edge_of_stability"))', "pass"), str(BUILDER), "exec"), spec)
 toy_cells = [c["source"] for c in spec["CELLS"] if c["kind"] == "code" and "def toy_run" in c["source"]]
 ok(len(toy_cells) == 1, "found the notebook's toy_run cell")
 exec("import numpy as np\nimport matplotlib\nmatplotlib.use('Agg')\nimport matplotlib.pyplot as plt\n" + toy_cells[0].split("# ---- demo")[0], ns)

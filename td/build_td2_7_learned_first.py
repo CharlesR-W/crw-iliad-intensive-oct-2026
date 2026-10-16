@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Build NB2 §7, "What is learned first" (Training Dynamics day).
 
-Page shape (streamlined 2026-10-09, paper first): a short pitch, the notebook's key
-paper and a one-line-per-section route; then three sections, 7.1 two moments (#td27-1),
-7.2 higher cumulants (#td27-2) and 7.3 spectral bias (#td27-3). Each opens with the
-question and answer in plain words, its lead paper(s) and a short core idea, then one
-"Optional: annotated derivations and walkthrough" subsection (#td27-N-walkthrough)
-that holds the derivations, the exercises (bold labels, not headings) with worked
-solutions, and the code. A one-line "Also:" list closes the page (#td27-readings).
+Page shape (readings first, 2026-10-14): a short pitch and a one-line route, then one
+`## Readings` section (#td27-readings) with every paper of the notebook, grouped by
+section, then the derivations and walkthrough: 7.1 two moments (#td27-1), 7.2 higher
+cumulants (#td27-2) and 7.3 spectral bias (#td27-3). Each opens with the question and
+answer in plain words, a one-line paper pointer and a short core idea, then (from the
+#td27-N-walkthrough anchor) the derivations, the exercises (bold labels, not headings)
+with worked solutions, and the code.
 
 Closed-form results are checked in checks/td2_7_learned_first_check.py; the review
 log is ../reviews/td/td2_7_learned_first.md.
@@ -28,6 +28,24 @@ Networks trained by gradient descent tend to use coarse structure in the data be
 fine structure: class means and covariances before higher-order correlations, smooth
 parts of a target before wiggly ones. This notebook works out three settings where that
 order can be computed.
+
+**Route.** The [Readings](#td27-readings) come first: every paper of the notebook,
+grouped by section. The sections after them are the derivations and walkthrough
+(exercises with worked solutions, and code), for whoever wants them.
+
+- [7.1 Two moments](#td27-1): linear-in-input models see only means and covariances; small-weight networks see higher statistics later.
+- [7.2 Higher cumulants](#td27-2): online SGD needs about $d^{\,k-1}$ samples to find a direction with information exponent $k\ge3$, far fewer if it is correlated with lower-order structure.
+- [7.3 Spectral bias](#td27-3): a fixed kernel fits each eigenfunction at the rate of its eigenvalue; on the circle, low frequencies first.
+"""
+    ),
+    # ================================================================ readings
+    markdown(
+        r"""
+<a id="td27-readings"></a>
+
+## Readings
+
+**Two moments ([§7.1](#td27-1)).** The notebook's key paper.
 """
         + reading(
             "Neural networks trained with SGD learn distributions of increasing complexity",
@@ -37,15 +55,52 @@ order can be computed.
             importance=5, length=3,
         )
         + r"""
-**Route.**
+**Higher cumulants ([§7.2](#td27-2)).** How many samples online SGD needs to find a direction hidden in a higher cumulant.
+"""
+        + reading(
+            "Sliding down the stairs: how correlated latent variables accelerate learning with neural networks",
+            "https://arxiv.org/abs/2404.08602",
+            "Bardone, Goldt (ICML 2024)",
+            "The mixed cumulant model, and nearly sharp online-SGD sample complexities for a single neuron: about $d\\log^2d$ for a covariance spike, $d^{\\,3}$ for a fourth-cumulant spike, and $d\\log^2d$ for both when their latent variables are correlated (Table 1; there $\\delta\\approx f(d)$ means $\\delta=o(f(d))$).",
+            importance=4, length=3,
+        )
+        + reading(
+            "Online stochastic gradient descent on non-convex losses from high-dimensional inference",
+            "https://arxiv.org/abs/2003.10409",
+            "Ben Arous, Gheissari, Jagannath (JMLR 22, 2021)",
+            "Defines the information exponent and proves nearly sharp thresholds for online SGD to leave the uninformative equator (order $d$; between $d\\log d$ and $d\\log^2 d$; $d^{\\,k-1}$ up to logarithms); Section 2 computes the exponent for single-index models, GLMs, PCA and spiked tensors.",
+            importance=3, length=3,
+        )
+        + r"""
+**Spectral bias ([§7.3](#td27-3)).**
+"""
+        + reading(
+            "The convergence rate of neural networks for learned functions of different frequencies",
+            "https://arxiv.org/abs/1906.00425",
+            "Basri, Jacobs, Kasten, Kritchman (NeurIPS 2019)",
+            "The NTK spectrum of a two-layer ReLU network for uniform data on the sphere: without biases, odd frequencies $\\ge3$ cannot be learned; with biases, learning time $\\propto\\ell^2$ in 1D, which matches experiments with shallow and deep networks.",
+            importance=4, length=3,
+        )
+        + reading(
+            "On the spectral bias of neural networks",
+            "https://arxiv.org/abs/1806.08734",
+            "Rahaman et al. (ICML 2019)",
+            "Six-layer ReLU networks fitting sums of sinusoids learn low frequencies first, even when higher frequencies have larger amplitude; low-frequency components are also more robust to parameter perturbations.",
+            importance=3, length=2,
+        )
+        + r"""
+**Also:**
+[Székely, Bardone, Gerace, Goldt, *Learning from higher-order correlations, efficiently*](https://arxiv.org/abs/2312.14922)
+(NeurIPS 2024; finite data reused for many epochs: about $d^{\,2}$ samples for low-degree
+tests and for trained two-layer networks, where random features fail);
+[Damian, Nichani, Ge, Lee, *Smoothing the landscape boosts the signal for SGD*](https://arxiv.org/abs/2305.10633)
+(NeurIPS 2023; about $d^{\,k/2}$ samples with a smoothed loss);
+[Xu et al., *Frequency Principle*](https://arxiv.org/abs/1901.06523) (2020; low-to-high
+frequency fitting on MNIST and CIFAR-10).
 
-- [7.1 Two moments](#td27-1): linear-in-input models see only means and covariances; small-weight networks see higher statistics later.
-- [7.2 Higher cumulants](#td27-2): online SGD needs about $d^{\,k-1}$ samples to find a direction with information exponent $k\ge3$, far fewer if it is correlated with lower-order structure.
-- [7.3 Spectral bias](#td27-3): a fixed kernel fits each eigenfunction at the rate of its eigenvalue; on the circle, low frequencies first.
-- [Readings](#td27-readings).
-
-Each section's derivations, exercises (with worked solutions) and code are in an optional
-walkthrough.
+Related, in this day: what basis a trained diffusion denoiser uses, and why it adapts to
+image geometry (Kadkhodaie, Guth, Simoncelli, Mallat, ICLR 2024), is an exercise in
+[`td2_8_further_readings` §3](td2_8_further_readings.html#td28-gahb).
 """
     ),
     # ================================================================ 7.1
@@ -60,7 +115,8 @@ input $x$ sees only the class means and covariances. A network with small weight
 close to such a model, and higher statistics of $x$ enter its gradient at higher orders
 in the weight scale.
 
-**Lead paper:** [Refinetti et al.](https://arxiv.org/abs/2211.11567) (above), Section 2.
+**Paper:** Refinetti, Ingrosso & Goldt, *Neural networks trained with SGD learn
+distributions of increasing complexity*, Section 2 (see [Readings](#td27-readings)).
 They truncate a sigmoidal perceptron's gradient flow order by order in the weights: the
 weight first aligns with the class-mean difference, then moves to Fisher's discriminant,
 then picks up a fourth-cumulant correction.
@@ -77,9 +133,7 @@ the weights grow, the terms become comparable.
 
 <a id="td27-1-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* Gradient flow $\dot\theta=-\nabla L$ in continuous time $t=k\eta$, with step
+**Derivations and walkthrough.** *Notation:* Gradient flow $\dot\theta=-\nabla L$ in continuous time $t=k\eta$, with step
 size $\eta$. Inputs $x\in\mathbb R^d$, labels $y$; for classification $y=\pm1$ with equal
 probabilities, class means $\mu_\pm$, class covariances $C_\pm$. $\mathbb E$ averages over
 the data, or over the training set when it is finite. $x^{\otimes k}$ is the $k$-fold
@@ -481,22 +535,11 @@ $\mathbb R^d$, and differ there only in shape, in a higher cumulant. A model lin
 input cannot see $v$ (§7.1). A neuron trained by online SGD can, but the number of
 samples it needs grows as a power of $d$ set by the order at which $v$ first shows up in
 the loss. Correlating $v$ with easier structure elsewhere cuts that cost sharply.
-"""
-        + reading(
-            "Sliding down the stairs: how correlated latent variables accelerate learning with neural networks",
-            "https://arxiv.org/abs/2404.08602",
-            "Bardone, Goldt (ICML 2024)",
-            "The mixed cumulant model, and nearly sharp online-SGD sample complexities for a single neuron: about $d\\log^2d$ for a covariance spike, $d^{\\,3}$ for a fourth-cumulant spike, and $d\\log^2d$ for both when their latent variables are correlated (Table 1; there $\\delta\\approx f(d)$ means $\\delta=o(f(d))$).",
-            importance=4, length=3,
-        )
-        + reading(
-            "Online stochastic gradient descent on non-convex losses from high-dimensional inference",
-            "https://arxiv.org/abs/2003.10409",
-            "Ben Arous, Gheissari, Jagannath (JMLR 22, 2021)",
-            "Defines the information exponent and proves nearly sharp thresholds for online SGD to leave the uninformative equator (order $d$; between $d\\log d$ and $d\\log^2 d$; $d^{\\,k-1}$ up to logarithms); Section 2 computes the exponent for single-index models, GLMs, PCA and spiked tensors.",
-            importance=3, length=3,
-        )
-        + r"""
+
+**Papers:** Bardone & Goldt, *Sliding down the stairs*; Ben Arous, Gheissari &
+Jagannath, *Online SGD on non-convex losses from high-dimensional inference* (see
+[Readings](#td27-readings)).
+
 *Core idea.* Keep the neuron's weight $w$ on the unit sphere and track its overlap
 $\alpha=w\cdot v$; a random start has $|\alpha|\approx d^{-1/2}$. If the population loss
 near $\alpha=0$ first depends on $\alpha$ at order $\alpha^k$ (the **information
@@ -508,9 +551,7 @@ along once $u$ is found, and $v$ then costs about $d\log^2d$ samples, like $u$.
 
 <a id="td27-2-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* $d$ is the input dimension, $w$ a neuron's weight vector on the unit sphere,
+**Derivations and walkthrough.** *Notation:* $d$ is the input dimension, $w$ a neuron's weight vector on the unit sphere,
 $\alpha=w\cdot v$ its overlap with a unit direction $v$. The cumulants $\kappa_p$ are
 defined in [§7.1's walkthrough](#td27-cumulants): $\kappa_1$ is the mean, $\kappa_2$ the
 covariance, and for $p\ge3$ they vanish for a Gaussian, so a nonzero $\kappa_3$ or
@@ -621,7 +662,7 @@ result assumes $\alpha_u$ and $\alpha_v$ start with the same sign.
 
 *Scope.* These results are for online SGD (fresh samples at every step) on a single
 neuron. With a finite dataset reused for many epochs the counting changes; see Székely et
-al. in the [readings](#td27-readings).
+al. in the [Readings](#td27-readings).
 
 **Exercise 7.2.A — The mixed cumulant model, by hand.**
 Class $+1$ is $x=\beta_m m+\sqrt{\beta_u}\lambda u+Q(\sqrt{\beta_v}\nu v+z)$ with
@@ -926,22 +967,11 @@ the high ones have larger amplitude: the *spectral bias*, or *frequency principl
 model linear in its parameters (a kernel method, random features, or a network in its
 frozen-kernel, NTK, regime) trained on square loss, the order is exact: each kernel
 eigenfunction is fitted at a rate equal to its eigenvalue.
-"""
-        + reading(
-            "The convergence rate of neural networks for learned functions of different frequencies",
-            "https://arxiv.org/abs/1906.00425",
-            "Basri, Jacobs, Kasten, Kritchman (NeurIPS 2019)",
-            "The NTK spectrum of a two-layer ReLU network for uniform data on the sphere: without biases, odd frequencies $\\ge3$ cannot be learned; with biases, learning time $\\propto\\ell^2$ in 1D, which matches experiments with shallow and deep networks.",
-            importance=4, length=3,
-        )
-        + reading(
-            "On the spectral bias of neural networks",
-            "https://arxiv.org/abs/1806.08734",
-            "Rahaman et al. (ICML 2019)",
-            "Six-layer ReLU networks fitting sums of sinusoids learn low frequencies first, even when higher frequencies have larger amplitude; low-frequency components are also more robust to parameter perturbations.",
-            importance=3, length=2,
-        )
-        + r"""
+
+**Papers:** Basri, Jacobs, Kasten & Kritchman, *The convergence rate of neural networks
+for learned functions of different frequencies*; Rahaman et al., *On the spectral bias of
+neural networks* (see [Readings](#td27-readings)).
+
 *Core idea.* With fixed features $\phi(x)$ and kernel $K(x,x')=\phi(x)\cdot\phi(x')$,
 gradient flow on square loss makes the residual decay as $e^{-\lambda_kt}$ along the
 $k$-th eigenfunction of the kernel, where $\lambda_k$ is its eigenvalue under the data
@@ -953,9 +983,7 @@ without biases, odd frequencies $\ge3$ cannot be fitted at all.
 
 <a id="td27-3-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-Background elsewhere: the Physics of Deep Learning day's
+**Derivations and walkthrough.** Background elsewhere: the Physics of Deep Learning day's
 [Notebook 1, §3]({PHYS}/01_fixed_features_kernel_learning_solutions.ipynb) (kernel gradient
 flow as spectral filtering; if you have done it, skim to *On the circle*) and its
 [Notebook 2]({PHYS}/02_ntk_limit_kernel_learners_solutions.ipynb) (the infinite-width NTK).
@@ -1299,27 +1327,6 @@ why: the eNTK changes by only a few per cent overall, but its Rayleigh quotient 
 $\sin8\vartheta$ drops about five-fold (at scale 10, by about a fifth). Feature learning has
 shrunk the kernel exactly on the slowest mode, so the frozen-kernel prediction is most
 fragile for the modes it says are slow.
-"""
-    ),
-    # ================================================================ readings
-    markdown(
-        r"""
-<a id="td27-readings"></a>
-
-## Readings
-
-The lead papers are linked at the top of each section. Also:
-[Székely, Bardone, Gerace, Goldt, *Learning from higher-order correlations, efficiently*](https://arxiv.org/abs/2312.14922)
-(NeurIPS 2024; finite data reused for many epochs: about $d^{\,2}$ samples for low-degree
-tests and for trained two-layer networks, where random features fail);
-[Damian, Nichani, Ge, Lee, *Smoothing the landscape boosts the signal for SGD*](https://arxiv.org/abs/2305.10633)
-(NeurIPS 2023; about $d^{\,k/2}$ samples with a smoothed loss);
-[Xu et al., *Frequency Principle*](https://arxiv.org/abs/1901.06523) (2020; low-to-high
-frequency fitting on MNIST and CIFAR-10).
-
-Related, in this day: what basis a trained diffusion denoiser uses, and why it adapts to
-image geometry (Kadkhodaie, Guth, Simoncelli, Mallat, ICLR 2024), is an exercise in
-[`td2_8_further_readings` §3](td2_8_further_readings.html#td28-gahb).
 """
     ),
 ]

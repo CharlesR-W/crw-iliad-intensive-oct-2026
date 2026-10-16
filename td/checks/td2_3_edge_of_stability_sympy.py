@@ -1,4 +1,4 @@
-"""Symbolic checks for td2_2_edge_of_stability (run: python td/checks/td2_2_edge_of_stability_sympy.py).
+"""Symbolic checks for td2_3_edge_of_stability (run: python td/checks/td2_3_edge_of_stability_sympy.py).
 
 1. Catapult: exact one-step maps for f = v.u/sqrt(n), x=1, target 0, L = f^2/2.
 2. Self-stabilization toy: period-2 orbit, central-flow sigma^2 = period-2 x^2,

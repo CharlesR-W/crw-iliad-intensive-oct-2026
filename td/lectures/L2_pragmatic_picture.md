@@ -1,18 +1,19 @@
 # L2: The pragmatic picture (outline and speaker notes)
 
-**Length:** about 28 min. Segments marked *compressible* can go down to one sentence, bringing it to about 22 min.
+**Length:** about 28 min in full; the slide deck takes the compressed path (about 15 min). Segments marked *compressible* can go down to one sentence, bringing it to about 22 min.
+**Slides:** [`L2_pragmatic_picture.html`](L2_pragmatic_picture.html), a 15-slide deck for a short orienting lecture (about 15 min) that follows the compressed path below, one slide per knob, with these speaker notes condensed into each slide's notes. Arrows or space to move, N shows the notes on the slide, S opens reveal.js's speaker view, Esc the overview. For a PDF, open the page with `?print-pdf` and print from Chrome or Chromium. Figures are made by `assets/L2/make_figures.py`; each restates a code cell of the notebook it is captioned with.
 **Hands off to:** the NB2 notebooks `td2_1` to `td2_8`.
-**Purpose:** organize NB2 around the knobs a practitioner turns: learning rate, batch size, schedule, optimizer, width, normalization and weight decay. For each knob, name the one or two derivations behind it and state their result, then point to the notebook that does the derivation. **Nothing is derived on the board.** Every result below is an exercise with a worked solution in the notebook named.
+**Purpose:** organize NB2 around the knobs a practitioner turns: learning rate, batch size, schedule, optimizer, width, normalization and weight decay. The order follows the notebooks: the small-step expansions (`td2_1` flows, `td2_2` SDEs) first, then where they break (`td2_3` edge of stability), then the rest. For each knob, name the one or two derivations behind it and state their result, then point to the notebook that does the derivation. **Nothing is derived on the board.** Every result below is an exercise with a worked solution in the notebook named.
 
-**Notation on the board (matches NB2).** Loss $L$, gradient $G=\nabla L$ (written $g$ in `td2_1` and `td2_4`, and $\nabla L$ in `td2_6`), Hessian $H$, sharpness $S=\lambda_{\max}(H)$, step $\eta$, batch size $B$, per-example gradient covariance $\Sigma$. **Time is $t=k\eta$**, so gradient flow is $\dot\theta=-\nabla L$. The one exception is Adam's SDE in `td2_3` §3.6, where one step is time $\eta^2$.
+**Notation on the board (matches NB2).** Loss $L$, gradient $G=\nabla L$ (written $g$ in `td2_1` and `td2_4`, and $\nabla L$ in `td2_6`), Hessian $H$, sharpness $S=\lambda_{\max}(H)$, step $\eta$, batch size $B$, per-example gradient covariance $\Sigma$. **Time is $t=k\eta$**, so gradient flow is $\dot\theta=-\nabla L$. The one exception is Adam's SDE in `td2_2` §2.6, where one step is time $\eta^2$.
 
 **Symbol clashes to warn about once, early.**
 
 - $\Sigma$ is the target correlation in NB1/L1 and the gradient-noise covariance in NB2.
-- $\lambda$ is a Hessian eigenvalue in `td2_1`/`td2_2`, the NTK in the catapult (`td2_2` §2.7), and the weight decay in `td2_5`.
-- $\epsilon$ is the step size in `td2_3` §3.4 (McCandlish et al.'s notation) and Adam's $\epsilon$ in §3.6.
-- $S$ counts *steps* in `td2_3` §3.4's steps–examples tradeoff.
-- $P$ is Adam's preconditioner in `td2_2`–`td2_5` and the number of parameters in `td2_6` (where $P_k$ is the projector onto the top-$k$ Hessian eigenvectors).
+- $\lambda$ is a Hessian eigenvalue in `td2_1`/`td2_3`, the NTK in the catapult (`td2_3` §3.7), and the weight decay in `td2_5`.
+- $\epsilon$ is the step size in `td2_2` §2.4 (McCandlish et al.'s notation) and Adam's $\epsilon$ in §2.6.
+- $S$ counts *steps* in `td2_2` §2.4's steps–examples tradeoff.
+- $P$ is Adam's preconditioner in `td2_3`–`td2_5` and the number of parameters in `td2_6` (where $P_k$ is the projector onto the top-$k$ Hessian eigenvectors).
 
 **One picture to reuse throughout.** Draw it once at the start and keep it on the board: a long valley with steep walls and a nearly flat floor. Add an iterate bouncing across the valley while drifting slowly along the floor. Segments 1, 3, 6 and 7 all come back to it.
 
@@ -22,19 +23,19 @@
 
 **Claim.** Most of NB2 uses one of two tools.
 
-1. **Small-step expansions:** treat discrete training as a flow plus corrections (backward error analysis), or as a stochastic differential equation. These give scaling rules.
-2. **Where the expansions break:** real training often sits at $\eta S\approx2$, exactly where "small step" fails, and different tools take over.
+1. **Small-step expansions** (segments 1 and 2, notebooks `td2_1` and `td2_2`): treat discrete training as a flow plus corrections (backward error analysis), or as a stochastic differential equation. These give scaling rules.
+2. **Where the expansions break** (segment 3, notebook `td2_3`): real training often sits at $\eta S\approx2$, exactly where "small step" fails, and different tools take over.
 
 **Speaker notes.**
 
-- Every NB2 notebook stands alone. Each section opens with a short pitch and its paper, then an optional annotated walkthrough, so students can enter anywhere. Nobody is expected to finish.
+- Every NB2 notebook stands alone. Each opens with its readings (every paper, rated, with a line on what it is for), then the derivations and code follow section by section. Nobody is expected to finish.
 - *(Room for the instructor's framing of the two tracks.)*
+
 
 ---
 
-## 1. Learning rate (6 min)
+## 1. Learning rate as a step size (2 min)
 
-### 1a. Stability, and gradient descent as a corrected flow (2 min)
 
 **Claim.** On a quadratic, gradient descent converges iff $\eta S<2$. For small $\eta S$, gradient descent follows, more exactly than gradient flow does, the flow of a modified loss that penalizes the gradient norm. This is implicit gradient regularization (IGR). The expansion parameter is $\eta S$ (step times curvature). The series is asymptotic and usually divergent, the kept correction degrades smoothly as $\eta S$ grows, and for $\eta\lambda\ge1$ in some direction no gradient flow reproduces the step at all.
 
@@ -52,35 +53,6 @@ $$
 - **Show:** `td2_1`, the code cell after Exercise 1.2.d, where gradient descent, gradient flow and the IGR flow are compared on $(ab-1)^2/2$. The IGR flow accounts for 81%, 42% and 16% of gradient descent's shift at $\eta S\approx0.2$, 0.8 and 1.4.
 - **Picked up in:** `td2_1` §1.1 to §1.3, and §1.5 for momentum.
 
-### 1b. The edge of stability (3 min)
-
-**Claim.** Under full-batch gradient descent the sharpness typically rises during training (progressive sharpening) until $S\approx2/\eta$, then hovers there while the loss keeps falling on average. That is exactly where the expansion of 1a fails. The mechanism is *self-stabilization*: the oscillation along the top eigenvector $u$ feeds back through the third derivative and pushes the iterate down the sharpness gradient. A *central flow* models the time-averaged trajectory instead of the iterate.
-
-**Board.**
-$$
-\nabla L(\bar\theta+xu)=\nabla L(\bar\theta)+x\,S\,u+\tfrac12x^2\,\nabla S(\bar\theta)+O(x^3)
-$$
-(`td2_2` §2.2.) The last term doesn't depend on the sign of $x$, so it survives averaging over the period-2 oscillation.
-
-**Picture.** The valley: the bounce across the walls *is* the oscillation along $u$, and the $\tfrac12x^2\nabla S$ push moves the iterate toward lower walls.
-
-**Speaker notes.**
-
-- The central flow is $dw/dt=-[\nabla L+\tfrac12\sigma^2\nabla S]$, with $\sigma^2$ fixed by requiring $S$ to stay at $2/\eta$. Its time-averaged loss is $L+\sigma^2/\eta$. State it, don't derive it (that is Exercise 2.3). It is heuristic, and Cohen et al. state its limits.
-- Other continuous-time models, presented side by side in `td2_2` §2.4: Rod Flow tracks the midpoint and half-length of consecutive iterates. Principal flow resums the backward-error-analysis terms built from $H$, which captures the onset of the instability but not the stabilization.
-- **Open question to name:** *why* progressive sharpening happens is only partly understood. `td2_2` takes it as given.
-- **Show:** `td2_2` §2.1, the MLP sharpness plot at three step sizes against $t=k\eta$. All three follow the same flow curve until each hits its own $2/\eta$. Then `assets/interactive/eos_toy_and_catapult.html`, panel 1, preset **EoS from below**.
-- **Picked up in:** `td2_2` §2.1 to §2.4.
-
-### 1c. The catapult (1 min, *compressible*)
-
-**Claim.** In the smallest model where curvature can change (a width-$n$ two-layer net, one input), a large step can *lower* curvature in one shot. The regimes are $\eta\lambda_0<2$ (lazy), $2<\eta\lambda_0<4$ (the loss spikes, then curvature drops and training converges somewhere flatter), and $\eta\lambda_0>4$ (divergence). The $4/\lambda_0$ edge is specific to this model; the paper finds ReLU nets tolerate up to about $12/\lambda_0$.
-
-**Speaker notes.**
-
-- Contrast with 1b: self-stabilization is a sustained hover, while the catapult is a one-shot drop with nothing pushing the curvature back up.
-- **Show:** the same HTML, panel 2, presets **lazy**, **catapult** and **divergent**.
-- **Picked up in:** `td2_2` §2.7 (exact maps, Exercise 2.7).
 
 ---
 
@@ -94,23 +66,61 @@ d\theta=-\nabla L\,dt+\sqrt{\eta/B}\;\Sigma^{1/2}\,dW
 \qquad\qquad
 B_{\rm noise}=\frac{\mathrm{tr}(H\Sigma)}{G^\top HG}
 $$
-(`td2_3` §3.2 and §3.4.) Say aloud that $\Delta L_{\rm opt}(B)=\Delta L_{\max}/(1+B_{\rm noise}/B)$.
+(`td2_2` §2.2 and §2.4.) Say aloud that $\Delta L_{\rm opt}(B)=\Delta L_{\max}/(1+B_{\rm noise}/B)$.
 
 **Speaker notes.**
 
-- The order-2 SME adds IGR's drift correction $\tfrac\eta4\|\nabla L\|^2$, which depends on $\eta$, not $\eta/B$. So the linear scaling rule is a first-order statement. It fails once the batch approaches $B_{\rm noise}$, when $\eta h$ isn't small in the top directions, and at the edge of stability (`td2_3` §3.5).
+- The order-2 SME adds IGR's drift correction $\tfrac\eta4\|\nabla L\|^2$, which depends on $\eta$, not $\eta/B$. So the linear scaling rule is a first-order statement. It fails once the batch approaches $B_{\rm noise}$, when $\eta h$ isn't small in the top directions, and at the edge of stability (`td2_2` §2.5).
 - Adam's rule, stated only: under $B\to\kappa B$, take $\eta\to\sqrt\kappa\,\eta$, $1-\beta_i\to\kappa(1-\beta_i)$, $\epsilon\to\epsilon/\sqrt\kappa$ (Malladi et al.; here $\epsilon$ is Adam's). It needs noise-dominated gradients.
 - **Competing accounts, present them evenly:**
-  - *What does SGD's noise buy?* One view treats the SDE's temperature $\eta/B$ as the important parameter. Smith, Dherin, Barrett and De argue from experiments that the finite-$\eta$ drift corrections matter more for generalization (`td2_3` §3.7 item 4; the SGD version of IGR is `td2_1` §1.4).
-  - *Is the noise Gaussian?* Şimşekli, Sagun and Gürbüzbalaban argued for heavy tails (a Lévy limit). Li, Malladi and Arora argue the measurement can mislead, and find matched-covariance Gaussian noise reaches the same CIFAR-10 accuracy (§3.7 item 7).
-- "Is the Taylor expansion even valid?" `td2_3` §3.7 collects nine answers. Weak-order bounds hold on a fixed horizon as $\eta\to0$, and nothing quantitative follows for a given $\eta$. The question can be tested directly with SVAG (§3.5).
-- Under SGD, the quantity that sits at $2/\eta$ is a *batch sharpness*, and the full-batch $S$ settles lower (`td2_2` §2.6).
-- **Show:** `td2_3` §3.4.B, the steps–examples tradeoff measured on least squares and fitted by the hyperbola $(S/S_{\min}-1)(E/E_{\min}-1)=1$.
-- **Picked up in:** `td2_3` §3.1 to §3.6 (core reading: Li, Malladi and Arora), §3.7 for validity.
+  - *What does SGD's noise buy?* One view treats the SDE's temperature $\eta/B$ as the important parameter. Smith, Dherin, Barrett and De argue from experiments that the finite-$\eta$ drift corrections matter more for generalization (`td2_2` §2.7 item 4; the SGD version of IGR is `td2_1` §1.4).
+  - *Is the noise Gaussian?* Şimşekli, Sagun and Gürbüzbalaban argued for heavy tails (a Lévy limit). Li, Malladi and Arora argue the measurement can mislead, and find matched-covariance Gaussian noise reaches the same CIFAR-10 accuracy (§2.7 item 7).
+- "Is the Taylor expansion even valid?" `td2_2` §2.7 collects nine answers. Weak-order bounds hold on a fixed horizon as $\eta\to0$, and nothing quantitative follows for a given $\eta$. The question can be tested directly with SVAG (§2.5).
+- Under SGD, the quantity that sits at $2/\eta$ is a *batch sharpness*, and the full-batch $S$ settles lower (`td2_3` §3.6, next segment).
+- **Show:** `td2_2` §2.4.B, the steps–examples tradeoff measured on least squares and fitted by the hyperbola $(S/S_{\min}-1)(E/E_{\min}-1)=1$.
+- **Picked up in:** `td2_2` §2.1 to §2.6 (core reading: Li, Malladi and Arora), §2.7 for validity.
+
 
 ---
 
-## 3. Schedule: warmup and decay (3 min)
+## 3. Where the expansions break: the edge of stability and the catapult (4 min)
+
+**Claim.** Segments 1 and 2 expanded in $\eta S$. Real training sits at $\eta S\approx2$, exactly where that fails, and different tools take over.
+
+### 3a. The edge of stability (3 min)
+
+**Claim.** Under full-batch gradient descent the sharpness typically rises during training (progressive sharpening) until $S\approx2/\eta$, then hovers there while the loss keeps falling on average. That is exactly where the expansion of segment 1 fails. The mechanism is *self-stabilization*: the oscillation along the top eigenvector $u$ feeds back through the third derivative and pushes the iterate down the sharpness gradient. A *central flow* models the time-averaged trajectory instead of the iterate.
+
+**Board.**
+$$
+\nabla L(\bar\theta+xu)=\nabla L(\bar\theta)+x\,S\,u+\tfrac12x^2\,\nabla S(\bar\theta)+O(x^3)
+$$
+(`td2_3` §3.2.) The last term doesn't depend on the sign of $x$, so it survives averaging over the period-2 oscillation.
+
+**Picture.** The valley: the bounce across the walls *is* the oscillation along $u$, and the $\tfrac12x^2\nabla S$ push moves the iterate toward lower walls.
+
+**Speaker notes.**
+
+- The central flow is $dw/dt=-[\nabla L+\tfrac12\sigma^2\nabla S]$, with $\sigma^2$ fixed by requiring $S$ to stay at $2/\eta$. Its time-averaged loss is $L+\sigma^2/\eta$. State it, don't derive it (that is Exercise 3.3). It is heuristic, and Cohen et al. state its limits.
+- Other continuous-time models, presented side by side in `td2_3` §3.4: Rod Flow tracks the midpoint and half-length of consecutive iterates. Principal flow resums the backward-error-analysis terms built from $H$, which captures the onset of the instability but not the stabilization.
+- **Open question to name:** *why* progressive sharpening happens is only partly understood. `td2_3` takes it as given.
+- **Show:** `td2_3` §3.1, the MLP sharpness plot at three step sizes against $t=k\eta$. All three follow the same flow curve until each hits its own $2/\eta$. Then `assets/interactive/eos_toy_and_catapult.html`, panel 1, preset **EoS from below**.
+- **Picked up in:** `td2_3` §3.1 to §3.4.
+
+### 3b. The catapult (1 min, *compressible*)
+
+**Claim.** In the smallest model where curvature can change (a width-$n$ two-layer net, one input), a large step can *lower* curvature in one shot. The regimes are $\eta\lambda_0<2$ (lazy), $2<\eta\lambda_0<4$ (the loss spikes, then curvature drops and training converges somewhere flatter), and $\eta\lambda_0>4$ (divergence). The $4/\lambda_0$ edge is specific to this model; the paper finds ReLU nets tolerate up to about $12/\lambda_0$.
+
+**Speaker notes.**
+
+- Contrast with 3a: self-stabilization is a sustained hover, while the catapult is a one-shot drop with nothing pushing the curvature back up.
+- **Show:** the same HTML, panel 2, presets **lazy**, **catapult** and **divergent**.
+- **Picked up in:** `td2_3` §3.7 (exact maps, Exercise 3.7).
+
+
+---
+
+## 4. Schedule: warmup and decay (3 min)
 
 **Claim.** Both ends of a schedule have derivable mechanisms, and each end has more than one account.
 
@@ -118,24 +128,25 @@ $$
 $$
 \tfrac12\mathrm{tr}(H\Pi)=\frac{\eta}{4B}\,\mathrm{tr}\,\Sigma\qquad\text{where }H\Pi+\Pi H=\tfrac\eta B\Sigma
 $$
-(`td2_3` §3.3.) In a quadratic basin, the stationary excess loss of constant-step SGD doesn't depend on $H$. Cutting $\eta$ lowers it right away.
+(`td2_2` §2.3.) In a quadratic basin, the stationary excess loss of constant-step SGD doesn't depend on $H$. Cutting $\eta$ lowers it right away.
 
 **Speaker notes.**
 
 - **Warmup, two accounts.**
   - *Edge of stability* (Kalra and Barkeshli): starting at the target $\eta$ from a sharp initialization causes a catapult or divergence. Ramping $\eta$ up lets $S$ follow $2/\eta(t)$ down into regions that tolerate the target step.
-  - *Adam's second moment* (Liu et al., RAdam): early $\hat v$ is estimated from few samples, so the adaptive step has high variance. `td2_2` §2.8 states it in one paragraph without deriving it; Kalra and Barkeshli's paper (a `td2_2` reading) also proposes a second-moment initialization for Adam.
-  - `td2_2` §2.8 develops the first account, and Exercise 2.8(a) tests it in the toy, from two starting sharpnesses, and asks when warmup helps and whether it can hurt.
+  - *Adam's second moment* (Liu et al., RAdam): early $\hat v$ is estimated from few samples, so the adaptive step has high variance. `td2_3` §3.8 states it in one paragraph without deriving it; Kalra and Barkeshli's paper (a `td2_2` reading) also proposes a second-moment initialization for Adam.
+  - `td2_3` §3.8 develops the first account, and Exercise 3.8(a) tests it in the toy, from two starting sharpnesses, and asks when warmup helps and whether it can hurt.
 - **Decay, three pictures of the same observation** (the loss drops when $\eta$ is cut):
   - the OU floor on the board;
   - Wen et al.'s *river valley* for WSD schedules, where SGD noise makes the iterate bounce between the hillsides and hides progress along the river until the decay phase reveals it;
-  - an edge-of-stability analogue, where the measured loss is $L+\sigma^2/\eta$ and decaying $\eta$ moves the edge up. `td2_2` labels this analogy as its own and not a claim of either paper.
-- **Show:** `eos_toy_and_catapult.html` panel 1, presets **sharp start, no warmup** and **sharp start, warmup**. Then `td2_3` §3.3.B, the learning-rate-decay cell, whose dashed line is the exact expected excess loss, not a fit.
-- **Picked up in:** `td2_2` §2.8; `td2_3` §3.3.
+  - an edge-of-stability analogue, where the measured loss is $L+\sigma^2/\eta$ and decaying $\eta$ moves the edge up. `td2_3` labels this analogy as its own and not a claim of either paper.
+- **Show:** `eos_toy_and_catapult.html` panel 1, presets **sharp start, no warmup** and **sharp start, warmup**. Then `td2_2` §2.3.B, the learning-rate-decay cell, whose dashed line is the exact expected excess loss, not a fit.
+- **Picked up in:** `td2_3` §3.8; `td2_2` §2.3.
+
 
 ---
 
-## 4. Optimizer (4 min)
+## 5. Optimizer (4 min)
 
 **Claim.** A first-order optimizer has to decide what counts as a *small* step. That decision is a norm, and the norm fixes the direction. Euclidean gives gradient descent, $\ell_\infty$ gives sign descent (Adam with its averages off), the Fisher norm gives natural gradient, and the spectral norm on a weight matrix gives $UV^\top$, which Muon approximates by Newton–Schulz.
 
@@ -152,14 +163,15 @@ $$
 - **The parable (labelled as an analogy, as `td2_4` §4.0 does).** Between point masses with disjoint supports, KL is infinite and Jensen–Shannon is constant, so neither gives a gradient. Wasserstein-1 is $|\theta|$, because only it uses the geometry of the space. The parameter-space version is only the *question* "in which geometry should a step be measured?" The GAN theorems imply nothing about optimizers.
 - `td2_4` makes this point itself: every optimizer is steepest descent under *some* norm, so the dictionary explains nothing on its own. A norm earns its place through parametrization invariance (natural gradient, §4.2) or step sizes that transfer across width (§4.5, next segment).
 - Natural gradient is invariant to reparametrization to first order. Raw sharpness is not, because the Hessian is a quadratic form and its eigenvalues need a metric. This links to the MDL day's flatness discussion (Dinh et al.'s two-layer example is MDL WB2 Exercise 4.5, part 3).
-- Adam's edge: with a frozen preconditioner, Adam at $\beta_1=0.9$ is stable iff $\eta\lambda_{\max}(P^{-1}H)<38$, and full-batch Adam holds this *preconditioned* sharpness at $38/\eta$ while raw sharpness keeps rising (`td2_2` §2.5).
+- Adam's edge: with a frozen preconditioner, Adam at $\beta_1=0.9$ is stable iff $\eta\lambda_{\max}(P^{-1}H)<38$, and full-batch Adam holds this *preconditioned* sharpness at $38/\eta$ while raw sharpness keeps rising (`td2_3` §3.5).
 - "Adam is sign descent" is exact only with the averages off (`td2_4` §4.3.D gives the failures).
 - **Show:** `assets/interactive/steepest_descent_balls.html`. Toggle **Trust region** / **Squared penalty**, and try **g₂ ≈ 0** to show why sign descent is sensitive to small gradient components. Optionally `td2_4` §4.4.D, singular values through Newton–Schulz iterations: the cubic converges to 1, while Muon's quintic deliberately lands them in a band.
-- **Picked up in:** `td2_4` §4.0 to §4.4 (core reading: Bernstein and Newhouse); `td2_2` §2.5.
+- **Picked up in:** `td2_4` §4.0 to §4.4 (core reading: Bernstein and Newhouse); `td2_3` §3.5.
+
 
 ---
 
-## 5. Width (2 min)
+## 6. Width (2 min)
 
 **Claim.** Asking which step sizes transfer across width gives a spectral condition for feature learning. Combined with the spectral norm of each optimizer's update, it gives the learning-rate rule. For Adam's hidden layers that rule is $\eta\propto1/\text{fan-in}$, which is muP's rule.
 
@@ -177,9 +189,10 @@ $$
 - **Show:** `td2_4` §4.5.D, $\|\mathrm{sign}(G)\|_2$ against width for low-rank versus dense random $G$ (the derivation is §4.5.C).
 - **Picked up in:** `td2_4` §4.5. The modular norm, and the depth scaling it suggests, are §4.6.
 
+
 ---
 
-## 6. Normalization and weight decay (4 min)
+## 7. Normalization and weight decay (4 min)
 
 **Claim.** Most weights in a modern network feed a normalization layer, so the loss sees only their direction. The step the direction takes is set by $\eta/\|w\|^2$, and weight decay's job on those weights is to set $\|w\|$. At equilibrium each normalized block rotates by a fixed angle per step, independent of its gradient scale. On scale-invariant weights, weight decay acts as a learning-rate schedule, not a regularizer of the function. Li and Arora make this exact: it is equivalent to an exponentially increasing learning rate.
 
@@ -202,9 +215,10 @@ $$
 - **Show:** `td2_5` §5.2, the weight-decay equilibrium cell with five settings, including two pairs with the same $\eta\lambda$ that end up at the same angle. Then the summary table at the end of §5.3.
 - **Picked up in:** `td2_5`. Its short route is 30 to 45 min.
 
+
 ---
 
-## 7. What the knobs act on (2 min, *compressible*)
+## 8. What the knobs act on (2 min, *compressible*)
 
 **Claim.** Here is some phenomenology that any account of training has to match, and the mechanisms NB2 derives for it.
 
@@ -224,17 +238,18 @@ $$
 - **Show:** `td2_6` §6.4.B, alignment $f_{\rm top}$ and the Dom/Bulk projections in both settings. Or `td2_7` §7.1, a small-init network trained on the data and on its Gaussian clone.
 - **Picked up in:** `td2_6` (core reading: Song, Ahn and Yun); `td2_7` (core readings: Refinetti et al., Bardone and Goldt, Basri et al.).
 
+
 ---
 
-## 8. Menu and routes (2 min)
+## 9. Menu and routes (2 min)
 
 Put the menu up as a list. Students choose.
 
 | Knob or question | Notebook |
 |---|---|
 | Learning rate as a step size: flows, IGR, momentum | `td2_1_flows` |
-| Learning rate at the edge: EoS, central flows, Adam's and SGD's edges, catapult, warmup and WSD | `td2_2_edge_of_stability` |
-| Batch size: SMEs, loss floor, critical batch, linear and square-root rules, validity | `td2_3_sgd_sde` |
+| Batch size: SMEs, loss floor, critical batch, linear and square-root rules, validity | `td2_2_sgd_sde` |
+| Where the expansions break: EoS, central flows, Adam's and SGD's edges, catapult, warmup and WSD | `td2_3_edge_of_stability` |
 | Optimizer and width: norms, natural gradient, Adam as sign descent, Muon, muP | `td2_4_optimizer_geometry` |
 | Normalization, weight decay, spikes, clipping | `td2_5_normalization_weight_decay` |
 | What the Hessian looks like; when the basin is chosen | `td2_6_curvature` |
@@ -243,13 +258,14 @@ Put the menu up as a list. Students choose.
 
 **Suggested routes** (from `td2_8`'s map; suggestions only):
 
-- *Less background:* NB1 §1, §4 and §5 (mode equations, the kernel, lazy/rich), then `td2_1` followed by `td2_3`. Flows and SDEs are one story: backward error analysis, first for the step and then in distribution.
-- *Practitioner-minded:* `td2_3` → `td2_4` → `td2_5`.
-- *More background:* skim NB1, then any NB2 notebook. `td2_2` and `td2_6` are where the expansions break and the empirical phenomenology lives.
+- *Less background:* NB1 §1, §4 and §5 (mode equations, the kernel, lazy/rich), then `td2_1` followed by `td2_2`. Flows and SDEs are one story: backward error analysis, first for the step and then in distribution.
+- *Practitioner-minded:* `td2_2` → `td2_4` → `td2_5`.
+- *More background:* skim NB1, then any NB2 notebook. `td2_3` and `td2_6` are where the expansions break and the empirical phenomenology lives.
 
 **Out of scope for the day, with where to go instead.** Whether SGD samples a Bayesian posterior: the MDL day's WB2 §8 and its figure `sgd_stationary_vs_posterior.html`. Infinite-width NTK theory: the Physics of Deep Learning day.
 
 *(Room for the instructor's own recommendations.)*
+
 
 ---
 
@@ -258,12 +274,13 @@ Put the menu up as a list. Students choose.
 | Segment | Full | Compressed |
 |---|---|---|
 | 0 Two kinds of tools | 1.5 | 1 |
-| 1 Learning rate (1a, 1b, 1c) | 6 | 4.5 (1c to one sentence) |
+| 1 Learning rate as a step size | 2 | 1.5 |
 | 2 Batch size | 5 | 4 |
-| 3 Schedule | 3 | 2.5 |
-| 4 Optimizer | 4 | 3.5 |
-| 5 Width | 2 | 1.5 |
-| 6 Normalization and weight decay | 4 | 3.5 |
-| 7 What the knobs act on | 2 | 0.5 (one sentence each) |
-| 8 Menu and routes | 2 | 1.5 |
+| 3 Where the expansions break (3a, 3b) | 4 | 3 (3b to one sentence) |
+| 4 Schedule | 3 | 2.5 |
+| 5 Optimizer | 4 | 3.5 |
+| 6 Width | 2 | 1.5 |
+| 7 Normalization and weight decay | 4 | 3.5 |
+| 8 What the knobs act on | 2 | 0.5 (one sentence each) |
+| 9 Menu and routes | 2 | 1.5 |
 | **Total** | **29.5** | **22.5** |

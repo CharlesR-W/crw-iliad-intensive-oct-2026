@@ -4,17 +4,17 @@ NB2 §8's further readings (dropout averaging, layer cushion, geometry-adaptive
 denoising bases, critical periods and plasticity, fine-tuning and RL update
 dynamics).
 
-Shape (streamline brief, 2026-10-09): the top is a short pitch, a one-line-per-
-notebook map of the day with three suggested routes, and a one-line route per
-section. Each `##` section opens with the question and its answer in plain
-words, then its lead paper(s) via reading(), an optional short core-idea
-paragraph and a one-line "Also:" list. Short exercises and numerical checks sit
-in one `### Optional: annotated derivations and walkthrough` per section (anchor
-`<section>-walkthrough`); exercises are bold-labelled paragraphs, not headings.
-§4 has no derivations and so no walkthrough. Section anchors (td28-dropout,
-td28-cushion, td28-gahb, td28-plasticity, td28-rl) are stable; other notebooks
-link to td28-gahb and td28-plasticity. The map links sibling notebooks only at
-section-level anchors.
+Shape (readings first, 2026-10-14): a short pitch, a one-line-per-notebook map
+of the day with three suggested routes, and a one-line route per topic; then one
+`## Readings` section (anchor td28-readings) with every paper, grouped by topic,
+each group with its "Also:" links; then one `##` per topic with derivations (1,
+2, 3, 5): the question and answer in plain words, at most a short core-idea
+paragraph, then (from the `<section>-walkthrough` anchor) short exercises
+(bold-labelled paragraphs) and numerical checks. §4 has no derivations, so it
+lives entirely in the Readings block, its pitch and anchor heading its group.
+Section anchors (td28-dropout, td28-cushion, td28-gahb, td28-plasticity, td28-rl)
+are stable; other notebooks link to td28-gahb and td28-plasticity. The map links
+sibling notebooks only at section-level anchors.
 
 Source checks and critique rounds are logged in
 ../reviews/td/td2_8_further_readings.md; standalone checks are in
@@ -31,8 +31,6 @@ def nb(stem: str, anchor: str = "") -> str:
     return f"[`{stem}`]({stem}.html{'#' + anchor if anchor else ''})"
 
 
-WALK = "### Optional: annotated derivations and walkthrough"
-
 INDEX = rf"""
 # Training Dynamics 2.8: further readings, and a map of the day
 
@@ -47,8 +45,8 @@ alone; take whatever interests you.
 
 - {nb("td1_linear_networks")}: deep linear networks solved exactly: plateaus, depth, the landscape, lazy versus rich learning.
 - {nb("td2_1_flows")}: gradient descent follows a modified flow (backward error analysis), and when to trust it; momentum.
-- {nb("td2_2_edge_of_stability")}: sharpness rises to the stability limit and stays there; catapults, warmup, schedules.
-- {nb("td2_3_sgd_sde")}: SGD as a stochastic differential equation; batch-size and learning-rate scaling rules.
+- {nb("td2_3_edge_of_stability")}: sharpness rises to the stability limit and stays there; catapults, warmup, schedules.
+- {nb("td2_2_sgd_sde")}: SGD as a stochastic differential equation; batch-size and learning-rate scaling rules.
 - {nb("td2_4_optimizer_geometry")}: optimizers as steepest descent under a norm: natural gradient, Adam, Muon, muP.
 - {nb("td2_5_normalization_weight_decay")}: normalization, weight decay and the effective step size; loss spikes, clipping.
 - {nb("td2_6_curvature")}: the Hessian's Gauss–Newton part, bulk plus outliers, the tiny top subspace, when the basin is chosen.
@@ -56,22 +54,25 @@ alone; take whatever interests you.
 
 **Suggested routes.** *Less background:* `td1_linear_networks`
 [§1](td1_linear_networks.html#td1-s1), [§4](td1_linear_networks.html#td1-s4) and
-[§5](td1_linear_networks.html#td1-s5), then `td2_1` → `td2_3`. *Practitioner:*
-`td2_3` → `td2_4` → `td2_5`. *More background:* skim `td1`, then `td2_2` and
+[§5](td1_linear_networks.html#td1-s5), then `td2_1` → `td2_2`. *Practitioner:*
+`td2_2` → `td2_4` → `td2_5`. *More background:* skim `td1`, then `td2_3` and
 `td2_6`, where small-step theory breaks down.
 
 **Out of scope:** whether SGD samples a Bayesian posterior (the Mysteries day's
 [MDL1 §8](../notebooks/mdl1_statistical_learning.html#wb2-sgd-posterior), exercise
 8.2), and infinite-width NTK theory (the Physics of Deep Learning day).
 
-**This notebook:** five topics the day does not derive, each led by its paper.
-Four have an optional walkthrough with short exercises and a numerical check; run
-the code cells in order (seconds on a laptop CPU).
+**This notebook:** five topics the day does not derive. **Route.** The
+[Readings](#td28-readings) come first: every paper, grouped by topic. The sections
+after them are the derivations and walkthrough (short exercises with worked
+solutions, and a numerical check) for topics 1, 2, 3 and 5, for whoever wants
+them; topic 4 is readings only. Run the code cells in order (seconds on a laptop
+CPU).
 
 1. [Dropout as a geometric-mean ensemble](#td28-dropout): Baldi & Sadowski.
 2. [Layer cushion, noise robustness and basin size](#td28-cushion): Arora, Ge, Neyshabur & Zhang.
 3. [Geometry-adaptive harmonic bases](#td28-gahb): Kadkhodaie, Guth, Simoncelli & Mallat.
-4. [Critical periods and loss of plasticity](#td28-plasticity): Dohare et al.; Achille, Rovere & Soatto.
+4. [Critical periods and loss of plasticity](#td28-plasticity) (readings only): Dohare et al.; Achille, Rovere & Soatto.
 5. [Fine-tuning and RL update dynamics](#td28-rl): Mukherjee et al.; Zhu et al.
 """
 
@@ -87,18 +88,14 @@ import numpy as np
 rng = np.random.default_rng(0)
 """
     ),
-    # ------------------------------------------------------------------ 1. dropout
+    # ------------------------------------------------------------------ readings
     markdown(
         r"""
-<a id="td28-dropout"></a>
+<a id="td28-readings"></a>
 
-## 1. Dropout as a geometric-mean ensemble
+## Readings
 
-Dropout trains a randomly thinned subnetwork at each step; at test time it runs
-the full network once, with each weight scaled by its keep probability. Why does
-that one pass stand in for averaging all the subnetworks? For a logistic unit it
-is *exactly* their normalized geometric mean, which is close to their arithmetic
-mean.
+**1. Dropout as a geometric-mean ensemble ([§1](#td28-dropout)).**
 """
         + reading(
             "Understanding dropout",
@@ -114,13 +111,126 @@ the standard reference. Dropout as an adaptive $L^2$ penalty is derived in the
 Mysteries day's [MDL1 §4](../notebooks/mdl1_statistical_learning.html#wb2-dropout),
 exercise 4.4.
 
+**2. Layer cushion, noise robustness and basin size ([§2](#td28-cushion)).**
+"""
+        + reading(
+            "Stronger generalization bounds for deep nets via a compression approach",
+            "https://arxiv.org/abs/1802.05296",
+            "Arora, Ge, Neyshabur & Zhang (ICML 2018)",
+            "Defines noise sensitivity, layer cushion and related noise-stability properties, uses them to compress trained networks and bound the compressed network's generalization error, and measures the cushion growing during training.",
+            "§3 has the definitions; §6 the measurements.",
+            importance=5, length=2,
+        )
+        + reading(
+            "Computing nonvacuous generalization bounds for deep (stochastic) neural networks with many more parameters than training data",
+            "https://arxiv.org/abs/1703.11008",
+            "Dziugaite & Roy (UAI 2017)",
+            "The weight-noise version: optimize a PAC-Bayes bound over a Gaussian centred near the SGD solution, getting nonvacuous bounds on binary MNIST; the weight noise the training loss tolerates is a (parametrization-dependent) proxy for basin size.",
+            importance=3, length=3,
+        )
+        + r"""
+**3. Geometry-adaptive harmonic bases ([§3](#td28-gahb)).**
+"""
+        + reading(
+            "Generalization in diffusion models arises from geometry-adaptive harmonic representations",
+            "https://arxiv.org/abs/2310.02557",
+            "Kadkhodaie, Guth, Simoncelli & Mallat (ICLR 2024)",
+            r"Denoisers trained on disjoint halves of a face dataset memorize when data are few and converge to nearly the same score when data are many (about $10^5$ images); the Jacobian-eigenvector analysis then shows near-optimal, geometry-adaptive shrinkage, which persists on data where it is suboptimal.",
+            "§2 for the transition, §3 for the analysis.",
+            importance=5, length=2,
+        )
+        + r"""
+Also: [Mohan et al., bias-free denoising CNNs (ICLR 2020)](https://arxiv.org/abs/1906.05478)
+(why the Jacobian reading works);
+[Kamb & Ganguli, an analytic theory of creativity (2024)](https://arxiv.org/abs/2412.20292)
+(locality and equivariance alone predict trained diffusion models' outputs);
+[Belrose et al., statistics of increasing complexity (2024)](https://arxiv.org/abs/2402.04362)
+(`td2_7`'s "low-order statistics first", measured on real networks).
+
+<a id="td28-plasticity"></a>
+
+**4. Critical periods and loss of plasticity (readings only).** Does it matter
+*when* a network sees something? Yes. A deficit early in training, such as blurred images for the first epochs, lowers final accuracy in a way later
+training does not repair (a *critical period*), and a network trained on a long
+sequence of tasks gradually loses the ability to learn new ones (*loss of
+plasticity*). Early training builds something later training cannot easily undo.
+"""
+        + reading(
+            "Loss of plasticity in deep continual learning",
+            "https://doi.org/10.1038/s41586-024-07711-7",
+            "Dohare, Hernandez-Garcia, Lan, Rahman, Mahmood & Sutton (Nature 2024; preprint [arXiv:2306.13812](https://arxiv.org/abs/2306.13812))",
+            "On continual ImageNet variants and in RL, standard networks steadily lose the ability to learn, across architectures and optimizers; \"continual backprop\", which keeps reinitializing a few little-used units, maintains plasticity.",
+            importance=5, length=2,
+        )
+        + reading(
+            "Critical learning periods in deep networks",
+            "https://arxiv.org/abs/1711.08856",
+            "Achille, Rovere & Soatto (ICLR 2019)",
+            "Early blur leaves a permanent deficit, while deficits that keep low-level statistics (vertical flips) do not; the Fisher information of the weights rises fast early in training and then falls.",
+            importance=4, length=3,
+        )
+        + r"""
+Two hooks to this day: critical periods already appear in deep linear networks,
+where the mode equations of [`td1_linear_networks` §1](td1_linear_networks.html#td1-s1)
+make them tractable (Kleinman et al.), and plasticity loss is tied to changes in
+loss-landscape curvature (Lyle et al.; [`td2_6`](td2_6_curvature.html)). The
+Mysteries day lists critical periods among its strange facts in
+[MDL4 §6](../notebooks/mdl4_mysteries.html#wb6-section-4).
+
+Also: [Kleinman, Achille & Soatto, critical periods in deep linear networks (ICLR 2024)](https://arxiv.org/abs/2308.12221);
+[Lyle et al., understanding plasticity (ICML 2023)](https://arxiv.org/abs/2303.01486)
+(plasticity loss tracks curvature, often without saturated units);
+[Ash & Adams, on warm-starting (NeurIPS 2020)](https://arxiv.org/abs/1910.08475)
+(the everyday version, and "shrink and perturb").
+
+**5. Fine-tuning and RL update dynamics ([§5](#td28-rl)).**
+"""
+        + reading(
+            "Reinforcement learning finetunes small subnetworks in large language models",
+            "https://arxiv.org/abs/2505.11711",
+            "Mukherjee, Yuan, Hakkani-Tür & Peng (NeurIPS 2025)",
+            r"Across seven RL algorithms and ten models, RL changes only 5–30% of parameters (counting bfloat16 changes up to $10^{-5}$ as none); the changed set is consistent across seeds and algorithms, fine-tuning it alone reproduces the full result, and each matrix's update has nearly full numerical rank.",
+            importance=4, length=2,
+        )
+        + reading(
+            "The path not taken: RLVR provably learns off the principals",
+            "https://arxiv.org/abs/2511.08567",
+            "Zhu et al. (2025)",
+            "RL with verifiable rewards (RLVR) lands less often than chance on the *principal weights* (the largest entries of a low-rank SVD reconstruction of each pretrained matrix, a proxy for high curvature) and barely changes the singular spectrum, while SFT does the opposite.",
+            "The \"provably\" refers to bounds for small, KL-constrained steps.",
+            importance=4, length=3,
+        )
+        + r"""
+Also: [Cai et al., predictability of RL dynamics (2025)](https://arxiv.org/abs/2510.00553)
+(the top singular component of each update recovers about 99% of the accuracy);
+[Schulman and Thinking Machines Lab, LoRA without regret (2025)](https://thinkingmachines.ai/blog/lora/)
+(rank-1 LoRA suffices for policy-gradient RL);
+[Shenfeld, Pari & Agrawal, RL's Razor (2025)](https://arxiv.org/abs/2509.04259)
+(forgetting tracks the KL divergence to the base model);
+[Malladi et al., a kernel view of fine-tuning (ICML 2023)](https://arxiv.org/abs/2210.05643)
+(prompt-based fine-tuning as kernel regression with the pretrained tangent kernel);
+[CRW, some interesting papers on RLVR (blog, 2026)](https://charlesr-w.github.io/crw-blog/Some-Interesting-Papers-on-RLVR/)
+(a short, informal survey of these papers and more).
+"""
+    ),
+    # ------------------------------------------------------------------ 1. dropout
+    markdown(
+        r"""
+<a id="td28-dropout"></a>
+
+## 1. Dropout as a geometric-mean ensemble
+
+Dropout trains a randomly thinned subnetwork at each step; at test time it runs
+the full network once, with each weight scaled by its keep probability. Why does
+that one pass stand in for averaging all the subnetworks? For a logistic unit it
+is *exactly* their normalized geometric mean, which is close to their arithmetic
+mean.
+
+**Paper:** Baldi & Sadowski, *Understanding dropout*, §3–4 (see [Readings](#td28-readings)).
+
 <a id="td28-dropout-walkthrough"></a>
 
-"""
-        + WALK
-        + r"""
-
-**Setup.** One logistic unit, $\sigma(x)=1/(1+e^{-x})$, with inputs $I_i$ and
+**Derivations and walkthrough.** *Setup:* One logistic unit, $\sigma(x)=1/(1+e^{-x})$, with inputs $I_i$ and
 weights $w_i$. Dropout gates each input with $\delta_i\sim\mathrm{Bernoulli}(p_i)$,
 independently, so the input sum is $S=\sum_i\delta_iw_iI_i$ and the output is
 $O=\sigma(S)$. Index the $2^n$ subnetworks by $k$, with probabilities $P_k$, sums
@@ -250,23 +360,7 @@ it so? Arora et al. measure how strongly noise injected at one layer is attenuat
 by the layers above it, *on the training data*. Their key quantity, the layer
 cushion, is small at random initialization and grows during training, most in the
 higher layers.
-"""
-        + reading(
-            "Stronger generalization bounds for deep nets via a compression approach",
-            "https://arxiv.org/abs/1802.05296",
-            "Arora, Ge, Neyshabur & Zhang (ICML 2018)",
-            "Defines noise sensitivity, layer cushion and related noise-stability properties, uses them to compress trained networks and bound the compressed network's generalization error, and measures the cushion growing during training.",
-            "§3 has the definitions; §6 the measurements.",
-            importance=5, length=2,
-        )
-        + reading(
-            "Computing nonvacuous generalization bounds for deep (stochastic) neural networks with many more parameters than training data",
-            "https://arxiv.org/abs/1703.11008",
-            "Dziugaite & Roy (UAI 2017)",
-            "The weight-noise version: optimize a PAC-Bayes bound over a Gaussian centred near the SGD solution, getting nonvacuous bounds on binary MNIST; the weight noise the training loss tolerates is a (parametrization-dependent) proxy for basin size.",
-            importance=3, length=3,
-        )
-        + r"""
+
 This is a quantitative replacement for "flat minima generalize", whose raw
 flatness depends on how the network is parametrized
 ([`td2_4` §4.2](td2_4_optimizer_geometry.html#td24-2); the Mysteries day's
@@ -277,13 +371,13 @@ like injected noise, and the compressed network gets a generalization bound the
 authors report as orders of magnitude better than parameter counting.
 [`td2_6` §6.5](td2_6_curvature.html#td26-5) covers when the basin is chosen.
 
+**Papers:** Arora, Ge, Neyshabur & Zhang, *Stronger generalization bounds for deep nets
+via a compression approach*; Dziugaite & Roy on nonvacuous PAC-Bayes bounds (see
+[Readings](#td28-readings)).
+
 <a id="td28-cushion-walkthrough"></a>
 
-"""
-        + WALK
-        + r"""
-
-**Notation.** Layer $i$ computes $x^i=A_i\phi(x^{i-1})$, with weight matrix
+**Derivations and walkthrough.** *Notation:* Layer $i$ computes $x^i=A_i\phi(x^{i-1})$, with weight matrix
 $A_i$, elementwise activation $\phi$ (ReLU in the paper) and input $x^0$.
 $\lVert A\rVert_F$ is the Frobenius norm, $\lVert A\rVert_2$ the spectral norm, and
 $\eta\sim\mathcal N(0,I)$ a standard Gaussian noise vector (not a learning rate
@@ -379,30 +473,13 @@ in smooth regions, and these bases appear even on data for which they are
 suboptimal. It is an inductive-bias result like the spectral bias of
 [`td2_7` §7.3](td2_7_learned_first.html#td27-3), read off from the network's
 Jacobian.
-"""
-        + reading(
-            "Generalization in diffusion models arises from geometry-adaptive harmonic representations",
-            "https://arxiv.org/abs/2310.02557",
-            "Kadkhodaie, Guth, Simoncelli & Mallat (ICLR 2024)",
-            r"Denoisers trained on disjoint halves of a face dataset memorize when data are few and converge to nearly the same score when data are many (about $10^5$ images); the Jacobian-eigenvector analysis then shows near-optimal, geometry-adaptive shrinkage, which persists on data where it is suboptimal.",
-            "§2 for the transition, §3 for the analysis.",
-            importance=5, length=2,
-        )
-        + r"""
-Also: [Mohan et al., bias-free denoising CNNs (ICLR 2020)](https://arxiv.org/abs/1906.05478)
-(why the Jacobian reading works);
-[Kamb & Ganguli, an analytic theory of creativity (2024)](https://arxiv.org/abs/2412.20292)
-(locality and equivariance alone predict trained diffusion models' outputs);
-[Belrose et al., statistics of increasing complexity (2024)](https://arxiv.org/abs/2402.04362)
-(`td2_7`'s "low-order statistics first", measured on real networks).
+
+**Paper:** Kadkhodaie, Guth, Simoncelli & Mallat, *Generalization in diffusion models
+arises from geometry-adaptive harmonic representations* (see [Readings](#td28-readings)).
 
 <a id="td28-gahb-walkthrough"></a>
 
-"""
-        + WALK
-        + r"""
-
-**The optimal denoiser.** A clean image $x\in\mathbb R^d$ is observed as
+**Derivations and walkthrough.** *The optimal denoiser:* A clean image $x\in\mathbb R^d$ is observed as
 $y=x+\sigma z$, with $z\sim\mathcal N(0,I)$ and noise level $\sigma$. Write
 $p_\sigma$ for the density of $y$, and $\nabla f(y)$ for the Jacobian of a map $f$
 at $y$. The MSE-optimal denoiser is
@@ -499,48 +576,6 @@ print("shrinkage factors along the top 6 principal directions:",
       np.round(np.sort(np.linalg.eigvalsh(J))[::-1][:6], 3))
 """
     ),
-    # ------------------------------------------------------------------ 4. plasticity
-    markdown(
-        r"""
-<a id="td28-plasticity"></a>
-
-## 4. Critical periods and loss of plasticity
-
-Does it matter *when* a network sees something? Yes. A deficit early in training,
-such as blurred images for the first epochs, lowers final accuracy in a way later
-training does not repair (a *critical period*), and a network trained on a long
-sequence of tasks gradually loses the ability to learn new ones (*loss of
-plasticity*). Early training builds something later training cannot easily undo.
-"""
-        + reading(
-            "Loss of plasticity in deep continual learning",
-            "https://doi.org/10.1038/s41586-024-07711-7",
-            "Dohare, Hernandez-Garcia, Lan, Rahman, Mahmood & Sutton (Nature 2024; preprint [arXiv:2306.13812](https://arxiv.org/abs/2306.13812))",
-            "On continual ImageNet variants and in RL, standard networks steadily lose the ability to learn, across architectures and optimizers; \"continual backprop\", which keeps reinitializing a few little-used units, maintains plasticity.",
-            importance=5, length=2,
-        )
-        + reading(
-            "Critical learning periods in deep networks",
-            "https://arxiv.org/abs/1711.08856",
-            "Achille, Rovere & Soatto (ICLR 2019)",
-            "Early blur leaves a permanent deficit, while deficits that keep low-level statistics (vertical flips) do not; the Fisher information of the weights rises fast early in training and then falls.",
-            importance=4, length=3,
-        )
-        + r"""
-Two hooks to this day: critical periods already appear in deep linear networks,
-where the mode equations of [`td1_linear_networks` §1](td1_linear_networks.html#td1-s1)
-make them tractable (Kleinman et al.), and plasticity loss is tied to changes in
-loss-landscape curvature (Lyle et al.; [`td2_6`](td2_6_curvature.html)). The
-Mysteries day lists critical periods among its strange facts in
-[MDL4 §6](../notebooks/mdl4_mysteries.html#wb6-section-4).
-
-Also: [Kleinman, Achille & Soatto, critical periods in deep linear networks (ICLR 2024)](https://arxiv.org/abs/2308.12221);
-[Lyle et al., understanding plasticity (ICML 2023)](https://arxiv.org/abs/2303.01486)
-(plasticity loss tracks curvature, often without saturated units);
-[Ash & Adams, on warm-starting (NeurIPS 2020)](https://arxiv.org/abs/1910.08475)
-(the everyday version, and "shrink and perturb").
-"""
-    ),
     # ------------------------------------------------------------------ 5. RL
     markdown(
         r"""
@@ -553,23 +588,10 @@ Measured in weights, RL fine-tuning of language models changes few parameters (a
 counted in bfloat16), yet each update matrix has full numerical rank, is dominated
 by one singular direction, and avoids the pretrained matrices' "principal weights",
 where supervised fine-tuning (SFT) does not.
-"""
-        + reading(
-            "Reinforcement learning finetunes small subnetworks in large language models",
-            "https://arxiv.org/abs/2505.11711",
-            "Mukherjee, Yuan, Hakkani-Tür & Peng (NeurIPS 2025)",
-            r"Across seven RL algorithms and ten models, RL changes only 5–30% of parameters (counting bfloat16 changes up to $10^{-5}$ as none); the changed set is consistent across seeds and algorithms, fine-tuning it alone reproduces the full result, and each matrix's update has nearly full numerical rank.",
-            importance=4, length=2,
-        )
-        + reading(
-            "The path not taken: RLVR provably learns off the principals",
-            "https://arxiv.org/abs/2511.08567",
-            "Zhu et al. (2025)",
-            "RL with verifiable rewards (RLVR) lands less often than chance on the *principal weights* (the largest entries of a low-rank SVD reconstruction of each pretrained matrix, a proxy for high curvature) and barely changes the singular spectrum, while SFT does the opposite.",
-            "The \"provably\" refers to bounds for small, KL-constrained steps.",
-            importance=4, length=3,
-        )
-        + r"""
+
+**Papers:** Mukherjee, Yuan, Hakkani-Tür & Peng on RL fine-tuning small subnetworks;
+Zhu et al., *The path not taken* (see [Readings](#td28-readings)).
+
 The question this day adds, from [`td2_6` §6.4](td2_6_curvature.html#td26-4):
 how does the update sit relative to the curvature (the Hessian or Gauss–Newton
 eigenbasis)? None of these papers measures that directly at language-model scale,
@@ -578,24 +600,9 @@ day's [MDL4 §12](../notebooks/mdl4_mysteries.html#wb6-section-11) reads
 Mukherjee et al. and Shenfeld et al. as a pair, including what "unchanged" means
 in bfloat16.
 
-Also: [Cai et al., predictability of RL dynamics (2025)](https://arxiv.org/abs/2510.00553)
-(the top singular component of each update recovers about 99% of the accuracy);
-[Schulman and Thinking Machines Lab, LoRA without regret (2025)](https://thinkingmachines.ai/blog/lora/)
-(rank-1 LoRA suffices for policy-gradient RL);
-[Shenfeld, Pari & Agrawal, RL's Razor (2025)](https://arxiv.org/abs/2509.04259)
-(forgetting tracks the KL divergence to the base model);
-[Malladi et al., a kernel view of fine-tuning (ICML 2023)](https://arxiv.org/abs/2210.05643)
-(prompt-based fine-tuning as kernel regression with the pretrained tangent kernel);
-[CRW, some interesting papers on RLVR (blog, 2026)](https://charlesr-w.github.io/crw-blog/Some-Interesting-Papers-on-RLVR/)
-(a short, informal survey of these papers and more).
-
 <a id="td28-rl-walkthrough"></a>
 
-"""
-        + WALK
-        + r"""
-
-**Notation.** $\Delta W$ is the change in one weight matrix from fine-tuning. Its
+**Derivations and walkthrough.** *Notation:* $\Delta W$ is the change in one weight matrix from fine-tuning. Its
 *numerical rank* counts singular values above a small tolerance; its *stable rank*
 is $\lVert\Delta W\rVert_F^2/\lVert\Delta W\rVert_2^2$ (Frobenius over spectral norm,
 squared). Cai et al. keep only the top singular component of each update, rescaled

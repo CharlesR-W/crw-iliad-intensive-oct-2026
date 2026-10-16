@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Build NB2 §6, "Curvature: what the Hessian looks like and when the basin is chosen" (Training Dynamics day).
 
-Page shape (streamlined 2026-10-09): a short pitch, the two key papers, a one-line route per
-section; then five `##` sections (anchors td26-1 ... td26-5), each with a plain-words statement,
-its lead paper(s) via reading(), a short core paragraph, and one
-`### Optional: annotated derivations and walkthrough` (anchor td26-N-walkthrough) holding the
-derivation narrative, the exercises (bold labels, not headings) with worked answers, and the
-code demos. A short "Readings" section (td26-readings) lists the remaining papers in one line.
+Shape (readings first, 2026-10-14): a short pitch and a one-line route, then one
+`## Readings` section (anchor td26-readings) with every paper of the notebook, grouped by
+section, then the derivations and walkthrough: five `##` sections (anchors td26-1 ...
+td26-5), each with a plain-words statement, a short core paragraph and a one-line paper
+pointer, then (from the td26-N-walkthrough anchor) the derivation narrative, the exercises
+(bold labels, not headings) with worked answers, and the code demos.
 
 Closed-form results are checked in checks/td2_6_curvature_check.py; the review log is
 ../reviews/td/td2_6_curvature.md.
@@ -14,23 +14,23 @@ Closed-form results are checked in checks/td2_6_curvature_check.py; the review l
 from nbkit_td import answer, code, code_answer, markdown, reading, run
 
 # ---------------------------------------------------------------- papers
-SAGUN_URL = "https://arxiv.org/abs/1706.04454"
-FORT_URL = "https://arxiv.org/abs/2010.15110"
-
-
-def sagun(blurb):
-    return reading(
-        "Empirical analysis of the Hessian of over-parametrized neural networks", SAGUN_URL,
-        "Sagun, Evci, Güney, Dauphin and Bottou (2017)", blurb, importance=4, length=2)
-
-
-def fort(blurb):
-    return reading(
-        "Deep learning versus kernel learning: an empirical study of loss landscape geometry and the time "
-        "evolution of the Neural Tangent Kernel", FORT_URL,
-        "Fort, Dziugaite, Paul, Kharaghani, Roy and Ganguli (NeurIPS 2020)", blurb, importance=5, length=3)
-
-
+SAGUN = reading(
+    "Empirical analysis of the Hessian of over-parametrized neural networks",
+    "https://arxiv.org/abs/1706.04454",
+    "Sagun, Evci, Güney, Dauphin and Bottou (2017)",
+    "Short and readable: bulk plus outliers on Gaussian-mixture data and small MLPs, with the outliers in the Gauss–Newton part; adding parameters grows the bulk at zero, changing the data moves the outliers. Its appendix shows how much the outlier count depends on the cutoff rule (often a lot).",
+    importance=4,
+    length=2,
+)
+FORT = reading(
+    "Deep learning versus kernel learning: an empirical study of loss landscape geometry and the time "
+    "evolution of the Neural Tangent Kernel",
+    "https://arxiv.org/abs/2010.15110",
+    "Fort, Dziugaite, Paul, Kharaghani, Roy and Ganguli (NeurIPS 2020)",
+    "Basin commitment and the tangent kernel's motion measured side by side. ResNet-20 on CIFAR: a chaotic transient of 2–3 epochs fixes the basin, the same window in which the empirical NTK moves fastest; the kernel then keeps moving slowly.",
+    importance=5,
+    length=3,
+)
 MARTENS = reading(
     "New insights and perspectives on the natural gradient method",
     "https://arxiv.org/abs/1412.1193",
@@ -85,11 +85,10 @@ The Hessian of a classifier's training loss is a bulk of near-zero eigenvalues
 plus a few large outliers, about one per class. This notebook asks where the
 outliers come from, whether the gradient's pull toward them means learning
 happens there, and how early a run commits to one basin.
-"""
-        + sagun("The bulk-plus-outliers picture on small MLPs: adding parameters grows the bulk at zero; changing the data moves the outliers.")
-        + fort("If you read one paper: basin commitment and the tangent kernel's motion measured side by side.")
-        + r"""
-**Route.**
+
+**Route.** The [Readings](#td26-readings) come first: every paper of the notebook,
+grouped by section. The sections after them are the derivations and walkthrough
+(exercises with worked solutions, and code), for whoever wants them.
 - [6.1 The Gauss–Newton decomposition](#td26-1): which part of the Hessian you keep when you drop the network's second derivatives.
 - [6.2 Gauss–Newton and the tangent kernel](#td26-2): curvature eigenvalues are kernel eigenvalues.
 - [6.3 Bulk and outliers](#td26-3): about $C$ outliers from class means of gradients.
@@ -182,6 +181,40 @@ def eigs(M):
     return torch.linalg.eigvalsh(M).flip(0).numpy()            # descending
 """
     ),
+    # ================================================================ readings
+    markdown(
+        r"""
+<a id="td26-readings"></a>
+
+## Readings
+
+**The Gauss–Newton decomposition ([§6.1](#td26-1)).** Also the Gauss–Newton side of
+[§6.2](#td26-2), which is linear algebra rather than a paper's result.
+"""
+        + MARTENS
+        + r"""
+**Bulk and outliers ([§6.3](#td26-3)).** The short paper, then the long one.
+"""
+        + SAGUN
+        + PAPYAN
+        + r"""
+**The tiny subspace ([§6.4](#td26-4)).** The observation, then the intervention.
+"""
+        + GUR_ARI
+        + SONG
+        + r"""
+**When the basin is chosen ([§6.5](#td26-5)).** If you read one paper of the notebook, read Fort et al.
+"""
+        + FORT
+        + FRANKLE
+        + r"""
+**Also:**
+[Ghorbani, Krishnan and Xiao 2019](https://arxiv.org/abs/1901.10159) (full Hessian densities of ImageNet-scale networks by stochastic Lanczos; without BatchNorm, outliers appear early and hold the gradient);
+[Atanasov, Bordelon and Pehlevan 2022](https://arxiv.org/abs/2111.00034) (silent alignment, the matrix version of 6.5's timing);
+[Sagun, Bottou and LeCun 2016](https://arxiv.org/abs/1611.07476);
+Papyan [2018](https://arxiv.org/abs/1811.07062) and [2019](https://arxiv.org/abs/1901.08244).
+"""
+    ),
     # ================================================================ 6.1
     markdown(
         r"""
@@ -194,9 +227,10 @@ the Gauss–Newton matrix in place of the Hessian: the part built from first
 derivatives of the network only, positive semidefinite by construction. The
 part it drops vanishes at interpolation for square loss, but for cross-entropy
 it shrinks only like one over the logit scale.
-"""
-        + MARTENS
-        + r"""
+
+**Paper:** Martens, *New insights and perspectives on the natural gradient method*
+(see [Readings](#td26-readings)).
+
 Take $n$ examples with logits $z_i=f(\theta;x_i)\in\mathbb R^C$, per-example
 loss $\ell_i$, $L=\frac1n\sum_i\ell_i$, Jacobians
 $J_i=\partial z_i/\partial\theta\in\mathbb R^{C\times P}$ and logit-space loss
@@ -219,9 +253,7 @@ Attribution day picks up from there.
 
 <a id="td26-1-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation:* as above; $\theta\in\mathbb R^P$; $J\in\mathbb R^{nC\times P}$
+**Derivations and walkthrough.** *Notation:* as above; $\theta\in\mathbb R^P$; $J\in\mathbb R^{nC\times P}$
 stacks the $J_i$.
 
 **Square loss.** For $\ell=\frac12\|z-y\|^2$ with one-hot $y$, $A_i=I_C$ and
@@ -471,8 +503,8 @@ from the same Jacobian, so the Gauss–Newton matrix and the kernel weighted by
 the loss Hessian have the same nonzero eigenvalues. Their eigenvectors are
 tied only through the Jacobian.
 
-This is linear algebra rather than a paper's result; Martens (6.1) covers the
-Gauss–Newton side.
+This is linear algebra rather than a paper's result; Martens (in the
+[Readings](#td26-readings), under §6.1) covers the Gauss–Newton side.
 
 Stack the Jacobians $J_i=\partial z_i/\partial\theta$ ($n$ examples, $C$
 logits, $P$ parameters) into $J\in\mathbb R^{nC\times P}$ and the logit-space
@@ -497,9 +529,7 @@ the model is still unsure about.
 
 <a id="td26-2-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation:* as above; $H$ is the loss Hessian, $H_{\rm res}=H-H_{\rm GN}$ the
+**Derivations and walkthrough.** *Notation:* as above; $H$ is the loss Hessian, $H_{\rm res}=H-H_{\rm GN}$ the
 residual of 6.1.
 
 **Directions.** If $v$ is a unit eigenvector of the weighted kernel with
@@ -646,10 +676,10 @@ which grows when the network grows, and a few large outliers tied to the $C$
 classes, which move when the data change. The outliers sit in the Gauss–Newton
 part and come from class means of per-example gradient vectors; the
 within-class scatter of those vectors forms the bulk.
-"""
-        + sagun("Short and readable: bulk plus outliers on Gaussian-mixture data and small MLPs, with the outliers in the Gauss–Newton part. Its appendix shows how much the outlier count depends on the cutoff rule (often a lot).")
-        + PAPYAN
-        + r"""
+
+**Papers:** Sagun et al. (2017) on bulk and outliers; Papyan (2020) on class and
+cross-class structure (see [Readings](#td26-readings)).
+
 How many outliers? About $C$ dominant ones (about $k$ for small MLPs on $k$
 Gaussian clusters), and below them a weaker cross-class layer of at most
 $C(C-2)$ directions (Papyan measures about $C^2-2C$) that can merge into the
@@ -660,9 +690,7 @@ training.
 
 <a id="td26-3-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation:* $n$ examples with true classes $y_i$; logits $z_i$ with Jacobians
+**Derivations and walkthrough.** *Notation:* $n$ examples with true classes $y_i$; logits $z_i$ with Jacobians
 $J_i=\partial z_i/\partial\theta$; predicted probabilities
 $p_i=\mathrm{softmax}(z_i)$ with entries $p_{ik}$; $e_k$ the $k$-th unit
 vector in $\mathbb R^C$; $H_{\rm GN}=\frac1n\sum_iJ_i^\top A_iJ_i$ with the
@@ -864,10 +892,10 @@ top-curvature directions of the Hessian. Yet an optimizer restricted to that
 subspace stops making progress, and one that avoids it trains normally. The
 top component is the restoring force of an oscillation across a steep valley;
 progress is the slow drift along the valley floor, in the bulk.
-"""
-        + GUR_ARI
-        + SONG
-        + r"""
+
+**Papers:** Gur-Ari, Roberts and Dyer (2018), the observation; Song, Ahn and Yun
+(2025), the intervention (see [Readings](#td26-readings)).
+
 Take an eigendirection of the Hessian with curvature $\lambda$, and let $g$ be
 the gradient's component along it. A step $-\eta g$ ($\eta$ the step size)
 changes the loss, to second order, by
@@ -884,16 +912,14 @@ progress.
 
 <a id="td26-4-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Prerequisites.* **Edge of stability**
-([`td2_2`](td2_2_edge_of_stability.html)): GD on $\tfrac12\lambda x^2$
+**Derivations and walkthrough.** *Prerequisites:* **Edge of stability**
+([`td2_3`](td2_3_edge_of_stability.html)): GD on $\tfrac12\lambda x^2$
 converges iff $\eta\lambda<2$; in full-batch training the sharpness
 $S=\lambda_{\max}(H)$ rises to about $2/\eta$ and hovers there
 ([Cohen et al. 2021](https://arxiv.org/abs/2103.00065)), with the iterate
 oscillating along the top eigenvector
 ([Damian, Nichani and Lee](https://arxiv.org/abs/2209.15594)). **SGD noise
-floor** ([`td2_3`](td2_3_sgd_sde.html)): near a minimum, SGD with step $\eta$
+floor** ([`td2_2`](td2_2_sgd_sde.html)): near a minimum, SGD with step $\eta$
 and batch $B$ fluctuates at a stationary excess loss of about
 $\frac{\eta}{4B}\mathrm{tr}\,\Sigma$ ($\Sigma$ the per-example gradient
 covariance; quadratic basin, $\eta h\ll1$ in the noisy directions).
@@ -1013,7 +1039,7 @@ as qualitative. The second cell forks unprojected, Dom and Bulk updates from
 (a) the SGD run, Song et al.'s regime, and (b) a cross-entropy run on
 separable data after 100% training accuracy, the late regime. Look for:
 - GD below the edge: $f_{\rm top}$ drops to zero.
-- GD at the edge ($\eta=0.5$, $2/\eta=4$): the sharpness starts at 10 and drops within a few steps (a catapult; [`td2_2_edge_of_stability` §2.7](td2_2_edge_of_stability.html#td22-7)), then sits near $2/\eta$ from about step 80. $f_{\rm top}$ stays near 0 until roughly step 180, then jumps to near 1 once an oscillation along the top directions has grown; the loss spikes are bursts of it. "At the edge" and "aligned" are not simultaneous here.
+- GD at the edge ($\eta=0.5$, $2/\eta=4$): the sharpness starts at 10 and drops within a few steps (a catapult; [`td2_3_edge_of_stability` §3.7](td2_3_edge_of_stability.html#td23-7)), then sits near $2/\eta$ from about step 80. $f_{\rm top}$ stays near 0 until roughly step 180, then jumps to near 1 once an oscillation along the top directions has grown; the loss spikes are bursts of it. "At the edge" and "aligned" are not simultaneous here.
 - SGD: $f_{\rm top}$ is high on average (about 0.7 in this single run), driven by noise, far below the edge.
 - In (a), Dom stalls (loss near 0.032) while Bulk tracks SGD (Bulk 0.032 to about 0.026, SGD 0.031 to about 0.025 over 250 steps): a modest effect, in a single run. In (b) it is the other way round.
 """
@@ -1129,10 +1155,10 @@ barrier, the run has committed to a basin. Commitment comes early, and in a
 ResNet on CIFAR it coincides with the window in which the tangent kernel moves
 fastest. In a solvable model the basin is chosen while the relevant kernel
 (Gauss–Newton) eigenvalue is still in its early exponential growth.
-"""
-        + fort("ResNet-20 on CIFAR: a chaotic transient of 2–3 epochs fixes the basin, the same window in which the empirical NTK moves fastest; the kernel then keeps moving slowly.")
-        + FRANKLE
-        + r"""
+
+**Papers:** Fort et al. (2020), the notebook's key paper; Frankle et al. (2020) on
+instability to SGD noise (see [Readings](#td26-readings)).
+
 In a model linear in its parameters (a fixed kernel, the lazy limit) the loss
 is convex, so there is no basin to choose. The smallest model with a choice
 is the scalar two-layer net $f=w_1w_2$ with loss $\frac12(w_1w_2-s)^2$,
@@ -1146,9 +1172,7 @@ lazy.
 
 <a id="td26-5-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation:* $\theta_A,\theta_B$ are the final parameters of two children
+**Derivations and walkthrough.** *Notation:* $\theta_A,\theta_B$ are the final parameters of two children
 trained from a common checkpoint; $\mathcal E$ is the error (test or
 training); $\Theta_t=J_tJ_t^\top$ is the empirical tangent-kernel Gram matrix
 at step $t$, with $J_t$ the Jacobian of the network's outputs on a data set.
@@ -1387,20 +1411,6 @@ ax[1].set(xlabel="step", title=r"per-mode kernel eigenvalues $\Theta_m=w_1^2+w_2
 ax[2].set(xlabel="step", title="whole-kernel velocity: (1 - cos) per step"); ax[2].legend(fontsize=7)
 fig.tight_layout(); plt.show()
 print(f"({time.time() - t0:.1f}s)")
-"""
-    ),
-    # ================================================================ readings
-    markdown(
-        r"""
-<a id="td26-readings"></a>
-
-## Readings
-
-The lead papers are at the top of each section. Also:
-[Ghorbani, Krishnan and Xiao 2019](https://arxiv.org/abs/1901.10159) (full Hessian densities of ImageNet-scale networks by stochastic Lanczos; without BatchNorm, outliers appear early and hold the gradient);
-[Atanasov, Bordelon and Pehlevan 2022](https://arxiv.org/abs/2111.00034) (silent alignment, the matrix version of 6.5's timing);
-[Sagun, Bottou and LeCun 2016](https://arxiv.org/abs/1611.07476);
-Papyan [2018](https://arxiv.org/abs/1811.07062) and [2019](https://arxiv.org/abs/1901.08244).
 """
     ),
 ]

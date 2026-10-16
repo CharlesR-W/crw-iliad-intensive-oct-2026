@@ -64,7 +64,7 @@ table.ro td.num { text-align: right; white-space: nowrap; padding-left: 8px; }
 <body>
 <main>
 <h1>Edge of stability: two solvable toys</h1>
-<p class="sub">Companion to Training Dynamics NB2 §2 (<code>td2_2_edge_of_stability</code>). Time is counted in steps <span class="m">k</span> here; the notebook's continuous time is <span class="m">t = kη</span>.</p>
+<p class="sub">Companion to Training Dynamics NB2 §3 (<code>td2_3_edge_of_stability</code>). Time is counted in steps <span class="m">k</span> here; the notebook's continuous time is <span class="m">t = kη</span>.</p>
 
 <h2>1. Self-stabilization (§2.2, §2.8)</h2>
 <p class="sub">Gradient descent on <span class="m">L(x, y) = ½ y x² + c y⁻⁵</span>, <span class="m">c = 62.5</span>. The coordinate <span class="m">y</span> is the curvature along <span class="m">x</span>, which is the sharpness <span class="m">S</span> near <span class="m">x = 0</span> (for <span class="m">y ≳ 2.6</span>); <span class="m">ℓ(y) = c y⁻⁵</span> pushes it up (progressive sharpening). Each step also adds noise of size 10⁻³ to <span class="m">x</span>, a floor for the unstable direction (in a real network: other directions, minibatch noise, round-off).</p>

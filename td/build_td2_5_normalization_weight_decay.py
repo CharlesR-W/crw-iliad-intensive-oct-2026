@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Build NB2 §5: Normalization, weight decay, and instabilities.
 
-Shape (streamlined 2026-10-09, see ../reviews/2026-10-09-td-streamline-brief.md): a short
-pitch with the two key papers (Kosson et al.; Wortsman et al.) and a route; then four
-sections (5.1 scale invariance, 5.2 weight-decay equilibrium, 5.3 loss spikes, 5.4
-clipping), each opening with its question, answer and lead paper, followed by one
-"Optional: annotated derivations and walkthrough" subsection (anchor s5N-walkthrough)
-holding the exercises (bold labels, not headings), solutions and code; a one-line
-"Also:" reading list closes the page.
+Shape (readings first, 2026-10-14): a short pitch and a route, then one `## Readings`
+section (anchor s5r) with every paper of the notebook, grouped by section, then the
+derivations and walkthrough: four `##` sections (5.1 scale invariance, 5.2 weight-decay
+equilibrium, 5.3 loss spikes, 5.4 clipping), each with its question, answer and a pointer
+to its papers, then (from the s5N-walkthrough anchor) the exercises (bold labels, not
+headings), solutions and code.
 
 Closed forms are checked in checks/td2_5_normalization_weight_decay_checks.py.
 Source verification and critique rounds: ../reviews/td/td2_5_normalization_weight_decay.md.
@@ -28,32 +27,14 @@ weight norm: they set an effective step size $\eta/\|w\|^2$, and at equilibrium 
 turns by about $\sqrt{2\eta\lambda}$ radians per step, whatever its gradient scale. The
 second half asks why large runs spike, and what gradient clipping is for.
 
-"""
-        + reading(
-            "Rotational equilibrium: how weight decay balances learning across neural networks",
-            "https://arxiv.org/abs/2305.17212",
-            "Kosson, Messmer & Jaggi (ICML 2024)",
-            "Equilibrium norms and per-step rotations for SGD with momentum, AdamW, Adam+L² and Lion (Table 1), measured in ResNets and GPT-2; the backbone of 5.1–5.2.",
-            importance=3,
-            length=3,
-        )
-        + reading(
-            "Small-scale proxies for large-scale Transformer training instabilities",
-            "https://arxiv.org/abs/2309.14322",
-            "Wortsman et al. (ICLR 2024)",
-            "Reproduces attention-logit growth and output-logit divergence in small transformers at high learning rate, and removes them with QK-layernorm and z-loss; the core reading for 5.3.",
-            importance=4,
-            length=3,
-        )
-        + r"""
+**Route.** The [Readings](#s5r) come first: every paper of the notebook, grouped by section.
+The sections after them are the derivations and walkthrough (exercises with worked
+solutions, and code), for whoever wants them.
 
-**Route.** Each section opens with its question, answer and paper; the derivations, exercises
-and code sit under "Optional: annotated derivations and walkthrough".
 - [5.1 Scale invariance](#s51): one step is exactly a step on the sphere with learning rate $\eta/\lVert w\rVert^2$.
 - [5.2 The weight-decay equilibrium](#s52): SGD and AdamW; only $\eta\lambda$ matters; weight decay as an exponential learning-rate schedule.
 - [5.3 Loss spikes](#s53): four mechanisms, and which are edge-of-stability phenomena.
 - [5.4 Clipping](#s54): the right step when curvature grows with the gradient.
-- [Readings](#s5r)
 """
     ),
     code(
@@ -65,6 +46,84 @@ import torch
 
 torch.set_num_threads(1)   # the models here are tiny; extra threads only add overhead
 plt.rcParams.update({"figure.dpi": 100, "axes.grid": True, "grid.alpha": 0.3})
+"""
+    ),
+    # ================================================================== readings
+    markdown(
+        r"""
+<a id="s5r"></a>
+
+## Readings
+
+**Scale invariance ([§5.1](#s51)).**
+"""
+        + reading(
+            "L2 regularization versus batch and weight normalization",
+            "https://arxiv.org/abs/1706.05350",
+            "van Laarhoven (2017)",
+            "A short note: on normalized weights, L² regularization cannot change the function; it only sets the weight scale, and with it the effective learning rate $\\eta/\\|w\\|^2$.",
+            importance=3,
+            length=1,
+        )
+        + r"""
+**The weight-decay equilibrium ([§5.2](#s52)).**
+"""
+        + reading(
+            "Rotational equilibrium: how weight decay balances learning across neural networks",
+            "https://arxiv.org/abs/2305.17212",
+            "Kosson, Messmer & Jaggi (ICML 2024)",
+            "Equilibrium norms and per-step rotations for SGD with momentum, AdamW, Adam+L² and Lion (Table 1), measured in ResNets and GPT-2; the backbone of §5.1–5.2.",
+            importance=3,
+            length=3,
+        )
+        + reading(
+            "An exponential learning rate schedule for deep learning",
+            "https://arxiv.org/abs/1910.07454",
+            "Li & Arora (ICLR 2020)",
+            "For a scale-invariant loss, SGD with weight decay (and momentum) equals, in function space, SGD with an exponentially increasing learning rate and no weight decay; BatchNorm ResNets train fine this way.",
+            importance=5,
+            length=3,
+        )
+        + r"""
+**Loss spikes ([§5.3](#s53)).**
+"""
+        + reading(
+            "Small-scale proxies for large-scale Transformer training instabilities",
+            "https://arxiv.org/abs/2309.14322",
+            "Wortsman et al. (ICLR 2024)",
+            "Reproduces attention-logit growth and output-logit divergence in small transformers at high learning rate, and removes them with QK-layernorm and z-loss; the core reading for §5.3 (mechanisms 3 and 4).",
+            importance=4,
+            length=3,
+        )
+        + reading(
+            "Adaptive preconditioners trigger loss spikes in Adam",
+            "https://arxiv.org/abs/2506.04805",
+            "Bai et al. (ICML 2026)",
+            "Mechanism 2, analyzed on a 1D quadratic and shown in small networks and transformers up to 187M parameters; lowering β₂ reduces spikes.",
+            importance=2,
+            length=3,
+        )
+        + r"""
+**Clipping ([§5.4](#s54)).**
+"""
+        + reading(
+            "Why gradient clipping accelerates training: a theoretical justification for adaptivity",
+            "https://arxiv.org/abs/1905.11881",
+            "Zhang, He, Sra & Jadbabaie (ICLR 2020)",
+            "Introduces (L₀,L₁)-smoothness, measures it along training trajectories, and proves that clipped GD can be arbitrarily faster than fixed-step GD on such functions.",
+            importance=2,
+            length=3,
+        )
+        + r"""
+**Also:**
+[Li, Lyu & Arora, the intrinsic learning rate](https://arxiv.org/abs/2010.02916) (names
+$\eta\lambda$, conjectures equilibrium in $O(1/\eta\lambda)$ steps; 5.2);
+[Lobacheva et al., periodic behavior with BatchNorm and weight decay](https://arxiv.org/abs/2106.15739)
+(mechanism 1);
+[D'Angelo et al., why we need weight decay](https://arxiv.org/abs/2310.04415) (argues it is
+never useful as an explicit regularizer; acts through $\eta/\|w\|$ under AdamW);
+[Wan et al. 2021, spherical motion dynamics](https://proceedings.neurips.cc/paper_files/paper/2021/file/326a8c055c0d04f5b06544665d8bb3ea-Paper.pdf)
+(the per-step SGD equilibrium angle under explicit noise assumptions).
 """
     ),
     # ================================================================== 5.1
@@ -81,16 +140,8 @@ sharpness (top Hessian eigenvalue) shrinks like $1/r^2$, and one SGD step with l
 $\eta$ and weight decay $\lambda$ is *exactly* a gradient step on the sphere (then
 renormalized) with the effective learning rate $\eta_{\rm eff}=\eta/((1-\eta\lambda)r^2)$.
 
-"""
-        + reading(
-            "L2 regularization versus batch and weight normalization",
-            "https://arxiv.org/abs/1706.05350",
-            "van Laarhoven (2017)",
-            "A short note: on normalized weights, L² regularization cannot change the function; it only sets the weight scale, and with it the effective learning rate $\\eta/\\|w\\|^2$.",
-            importance=3,
-            length=1,
-        )
-        + r"""
+**Paper:** van Laarhoven, *L2 regularization versus batch and weight normalization* (see
+[Readings](#s5r)).
 
 **How far this reaches.** In a BatchNorm convnet almost every weight is scale-invariant
 (BatchNorm's invariance is per output channel, i.e. per row of $W$); the exceptions are the
@@ -101,9 +152,7 @@ Everything below is exact for scale-invariant blocks and a model elsewhere.
 
 <a id="s51-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Setup.** LayerNorm and RMSNorm divide a vector by its own scale, so
+**Derivations and walkthrough.** *Setup:* LayerNorm and RMSNorm divide a vector by its own scale, so
 $\mathrm{LN}(c\,h)=\mathrm{LN}(h)$ for $c>0$, exactly when the stabilizer $\epsilon$ is zero
 and to excellent approximation when $h$'s variance (for RMSNorm, mean square) is
 $\gg\epsilon$. If $h=Wx$ feeds it, the loss is unchanged by $W\to cW$. Notation:
@@ -246,23 +295,12 @@ $1/\sqrt k$ at step $k$. With it, the norm settles where each step turns the dir
 $\theta^*=\arccos(1-\eta\lambda)\approx\sqrt{2\eta\lambda}$, independent of the gradient
 scale: exactly under SGD, approximately under AdamW.
 
-The lead paper is Kosson et al. (top of page), who call this state *rotational
-equilibrium*; the exact SGD statement below is Li and Arora's.
-
-"""
-        + reading(
-            "An exponential learning rate schedule for deep learning",
-            "https://arxiv.org/abs/1910.07454",
-            "Li & Arora (ICLR 2020)",
-            "For a scale-invariant loss, SGD with weight decay (and momentum) equals, in function space, SGD with an exponentially increasing learning rate and no weight decay; BatchNorm ResNets train fine this way.",
-            importance=5,
-            length=3,
-        )
-        + r"""
+The lead paper is Kosson et al., who call this state *rotational equilibrium*; the exact
+SGD statement below is Li and Arora's (both in the [Readings](#s5r)).
 
 **The core idea.** On these weights weight decay cannot prefer one function over another;
 its only channel is the norm, hence $\eta_{\rm eff}$ (any effect on generalization goes
-through that, e.g. through the SGD noise scale, [NB2 §3](td2_3_sgd_sde.html)). So under
+through that, e.g. through the SGD noise scale, [NB2 §2](td2_2_sgd_sde.html)). So under
 SGD, $\eta$ and $\lambda$ matter only through $\eta\lambda$, Li, Lyu and Arora's *intrinsic
 learning rate*, and weight decay can be traded exactly for an exponentially growing learning
 rate. Under AdamW the norm settles at $\approx\sqrt{\eta C/(2\lambda)}$ for a block of $C$
@@ -272,9 +310,7 @@ a run.
 
 <a id="s52-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Setup.** SGD with weight decay is $w_{k+1}=(1-\eta\lambda)w_k-\eta\nabla L(w_k)$ (PyTorch's
+**Derivations and walkthrough.** *Setup:* SGD with weight decay is $w_{k+1}=(1-\eta\lambda)w_k-\eta\nabla L(w_k)$ (PyTorch's
 `SGD(weight_decay=λ)` without momentum). With $r_k=\|w_k\|$, $G_k$ the gradient norm at the
 unit-norm point $u_k=w_k/r_k$, and $\theta_k$ the angle between $w_k$ and $w_{k+1}$,
 Exercise 5.1.2 gives, exactly,
@@ -607,7 +643,7 @@ Expand $\|(1-\eta\lambda)w_k-\eta U_k\|^2$ and take expectations. For 2, split $
 the RMS angle per step shrinks to $\sqrt{2\eta\lambda(1-\beta_1)/(1+\beta_1)}$: momentum
 spreads each gradient over $\sim1/(1-\beta_1)$ correlated steps, so each step rotates less.
 For SGD with heavy-ball momentum $\gamma$ their prediction is $\sqrt{2\eta\lambda/(1+\gamma)}$.
-D'Angelo et al. (Readings) report, for sign-SGD, that matching $\eta/\|w\|$ (not
+D'Angelo et al. ([Readings](#s5r)) report, for sign-SGD, that matching $\eta/\|w\|$ (not
 $\eta/\|w\|^2$) reproduces AdamW's training curves without weight decay in float32, while the
 bfloat16 runs diverge. The next cell tests the random-walk assumption.
 """
@@ -673,7 +709,7 @@ diverge (a drift upward that does not)? There is no single cause. Below are four
 mechanisms, each asked whether it is an *edge-of-stability phenomenon*: an instability that
 appears when some curvature, measured in the optimizer's own geometry, crosses its stability
 threshold (for GD with learning rate $\eta$ and sharpness $S$, $\eta S=2$;
-[NB2 §2](td2_2_edge_of_stability.html)).
+[NB2 §3](td2_3_edge_of_stability.html)).
 
 | Mechanism | Edge of stability? | Spike or divergence | Remedy |
 |---|---|---|---|
@@ -682,28 +718,15 @@ threshold (for GD with learning rate $\eta$ and sharpness $S$, $\eta S=2$;
 | 3. Attention logits grow with $\lVert W_Q\rVert\lVert W_K\rVert$ | Not shown | Slow divergence | QK-layernorm |
 | 4. Adam drifts output logits along a flat direction | The drift is not (zero curvature) | Slow divergence | z-loss; weight decay |
 
-The lead papers are Wortsman et al. (top of page) for 3 and 4 (they study slow divergences,
-not fast spikes) and, for 2:
-
-"""
-        + reading(
-            "Adaptive preconditioners trigger loss spikes in Adam",
-            "https://arxiv.org/abs/2506.04805",
-            "Bai et al. (ICML 2026)",
-            "Mechanism 2, analyzed on a 1D quadratic and shown in small networks and transformers up to 187M parameters; lowering β₂ reduces spikes.",
-            importance=2,
-            length=3,
-        )
-        + r"""
+The lead papers (see [Readings](#s5r)) are Wortsman et al. for 3 and 4 (they study slow
+divergences, not fast spikes) and Bai et al. for 2.
 
 Mechanism 1 is the equilibrium of 5.2 going unstable when gradient noise is small. The
 walkthrough reproduces 1, 2 and the drift of 4 on a laptop in seconds.
 
 <a id="s53-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Setup.** GD on $\tfrac12hx^2$ gives $x_{k+1}=(1-\eta h)x_k$, stable iff $0<\eta h<2$; near
+**Derivations and walkthrough.** *Setup:* GD on $\tfrac12hx^2$ gives $x_{k+1}=(1-\eta h)x_k$, stable iff $0<\eta h<2$; near
 a minimum with Hessian $H$ the condition is $\eta S<2$, $S=\lambda_{\max}(H)$. For a scale-invariant block
 $w=ru$ (5.1), the direction moves with $\eta_{\rm eff}=\eta/((1-\eta\lambda)r^2)$, is stable
 near a minimum iff $\eta_{\rm eff}S(u)<2$ ($S(u)$ the sharpness at the unit-norm point), and
@@ -785,7 +808,7 @@ running averages of $g$ and $g^2$ with decay rates $\beta_1,\beta_2$ (5.2). Late
 freeze the preconditioner $P=\mathrm{diag}(\sqrt{\hat v}+\epsilon)$ and define the
 *preconditioned sharpness* $S_P=\lambda_{\max}(P^{-1}H)$, $H$ the Hessian. On a quadratic the
 positive-curvature modes are then stable iff $\eta S_P<(2+2\beta_1)/(1-\beta_1)$, which is 38
-at $\beta_1=0.9$ ([NB2 §2.5](td2_2_edge_of_stability.html#td22-5);
+at $\beta_1=0.9$ ([NB2 §3.5](td2_3_edge_of_stability.html#td23-5);
 [Cohen et al. 2022](https://arxiv.org/abs/2207.14484)), and full-batch Adam drives $\eta S_P$
 up to this threshold and holds it there.
 
@@ -1019,16 +1042,8 @@ the right step size is $\propto1/\|\nabla L\|$ where the gradient is large, whic
 clipping does, and clipped GD can then be arbitrarily faster than GD with any fixed step.
 Under Adam the step is already bounded, and clipping mainly protects the optimizer state.
 
-"""
-        + reading(
-            "Why gradient clipping accelerates training: a theoretical justification for adaptivity",
-            "https://arxiv.org/abs/1905.11881",
-            "Zhang, He, Sra & Jadbabaie (ICLR 2020)",
-            "Introduces (L₀,L₁)-smoothness, measures it along training trajectories, and proves that clipped GD can be arbitrarily faster than fixed-step GD on such functions.",
-            importance=2,
-            length=3,
-        )
-        + r"""
+**Paper:** Zhang, He, Sra & Jadbabaie, *Why gradient clipping accelerates training* (see
+[Readings](#s5r)).
 
 **The core idea.** $L$ is $(L_0,L_1)$-*smooth* if $\|\nabla^2L(x)\|\le L_0+L_1\|\nabla L(x)\|$
 (operator norm on the Hessian). This contains ordinary $L$-smoothness ($L_1=0$) and also, e.g.,
@@ -1039,9 +1054,7 @@ clipping and a large learning rate; whether clipping speeds up a given run depen
 
 <a id="s54-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Setup.** Clipped GD is
+**Derivations and walkthrough.** *Setup:* Clipped GD is
 $$
 x_{k+1}=x_k-h_k\nabla L(x_k),\qquad h_k=\min\Big(\eta,\ \frac{\gamma\eta}{\|\nabla L(x_k)\|}\Big):
 $$
@@ -1189,24 +1202,6 @@ gradient inflates $\hat v$, which then suppresses those coordinates' updates unt
 back, which takes $\approx\log F/(1-\beta_2)$ steps to fall by a factor $F$ late in training if
 later gradients are much smaller. This is a plausible role, not an established theory; we
 know of no analysis of clipped Adam comparable to the GD story above.
-"""
-    ),
-    # ================================================================== readings
-    markdown(
-        r"""
-<a id="s5r"></a>
-
-## Readings
-
-The lead papers are linked at the top of the page and of each section. Also:
-[Li, Lyu & Arora, the intrinsic learning rate](https://arxiv.org/abs/2010.02916) (names
-$\eta\lambda$, conjectures equilibrium in $O(1/\eta\lambda)$ steps; 5.2);
-[Lobacheva et al., periodic behavior with BatchNorm and weight decay](https://arxiv.org/abs/2106.15739)
-(mechanism 1);
-[D'Angelo et al., why we need weight decay](https://arxiv.org/abs/2310.04415) (argues it is
-never useful as an explicit regularizer; acts through $\eta/\|w\|$ under AdamW);
-[Wan et al. 2021, spherical motion dynamics](https://proceedings.neurips.cc/paper_files/paper/2021/file/326a8c055c0d04f5b06544665d8bb3ea-Paper.pdf)
-(the per-step SGD equilibrium angle under explicit noise assumptions).
 """
     ),
 ]

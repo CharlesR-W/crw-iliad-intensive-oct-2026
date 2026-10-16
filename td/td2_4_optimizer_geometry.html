@@ -270,6 +270,7 @@ article details.code > summary:hover { color: var(--fg); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
+<li><a href="#readings">Readings</a></li>
 <li><a href="#40-a-parable-choose-a-metric-that-respects-the-space">4.0 A parable: choose a metric that respects the space</a></li>
 <li><a href="#41-steepest-descent-under-a-norm">4.1 Steepest descent under a norm</a></li>
 <li><a href="#42-natural-gradient-invariance-and-what-it-inherits-from-kl">4.2 Natural gradient: invariance, and what it inherits from KL</a></li>
@@ -288,25 +289,7 @@ article details.code > summary:hover { color: var(--fg); }
 <p class="run-note">To run the code, open <a href='td2_4_optimizer_geometry.ipynb'><code>td2_4_optimizer_geometry.ipynb</code></a> in Jupyter (CPU only; needs numpy, matplotlib, scipy and torch). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
 
 <p>To first order a step <span class="math inline">\Delta</span> changes the loss by <span class="math inline">\langle g,\Delta\rangle</span>, with <span class="math inline">g=\nabla L</span>. That has no minimum until you bound the step’s size, and the norm you bound it in fixes the direction: <span class="math inline">\ell_2</span> gives gradient descent, <span class="math inline">\ell_\infty</span> gives sign descent (Adam with its averages off), the Fisher norm gives natural gradient, and the spectral norm gives Muon’s orthogonalized update. Asking which norm lets step sizes transfer across width gives muP.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2409.20325">Old optimizer, new norm: an anthology</a></strong>, Jeremy Bernstein and Laker Newhouse (OPT 2024 workshop) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Short and readable: with their moving averages switched off, Adam, Shampoo and Prodigy are steepest descent under different norms; the source of §4.1’s dictionary.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://kellerjordan.github.io/posts/muon/">Muon: an optimizer for hidden layers in neural networks</a></strong>, Keller Jordan et al. (blog, 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Muon’s definition, its Newton–Schulz coefficients and how they were tuned, and the NanoGPT-speedrun evidence (§4.4).</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2310.17813">A spectral condition for feature learning</a></strong>, Greg Yang, James Simon, Jeremy Bernstein (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>An elementary derivation of muP from one condition on the spectral norms of weights and updates (§4.5); short enough to read in full.</p>
-</div>
-
-<p><strong>Route.</strong></p>
+<p><strong>Route.</strong> The <a href="#td24-readings">Readings</a> come first: every paper of the notebook, grouped by section. The sections after them are the derivations and walkthrough (exercises with worked solutions, and code), for whoever wants them.</p>
 <ul>
 <li><a href="#td24-0">4.0 A parable</a>: between disjoint distributions, KL and JS give no gradient and Wasserstein does.</li>
 <li><a href="#td24-1">4.1 Steepest descent under a norm</a> (core): the norm-to-optimizer dictionary and the interactive unit balls.</li>
@@ -374,24 +357,81 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 
+<details class="sec sec2" data-sec="readings" open>
+<summary><h2 id="readings">Readings</h2></summary>
+<div class="sec-body">
+<a id="td24-readings"></a>
+<p><strong>A parable: distances between distributions (<a href="#td24-0">§4.0</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://charlesr-w.github.io/crw-blog/KL-Divergence-Geometric-Naturalness-and-Optimal-Transport/">KL divergence, geometric naturalness, and optimal transport</a></strong>, Charles Renshaw-Whitman, blog post (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>§4.0’s point-mass example, the case for metric-aware distances between distributions, and WGAN’s dual workaround.</p>
+</div>
+
+<p><em>Also:</em> <a href="https://arxiv.org/abs/1701.07875">WGAN</a> (its Example 1: two parallel segments); <a href="https://arxiv.org/abs/1701.04862">Arjovsky and Bottou</a> (why a GAN generator’s gradient vanishes).</p>
+<p><strong>Steepest descent under a norm (<a href="#td24-1">§4.1</a>).</strong> The notebook’s lead paper.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2409.20325">Old optimizer, new norm: an anthology</a></strong>, Jeremy Bernstein and Laker Newhouse (OPT 2024 workshop) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Short and readable: with their moving averages switched off, Adam, Shampoo and Prodigy are steepest descent under different norms; the source of §4.1’s dictionary.</p>
+</div>
+
+<p><strong>Natural gradient (<a href="#td24-2">§4.2</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1412.1193">New insights and perspectives on the natural gradient method</a></strong>, James Martens (JMLR 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>The careful version of §4.2: the relation to the generalized Gauss–Newton matrix, approximate (not exact) invariance for finite steps, and why the Hessian lacks it.</p>
+</div>
+
+<p><em>Also:</em> <a href="https://doi.org/10.1162/089976698300017746">Amari 1998</a> (the original); <a href="https://arxiv.org/abs/1905.12558">Kunstner, Balles and Hennig</a> (the empirical Fisher); <a href="https://arxiv.org/abs/1503.05671">K-FAC</a>; <a href="https://arxiv.org/abs/1703.04933">Dinh et al.</a> (sharp minima made flat by rescaling).</p>
+<p><strong>Adam as smoothed sign descent (<a href="#td24-3">§4.3</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2304.13960">Noise is not the main factor behind the gap between SGD and Adam on transformers, but sign descent might be</a></strong>, Frederik Kunstner, Jacques Chen, Jonathan Wilder Lavington, Mark Schmidt (ICLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Growing the batch to the full dataset widens Adam’s lead over SGD, and sign descent with momentum behaves much like Adam at large batch.</p>
+</div>
+
+<p><em>Also:</em> <a href="https://arxiv.org/abs/2402.19449">Kunstner et al. 2024</a> (heavy-tailed class imbalance); <a href="https://arxiv.org/abs/2302.06675">Lion</a> (sign descent with momentum, found by program search); <a href="https://arxiv.org/abs/1705.07774">Balles and Hennig</a> (Adam as sign plus variance adaptation).</p>
+<p><strong>Newton–Schulz and Muon (<a href="#td24-4">§4.4</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://kellerjordan.github.io/posts/muon/">Muon: an optimizer for hidden layers in neural networks</a></strong>, Keller Jordan et al. (blog, 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Muon’s definition, its Newton–Schulz coefficients and how they were tuned, and the NanoGPT-speedrun evidence (§4.4).</p>
+</div>
+
+<p><strong>Width and muP (<a href="#td24-5">§4.5</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2310.17813">A spectral condition for feature learning</a></strong>, Greg Yang, James Simon, Jeremy Bernstein (2023) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>An elementary derivation of muP from one condition on the spectral norms of weights and updates (§4.5); short enough to read in full.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2203.03466">Tensor Programs V: tuning large neural networks via zero-shot hyperparameter transfer</a></strong>, Greg Yang, Edward J. Hu, Igor Babuschkin, Szymon Sidor, Xiaodong Liu, David Farhi, Nick Ryder, Jakub Pachocki, Weizhu Chen, Jianfeng Gao (NeurIPS 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>muTransfer, and in Table 3 the muP scalings per layer type for SGD and Adam.</p>
+</div>
+
+<p><em>Also:</em> <a href="https://arxiv.org/abs/2011.14522">Tensor Programs IV</a> (muP’s original derivation); <a href="https://arxiv.org/abs/2502.16982">Moonlight</a> (a different Muon scaling convention).</p>
+<p><strong>The modular norm (<a href="#td24-6">§4.6</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2405.14813">Scalable optimization in the modular norm</a></strong>, Tim Large, Yang Liu, Minyoung Huh, Hyojin Bahng, Phillip Isola, Jeremy Bernstein (NeurIPS 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Modules with masses and sensitivities, the composition rules, smoothness in the modular norm, and learning-rate transfer across width and depth; comes with the Modula package.</p>
+</div>
+
+<p><em>Also:</em> <a href="https://arxiv.org/abs/2410.21265">Modular duality</a> (the gradient-to-update map for the whole network, with Newton–Schulz updates for linear and convolutional layers).</p>
+</div>
+</details>
 <details class="sec sec2" data-sec="40-a-parable-choose-a-metric-that-respects-the-space">
 <summary><h2 id="40-a-parable-choose-a-metric-that-respects-the-space">4.0 A parable: choose a metric that respects the space</h2></summary>
 <div class="sec-body">
 <a id="td24-0"></a>
 <p>Between two distributions with disjoint supports, KL is infinite and Jensen–Shannon is constant, so neither gives gradient descent anything to follow. The Wasserstein distance does, because it measures how far mass has to move.</p>
-<div class="reading">
-
-<p><strong><a href="https://charlesr-w.github.io/crw-blog/KL-Divergence-Geometric-Naturalness-and-Optimal-Transport/">KL divergence, geometric naturalness, and optimal transport</a></strong>, Charles Renshaw-Whitman, blog post (2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>The point-mass example below, the case for metric-aware distances between distributions, and WGAN’s dual workaround.</p>
-</div>
-
-<p>Also: <a href="https://arxiv.org/abs/1701.07875">WGAN</a> (its Example 1: two parallel segments); <a href="https://arxiv.org/abs/1701.04862">Arjovsky and Bottou</a> (why a GAN generator’s gradient vanishes).</p>
+<p><strong>Paper:</strong> Renshaw-Whitman, <em>KL divergence, geometric naturalness, and optimal transport</em> (see <a href="#td24-readings">Readings</a>).</p>
 <p><strong>The analogy, labelled as one.</strong> Gradient descent measures a step by the Euclidean norm of the raw parameters, as if every coordinate were an interchangeable label. The parameter-space analogue of “use Wasserstein” is to measure an update by how much it changes a layer’s outputs: the spectral and modular norms of §4.1, §4.5 and §4.6. Natural gradient (§4.2) is a different move. It removes dependence on how the parameters are written, but it measures steps by KL, and so inherits KL’s blindness to output geometry (Exercise 4.2.C).</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td24-0-walkthrough"></a>
-<p>Early in GAN training the generator’s distribution <span class="math inline">P_\theta</span> typically lives on a low-dimensional set that misses the data. KL and JS compare distributions point by point, so moving mass a tiny distance onto empty ground costs as much as moving it anywhere; the Wasserstein-1 distance <span class="math inline">W_1</span> (earth mover’s distance) asks how much mass moves and how far. WGAN estimates it through the Kantorovich–Rubinstein dual, <span class="math inline">W_1(P,Q)=\sup_{\|f\|_{\rm Lip}\le1}\mathbb E_Pf-\mathbb E_Qf</span>, with a critic network as <span class="math inline">f</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> Early in GAN training the generator’s distribution <span class="math inline">P_\theta</span> typically lives on a low-dimensional set that misses the data. KL and JS compare distributions point by point, so moving mass a tiny distance onto empty ground costs as much as moving it anywhere; the Wasserstein-1 distance <span class="math inline">W_1</span> (earth mover’s distance) asks how much mass moves and how far. WGAN estimates it through the Kantorovich–Rubinstein dual, <span class="math inline">W_1(P,Q)=\sup_{\|f\|_{\rm Lip}\le1}\mathbb E_Pf-\mathbb E_Qf</span>, with a critic network as <span class="math inline">f</span>.</p>
 <p><strong>Exercise 4.0.A — Point masses.</strong> Take <span class="math inline">P_0=\delta_0</span> and <span class="math inline">P_\theta=\delta_\theta</span> on <span class="math inline">\mathbb R</span>. Here <span class="math inline">W_1(P,Q)=\min\mathbb E|X-Y|</span> over couplings (joint laws of <span class="math inline">(X,Y)</span> with marginals <span class="math inline">P</span> and <span class="math inline">Q</span>).</p>
 <ol type="1">
 <li>Compute <span class="math inline">\mathrm{KL}(P_0\|P_\theta)</span>, <span class="math inline">\mathrm{JS}(P_0,P_\theta)=\tfrac12\mathrm{KL}(P_0\|M)+\tfrac12\mathrm{KL}(P_\theta\|M)</span> with <span class="math inline">M=\tfrac12(P_0+P_\theta)</span>, and <span class="math inline">W_1(P_0,P_\theta)</span>, for every <span class="math inline">\theta</span>.</li>
@@ -413,15 +453,12 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="41-steepest-descent-under-a-norm">
 <summary><h2 id="41-steepest-descent-under-a-norm">4.1 Steepest descent under a norm</h2></summary>
 <div class="sec-body">
 <a id="td24-1"></a>
 <p>The linear change <span class="math inline">\langle g,\Delta\rangle</span> has a steepest direction only once you say how a step’s size is measured. Each norm picks one, and the common optimizers are the answers for <span class="math inline">\ell_2</span>, <span class="math inline">\ell_\infty</span>, a Mahalanobis norm and the spectral norm.</p>
-<p><strong>Lead paper:</strong> <a href="https://arxiv.org/abs/2409.20325">Old optimizer, new norm</a> (Bernstein and Newhouse, top of page); its Proposition 1 is the penalty formula below.</p>
+<p><strong>Paper:</strong> Bernstein and Newhouse, <em>Old optimizer, new norm</em> (see <a href="#td24-readings">Readings</a>); its Proposition 1 is the penalty formula below.</p>
 <p>Write <span class="math inline">\|g\|_*=\max_{\|d\|\le1}\langle g,d\rangle</span> for the <strong>dual norm</strong> and <span class="math inline">d^\star(g)</span> for a unit-ball point attaining it. Minimizing <span class="math inline">\langle g,\Delta\rangle</span> over the ball <span class="math inline">\|\Delta\|\le\eta</span> gives the <strong>trust-region</strong> step <span class="math inline">-\eta\,d^\star(g)</span>, of fixed length <span class="math inline">\eta</span>. Minimizing <span class="math inline">\langle g,\Delta\rangle+\|\Delta\|^2/(2\eta)</span> gives the <strong>penalty</strong> step <span class="math inline">-\eta\,\|g\|_*\,d^\star(g)</span>, which shrinks as the gradient does. Same direction, different lengths:</p>
 <div class="table-wrap"><table>
 <thead>
@@ -475,11 +512,8 @@ article details.code > summary:hover { color: var(--fg); }
 <p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/steepest_descent_balls.html"><code>steepest_descent_balls.html</code></a> (opens full page). Drag a 2D gradient and watch the unit balls of <span class="math inline">\ell_2</span>, <span class="math inline">\ell_\infty</span>, <span class="math inline">\ell_1</span> and a Mahalanobis (Fisher-like) norm pick out their steepest-descent steps, in trust-region or penalty form.</p>
 <div class="figure-frame"><iframe src="assets/interactive/steepest_descent_balls.html" title="Interactive figure: steepest_descent_balls.html" loading="lazy"></iframe></div>
 
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-2">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-2">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td24-1-walkthrough"></a>
-<p>Notation as above: <span class="math inline">g\ne0</span> the gradient, <span class="math inline">\|\cdot\|</span> a norm on steps, <span class="math inline">\|g\|_*</span> its dual, <span class="math inline">d^\star(g)</span> a maximizer. Four remarks first.</p>
+<p><strong>Derivations and walkthrough.</strong> Notation as above: <span class="math inline">g\ne0</span> the gradient, <span class="math inline">\|\cdot\|</span> a norm on steps, <span class="math inline">\|g\|_*</span> its dual, <span class="math inline">d^\star(g)</span> a maximizer. Four remarks first.</p>
 <ol type="1">
 <li><strong>Plain GD is the penalty form in <span class="math inline">\ell_2</span>.</strong> Adam and Muon behave more like trust-region methods, so near a minimum, where the gradient shrinks but their steps do not, they need a decaying <span class="math inline">\eta</span> (Exercise 4.1.D).</li>
 <li><strong>Corners make the direction non-unique.</strong> For <span class="math inline">\ell_\infty</span>, <span class="math inline">\ell_1</span> and spectral balls the maximizer can be a whole face: <span class="math inline">\mathrm{sign}(0)</span> is anything in <span class="math inline">[-1,1]</span>; ties in <span class="math inline">|g_i|</span> for <span class="math inline">\ell_1</span>; zero singular values for the spectral norm.</li>
@@ -617,27 +651,15 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="42-natural-gradient-invariance-and-what-it-inherits-from-kl">
 <summary><h2 id="42-natural-gradient-invariance-and-what-it-inherits-from-kl">4.2 Natural gradient: invariance, and what it inherits from KL</h2></summary>
 <div class="sec-body">
 <a id="td24-2"></a>
 <p>Gradient descent follows a different path if you write the same model in different parameters. Natural gradient, <span class="math inline">\Delta\theta=-\eta F^{-1}g</span> with <span class="math inline">F</span> the Fisher information, does not, because <span class="math inline">F</span> transforms the way a metric must. The same reasoning shows that raw sharpness <span class="math inline">\lambda_{\max}(H)</span>, with <span class="math inline">H</span> the loss Hessian, is not a property of the function.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1412.1193">New insights and perspectives on the natural gradient method</a></strong>, James Martens (JMLR 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>The careful version of this section: the relation to the generalized Gauss–Newton matrix, approximate (not exact) invariance for finite steps, and why the Hessian lacks it.</p>
-</div>
-
-<p>Also: <a href="https://doi.org/10.1162/089976698300017746">Amari 1998</a> (the original); <a href="https://arxiv.org/abs/1905.12558">Kunstner, Balles and Hennig</a> (the empirical Fisher); <a href="https://arxiv.org/abs/1503.05671">K-FAC</a>; <a href="https://arxiv.org/abs/1703.04933">Dinh et al.</a> (sharp minima made flat by rescaling).</p>
+<p><strong>Paper:</strong> Martens, <em>New insights and perspectives on the natural gradient method</em> (see <a href="#td24-readings">Readings</a>).</p>
 <p>Write <span class="math inline">\theta=\phi(\xi)</span> for a change of parameters, with invertible Jacobian <span class="math inline">J=\partial\theta/\partial\xi</span>. Steps are vectors, <span class="math inline">\Delta\theta=J\,\Delta\xi</span>; gradients are covectors, <span class="math inline">g_\xi=J^\top g_\theta</span>. Gradient descent sets one equal to the other, so in <span class="math inline">\theta</span> coordinates its step is <span class="math inline">-\eta\,JJ^\top g_\theta</span>, which depends on the coordinates you descended in. Turning a covector into a vector needs a metric, <span class="math inline">\Delta=-\eta M^{-1}g</span> (§4.1’s penalty step), and the result is coordinate-free exactly when <span class="math inline">M_\xi=J^\top M_\theta J</span>. The Fisher, built from score vectors, transforms this way; the identity matrix of plain GD does not.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-3">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-3">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td24-2-walkthrough"></a>
-<p><em>Notation.</em> The model is a distribution <span class="math inline">p</span> (over outputs, or data); its Fisher information is <span class="math inline">F=\mathbb E_{x\sim p}[\nabla\log p(x)\,\nabla\log p(x)^\top]</span>, written <span class="math inline">F_\theta</span> or <span class="math inline">F_\xi</span> in each coordinate system, and to second order <span class="math inline">\mathrm{KL}(p_\theta\|p_{\theta+\delta})=\tfrac12\delta^\top F\delta</span>. <span class="math inline">g_\theta</span>, <span class="math inline">g_\xi</span> are the loss gradients and <span class="math inline">H</span> the loss Hessian.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> the model is a distribution <span class="math inline">p</span> (over outputs, or data); its Fisher information is <span class="math inline">F=\mathbb E_{x\sim p}[\nabla\log p(x)\,\nabla\log p(x)^\top]</span>, written <span class="math inline">F_\theta</span> or <span class="math inline">F_\xi</span> in each coordinate system, and to second order <span class="math inline">\mathrm{KL}(p_\theta\|p_{\theta+\delta})=\tfrac12\delta^\top F\delta</span>. <span class="math inline">g_\theta</span>, <span class="math inline">g_\xi</span> are the loss gradients and <span class="math inline">H</span> the loss Hessian.</p>
 <p><strong>Where the invariance stops.</strong></p>
 <ul>
 <li>It is exact for the flow and for affine reparametrizations; for finite steps under a nonlinear <span class="math inline">\phi</span> it holds only to first order in <span class="math inline">\eta</span>.</li>
@@ -646,7 +668,7 @@ article details.code > summary:hover { color: var(--fg); }
 <li>In practice <span class="math inline">F</span> is inverted approximately: K-FAC uses per-layer Kronecker products <span class="math inline">A\otimes G</span> of the second moments of the layer’s inputs and back-propagated gradients. Shampoo (Exercise 4.1.C) also preconditions from both sides, but with <span class="math inline">GG^\top</span>, <span class="math inline">G^\top G</span> and the power <span class="math inline">-1/4</span>.</li>
 <li>Natural gradient measures steps by KL, so it inherits KL’s blindness to output-space geometry (Exercise 4.2.C).</li>
 </ul>
-<p><strong>Sharpness needs a metric.</strong> At a critical point <span class="math inline">H_\xi=J^\top H_\theta J</span>: the Hessian is a quadratic form, whose eigenvalues mean something only against a metric <span class="math inline">M</span> (they are those of <span class="math inline">M^{-1}H</span>). Raw <span class="math inline">\lambda_{\max}(H)</span> silently uses <span class="math inline">M=I</span>, so rescaling layers can make sharp minima flat (Dinh et al.; <a href="../notebooks/mdl1_statistical_learning.html#wb2-flatness">MDL MDL1 §4, exercise 4.5</a> works the two-layer example). An invariant curvature is the spectrum of <span class="math inline">F^{-1}H</span>. Newton, whose metric is the Hessian, is invariant only under affine changes, because away from a critical point the Hessian picks up a term from the curvature of the coordinate change (Exercises 4.2.B, 4.2.D). The same object governs stability: preconditioned GD with fixed <span class="math inline">P\succ0</span> on a quadratic with <span class="math inline">H\succ0</span> converges iff <span class="math inline">\eta\lambda_{\max}(P^{-1}H)&lt;2</span>, and this preconditioned sharpness is what adaptive optimizers hold at their edge of stability (<a href="https://arxiv.org/abs/2207.14484">Cohen et al. 2022</a>; <a href="td2_2_edge_of_stability.html#td22-5">NB2 §2.5</a>).</p>
+<p><strong>Sharpness needs a metric.</strong> At a critical point <span class="math inline">H_\xi=J^\top H_\theta J</span>: the Hessian is a quadratic form, whose eigenvalues mean something only against a metric <span class="math inline">M</span> (they are those of <span class="math inline">M^{-1}H</span>). Raw <span class="math inline">\lambda_{\max}(H)</span> silently uses <span class="math inline">M=I</span>, so rescaling layers can make sharp minima flat (Dinh et al.; <a href="../notebooks/mdl1_statistical_learning.html#wb2-flatness">MDL MDL1 §4, exercise 4.5</a> works the two-layer example). An invariant curvature is the spectrum of <span class="math inline">F^{-1}H</span>. Newton, whose metric is the Hessian, is invariant only under affine changes, because away from a critical point the Hessian picks up a term from the curvature of the coordinate change (Exercises 4.2.B, 4.2.D). The same object governs stability: preconditioned GD with fixed <span class="math inline">P\succ0</span> on a quadratic with <span class="math inline">H\succ0</span> converges iff <span class="math inline">\eta\lambda_{\max}(P^{-1}H)&lt;2</span>, and this preconditioned sharpness is what adaptive optimizers hold at their edge of stability (<a href="https://arxiv.org/abs/2207.14484">Cohen et al. 2022</a>; <a href="td2_3_edge_of_stability.html#td23-5">NB2 §3.5</a>).</p>
 <p><strong>Exercise 4.2.A — Invariance of the natural-gradient flow.</strong> Assume <span class="math inline">F_\theta\succ0</span>.</p>
 <ol type="1">
 <li>Show <span class="math inline">F_\xi=J^\top F_\theta J</span> and <span class="math inline">g_\xi=J^\top g_\theta</span>.</li>
@@ -755,31 +777,19 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="43-adam-as-smoothed-sign-descent">
 <summary><h2 id="43-adam-as-smoothed-sign-descent">4.3 Adam as smoothed sign descent</h2></summary>
 <div class="sec-body">
 <a id="td24-3"></a>
 <p>With its moving averages switched off, Adam is sign descent, the trust-region step in <span class="math inline">\ell_\infty</span>. With them on, it is sign descent shrunk by a per-coordinate signal-to-noise factor: a good picture in some regimes and a misleading one in others. Decoupled weight decay then confines the weights to a box.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2304.13960">Noise is not the main factor behind the gap between SGD and Adam on transformers, but sign descent might be</a></strong>, Frederik Kunstner, Jacques Chen, Jonathan Wilder Lavington, Mark Schmidt (ICLR 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Growing the batch to the full dataset widens Adam’s lead over SGD, and sign descent with momentum behaves much like Adam at large batch.</p>
-</div>
-
-<p>Also: <a href="https://arxiv.org/abs/2402.19449">Kunstner et al. 2024</a> (heavy-tailed class imbalance); <a href="https://arxiv.org/abs/2302.06675">Lion</a> (sign descent with momentum, found by program search); <a href="https://arxiv.org/abs/1705.07774">Balles and Hennig</a> (Adam as sign plus variance adaptation).</p>
+<p><strong>Paper:</strong> Kunstner, Chen, Lavington and Schmidt, <em>Noise is not the main factor behind the gap between SGD and Adam on transformers</em> (see <a href="#td24-readings">Readings</a>).</p>
 <p><strong>Why Adam beats SGD on transformers.</strong> Not, it seems, because it copes better with heavy-tailed gradient noise: removing the noise by growing the batch widens the gap, so the sign-like geometry looks like the main factor. Kunstner et al.’s 2024 follow-up points to heavy-tailed class imbalance in language data: under gradient descent the loss on rare tokens falls slowly, while sign-based methods are much less sensitive to class frequency (shown empirically, and proved for a simplified linear softmax model in continuous time).</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-4">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-4">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td24-3-walkthrough"></a>
-<p><em>Notation.</em> Per coordinate, with gradient <span class="math inline">g_t</span> at step <span class="math inline">t=1,2,\dots</span>, Adam keeps EMAs <span class="math inline">m_t=\beta_1m_{t-1}+(1-\beta_1)g_t</span> and <span class="math inline">v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2</span> (from <span class="math inline">m_0=v_0=0</span>), bias-corrects them, <span class="math inline">\hat m_t=m_t/(1-\beta_1^t)</span>, <span class="math inline">\hat v_t=v_t/(1-\beta_2^t)</span>, and steps <span class="math inline">\theta\leftarrow\theta-\eta\,\hat m_t/(\sqrt{\hat v_t}+\epsilon)</span>. <strong>Sign descent</strong> is <span class="math inline">\theta\leftarrow\theta-\eta\,\mathrm{sign}(g)</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> per coordinate, with gradient <span class="math inline">g_t</span> at step <span class="math inline">t=1,2,\dots</span>, Adam keeps EMAs <span class="math inline">m_t=\beta_1m_{t-1}+(1-\beta_1)g_t</span> and <span class="math inline">v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2</span> (from <span class="math inline">m_0=v_0=0</span>), bias-corrects them, <span class="math inline">\hat m_t=m_t/(1-\beta_1^t)</span>, <span class="math inline">\hat v_t=v_t/(1-\beta_2^t)</span>, and steps <span class="math inline">\theta\leftarrow\theta-\eta\,\hat m_t/(\sqrt{\hat v_t}+\epsilon)</span>. <strong>Sign descent</strong> is <span class="math inline">\theta\leftarrow\theta-\eta\,\mathrm{sign}(g)</span>.</p>
 <p>With the EMAs on (Bernstein and Newhouse call their role open), two limits describe Adam, both for <span class="math inline">\beta_1&lt;1</span> and many steps:</p>
 <ul>
 <li><strong>Smoothed sign.</strong> If a coordinate’s gradient has mean <span class="math inline">\mu</span> and variance <span class="math inline">\sigma^2</span> and <span class="math inline">\beta_2</span> is close to 1, then <span class="math inline">\hat v\approx\mu^2+\sigma^2</span> and the <em>mean</em> update is about <span class="math inline">-\eta\,\mu/\sqrt{\mu^2+\sigma^2}</span>: the sign of the mean gradient, shrunk by the noise-to-signal ratio (Exercise 4.3.A.4; Balles and Hennig).</li>
-<li><strong>Slowly varying preconditioner.</strong> With <span class="math inline">\beta_2</span> close to 1, <span class="math inline">\sqrt{\hat v}</span> changes slowly, so over a short window Adam is EMA momentum preconditioned by <span class="math inline">P=\mathrm{diag}(\sqrt{\hat v})+\epsilon</span>; Adam’s edge of stability is a statement about <span class="math inline">\lambda_{\max}(P^{-1}H)</span> (<a href="td2_2_edge_of_stability.html#td22-5">NB2 §2.5</a>).</li>
+<li><strong>Slowly varying preconditioner.</strong> With <span class="math inline">\beta_2</span> close to 1, <span class="math inline">\sqrt{\hat v}</span> changes slowly, so over a short window Adam is EMA momentum preconditioned by <span class="math inline">P=\mathrm{diag}(\sqrt{\hat v})+\epsilon</span>; Adam’s edge of stability is a statement about <span class="math inline">\lambda_{\max}(P^{-1}H)</span> (<a href="td2_3_edge_of_stability.html#td23-5">NB2 §3.5</a>).</li>
 </ul>
 <p>With <span class="math inline">\epsilon=0</span>, each coordinate’s step is bounded by a constant multiple of <span class="math inline">\eta</span> when <span class="math inline">\beta_1^2&lt;\beta_2</span>: 1 for <span class="math inline">\beta_1=\beta_2</span>, about 7.3 for the defaults (Exercise 4.3.B).</p>
 <p><strong>Exercise 4.3.A — Sign descent, scale invariance and units.</strong></p>
@@ -887,7 +897,7 @@ article details.code > summary:hover { color: var(--fg); }
 <div class="solution-body">
 <ul>
 <li><strong>Noisy coordinates.</strong> The mean signed update is about <span class="math inline">\eta|\mu|/\sigma\ll\eta</span> (4.3.A.4), with fluctuations of about <span class="math inline">0.23\eta</span> around it, not steps of <span class="math inline">\pm\eta</span>. “Sign of the mean, weighted by signal-to-noise, plus noise” describes it better.</li>
-<li><strong>Oscillating gradients.</strong> At the edge of stability the gradient along the top curvature directions flips sign every step (<a href="td2_2_edge_of_stability.html#td22-1">NB2 §2</a>). Then <span class="math inline">m</span> averages toward zero while <span class="math inline">v</span> does not, and the right description is EMA momentum with a slowly varying diagonal preconditioner <span class="math inline">P</span>. With <span class="math inline">P\succ0</span> frozen, on a quadratic with <span class="math inline">H\succ0</span> and <span class="math inline">0\le\beta_1&lt;1</span>, the iteration converges for every start iff <span class="math inline">\eta\lambda_{\max}(P^{-1}H)&lt;2(1+\beta_1)/(1-\beta_1)</span>, which is 38 for <span class="math inline">\beta_1=0.9</span> (<a href="https://arxiv.org/abs/2207.14484">Cohen et al. 2022</a>).</li>
+<li><strong>Oscillating gradients.</strong> At the edge of stability the gradient along the top curvature directions flips sign every step (<a href="td2_3_edge_of_stability.html#td23-1">NB2 §3</a>). Then <span class="math inline">m</span> averages toward zero while <span class="math inline">v</span> does not, and the right description is EMA momentum with a slowly varying diagonal preconditioner <span class="math inline">P</span>. With <span class="math inline">P\succ0</span> frozen, on a quadratic with <span class="math inline">H\succ0</span> and <span class="math inline">0\le\beta_1&lt;1</span>, the iteration converges for every start iff <span class="math inline">\eta\lambda_{\max}(P^{-1}H)&lt;2(1+\beta_1)/(1-\beta_1)</span>, which is 38 for <span class="math inline">\beta_1=0.9</span> (<a href="https://arxiv.org/abs/2207.14484">Cohen et al. 2022</a>).</li>
 <li><strong>Tiny gradients.</strong> When <span class="math inline">\sqrt{\hat v}\ll\epsilon</span>, for example for rarely used embedding rows, the update is about <span class="math inline">-\eta\hat m/\epsilon</span> (at <span class="math inline">\sqrt{\hat v}=\epsilon</span> the denominator is already <span class="math inline">2\epsilon</span>): SGD with momentum and learning rate <span class="math inline">\eta/\epsilon</span>, neither sign-like nor scale-invariant.</li>
 </ul>
 <p>A fourth, milder one is a growing gradient, where <span class="math inline">v</span> lags and steps exceed <span class="math inline">\eta</span> (4.3.B).</p>
@@ -914,21 +924,15 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="44-newtonschulz-orthogonalizing-without-an-svd">
 <summary><h2 id="44-newtonschulz-orthogonalizing-without-an-svd">4.4 Newton–Schulz: orthogonalizing without an SVD</h2></summary>
 <div class="sec-body">
 <a id="td24-4"></a>
 <p>Muon replaces each hidden weight matrix’s momentum by an approximation of <span class="math inline">UV^\top</span>, the matrix with the same singular vectors and every singular value set to 1, computed by five steps of an odd matrix polynomial instead of an SVD. Its tuned quintic gives up exact convergence to grow small singular values fast.</p>
-<p><strong>Lead paper:</strong> <a href="https://kellerjordan.github.io/posts/muon/">Muon</a> (Jordan et al., top of page).</p>
+<p><strong>Paper:</strong> Jordan et al., <em>Muon: an optimizer for hidden layers</em> (see <a href="#td24-readings">Readings</a>).</p>
 <p><span class="math inline">UV^\top</span> is the steepest-descent direction under the spectral norm (§4.1), which measures how much an update can change a layer’s output (§4.5). Muon orthogonalizes the (Nesterov) momentum of each 2D hidden-layer weight; embeddings, the output head and vector parameters get AdamW. The post adds a hypothesis it labels as speculation: SGD-momentum and Adam updates for transformer weights are nearly low-rank, and orthogonalizing raises the scale of “rare directions” that matter for learning.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-5">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-5">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td24-4-walkthrough"></a>
-<p><em>Notation.</em> For a matrix <span class="math inline">M</span> with reduced SVD <span class="math inline">M=U\Sigma V^\top</span>, <span class="math inline">\mathrm{Ortho}(M)=UV^\top</span>. Muon’s iteration is <span class="math inline">X\leftarrow aX+b(XX^\top)X+c(XX^\top)^2X</span>, started from <span class="math inline">X_0=G/\|G\|_F</span> with <span class="math inline">G</span> the matrix being orthogonalized (the momentum), <span class="math inline">(a,b,c)=(3.4445,-4.7750,2.0315)</span>, and five steps. On singular values it acts as <span class="math inline">\sigma\mapsto\varphi(\sigma)=a\sigma+b\sigma^3+c\sigma^5</span>. The classical cubic iteration <span class="math inline">X\leftarrow\tfrac32X-\tfrac12XX^\top X</span>, i.e. <span class="math inline">p(\sigma)=(3\sigma-\sigma^3)/2</span>, converges to <span class="math inline">UV^\top</span>. Per the post, Muon’s coefficients maximize <span class="math inline">a=\varphi&#39;(0)</span> subject to the iterates settling in roughly <span class="math inline">[0.7,1.3]</span> rather than at 1, after the authors found that errors of about <span class="math inline">\pm0.3</span> in the singular values do not hurt training (their motivation, not an established result). The reference implementation also rescales by <span class="math inline">\sqrt{\max(1,\text{fan-out}/\text{fan-in})}</span> (Exercise 4.5.A).</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> for a matrix <span class="math inline">M</span> with reduced SVD <span class="math inline">M=U\Sigma V^\top</span>, <span class="math inline">\mathrm{Ortho}(M)=UV^\top</span>. Muon’s iteration is <span class="math inline">X\leftarrow aX+b(XX^\top)X+c(XX^\top)^2X</span>, started from <span class="math inline">X_0=G/\|G\|_F</span> with <span class="math inline">G</span> the matrix being orthogonalized (the momentum), <span class="math inline">(a,b,c)=(3.4445,-4.7750,2.0315)</span>, and five steps. On singular values it acts as <span class="math inline">\sigma\mapsto\varphi(\sigma)=a\sigma+b\sigma^3+c\sigma^5</span>. The classical cubic iteration <span class="math inline">X\leftarrow\tfrac32X-\tfrac12XX^\top X</span>, i.e. <span class="math inline">p(\sigma)=(3\sigma-\sigma^3)/2</span>, converges to <span class="math inline">UV^\top</span>. Per the post, Muon’s coefficients maximize <span class="math inline">a=\varphi&#39;(0)</span> subject to the iterates settling in roughly <span class="math inline">[0.7,1.3]</span> rather than at 1, after the authors found that errors of about <span class="math inline">\pm0.3</span> in the singular values do not hurt training (their motivation, not an established result). The reference implementation also rescales by <span class="math inline">\sqrt{\max(1,\text{fan-out}/\text{fan-in})}</span> (Exercise 4.5.A).</p>
 <p><strong>Exercise 4.4.A — Odd polynomials act on singular values.</strong></p>
 <ol type="1">
 <li>For <span class="math inline">X=U\Sigma V^\top</span> (reduced SVD), show <span class="math inline">(XX^\top)^kX=U\Sigma^{2k+1}V^\top</span>. Conclude that <span class="math inline">N</span> steps produce <span class="math inline">U\varphi^{N}(\Sigma)V^\top</span>, with <span class="math inline">\varphi</span> applied to each singular value.</li>
@@ -1045,32 +1049,19 @@ quintic after 5 steps: σ in [0.682, 1.202]</pre>
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="45-width-which-step-sizes-transfer">
 <summary><h2 id="45-width-which-step-sizes-transfer">4.5 Width: which step sizes transfer</h2></summary>
 <div class="sec-body">
 <a id="td24-5"></a>
 <p>Under muP (the maximal update parametrization) every layer’s features move by order one per step as width grows, so hyperparameters tuned on a narrow model transfer to a wide one. Yang, Simon and Bernstein derive muP’s hidden-layer rules from one spectral condition, and each optimizer’s norm then fixes its learning-rate exponent.</p>
-<p><strong>Lead paper:</strong> <a href="https://arxiv.org/abs/2310.17813">A spectral condition for feature learning</a> (Yang, Simon and Bernstein, top of page).</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2203.03466">Tensor Programs V: tuning large neural networks via zero-shot hyperparameter transfer</a></strong>, Greg Yang, Edward J. Hu, Igor Babuschkin, Szymon Sidor, Xiaodong Liu, David Farhi, Nick Ryder, Jakub Pachocki, Weizhu Chen, Jianfeng Gao (NeurIPS 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>muTransfer, and in Table 3 the muP scalings per layer type for SGD and Adam.</p>
-</div>
-
-<p>Also: <a href="https://arxiv.org/abs/2011.14522">Tensor Programs IV</a> (muP’s original derivation); <a href="https://arxiv.org/abs/2502.16982">Moonlight</a> (a different Muon scaling convention).</p>
+<p><strong>Papers:</strong> Yang, Simon and Bernstein, <em>A spectral condition for feature learning</em>; Yang et al., <em>Tensor Programs V</em> (Table 3) (see <a href="#td24-readings">Readings</a>).</p>
 <p>Measure activations by their RMS norm, <span class="math inline">\|x\|_{\rm RMS}=\|x\|_2/\sqrt n</span>, so entries of order one give RMS norm of order one at every width. For layer <span class="math inline">l</span> with weights <span class="math inline">W_l\in\mathbb R^{n_l\times n_{l-1}}</span>, the spectral condition (their Condition 1) asks that every layer and every update stretch order-one activations by an order-one factor:</p>
 <p><span class="math display">
 \|W_l\|_2,\ \|\Delta W_l\|_2=\Theta\Big(\sqrt{n_l/n_{l-1}}\Big),
 </span></p>
 <p>with <span class="math inline">\|\cdot\|_2</span> the spectral norm. The bound is tight, not loose by a power of the width, because gradient updates are low-rank and aligned with the incoming features. Each optimizer’s update norm then gives its learning rate: SGD <span class="math inline">\eta_l=\Theta(n_l/n_{l-1})</span>; Adam <span class="math inline">\eta_l=\Theta(1/\text{fan-in})</span>, since <span class="math inline">\mathrm{sign}(G)</span> of a low-rank <span class="math inline">G</span> has spectral norm as large as its Frobenius norm; Muon, whose <span class="math inline">UV^\top</span> has spectral norm 1, a factor <span class="math inline">\sqrt{n_l/n_{l-1}}</span>.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-6">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-6">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td24-5-walkthrough"></a>
-<p><em>Notation.</em> Layer <span class="math inline">l</span> has width <span class="math inline">n_l</span> (<span class="math inline">n_0</span> is the input dimension), weights <span class="math inline">W_l</span> (fan-in <span class="math inline">n_{l-1}</span>, fan-out <span class="math inline">n_l</span>) and features <span class="math inline">h_l=W_lh_{l-1}</span>; <span class="math inline">\|\cdot\|_F</span> is the Frobenius norm; <span class="math inline">\Theta(\cdot)</span> and <span class="math inline">O(\cdot)</span> refer to width <span class="math inline">\to\infty</span> at fixed aspect ratios. A matrix inherits the operator norm <span class="math inline">\|W\|_{\rm RMS\to RMS}=\max_x\|Wx\|_{\rm RMS}/\|x\|_{\rm RMS}=\sqrt{n_{\rm in}/n_{\rm out}}\,\|W\|_2</span> (Exercise 4.5.A), so Condition 1 reads <span class="math inline">\|W_l\|_{\rm RMS\to RMS},\|\Delta W_l\|_{\rm RMS\to RMS}=\Theta(1)</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> layer <span class="math inline">l</span> has width <span class="math inline">n_l</span> (<span class="math inline">n_0</span> is the input dimension), weights <span class="math inline">W_l</span> (fan-in <span class="math inline">n_{l-1}</span>, fan-out <span class="math inline">n_l</span>) and features <span class="math inline">h_l=W_lh_{l-1}</span>; <span class="math inline">\|\cdot\|_F</span> is the Frobenius norm; <span class="math inline">\Theta(\cdot)</span> and <span class="math inline">O(\cdot)</span> refer to width <span class="math inline">\to\infty</span> at fixed aspect ratios. A matrix inherits the operator norm <span class="math inline">\|W\|_{\rm RMS\to RMS}=\max_x\|Wx\|_{\rm RMS}/\|x\|_{\rm RMS}=\sqrt{n_{\rm in}/n_{\rm out}}\,\|W\|_2</span> (Exercise 4.5.A), so Condition 1 reads <span class="math inline">\|W_l\|_{\rm RMS\to RMS},\|\Delta W_l\|_{\rm RMS\to RMS}=\Theta(1)</span>.</p>
 <p>Yang–Simon–Bernstein define feature learning as <span class="math inline">\|h_l\|_{\rm RMS}=\Theta(1)</span> and <span class="math inline">\|\Delta h_l\|_{\rm RMS}=\Theta(1)</span> at every width; Condition 1 is sufficient for it, and any larger scaling blows up as width grows. The bounds come from <span class="math inline">\|Wh\|\le\|W\|\,\|h\|</span> and are attained because a batch-size-1 update is an outer product <span class="math inline">\delta\,h_{l-1}^\top</span>, with <span class="math inline">\delta=\partial L/\partial h_l</span> the back-propagated error, whose top right singular vector <em>is</em> <span class="math inline">h_{l-1}</span> (Exercise 4.5.B). The learning-rate rules follow: SGD in Exercise 4.5.B.4, Adam in Exercise 4.5.C (where a <em>dense random</em> sign matrix would instead give <span class="math inline">1/\sqrt n</span>: the gradient’s structure sets the exponent), Muon in Exercise 4.5.A.2. All of this assumes updates have low <strong>stable rank</strong> <span class="math inline">\|A\|_F^2/\|A\|_2^2</span> (at most the rank, ignoring tiny singular values) and stay aligned with the incoming features even when many examples contribute.</p>
 <details class="hint"><summary>When does the alignment assumption hold?</summary>
 
@@ -1234,27 +1225,15 @@ dense: ||sign(G)||_2 / limit at n = 2048: 0.983</pre>
 </div>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="46-the-modular-norm-combining-layers-and-depth">
 <summary><h2 id="46-the-modular-norm-combining-layers-and-depth">4.6 The modular norm: combining layers, and depth</h2></summary>
 <div class="sec-body">
 <a id="td24-6"></a>
 <p>§4.5 sized each layer’s step on its own. The modular norm is one norm for the whole network, built recursively from its modules, and steepest descent in it moves every layer by its own steepest step, with radii set by the architecture: <span class="math inline">\eta/L</span> per layer for a chain of <span class="math inline">L</span> equal layers.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2405.14813">Scalable optimization in the modular norm</a></strong>, Tim Large, Yang Liu, Minyoung Huh, Hyojin Bahng, Phillip Isola, Jeremy Bernstein (NeurIPS 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Modules with masses and sensitivities, the composition rules, smoothness in the modular norm, and learning-rate transfer across width and depth; comes with the Modula package.</p>
-</div>
-
-<p>Also: <a href="https://arxiv.org/abs/2410.21265">Modular duality</a> (the gradient-to-update map for the whole network, with Newton–Schulz updates for linear and convolutional layers).</p>
+<p><strong>Paper:</strong> Large et al., <em>Scalable optimization in the modular norm</em> (see <a href="#td24-readings">Readings</a>).</p>
 <p>Each module (a linear layer, an embedding, a nonlinearity, or a composite) carries a norm on its weights, a <strong>mass</strong> (its share of the network’s learning) and a <strong>sensitivity</strong> (how much it amplifies input perturbations).</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-7">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-7">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td24-6-walkthrough"></a>
-<p>Large et al.’s Linear module computes <span class="math inline">\sqrt{d_{\rm out}/d_{\rm in}}\,Wx</span>, with <span class="math inline">d_{\rm in}</span>, <span class="math inline">d_{\rm out}</span> its input and output widths, so its plain spectral norm plays the role of §4.5’s RMS→RMS norm; it has mass 1 and sensitivity 1. Composing <span class="math inline">M=M_2\circ M_1</span> adds masses, multiplies sensitivities and sets</p>
+<p><strong>Derivations and walkthrough.</strong> Large et al.’s Linear module computes <span class="math inline">\sqrt{d_{\rm out}/d_{\rm in}}\,Wx</span>, with <span class="math inline">d_{\rm in}</span>, <span class="math inline">d_{\rm out}</span> its input and output widths, so its plain spectral norm plays the role of §4.5’s RMS→RMS norm; it has mass 1 and sensitivity 1. Composing <span class="math inline">M=M_2\circ M_1</span> adds masses, multiplies sensitivities and sets</p>
 <p><span class="math display">
 \|(w_1,w_2)\|_M=\max\Big(\,s_2\,\frac{\mu_1+\mu_2}{\mu_1}\,\|w_1\|_{M_1},\ \frac{\mu_1+\mu_2}{\mu_2}\,\|w_2\|_{M_2}\Big),
 </span></p>
@@ -1268,9 +1247,6 @@ dense: ||sign(G)||_2 / limit at n = 2048: 0.983</pre>
 <p>The bound behind it is a worst case: inside the well-normed region, a perturbation of size <span class="math inline">\epsilon</span> in each of <span class="math inline">L</span> layers changes the output by up to about <span class="math inline">L\epsilon</span> if the perturbations add coherently. Steps of <span class="math inline">\eta/L</span> per layer keep that of order <span class="math inline">\eta</span>, which suggests per-layer step sizes (or branch multipliers) shrinking like <span class="math inline">1/L</span>. For residual networks, posed as the scaling <span class="math inline">L^{-\alpha}</span> of each branch, this is debated: <a href="https://arxiv.org/abs/2310.02244">Tensor Programs VI</a> and <a href="https://arxiv.org/abs/2309.16620">Bordelon et al.</a> use <span class="math inline">\alpha=\tfrac12</span>, while <a href="https://arxiv.org/abs/2505.01618">CompleteP (Dey et al. 2025)</a> reports better hyperparameter transfer with <span class="math inline">\alpha=1</span> in pre-LN transformers. Masses let some layers (embeddings, say) take a larger or smaller share than the equal split.</p>
 </div>
 </details>
-</div>
-</details>
-
 </div>
 </details>
 

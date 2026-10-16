@@ -270,10 +270,10 @@ article details.code > summary:hover { color: var(--fg); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
+<li><a href="#readings">Readings</a></li>
 <li><a href="#71-two-moments-are-all-a-linear-in-input-model-sees">7.1 Two moments are all a linear-in-input model sees</a></li>
 <li><a href="#72-higher-cumulants-how-long-does-a-hidden-direction-take">7.2 Higher cumulants: how long does a hidden direction take?</a></li>
 <li><a href="#73-spectral-bias-kernel-gradient-flow-mode-by-mode">7.3 Spectral bias: kernel gradient flow, mode by mode</a></li>
-<li><a href="#readings">Readings</a></li>
 </ol>
 </details>
 <div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 10 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
@@ -285,33 +285,63 @@ article details.code > summary:hover { color: var(--fg); }
 <p class="run-note">To run the code, open <a href='td2_7_learned_first.ipynb'><code>td2_7_learned_first.ipynb</code></a> in Jupyter (CPU only; needs numpy, matplotlib, scipy and torch). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
 
 <p>Networks trained by gradient descent tend to use coarse structure in the data before fine structure: class means and covariances before higher-order correlations, smooth parts of a target before wiggly ones. This notebook works out three settings where that order can be computed.</p>
+<p><strong>Route.</strong> The <a href="#td27-readings">Readings</a> come first: every paper of the notebook, grouped by section. The sections after them are the derivations and walkthrough (exercises with worked solutions, and code), for whoever wants them.</p>
+<ul>
+<li><a href="#td27-1">7.1 Two moments</a>: linear-in-input models see only means and covariances; small-weight networks see higher statistics later.</li>
+<li><a href="#td27-2">7.2 Higher cumulants</a>: online SGD needs about <span class="math inline">d^{\,k-1}</span> samples to find a direction with information exponent <span class="math inline">k\ge3</span>, far fewer if it is correlated with lower-order structure.</li>
+<li><a href="#td27-3">7.3 Spectral bias</a>: a fixed kernel fits each eigenfunction at the rate of its eigenvalue; on the circle, low frequencies first.</li>
+</ul>
+
+<details class="sec sec2" data-sec="readings" open>
+<summary><h2 id="readings">Readings</h2></summary>
+<div class="sec-body">
+<a id="td27-readings"></a>
+<p><strong>Two moments (<a href="#td27-1">§7.1</a>).</strong> The notebook’s key paper.</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2211.11567">Neural networks trained with SGD learn distributions of increasing complexity</a></strong>, Refinetti, Ingrosso, Goldt (ICML 2023) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>The <em>distributional simplicity bias</em>: networks from two-layer nets to ResNets and ViTs, trained on Gaussian clones of CIFAR-10, match the real-data network’s test accuracy early in training (clones from better generative models match it for longer), and a single-neuron expansion shows the stages: mean difference, Fisher discriminant, fourth-cumulant correction.</p>
 </div>
 
-<p><strong>Route.</strong></p>
-<ul>
-<li><a href="#td27-1">7.1 Two moments</a>: linear-in-input models see only means and covariances; small-weight networks see higher statistics later.</li>
-<li><a href="#td27-2">7.2 Higher cumulants</a>: online SGD needs about <span class="math inline">d^{\,k-1}</span> samples to find a direction with information exponent <span class="math inline">k\ge3</span>, far fewer if it is correlated with lower-order structure.</li>
-<li><a href="#td27-3">7.3 Spectral bias</a>: a fixed kernel fits each eigenfunction at the rate of its eigenvalue; on the circle, low frequencies first.</li>
-<li><a href="#td27-readings">Readings</a>.</li>
-</ul>
-<p>Each section’s derivations, exercises (with worked solutions) and code are in an optional walkthrough.</p>
+<p><strong>Higher cumulants (<a href="#td27-2">§7.2</a>).</strong> How many samples online SGD needs to find a direction hidden in a higher cumulant.</p>
+<div class="reading">
 
+<p><strong><a href="https://arxiv.org/abs/2404.08602">Sliding down the stairs: how correlated latent variables accelerate learning with neural networks</a></strong>, Bardone, Goldt (ICML 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The mixed cumulant model, and nearly sharp online-SGD sample complexities for a single neuron: about <span class="math inline">d\log^2d</span> for a covariance spike, <span class="math inline">d^{\,3}</span> for a fourth-cumulant spike, and <span class="math inline">d\log^2d</span> for both when their latent variables are correlated (Table 1; there <span class="math inline">\delta\approx f(d)</span> means <span class="math inline">\delta=o(f(d))</span>).</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2003.10409">Online stochastic gradient descent on non-convex losses from high-dimensional inference</a></strong>, Ben Arous, Gheissari, Jagannath (JMLR 22, 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Defines the information exponent and proves nearly sharp thresholds for online SGD to leave the uninformative equator (order <span class="math inline">d</span>; between <span class="math inline">d\log d</span> and <span class="math inline">d\log^2 d</span>; <span class="math inline">d^{\,k-1}</span> up to logarithms); Section 2 computes the exponent for single-index models, GLMs, PCA and spiked tensors.</p>
+</div>
+
+<p><strong>Spectral bias (<a href="#td27-3">§7.3</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1906.00425">The convergence rate of neural networks for learned functions of different frequencies</a></strong>, Basri, Jacobs, Kasten, Kritchman (NeurIPS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The NTK spectrum of a two-layer ReLU network for uniform data on the sphere: without biases, odd frequencies <span class="math inline">\ge3</span> cannot be learned; with biases, learning time <span class="math inline">\propto\ell^2</span> in 1D, which matches experiments with shallow and deep networks.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1806.08734">On the spectral bias of neural networks</a></strong>, Rahaman et al. (ICML 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Six-layer ReLU networks fitting sums of sinusoids learn low frequencies first, even when higher frequencies have larger amplitude; low-frequency components are also more robust to parameter perturbations.</p>
+</div>
+
+<p><strong>Also:</strong> <a href="https://arxiv.org/abs/2312.14922">Székely, Bardone, Gerace, Goldt, <em>Learning from higher-order correlations, efficiently</em></a> (NeurIPS 2024; finite data reused for many epochs: about <span class="math inline">d^{\,2}</span> samples for low-degree tests and for trained two-layer networks, where random features fail); <a href="https://arxiv.org/abs/2305.10633">Damian, Nichani, Ge, Lee, <em>Smoothing the landscape boosts the signal for SGD</em></a> (NeurIPS 2023; about <span class="math inline">d^{\,k/2}</span> samples with a smoothed loss); <a href="https://arxiv.org/abs/1901.06523">Xu et al., <em>Frequency Principle</em></a> (2020; low-to-high frequency fitting on MNIST and CIFAR-10).</p>
+<p>Related, in this day: what basis a trained diffusion denoiser uses, and why it adapts to image geometry (Kadkhodaie, Guth, Simoncelli, Mallat, ICLR 2024), is an exercise in <a href="td2_8_further_readings.html#td28-gahb"><code>td2_8_further_readings</code> §3</a>.</p>
+</div>
+</details>
 <details class="sec sec2" data-sec="71-two-moments-are-all-a-linear-in-input-model-sees">
 <summary><h2 id="71-two-moments-are-all-a-linear-in-input-model-sees">7.1 Two moments are all a linear-in-input model sees</h2></summary>
 <div class="sec-body">
 <a id="td27-1"></a>
 <p>Which statistics of the data does gradient descent use first? A model linear in its input <span class="math inline">x</span> sees only the class means and covariances. A network with small weights is close to such a model, and higher statistics of <span class="math inline">x</span> enter its gradient at higher orders in the weight scale.</p>
-<p><strong>Lead paper:</strong> <a href="https://arxiv.org/abs/2211.11567">Refinetti et al.</a> (above), Section 2. They truncate a sigmoidal perceptron’s gradient flow order by order in the weights: the weight first aligns with the class-mean difference, then moves to Fisher’s discriminant, then picks up a fourth-cumulant correction.</p>
+<p><strong>Paper:</strong> Refinetti, Ingrosso &amp; Goldt, <em>Neural networks trained with SGD learn distributions of increasing complexity</em>, Section 2 (see <a href="#td27-readings">Readings</a>). They truncate a sigmoidal perceptron’s gradient flow order by order in the weights: the weight first aligns with the class-mean difference, then moves to Fisher’s discriminant, then picks up a fourth-cumulant correction.</p>
 <p><em>Core idea.</em> With square loss, a linear model’s loss depends on the data only through first and second moments. So a labelled dataset and its <strong>Gaussian clone</strong> (each class replaced by the Gaussian with that class’s mean and covariance) give identical gradient-flow trajectories. Now take a two-layer network <span class="math inline">f(x)=\sum_ja_j\sigma(w_j\cdot x)</span> with all weights of order <span class="math inline">\varepsilon</span>, and expand <span class="math inline">\sigma</span> in powers of the pre-activation. The correlation of the label with a degree-<span class="math inline">k</span> function of the input, <span class="math inline">\mathbb E[y\,x^{\otimes k}]</span>, enters the gradient at order <span class="math inline">\varepsilon^k</span>: the class-mean difference first, then the covariance difference. This orders the <em>early</em> gradient; once the weights grow, the terms become comparable.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td27-1-walkthrough"></a>
-<p><em>Notation.</em> Gradient flow <span class="math inline">\dot\theta=-\nabla L</span> in continuous time <span class="math inline">t=k\eta</span>, with step size <span class="math inline">\eta</span>. Inputs <span class="math inline">x\in\mathbb R^d</span>, labels <span class="math inline">y</span>; for classification <span class="math inline">y=\pm1</span> with equal probabilities, class means <span class="math inline">\mu_\pm</span>, class covariances <span class="math inline">C_\pm</span>. <span class="math inline">\mathbb E</span> averages over the data, or over the training set when it is finite. <span class="math inline">x^{\otimes k}</span> is the <span class="math inline">k</span>-fold outer product, so <span class="math inline">\mathbb E[x^{\otimes k}]</span> is the <span class="math inline">k</span>-th moment tensor.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> Gradient flow <span class="math inline">\dot\theta=-\nabla L</span> in continuous time <span class="math inline">t=k\eta</span>, with step size <span class="math inline">\eta</span>. Inputs <span class="math inline">x\in\mathbb R^d</span>, labels <span class="math inline">y</span>; for classification <span class="math inline">y=\pm1</span> with equal probabilities, class means <span class="math inline">\mu_\pm</span>, class covariances <span class="math inline">C_\pm</span>. <span class="math inline">\mathbb E</span> averages over the data, or over the training set when it is finite. <span class="math inline">x^{\otimes k}</span> is the <span class="math inline">k</span>-fold outer product, so <span class="math inline">\mathbb E[x^{\otimes k}]</span> is the <span class="math inline">k</span>-th moment tensor.</p>
 <p><em>From NB1</em> (<code>td1_linear_networks</code>), restated. Square loss, whitened inputs <span class="math inline">\mathbb E[xx^\top]=I</span>, <span class="math inline">\Sigma_{yx}=\mathbb E[yx^\top]=USV^\top</span> with singular values <span class="math inline">s_\alpha</span>, and <span class="math inline">a_\alpha</span> the strength the model has learned in mode <span class="math inline">\alpha</span>. A <em>shallow</em> linear model <span class="math inline">f=Wx</span> has <span class="math inline">\dot a_\alpha=s_\alpha-a_\alpha</span>: every mode relaxes at the same rate, and <span class="math inline">s_\alpha</span> sets only the endpoint. A <em>two-layer</em> linear network <span class="math inline">f=W_2W_1x</span> from small balanced initialization has <span class="math inline">\dot a_\alpha=2a_\alpha(s_\alpha-a_\alpha)</span>, a sigmoid that rises at <span class="math inline">t\approx\frac1{2s_\alpha}\ln\frac{s_\alpha}{a_\alpha(0)}</span>, so stronger modes are learned first. (NB1 writes <span class="math inline">\tau\dot a</span> with <span class="math inline">\tau=1/\eta</span> and counts steps; with <span class="math inline">t=k\eta</span>, <span class="math inline">\tau</span> drops out.)</p>
 <p><strong>The linear model.</strong> Take <span class="math inline">f(x)=Wx+b</span> with square loss. Append a constant to the input, <span class="math inline">\tilde x=(x,1)</span>, and write <span class="math inline">\tilde W=[W,b]</span>. Then</p>
 <p><span class="math display">
@@ -634,32 +664,15 @@ K(x,x&#39;)=\sum_j\sigma(w_j\cdot x)\,\sigma(w_j\cdot x&#39;)+\Big(\sum_ja_j^2\,
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="72-higher-cumulants-how-long-does-a-hidden-direction-take">
 <summary><h2 id="72-higher-cumulants-how-long-does-a-hidden-direction-take">7.2 Higher cumulants: how long does a hidden direction take?</h2></summary>
 <div class="sec-body">
 <a id="td27-2"></a>
 <p>Suppose two classes have the same mean and variance along a direction <span class="math inline">v</span> in <span class="math inline">\mathbb R^d</span>, and differ there only in shape, in a higher cumulant. A model linear in its input cannot see <span class="math inline">v</span> (§7.1). A neuron trained by online SGD can, but the number of samples it needs grows as a power of <span class="math inline">d</span> set by the order at which <span class="math inline">v</span> first shows up in the loss. Correlating <span class="math inline">v</span> with easier structure elsewhere cuts that cost sharply.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2404.08602">Sliding down the stairs: how correlated latent variables accelerate learning with neural networks</a></strong>, Bardone, Goldt (ICML 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The mixed cumulant model, and nearly sharp online-SGD sample complexities for a single neuron: about <span class="math inline">d\log^2d</span> for a covariance spike, <span class="math inline">d^{\,3}</span> for a fourth-cumulant spike, and <span class="math inline">d\log^2d</span> for both when their latent variables are correlated (Table 1; there <span class="math inline">\delta\approx f(d)</span> means <span class="math inline">\delta=o(f(d))</span>).</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2003.10409">Online stochastic gradient descent on non-convex losses from high-dimensional inference</a></strong>, Ben Arous, Gheissari, Jagannath (JMLR 22, 2021) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Defines the information exponent and proves nearly sharp thresholds for online SGD to leave the uninformative equator (order <span class="math inline">d</span>; between <span class="math inline">d\log d</span> and <span class="math inline">d\log^2 d</span>; <span class="math inline">d^{\,k-1}</span> up to logarithms); Section 2 computes the exponent for single-index models, GLMs, PCA and spiked tensors.</p>
-</div>
-
+<p><strong>Papers:</strong> Bardone &amp; Goldt, <em>Sliding down the stairs</em>; Ben Arous, Gheissari &amp; Jagannath, <em>Online SGD on non-convex losses from high-dimensional inference</em> (see <a href="#td27-readings">Readings</a>).</p>
 <p><em>Core idea.</em> Keep the neuron’s weight <span class="math inline">w</span> on the unit sphere and track its overlap <span class="math inline">\alpha=w\cdot v</span>; a random start has <span class="math inline">|\alpha|\approx d^{-1/2}</span>. If the population loss near <span class="math inline">\alpha=0</span> first depends on <span class="math inline">\alpha</span> at order <span class="math inline">\alpha^k</span> (the <strong>information exponent</strong> <span class="math inline">k</span>), escaping that equator takes about <span class="math inline">d</span>, <span class="math inline">d\log d</span> and <span class="math inline">d^{\,k-1}</span> samples for <span class="math inline">k=1</span>, <span class="math inline">2</span> and <span class="math inline">\ge3</span>. A direction visible only in the fourth cumulant has <span class="math inline">k=4</span>: about <span class="math inline">d^{\,3}</span> samples. If its latent variable is correlated with that of a variance direction <span class="math inline">u</span> (exponent 2), the loss gains a cross term <span class="math inline">\alpha_u\alpha_v</span> that drags <span class="math inline">v</span> along once <span class="math inline">u</span> is found, and <span class="math inline">v</span> then costs about <span class="math inline">d\log^2d</span> samples, like <span class="math inline">u</span>.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-2">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-2">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td27-2-walkthrough"></a>
-<p><em>Notation.</em> <span class="math inline">d</span> is the input dimension, <span class="math inline">w</span> a neuron’s weight vector on the unit sphere, <span class="math inline">\alpha=w\cdot v</span> its overlap with a unit direction <span class="math inline">v</span>. The cumulants <span class="math inline">\kappa_p</span> are defined in <a href="#td27-cumulants">§7.1’s walkthrough</a>: <span class="math inline">\kappa_1</span> is the mean, <span class="math inline">\kappa_2</span> the covariance, and for <span class="math inline">p\ge3</span> they vanish for a Gaussian, so a nonzero <span class="math inline">\kappa_3</span> or <span class="math inline">\kappa_4</span> marks non-Gaussian shape.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> <span class="math inline">d</span> is the input dimension, <span class="math inline">w</span> a neuron’s weight vector on the unit sphere, <span class="math inline">\alpha=w\cdot v</span> its overlap with a unit direction <span class="math inline">v</span>. The cumulants <span class="math inline">\kappa_p</span> are defined in <a href="#td27-cumulants">§7.1’s walkthrough</a>: <span class="math inline">\kappa_1</span> is the mean, <span class="math inline">\kappa_2</span> the covariance, and for <span class="math inline">p\ge3</span> they vanish for a Gaussian, so a nonzero <span class="math inline">\kappa_3</span> or <span class="math inline">\kappa_4</span> marks non-Gaussian shape.</p>
 <p><strong>Hermite polynomials.</strong> The loss of a single neuron on near-Gaussian inputs is best expanded in Hermite polynomials; the degree of the first nonzero term sets how hard a direction is to find. The (probabilists’) Hermite polynomials <span class="math inline">He_0=1</span>, <span class="math inline">He_1=z</span>, <span class="math inline">He_2=z^2-1</span>, <span class="math inline">He_3=z^3-3z</span>, <span class="math inline">He_4=z^4-6z^2+3</span>, … are orthogonal under <span class="math inline">Z\sim\mathcal N(0,1)</span>, with <span class="math inline">\mathbb E[He_j(Z)He_k(Z)]=k!\,\delta_{jk}</span>. A function, such as an activation <span class="math inline">\sigma</span>, expands as <span class="math inline">\sigma(z)=\sum_k\frac{\sigma_k}{k!}He_k(z)</span> with <span class="math inline">\sigma_k=\mathbb E[\sigma(Z)He_k(Z)]</span>. For ReLU, <span class="math inline">\sigma_2=1/\sqrt{2\pi}</span> and <span class="math inline">\sigma_4=-1/\sqrt{2\pi}</span>.</p>
 <a id="td27-mcm"></a>
 <p><strong>The mixed cumulant model</strong> is the data model for §7.2 and for §7.1’s test bed. Bardone and Goldt put one signal each in the mean, the covariance and the fourth cumulant, with strengths <span class="math inline">\beta_m,\beta_u,\beta_v\ge0</span>. Class <span class="math inline">y=-1</span> is <span class="math inline">x=z\sim\mathcal N(0,I_d)</span>. Class <span class="math inline">y=+1</span> is</p>
@@ -732,7 +745,7 @@ L\approx L_0-c_{20}\,\alpha_u^2-c_{11}\,\alpha_u\alpha_v-c_{04}\,\alpha_v^4 ,
 <p>Their Propositions 1–4 and Table 1 state these as weak-recovery results, with ranges of the step parameter <span class="math inline">\delta</span> (step <span class="math inline">\delta/d</span>; Table 1’s <span class="math inline">\delta\approx f(d)</span> means <span class="math inline">\delta=o(f(d))</span>). The lower bounds hold for small steps (<span class="math inline">\delta=o(1/d)</span> for the cumulant spike), the sufficient conditions need suitably tuned steps, and the correlated-latent result assumes <span class="math inline">\alpha_u</span> and <span class="math inline">\alpha_v</span> start with the same sign.</p>
 </details>
 
-<p><em>Scope.</em> These results are for online SGD (fresh samples at every step) on a single neuron. With a finite dataset reused for many epochs the counting changes; see Székely et al. in the <a href="#td27-readings">readings</a>.</p>
+<p><em>Scope.</em> These results are for online SGD (fresh samples at every step) on a single neuron. With a finite dataset reused for many epochs the counting changes; see Székely et al. in the <a href="#td27-readings">Readings</a>.</p>
 <p><strong>Exercise 7.2.A — The mixed cumulant model, by hand.</strong> Class <span class="math inline">+1</span> is <span class="math inline">x=\beta_m m+\sqrt{\beta_u}\lambda u+Q(\sqrt{\beta_v}\nu v+z)</span> with orthonormal <span class="math inline">m,u,v</span>, <span class="math inline">\lambda\sim\mathcal N(0,1)</span>, <span class="math inline">\nu=\pm1</span>, <span class="math inline">z\sim\mathcal N(0,I_d)</span> and <span class="math inline">Q=I-\gamma vv^\top</span>, <span class="math inline">\gamma=\frac{\beta_v}{1+\beta_v+\sqrt{1+\beta_v}}</span>. Write <span class="math inline">s=\sqrt{\beta_v}\,\nu+\zeta</span>, with <span class="math inline">\zeta=v\cdot z\sim\mathcal N(0,1)</span>, for the <span class="math inline">v</span>-component before whitening.</p>
 <ol type="1">
 <li>Show that <span class="math inline">Q</span> maps <span class="math inline">v\mapsto v/\sqrt{1+\beta_v}</span> and fixes <span class="math inline">v^\perp</span>. Conclude that <span class="math inline">v\cdot x=s/\sqrt{1+\beta_v}</span> has mean 0 and variance 1 in class <span class="math inline">+1</span>, as in class <span class="math inline">-1</span>.</li>
@@ -965,32 +978,15 @@ L\approx L_0-\frac{\sigma_2\beta_u}{4}\alpha_u^2-\frac{\sigma_2c}{2}\alpha_u\alp
 <p><em>Right, correlated latents.</em> The overlap with <span class="math inline">v</span> rises from about step 100, and full data separates from the clone within a few hundred steps. (The clone now carries some information about <span class="math inline">v</span>, 7.2.A.3.) With 64 units in <span class="math inline">d=16</span> some unit starts with a sizable overlap by chance, so the dashed curves start near 0.6. At this size plateau lengths do not test the exponents (7.2.C does, for one neuron); the demo shows the staircase.</p>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="73-spectral-bias-kernel-gradient-flow-mode-by-mode">
 <summary><h2 id="73-spectral-bias-kernel-gradient-flow-mode-by-mode">7.3 Spectral bias: kernel gradient flow, mode by mode</h2></summary>
 <div class="sec-body">
 <a id="td27-3"></a>
 <p>Networks fitting a target made of several frequencies fit the low ones first, even when the high ones have larger amplitude: the <em>spectral bias</em>, or <em>frequency principle</em>. For a model linear in its parameters (a kernel method, random features, or a network in its frozen-kernel, NTK, regime) trained on square loss, the order is exact: each kernel eigenfunction is fitted at a rate equal to its eigenvalue.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1906.00425">The convergence rate of neural networks for learned functions of different frequencies</a></strong>, Basri, Jacobs, Kasten, Kritchman (NeurIPS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The NTK spectrum of a two-layer ReLU network for uniform data on the sphere: without biases, odd frequencies <span class="math inline">\ge3</span> cannot be learned; with biases, learning time <span class="math inline">\propto\ell^2</span> in 1D, which matches experiments with shallow and deep networks.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1806.08734">On the spectral bias of neural networks</a></strong>, Rahaman et al. (ICML 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Six-layer ReLU networks fitting sums of sinusoids learn low frequencies first, even when higher frequencies have larger amplitude; low-frequency components are also more robust to parameter perturbations.</p>
-</div>
-
+<p><strong>Papers:</strong> Basri, Jacobs, Kasten &amp; Kritchman, <em>The convergence rate of neural networks for learned functions of different frequencies</em>; Rahaman et al., <em>On the spectral bias of neural networks</em> (see <a href="#td27-readings">Readings</a>).</p>
 <p><em>Core idea.</em> With fixed features <span class="math inline">\phi(x)</span> and kernel <span class="math inline">K(x,x&#39;)=\phi(x)\cdot\phi(x&#39;)</span>, gradient flow on square loss makes the residual decay as <span class="math inline">e^{-\lambda_kt}</span> along the <span class="math inline">k</span>-th eigenfunction of the kernel, where <span class="math inline">\lambda_k</span> is its eigenvalue under the data distribution. So which functions count as “simple” is set by the kernel together with the data distribution. For inputs uniform on a circle, the eigenfunctions are Fourier modes and the eigenvalues are the kernel’s Fourier coefficients. For a two-layer ReLU network’s NTK with biases they decay like <span class="math inline">\ell^{-2}</span>, so frequency <span class="math inline">\ell</span> takes a time <span class="math inline">\propto\ell^2</span>; without biases, odd frequencies <span class="math inline">\ge3</span> cannot be fitted at all.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-3">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-3">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td27-3-walkthrough"></a>
-<p>Background elsewhere: the Physics of Deep Learning day’s <a href="../../IliadPhysicsLearning/notebooks/second-draft/01_fixed_features_kernel_learning_solutions.ipynb">Notebook 1, §3</a> (kernel gradient flow as spectral filtering; if you have done it, skim to <em>On the circle</em>) and its <a href="../../IliadPhysicsLearning/notebooks/second-draft/02_ntk_limit_kernel_learners_solutions.ipynb">Notebook 2</a> (the infinite-width NTK).</p>
+<p><strong>Derivations and walkthrough.</strong> Background elsewhere: the Physics of Deep Learning day’s <a href="../../IliadPhysicsLearning/notebooks/second-draft/01_fixed_features_kernel_learning_solutions.ipynb">Notebook 1, §3</a> (kernel gradient flow as spectral filtering; if you have done it, skim to <em>On the circle</em>) and its <a href="../../IliadPhysicsLearning/notebooks/second-draft/02_ntk_limit_kernel_learners_solutions.ipynb">Notebook 2</a> (the infinite-width NTK).</p>
 <p><em>Notation.</em> A fixed-feature model <span class="math inline">f(x)=\theta\cdot\phi(x)</span> with kernel <span class="math inline">K(x,x&#39;)=\phi(x)\cdot\phi(x&#39;)</span>, trained on <span class="math inline">(x_i,y_i)_{i\le n}</span> with <span class="math inline">L=\frac1{2n}\sum_i(f(x_i)-y_i)^2</span>; residuals <span class="math inline">r_i=f(x_i)-y_i</span>. On the circle, <span class="math inline">x=(\cos\vartheta,\sin\vartheta)</span> with <span class="math inline">\vartheta</span> uniform.</p>
 <p><strong>Mode by mode.</strong> Gradient flow gives <span class="math inline">\dot f(x)=-\frac1n\sum_iK(x,x_i)\,r_i</span>, so on the training set <span class="math inline">r(t)=e^{-\mathbf Kt/n}r(0)</span>, with Gram matrix <span class="math inline">\mathbf K_{ij}=K(x_i,x_j)</span>. The residual along an eigenvector of <span class="math inline">\mathbf K/n</span> with eigenvalue <span class="math inline">\hat\lambda_k</span> decays as <span class="math inline">e^{-\hat\lambda_kt}</span>, and a component with <span class="math inline">\hat\lambda_k=0</span> never moves (Exercise 7.3.A). As <span class="math inline">n\to\infty</span> these eigenvalues approach those of the integral operator <span class="math inline">(T_Kg)(x)=\mathbb E_{x&#39;}[K(x,x&#39;)g(x&#39;)]</span>, and the population flow is <span class="math inline">\partial_tf=-T_K(f-f^*)</span>. The shallow linear model of 7.1.A is the case <span class="math inline">\phi(x)=x</span>, where <span class="math inline">T_K</span> acts as the input covariance <span class="math inline">\Sigma_{xx}</span>.</p>
 <p><strong>On the circle.</strong> For <span class="math inline">K</span> depending only on <span class="math inline">\vartheta-\vartheta&#39;</span>, <span class="math inline">T_K</span> is a convolution. Its eigenfunctions are the Fourier modes <span class="math inline">\cos\ell\vartheta</span> and <span class="math inline">\sin\ell\vartheta</span>, and its eigenvalues are the Fourier coefficients of the kernel (Exercise 7.3.B). Rotation invariance alone does not order them; that depends on the kernel. Two cases worth knowing:</p>
@@ -1275,17 +1271,6 @@ prediction from the infinite-width kernel: [2.0, 79.0, 345.0]</pre>
 </div>
 
 <p>The network’s kernel at initialization averages to <span class="math inline">2K_{\rm bias}</span> of 7.3.C, so the prediction for frequency <span class="math inline">\ell</span> uses the eigenvalue <span class="math inline">a_\ell</span>; the inverse eigenvalues are in the ratio of about 1 : 46 : 200 for <span class="math inline">\ell=1,4,8</span> (the <span class="math inline">\ell^{-2}</span> law is only asymptotic). The lazy run (output scale 10, step reduced 100-fold) fits frequency 1, then 4, then 8, at the predicted times, and its eNTK barely moves. At scale 1, frequency 8 is still at about half its initial amplitude after 2000 steps, and frequency 4 lags too. The printout shows why: the eNTK changes by only a few per cent overall, but its Rayleigh quotient on <span class="math inline">\sin8\vartheta</span> drops about five-fold (at scale 10, by about a fifth). Feature learning has shrunk the kernel exactly on the slowest mode, so the frozen-kernel prediction is most fragile for the modes it says are slow.</p>
-</div>
-</details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="readings">
-<summary><h2 id="readings">Readings</h2></summary>
-<div class="sec-body">
-<a id="td27-readings"></a>
-<p>The lead papers are linked at the top of each section. Also: <a href="https://arxiv.org/abs/2312.14922">Székely, Bardone, Gerace, Goldt, <em>Learning from higher-order correlations, efficiently</em></a> (NeurIPS 2024; finite data reused for many epochs: about <span class="math inline">d^{\,2}</span> samples for low-degree tests and for trained two-layer networks, where random features fail); <a href="https://arxiv.org/abs/2305.10633">Damian, Nichani, Ge, Lee, <em>Smoothing the landscape boosts the signal for SGD</em></a> (NeurIPS 2023; about <span class="math inline">d^{\,k/2}</span> samples with a smoothed loss); <a href="https://arxiv.org/abs/1901.06523">Xu et al., <em>Frequency Principle</em></a> (2020; low-to-high frequency fitting on MNIST and CIFAR-10).</p>
-<p>Related, in this day: what basis a trained diffusion denoiser uses, and why it adapts to image geometry (Kadkhodaie, Guth, Simoncelli, Mallat, ICLR 2024), is an exercise in <a href="td2_8_further_readings.html#td28-gahb"><code>td2_8_further_readings</code> §3</a>.</p>
 </div>
 </details>
 

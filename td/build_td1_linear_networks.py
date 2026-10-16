@@ -7,15 +7,16 @@ versus planted. Closed forms are checked in checks/td1_linear_networks_math.py;
 the interactive figure is checked by assets/interactive/checks/mode_explorer_check.py.
 Review log: ../reviews/td/td1_linear_networks.md.
 
-Page shape (streamlined 2026-10-09, see ../reviews/2026-10-09-td-streamline-brief.md):
-a short intro with the key papers and a one-line route; then seven `##` sections
-(anchors td1-s1 .. td1-s7). Each section opens with the question and its answer in
-plain words, its lead paper(s) via reading(), and at most a short core-idea paragraph.
-Everything else (derivations, exercises with worked solutions, code) sits under one
-`### Optional: annotated derivations and walkthrough` per section (anchor
-td1-sN-walkthrough). Sub-topics keep their old numbers as bold labels (**1.4 ...**),
-so references like "§1.4" and "Exercise 1.4" still make sense. Exercises are bold
-paragraphs with anchors td1-exN-M. No `####`.
+Page shape (readings first, 2026-10-14): a short intro and a one-line route, then one
+`## Readings` section (anchor td1-readings) with every paper of the notebook, grouped by
+section, then the derivations and walkthrough: six `##` sections (anchors td1-s1 ..
+td1-s6), each with the question and its answer in plain words and at most a short
+core-idea paragraph, then (from the td1-sN-walkthrough anchor) the derivations,
+exercises with worked solutions and code; a short closing `## 7. Going further`
+(td1-s7) keeps the pointers to the Physics of Deep Learning day and to NB2. Sub-topics
+keep their old numbers as bold labels (**1.4 ...**), so references like "§1.4" and
+"Exercise 1.4" still make sense. Exercises are bold paragraphs with anchors td1-exN-M.
+No `###` or `####`.
 
 Time convention (NB1 only): tau = 1/eta, so t counts optimizer steps and
 t/tau = eta * steps.
@@ -41,22 +42,10 @@ A deep linear network can only represent a linear map, but gradient descent on i
 nonlinear and exactly solvable. Long plateaus followed by sudden drops, the strongest
 structure learned first, saddle-to-saddle trajectories, and a tangent kernel that either
 moves or stays frozen all appear here in closed form.
-"""
-        + reading(
-            *SAXE14,
-            "The exact solutions this notebook is built on: decoupled modes, sigmoidal learning curves with plateaus, and what depth changes.",
-            importance=5,
-            length=3,
-        )
-        + reading(
-            *TAJ,
-            "One formula for wide two-layer linear networks that covers lazy, rich and mixed learning, with a phase diagram in width and initialization scale.",
-            importance=5,
-            length=3,
-        )
-        + r"""
-**Route.** Each section gives its question, answer and paper first; derivations, worked
-exercises and code follow under "Optional".
+
+**Route.** The [Readings](#td1-readings) come first: every paper of the notebook, grouped
+by section. The sections after them are the derivations and walkthrough (exercises with
+worked solutions, and code), for whoever wants them.
 
 - [§1 The mode ODEs](#td1-s1): one solvable ODE per singular mode of the data.
 - [§2 Depth](#td1-s2) (side branch): plateaus grow as a power of the initial scale.
@@ -64,7 +53,7 @@ exercises and code follow under "Optional".
 - [§4 The end-to-end flow and its kernel](#td1-s4): the network's NTK and one conserved number per mode.
 - [§5 Rich, lazy and mixed](#td1-s5): one dial; large balanced initialization is not lazy.
 - [§6 Derived or planted](#td1-s6): which Saxe-style heuristics come from the math, and which from the setup.
-- [§7 Going further](#td1-s7): readings.
+- [§7 Going further](#td1-s7): the Physics of Deep Learning day's kernel notebooks, and where NB2 picks this up.
 
 The code cells share these helpers (numpy and matplotlib):
 """
@@ -140,6 +129,140 @@ def mode_ode(s, Delta, a0, t_grid):
     return rk4(lambda a: np.sqrt(4 * a**2 + Delta**2) * (s - a), [a0], t_grid)[:, 0]
 """
     ),
+    # ================================================================== readings
+    markdown(
+        r"""
+<a id="td1-readings"></a>
+
+## Readings
+
+**The notebook as a whole.** The exact solutions ([§1](#td1-s1), [§2](#td1-s2)) and the
+lazy / rich / mixed picture ([§4](#td1-s4), [§5](#td1-s5)).
+"""
+        + reading(
+            *SAXE14,
+            "The exact solutions this notebook is built on: decoupled modes, sigmoidal learning curves with plateaus, and what depth changes. Sections 1–3 derive the decoupled mode equations and their logistic solutions (§1); Eq. 15 and App. B give §2's depth-$N$ equation.",
+            "Their $\\Sigma$'s are sums over examples rather than averages, and they count layers including the input, so their $N_l$ is our $N+1$.",
+            importance=5,
+            length=3,
+        )
+        + reading(
+            *TAJ,
+            "One formula for wide two-layer linear networks that covers lazy, rich and mixed learning (§4–§5), with a phase diagram in width and initialization scale: with width $w$ and initialization variance $\\sigma^2$, singular values below about $\\sigma^2w$ are learned lazily and larger ones actively.",
+            importance=5,
+            length=3,
+        )
+        + r"""
+**The mode ODEs and alignment ([§1](#td1-s1)).**
+"""
+        + reading(
+            "Neural networks as kernel learners: the silent alignment effect",
+            "https://arxiv.org/abs/2111.00034",
+            "Atanasov, Bordelon, Pehlevan (ICLR 2022)",
+            "Why the hidden layer lines up with the data's modes before the loss moves: from small initialization the tangent kernel aligns while still small (proved for scalar-output linear networks), so the trained network is close to kernel regression with its *final* kernel.",
+            importance=4,
+            length=3,
+        )
+        + r"""
+**Depth ([§2](#td1-s2)).**
+"""
+        + reading(
+            "Saddle-to-saddle dynamics in deep linear networks: small initialization training, symmetry, and sparsity",
+            "https://arxiv.org/abs/2106.15933",
+            "Jacot, Ged, Şimşek, Hongler, Gabriel (2021)",
+            "Proves that from a small random initialization of per-layer scale $\\alpha$ the first escape from the origin follows a rank-one path, taking time $\\propto-\\log\\alpha$ at depth 2 and $\\alpha^{-(N-2)}$ beyond. The full saddle-to-saddle sequence is a conjecture supported by numerics.",
+            importance=3,
+            length=3,
+        )
+        + r"""
+**The landscape ([§3](#td1-s3)).**
+"""
+        + reading(
+            "The loss landscape of deep linear neural networks: a second-order analysis",
+            "https://arxiv.org/abs/2107.13289",
+            "Achour, Malgouyres, Gerchinovitz (JMLR 2024)",
+            "Characterizes every critical point (Prop. 1–2) and classifies them into global minima, strict saddles and non-strict saddles (Theorem 7).",
+            "Their depth $H$ counts weight matrices. They do not assume whitening.",
+            importance=5,
+            length=3,
+        )
+        + reading(
+            "A convergence analysis of gradient descent for deep linear neural networks",
+            "https://arxiv.org/abs/1810.02281",
+            "Arora, Cohen, Golowich, Hu (ICLR 2019)",
+            "The kind of convergence theorem the landscape alone does not give: a linear rate, given width, approximately balanced initialization, low initial loss and a small step.",
+            importance=3,
+            length=3,
+        )
+        + r"""
+**The end-to-end flow ([§4](#td1-s4)).**
+"""
+        + reading(
+            "On the optimization of deep networks: implicit acceleration by overparameterization",
+            "https://arxiv.org/abs/1802.06509",
+            "Arora, Cohen, Hazan (ICML 2018)",
+            "The balanced end-to-end equation at any depth: a preconditioner favouring directions already large in $W$, and for $N>2$ not the gradient flow of any regularized loss.",
+            importance=3,
+            length=3,
+        )
+        + r"""
+**Rich, lazy and mixed ([§5](#td1-s5)).**
+"""
+        + reading(
+            "On lazy training in differentiable programming",
+            "https://arxiv.org/abs/1812.07956",
+            "Chizat, Oyallon, Bach (NeurIPS 2019)",
+            "Lazy training comes from a choice of scaling (such as a large output multiplier), not from overparameterization as such.",
+            importance=3,
+            length=3,
+        )
+        + r"""
+**Derived or planted ([§6](#td1-s6)).**
+"""
+        + reading(
+            "A mathematical theory of semantic development in deep neural networks",
+            "https://arxiv.org/abs/1810.10531",
+            "Saxe, McClelland, Ganguli (PNAS 2019)",
+            "The source of heuristic 2: the exact solutions applied to tree-structured data, giving coarse-to-fine differentiation, illusory correlations and category coherence.",
+            importance=4,
+            length=3,
+        )
+        + r"""
+**Beyond linear networks ([§7](#td1-s7)).** Two extensions of the mode picture.
+"""
+        + reading(
+            "The neural race reduction: dynamics of abstraction in gated networks",
+            "https://arxiv.org/abs/2207.10430",
+            "Saxe, Sodhani, Lewallen (ICML 2022)",
+            "Gated linear pathways compute nonlinear functions, and their learning reduces to mode ODEs like §1's: a race between pathways.",
+            importance=3,
+            length=3,
+        )
+        + reading(
+            "Alternating gradient flows: a theory of feature learning in two-layer neural networks",
+            "https://arxiv.org/abs/2506.06489",
+            "Kunin, Marchetti, Chen, Karkada, Simon, DeWeese, Ganguli, Miolane (NeurIPS 2025)",
+            "Small-initialization training of two-layer networks as alternating steps, each neuron activation bringing a loss drop: saddle-to-saddle learning beyond linear networks.",
+            importance=3,
+            length=3,
+        )
+        + r"""
+**Also:**
+
+- [§3](#td1-s3): Baldi, Hornik, [Neural networks and principal component analysis: learning from examples without local minima](https://doi.org/10.1016/0893-6080(89)90014-2) (1989; the two-layer case, PCA for an autoencoder); Kawaguchi, [Deep learning without poor local minima](https://arxiv.org/abs/1605.07110) (2016; any depth and width, degenerate saddles from two hidden layers).
+- [§5](#td1-s5): Li, Luo, Lyu, [Towards resolving the implicit bias of gradient descent for matrix factorization: greedy low-rank learning](https://arxiv.org/abs/2012.09839) (2021); Kumar, Bordelon, Gershman, Pehlevan, [Grokking as the transition from lazy to rich training dynamics](https://arxiv.org/abs/2310.06110) (2023).
+- [§6](#td1-s6): Pennington, Schoenholz, Ganguli, [Resurrecting the sigmoid in deep learning through dynamical isometry](https://arxiv.org/abs/1711.04735) (2017; heuristic 4); Advani, Saxe, Sompolinsky, [High-dimensional dynamics of generalization error in neural networks](https://doi.org/10.1016/j.neunet.2020.08.022) (2020; heuristic 5; the arXiv version, [1710.03667](https://arxiv.org/abs/1710.03667), lists Advani and Saxe only).
+- Wide networks beyond kernels ([§7](#td1-s7)): Mei, Montanari, Nguyen, [A mean field view of the landscape of two-layer neural networks](https://arxiv.org/abs/1804.06561) (2018); Yang, Hu, [Tensor Programs IV: feature learning in infinite-width neural networks](https://arxiv.org/abs/2011.14522) (2021; muP); Bordelon, Pehlevan, [Self-consistent dynamical field theory of kernel evolution in wide neural networks](https://arxiv.org/abs/2205.09653) (2022).
+"""
+        + references(
+            book(
+                "The Principles of Deep Learning Theory",
+                "https://arxiv.org/abs/2106.10165",
+                "Roberts, Yaida, Hanin (Cambridge UP 2022)",
+                "finite width as a $1/n$ expansion around infinite width",
+            )
+        )
+    ),
     # ================================================================== §1
     markdown(
         r"""
@@ -154,22 +277,10 @@ $\tau\dot a=\sqrt{4a^2+d^2}\,(s-a)$, where $d$ is a conserved imbalance between 
 layers and $\tau=1/\eta$ (so $t$ counts steps). Small balanced weights give a sigmoid
 after a plateau whose length is set by $s$, so strong modes are learned first. Large
 imbalance gives a plain exponential at a rate that does not depend on $s$.
+
+**Papers:** Saxe, McClelland & Ganguli (2014), Sections 1–3; Atanasov, Bordelon & Pehlevan
+(2022) on silent alignment (see [Readings](#td1-readings)).
 """
-        + reading(
-            *SAXE14,
-            "Sections 1–3 derive the decoupled mode equations and their logistic solutions; this section follows them.",
-            "Their $\\Sigma$'s are sums over examples rather than averages, and they count layers including the input, so their $N_l$ is our $N+1$.",
-            importance=5,
-            length=3,
-        )
-        + reading(
-            "Neural networks as kernel learners: the silent alignment effect",
-            "https://arxiv.org/abs/2111.00034",
-            "Atanasov, Bordelon, Pehlevan (ICLR 2022)",
-            "Why the hidden layer lines up with the data's modes before the loss moves: from small initialization the tangent kernel aligns while still small (proved for scalar-output linear networks), so the trained network is close to kernel regression with its *final* kernel.",
-            importance=4,
-            length=3,
-        )
         + r"""
 **The core idea.** Rescaling one layer up and the next down leaves $W$ unchanged; this
 symmetry conserves the imbalance $D=W_2^\top W_2-W_1W_1^\top$. If the hidden layer is aligned
@@ -192,9 +303,7 @@ one per mode. Small random weights produce that alignment themselves, before the
         r"""
 <a id="td1-s1-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Notation.** Whitened inputs $x\in\mathbb R^{n_x}$ ($\mathbb E[xx^\top]=I$), targets
+**Derivations and walkthrough.** *Notation:* whitened inputs $x\in\mathbb R^{n_x}$ ($\mathbb E[xx^\top]=I$), targets
 $y\in\mathbb R^{n_y}$; layers $W_1$ ($h\times n_x$) and $W_2$ ($n_y\times h$), $W=W_2W_1$; loss
 $L=\tfrac12\mathbb E\|y-Wx\|^2$; $\Sigma=\mathbb E[yx^\top]=USV^\top=\sum_{\alpha=1}^rs_\alpha u_\alpha v_\alpha^\top$
 with distinct $s_1>\dots>s_r>0$; error $E:=\Sigma-W$; mode strength $a_\alpha:=u_\alpha^\top Wv_\alpha$.
@@ -593,26 +702,16 @@ With $N$ layers, $W=W_N\cdots W_1$, a balanced mode of strength $a$ and target s
 $s$ obeys $\tau\dot a=Na^{2-2/N}(s-a)$. From depth 3, the plateau grows as a power of $1/a_0$
 ($a_0$ the initial strength) instead of logarithmically, and the largest stable learning
 rate falls like $1/N$. A side branch: nothing later depends on it.
-"""
-        + reading(
-            "Saddle-to-saddle dynamics in deep linear networks: small initialization training, symmetry, and sparsity",
-            "https://arxiv.org/abs/2106.15933",
-            "Jacot, Ged, Şimşek, Hongler, Gabriel (2021)",
-            "Proves that from a small random initialization of per-layer scale $\\alpha$ the first escape from the origin follows a rank-one path, taking time $\\propto-\\log\\alpha$ at depth 2 and $\\alpha^{-(N-2)}$ beyond. The full saddle-to-saddle sequence is a conjecture supported by numerics.",
-            importance=3,
-            length=3,
-        )
-        + r"""
-The depth-$N$ equation itself is Saxe et al.'s (2014, Eq. 15 and App. B; top of the page).
+
+**Papers:** the depth-$N$ equation is Saxe et al.'s (2014, Eq. 15 and App. B); Jacot et al.
+(2021) on saddle-to-saddle escape (see [Readings](#td1-readings)).
 """
     ),
     markdown(
         r"""
 <a id="td1-s2-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Notation.** As in §1: whitened inputs, $\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top$, error
+**Derivations and walkthrough.** *Notation:* as in §1: whitened inputs, $\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top$, error
 $E=\Sigma-W$, mode strength $a=u^\top Wv$, $\tau=1/\eta$. At depth 2 a balanced mode has a
 plateau of about $(\tau/2s)\ln(s/a_0)$.
 
@@ -764,35 +863,16 @@ critical point is a partial SVD reconstruction $\Sigma_S=\sum_{\alpha\in S}s_\al
 of the target correlation $\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top$, every local minimum is
 global, and the other critical points are saddles (some degenerate from depth 3). None of
 this says how long training takes. A side branch: nothing later depends on it.
-"""
-        + reading(
-            "The loss landscape of deep linear neural networks: a second-order analysis",
-            "https://arxiv.org/abs/2107.13289",
-            "Achour, Malgouyres, Gerchinovitz (JMLR 2024)",
-            "Characterizes every critical point (Prop. 1–2) and classifies them into global minima, strict saddles and non-strict saddles (Theorem 7).",
-            "Their depth $H$ counts weight matrices. They do not assume whitening.",
-            importance=5,
-            length=3,
-        )
-        + reading(
-            "A convergence analysis of gradient descent for deep linear neural networks",
-            "https://arxiv.org/abs/1810.02281",
-            "Arora, Cohen, Golowich, Hu (ICLR 2019)",
-            "The kind of convergence theorem the landscape alone does not give: a linear rate, given width, approximately balanced initialization, low initial loss and a small step.",
-            importance=3,
-            length=3,
-        )
-        + r"""
-Also: Baldi, Hornik, [Neural networks and principal component analysis: learning from examples without local minima](https://doi.org/10.1016/0893-6080(89)90014-2) (1989; the two-layer case, PCA for an autoencoder); Kawaguchi, [Deep learning without poor local minima](https://arxiv.org/abs/1605.07110) (2016; any depth and width, degenerate saddles from two hidden layers).
+
+**Papers:** Achour, Malgouyres & Gerchinovitz (2024) on the critical points; Arora, Cohen,
+Golowich & Hu (2019) on convergence (see [Readings](#td1-readings)).
 """
     ),
     markdown(
         r"""
 <a id="td1-s3-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Notation.** Depth-$N$ network $W=W_N\cdots W_1$, whitened inputs,
+**Derivations and walkthrough.** *Notation:* depth-$N$ network $W=W_N\cdots W_1$, whitened inputs,
 $L=\tfrac12\|\Sigma-W\|_F^2+\text{const}$, $E=\Sigma-W$, distinct singular values $s_\alpha$.
 Gradient: $\nabla_{W_j}L=-(W_N\cdots W_{j+1})^\top E(W_{j-1}\cdots W_1)^\top$ (Exercise 2.1). $r_{\max}$ is
 the narrowest width, so $\operatorname{rank}W\le r_{\max}$. Without whitening,
@@ -971,18 +1051,10 @@ $K_t$ is the network's neural tangent kernel (NTK); whether it moves is the lazy
 question. With balanced layers it is zero on directions not yet learned. In general each
 singular mode carries one conserved number $\Delta$, counting layer imbalance and
 misalignment, which fixes how far that mode's kernel can move.
-"""
-        + reading(
-            "On the optimization of deep networks: implicit acceleration by overparameterization",
-            "https://arxiv.org/abs/1802.06509",
-            "Arora, Cohen, Hazan (ICML 2018)",
-            "The balanced end-to-end equation at any depth: a preconditioner favouring directions already large in $W$, and for $N>2$ not the gradient flow of any regularized loss.",
-            importance=3,
-            length=3,
-        )
-        + r"""
-Tu, Aranguri and Jacot (top of the page) prove the matrix form for wide Gaussian
-initializations. General wide-network NTK: the Physics of Deep Learning day's [Notebook 2]("""
+
+**Papers:** Arora, Cohen & Hazan (2018) for the balanced end-to-end equation; Tu, Aranguri
+and Jacot (2024) prove the matrix form for wide Gaussian initializations (see
+[Readings](#td1-readings)). General wide-network NTK: the Physics of Deep Learning day's [Notebook 2]("""
         + PHYS
         + r"""/02_ntk_limit_kernel_learners_solutions.ipynb) and §7.
 """
@@ -991,9 +1063,7 @@ initializations. General wide-network NTK: the Physics of Deep Learning day's [N
         r"""
 <a id="td1-s4-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Notation.** Two layers $W=W_2W_1$, whitened inputs, $\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top$,
+**Derivations and walkthrough.** *Notation:* two layers $W=W_2W_1$, whitened inputs, $\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top$,
 $E=\Sigma-W$, $\tau=1/\eta$; the flow (1.1) is $\tau\dot W_1=W_2^\top E$, $\tau\dot W_2=EW_1^\top$, with
 conserved imbalance $D=W_2^\top W_2-W_1W_1^\top$. An aligned mode (§1.3) has input weight $b$,
 output weight $c$, strength $a=bc$, imbalance $d=c^2-b^2$, and obeys
@@ -1159,32 +1229,16 @@ invariant $\Delta$ (§4) against its target singular value $s$. Small $\Delta$ g
 saddle-to-saddle, strongest-first learning; large $\Delta$ freezes the kernel; in between,
 strong modes are rich and weak ones lazy. "Large initialization is lazy" holds for large
 *Gaussian* weights, which are strongly imbalanced, and fails for large *balanced* ones.
-"""
-        + reading(
-            *TAJ,
-            "The phase diagram: with width $w$ and initialization variance $\\sigma^2$, singular values below about $\\sigma^2w$ are learned lazily and larger ones actively.",
-            importance=5,
-            length=3,
-        )
-        + reading(
-            "On lazy training in differentiable programming",
-            "https://arxiv.org/abs/1812.07956",
-            "Chizat, Oyallon, Bach (NeurIPS 2019)",
-            "Lazy training comes from a choice of scaling (such as a large output multiplier), not from overparameterization as such.",
-            importance=3,
-            length=3,
-        )
-        + r"""
-Also: Li, Luo, Lyu, [Towards resolving the implicit bias of gradient descent for matrix factorization: greedy low-rank learning](https://arxiv.org/abs/2012.09839) (2021); Kumar, Bordelon, Gershman, Pehlevan, [Grokking as the transition from lazy to rich training dynamics](https://arxiv.org/abs/2310.06110) (2023).
+
+**Papers:** Tu, Aranguri & Jacot (2024) for the phase diagram; Chizat, Oyallon & Bach (2019)
+on lazy training (see [Readings](#td1-readings)).
 """
     ),
     markdown(
         r"""
 <a id="td1-s5-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-**Notation.** As in §4: a mode with singular value $s$ has strength $a=u^\top Wv$, kernel
+**Derivations and walkthrough.** *Notation:* as in §4: a mode with singular value $s$ has strength $a=u^\top Wv$, kernel
 $k=|p|^2+|q|^2$ ($p=W_1v$, $q=W_2^\top u$), invariant $\Delta^2=k(0)^2-4a(0)^2$, and obeys (4.3),
 $\tau\dot a=\sqrt{4a^2+\Delta^2}\,(s-a)$: exactly for separated modes, approximately for wide
 random initializations. $\Delta=|c^2-b^2|$ for an aligned mode with input weight $b$ and output
@@ -1460,26 +1514,16 @@ singular value of the input–output correlation $\mathbb E[yx^\top]$):
 | 4. Orthogonal initialization | no small-kernel plateau at the start; but half of square orthogonal starts stall | positively aligned $O(1)$ modes and a per-depth learning rate, assumed in the argument |
 | 5. Generalization dynamics ($n\approx p$ overtraining) | nothing about depth: these are properties of linear least squares | i.i.d. isotropic inputs |
 | 6. Small initialization is rich, large is lazy | the dial is imbalance against what is left to learn | "large" must mean imbalanced; large balanced weights are not lazy |
-"""
-        + reading(
-            "A mathematical theory of semantic development in deep neural networks",
-            "https://arxiv.org/abs/1810.10531",
-            "Saxe, McClelland, Ganguli (PNAS 2019)",
-            "The source of heuristic 2: the exact solutions applied to tree-structured data, giving coarse-to-fine differentiation, illusory correlations and category coherence.",
-            importance=4,
-            length=3,
-        )
-        + r"""
-Also: Pennington, Schoenholz, Ganguli, [Resurrecting the sigmoid in deep learning through dynamical isometry](https://arxiv.org/abs/1711.04735) (2017; heuristic 4); Advani, Saxe, Sompolinsky, [High-dimensional dynamics of generalization error in neural networks](https://doi.org/10.1016/j.neunet.2020.08.022) (2020; heuristic 5; the arXiv version, [1710.03667](https://arxiv.org/abs/1710.03667), lists Advani and Saxe only).
+
+**Paper:** Saxe, McClelland & Ganguli (2019) on semantic development (see
+[Readings](#td1-readings)).
 """
     ),
     markdown(
         r"""
 <a id="td1-s6-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-The table above, with reasons. **Derived** means it follows from §1–§5 (linear network, square
+**Derivations and walkthrough.** The table above, with reasons. **Derived** means it follows from §1–§5 (linear network, square
 loss, whitened inputs); **planted** names what the headline needs from the data or the
 initialization; **transfer** is the evidence beyond linear networks. Notation:
 $\Sigma_{xx}=\mathbb E[xx^\top]$, $\Sigma_{yx}=\mathbb E[yx^\top]$ with singular values $s$; $a_0$ the
@@ -1674,25 +1718,6 @@ print("loss of the saddle that drops the weakest mode: 0.5 * 0.5**2 =", 0.5 * 0.
 
 ## 7. Going further
 
-Readings only. Two extensions of the mode picture beyond linear networks:
-"""
-        + reading(
-            "The neural race reduction: dynamics of abstraction in gated networks",
-            "https://arxiv.org/abs/2207.10430",
-            "Saxe, Sodhani, Lewallen (ICML 2022)",
-            "Gated linear pathways compute nonlinear functions, and their learning reduces to mode ODEs like §1's: a race between pathways.",
-            importance=3,
-            length=3,
-        )
-        + reading(
-            "Alternating gradient flows: a theory of feature learning in two-layer neural networks",
-            "https://arxiv.org/abs/2506.06489",
-            "Kunin, Marchetti, Chen, Karkada, Simon, DeWeese, Ganguli, Miolane (NeurIPS 2025)",
-            "Small-initialization training of two-layer networks as alternating steps, each neuron activation bringing a loss drop: saddle-to-saddle learning beyond linear networks.",
-            importance=3,
-            length=3,
-        )
-        + r"""
 **The analytic escape hatch.** For a day of exactly solvable theory instead, the Physics of
 Deep Learning day builds the kernel story from scratch:
 [Notebook 1, *Fixed features and kernel learning*]("""
@@ -1704,17 +1729,7 @@ Deep Learning day builds the kernel story from scratch:
 [Notebook 3, *Beyond fixed kernels*]("""
         + PHYS
         + r"""/03_beyond_ntk_feature_learning_and_cumulants_solutions.ipynb) (moving kernels, cumulants, and an exactly solvable deep linear network at finite width).
-Also: Mei, Montanari, Nguyen, [A mean field view of the landscape of two-layer neural networks](https://arxiv.org/abs/1804.06561) (2018); Yang, Hu, [Tensor Programs IV: feature learning in infinite-width neural networks](https://arxiv.org/abs/2011.14522) (2021; muP); Bordelon, Pehlevan, [Self-consistent dynamical field theory of kernel evolution in wide neural networks](https://arxiv.org/abs/2205.09653) (2022).
-"""
-        + references(
-            book(
-                "The Principles of Deep Learning Theory",
-                "https://arxiv.org/abs/2106.10165",
-                "Roberts, Yaida, Hanin (Cambridge UP 2022)",
-                "finite width as a $1/n$ expansion around infinite width",
-            )
-        )
-        + r"""
+
 **In NB2.** The mode picture returns in [what is learned first](td2_7_learned_first.html),
 the kernel $K_t$ in [curvature](td2_6_curvature.html) (as the Gauss–Newton matrix), and
 muP in [optimizer geometry](td2_4_optimizer_geometry.html).

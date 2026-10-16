@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
-"""Build NB2 §3, "SGD as a stochastic differential equation" (Training Dynamics day).
+"""Build NB2 §2, "SGD as a stochastic differential equation" (Training Dynamics day).
 
-Page shape (streamlined 2026-10-09, ../reviews/2026-10-09-td-streamline-brief.md): a short pitch,
-the three key papers (Li-Tai-E, Li-Malladi-Arora, McCandlish et al.) and a one-line route. Then
-seven `##` sections (anchors td23-1, td23-2, td23-3, td23-cbs, td23-lsr, td23-6, td23-valid). Each
-opens with its question and answer in plain words, its lead paper, and a short core-idea paragraph.
-Derivations, exercises (bold labels that keep the old numbering, e.g. "Exercise 3.3.A", so the
-in-text references like 3.3.A.4 still read) with folded solutions, and the code checks sit in one
-"### Optional: annotated derivations and walkthrough" per section (anchors td23-1-walkthrough,
-td23-2-walkthrough, ...). §3.7 is a short list with no walkthrough. "Readings" (td23-readings) is a
-one-line "Also:" list.
+Page shape (readings first, 2026-10-14): a short pitch and a one-line route, then one
+`## Readings` section (anchor td22-readings) with every paper of the notebook, grouped by
+section, then the derivations and walkthrough: seven `##` sections (anchors td22-1, td22-2,
+td22-3, td22-cbs, td22-lsr, td22-6, td22-valid), each with its question and answer in plain
+words and a short core-idea paragraph, then (from the `-walkthrough` anchor) the derivations,
+exercises (bold labels that keep the old numbering, e.g. "Exercise 2.3.A", so in-text
+references like 2.3.A.4 still read) with folded solutions, and the code checks. §2.7 is a
+short list with no walkthrough.
 
-Closed-form results are checked in checks/td2_3_sgd_sde_check.py; the review log is
-../reviews/td/td2_3_sgd_sde.md.
+Closed-form results are checked in checks/td2_2_sgd_sde_check.py; the review log is
+../reviews/td/td2_2_sgd_sde.md.
 """
 from nbkit_td import answer, code, code_answer, markdown, reading, run
 
@@ -24,7 +23,7 @@ CELLS = [
     # ================================================================ opening
     markdown(
         r"""
-# NB2 §3 — SGD as a stochastic differential equation
+# NB2 §2 — SGD as a stochastic differential equation
 
 **Training Dynamics, Iliad Intensive 2026**
 
@@ -32,6 +31,51 @@ A minibatch gradient is the full gradient plus zero-mean noise of covariance
 $\Sigma/B$ ($\Sigma$ the per-example gradient covariance, $B$ the batch size). So
 over many small steps of size $\eta$, SGD behaves like gradient flow plus Brownian
 noise of strength $\eta/B$. That picture turns batch-size folklore into formulas.
+
+**Route.** The [Readings](#td22-readings) come first: every paper of the notebook,
+grouped by section. The sections after them are the derivations and walkthrough
+(exercises with worked solutions, and code), for whoever wants them.
+
+- [2.1 The noise and its scale](#td22-1): why only $\eta/B$ matters.
+- [2.2 Stochastic modified equations](#td22-2): the SDE that SGD follows.
+- [2.3 Fluctuations in a basin](#td22-3): the loss floor at a constant learning rate.
+- [2.4 Critical batch size](#td22-cbs): past which extra examples stop helping.
+- [2.5 The linear scaling rule and where it fails](#td22-lsr).
+- [2.6 Adam and the square-root rule](#td22-6).
+- [2.7 When is the SDE picture valid?](#td22-valid)
+
+Code cells build on each other; run them top to bottom (seconds each on a CPU).
+"""
+    ),
+    code(
+        r"""
+import numpy as np
+import matplotlib.pyplot as plt
+
+rng = np.random.default_rng(0)
+"""
+    ),
+    # ================================================================ readings
+    markdown(
+        r"""
+<a id="td22-readings"></a>
+
+## Readings
+
+**The noise and reshuffling ([§2.1](#td22-1)).** Also the counterpoint in [§2.7](#td22-valid).
+"""
+        + reading(
+            "On the origin of implicit regularization in stochastic gradient descent",
+            "https://arxiv.org/abs/2101.12176",
+            "Samuel L. Smith, Benoit Dherin, David Barrett, Soham De (ICLR 2021)",
+            "Under random reshuffling the noise acts over an epoch only at second order in η, as an implicit "
+            "regularizer (N−B)/(N−1)·(η/4B)·tr Σ.",
+            "§4 is the counterpoint in §2.7.",
+            importance=3,
+            length=2,
+        )
+        + r"""
+**Stochastic modified equations ([§2.2](#td22-2), [§2.3](#td22-3)).** The SDE itself, and its solvable quadratic examples.
 """
         + reading(
             "Stochastic modified equations and adaptive stochastic gradient algorithms",
@@ -43,6 +87,21 @@ noise of strength $\eta/B$. That picture turns batch-size folklore into formulas
             importance=4,
             length=3,
         )
+        + r"""
+**Critical batch size ([§2.4](#td22-cbs)).**
+"""
+        + reading(
+            "An empirical model of large-batch training",
+            MCCANDLISH,
+            "Sam McCandlish, Jared Kaplan, Dario Amodei, OpenAI Dota Team (2018)",
+            "The critical batch size, and a cheap noise scale that predicts it on tasks from MNIST to Dota.",
+            "",
+            importance=4,
+            length=3,
+        )
+        + r"""
+**The linear scaling rule and its validity ([§2.5](#td22-lsr), [§2.7](#td22-valid)).**
+"""
         + reading(
             "On the validity of modeling SGD with stochastic differential equations (SDEs)",
             LMA,
@@ -54,61 +113,52 @@ noise of strength $\eta/B$. That picture turns batch-size folklore into formulas
             length=3,
         )
         + reading(
-            "An empirical model of large-batch training",
-            MCCANDLISH,
-            "Sam McCandlish, Jared Kaplan, Dario Amodei, OpenAI Dota Team (2018)",
-            "The critical batch size, and a cheap noise scale that predicts it on tasks from MNIST to Dota.",
-            "",
-            importance=4,
-            length=3,
+            "Accurate, large minibatch SGD: training ImageNet in 1 hour",
+            "https://arxiv.org/abs/1706.02677",
+            "Priya Goyal et al. (2017)",
+            "The empirical linear scaling rule with gradual warmup, holding up to batch size 8k for ResNet-50 on "
+            "ImageNet and degrading beyond.",
+            "§2 has the rule and its informal justification.",
+            importance=2,
+            length=1,
         )
         + r"""
-**Route.**
-
-- [3.1 The noise and its scale](#td23-1): why only $\eta/B$ matters.
-- [3.2 Stochastic modified equations](#td23-2): the SDE that SGD follows.
-- [3.3 Fluctuations in a basin](#td23-3): the loss floor at a constant learning rate.
-- [3.4 Critical batch size](#td23-cbs): past which extra examples stop helping.
-- [3.5 The linear scaling rule and where it fails](#td23-lsr).
-- [3.6 Adam and the square-root rule](#td23-6).
-- [3.7 When is the SDE picture valid?](#td23-valid)
-
-Derivations, exercises and code checks are in each section's optional
-walkthrough. Code cells build on each other; run them top to bottom (seconds each
-on a CPU).
+**Adam ([§2.6](#td22-6)).**
+"""
+        + reading(
+            "On the SDEs and scaling rules for adaptive gradient algorithms",
+            "https://arxiv.org/abs/2205.10287",
+            "Sadhika Malladi, Kaifeng Lyu, Abhishek Panigrahi, Sanjeev Arora (NeurIPS 2022)",
+            "SDEs for RMSprop and Adam with one step equal to time η², and the square-root scaling rule, "
+            "with proofs and checks on vision and language tasks.",
+            "§4.1 (the linear-loss warm-up) is the whole idea in one page.",
+            importance=3,
+            length=2,
+        )
+        + r"""
+**Also:**
+[Li, Tai and E, JMLR 2019](https://jmlr.org/papers/v20/17-526.html) (the rigorous SME
+theorems); [Higham 2001](https://doi.org/10.1137/S0036144500378302) (Euler–Maruyama and
+weak versus strong convergence, with short programs);
+[Şimşekli, Sagun and Gürbüzbalaban](https://arxiv.org/abs/1901.06053) (heavy-tailed
+gradient noise, §2.7).
 """
     ),
-    code(
-        r"""
-import numpy as np
-import matplotlib.pyplot as plt
-
-rng = np.random.default_rng(0)
-"""
-    ),
-    # ================================================================ 3.1
+    # ================================================================ 2.1
     markdown(
         r"""
-<a id="td23-1"></a>
+<a id="td22-1"></a>
 
-## 3.1 The noise and its scale
+## 2.1 The noise and its scale
 
 Write the minibatch gradient as $g_B=G+\xi$, with $G=\nabla L$ the full gradient
 and $\xi$ zero-mean noise. For batches of $B$ examples drawn with replacement,
 $\mathrm{Cov}\,\xi=\Sigma/B$, with $\Sigma$ the per-example gradient covariance. So
 SGD with step $\eta$ feels the noise only through $\eta/B$.
-"""
-        + reading(
-            "On the origin of implicit regularization in stochastic gradient descent",
-            "https://arxiv.org/abs/2101.12176",
-            "Samuel L. Smith, Benoit Dherin, David Barrett, Soham De (ICLR 2021)",
-            "Under random reshuffling the noise acts over an epoch only at second order in η, as an implicit "
-            "regularizer (N−B)/(N−1)·(η/4B)·tr Σ.",
-            "§4 is the counterpoint in §3.7.",
-            importance=3,
-            length=2,
-        )
-        + r"""
+
+**Paper:** Smith, Dherin, Barrett and De, *On the origin of implicit regularization in
+SGD* (see [Readings](#td22-readings)): reshuffled SGD, the counterpoint in §2.7.
+
 Hold $\theta$ roughly fixed and take $n$ steps. The drift adds up to $-n\eta G=-tG$,
 with $t=n\eta$, and the noise is a random walk with covariance
 $\eta^2n\,\Sigma/B=t\cdot\frac\eta B\Sigma$. As $\eta\to0$ at fixed $B$ the noise
@@ -116,13 +166,11 @@ vanishes and SGD becomes gradient flow; at finite $\eta$ its strength is set by
 $\eta/B$ alone, often called the *temperature*. Drift length $n\eta\|G\|$ and noise
 length $\eta\sqrt{n\,\mathrm{tr}\,\Sigma/B}$ are equal after $B_{\rm simple}/B$ steps,
 where $B_{\rm simple}=\mathrm{tr}\,\Sigma/\|G\|^2$ is McCandlish et al.'s *simple noise
-scale*. For $B\ll B_{\rm simple}$ noise shapes the dynamics (§3.4).
+scale*. For $B\ll B_{\rm simple}$ noise shapes the dynamics (§2.4).
 
-<a id="td23-1-walkthrough"></a>
+<a id="td22-1-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* $N$ examples with losses $\ell_i$, $L=\frac1N\sum_i\ell_i$, $G=\nabla L$,
+**Derivations and walkthrough.** *Notation:* $N$ examples with losses $\ell_i$, $L=\frac1N\sum_i\ell_i$, $G=\nabla L$,
 $\Sigma=\frac1N\sum_i(\nabla\ell_i-G)(\nabla\ell_i-G)^\top$, and $g_B=G+\xi$ the mean of
 $B$ per-example gradients. The noise $\xi$ depends on how batches are drawn:
 
@@ -130,7 +178,7 @@ $B$ per-example gradients. The noise $\xi$ depends on how batches are drawn:
 - **Without replacement within a batch**: $\mathrm{Cov}\,\xi=\frac{N-B}{N-1}\,\frac\Sigma B$, which matters only when $B$ is a sizable fraction of $N$.
 - **Random reshuffling** (shuffle each epoch, cut into $m=N/B$ batches; most multi-epoch training): at fixed $\theta$ the $m$ batch gradients of an epoch sum to exactly $mG$, so the noise cancels over the epoch.
 
-**Exercise 3.1.A — Sampling schemes.**
+**Exercise 2.1.A — Sampling schemes.**
 
 1. Show that $\mathrm{Cov}\,g_B=\Sigma/B$ for sampling with replacement and $\frac{N-B}{N-1}\frac\Sigma B$ for one batch drawn without replacement.
 2. *Reshuffling.* Fix $\theta$. In one shuffled epoch, let $Z_n=\sum_{j<n}\xi_j$ be the accumulated noise of the first $n$ batches. Show that $\mathbb E\,Z_n=0$ and
@@ -146,7 +194,7 @@ without replacement, $\mathbb E\,u_iu_j^\top=\frac1{N(N-1)}\sum_{i\ne j}u_iu_j^\
 expand $(\sum_iu_i)(\sum_ju_j)^\top=0$. For 2, the first $n$ batches of an epoch
 are a uniformly random set of $nB$ distinct examples. For the last question, use
 that SGD on a quadratic mode of curvature $h$ forgets its past at rate $\eta h$
-per step, since $\theta_{k+1}=(1-\eta h)\theta_k+\dots$ (§3.3 makes this precise).
+per step, since $\theta_{k+1}=(1-\eta h)\theta_k+\dots$ (§2.3 makes this precise).
 </details>
 """
     ),
@@ -176,15 +224,15 @@ $$
 
 This is a discrete Brownian bridge, pinned to zero at $n=m$; with replacement it keeps growing as $n\Sigma/B$.
 
-A mode of curvature $h$ forgets its past after about $1/(\eta h)$ steps. If $m\,\eta h\gg1$ it equilibrates many times per epoch and sees noise locally like sampling with replacement. If $m\,\eta h\ll1$ it integrates the whole epoch, and the noise largely cancels. So reshuffled SGD fluctuates less than the SDE predicts in flat directions, at small learning rates and in short epochs (measured in the last cell of Code 3.3.B). Smith et al. make the related point for the mean iterate ([`td2_1_flows`, §1.4](td2_1_flows.html#td21-s4)).
+A mode of curvature $h$ forgets its past after about $1/(\eta h)$ steps. If $m\,\eta h\gg1$ it equilibrates many times per epoch and sees noise locally like sampling with replacement. If $m\,\eta h\ll1$ it integrates the whole epoch, and the noise largely cancels. So reshuffled SGD fluctuates less than the SDE predicts in flat directions, at small learning rates and in short epochs (measured in the last cell of Code 2.3.B). Smith et al. make the related point for the mean iterate ([`td2_1_flows`, §1.4](td2_1_flows.html#td21-s4)).
 """
     ),
-    # ================================================================ 3.2
+    # ================================================================ 2.2
     markdown(
         r"""
-<a id="td23-2"></a>
+<a id="td22-2"></a>
 
-## 3.2 Stochastic modified equations
+## 2.2 Stochastic modified equations
 
 Which stochastic differential equation (SDE) does SGD follow? To first order in
 the step $\eta$, the *order-1 stochastic modified equation* (SME)
@@ -198,7 +246,7 @@ size, $W$ a Brownian motion, and time $t=k\eta$ after $k$ steps. To second order
 the drift becomes $-\nabla\big(L+\frac\eta4\|\nabla L\|^2\big)$, the same correction
 that full-batch gradient descent has. "Follows" means in law, not path by path.
 
-**Paper:** [Li, Tai and E](https://arxiv.org/abs/1511.06251) (rated at the top), §2–§3. The rigorous version, with the moment-matching theorem, is [Li, Tai and E, JMLR 2019](https://jmlr.org/papers/v20/17-526.html).
+**Paper:** [Li, Tai and E](https://arxiv.org/abs/1511.06251) (see [Readings](#td22-readings)), §2–§3. The rigorous version, with the moment-matching theorem, is [Li, Tai and E, JMLR 2019](https://jmlr.org/papers/v20/17-526.html).
 
 Why this SDE: one SGD step is $-\eta G-\eta\xi$, with $G=\nabla L$ and
 $\mathrm{Cov}\,\xi=\Sigma/B$. One Euler–Maruyama step of size $\eta$ for
@@ -207,12 +255,10 @@ normal. Matching covariances gives $\sigma\sigma^\top=\frac\eta B\Sigma$. Li, Ta
 prove a *weak* approximation: expectations of smooth functions of $\theta$ agree to
 $O(\eta)$ on a fixed time horizon ($O(\eta^2)$ for the order-2 SME).
 
-<a id="td23-2-walkthrough"></a>
+<a id="td22-2-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* Hessian $H$; otherwise as above. One SGD step is $-\eta(G+\xi)$ with
-zero-mean $\xi$ of covariance $\Sigma/B$ (§3.1).
+**Derivations and walkthrough.** *Notation:* Hessian $H$; otherwise as above. One SGD step is $-\eta(G+\xi)$ with
+zero-mean $\xi$ of covariance $\Sigma/B$ (§2.1).
 
 > **Two facts about SDEs** ([Higham 2001](https://doi.org/10.1137/S0036144500378302) is a friendly introduction).
 > 1. **Wiener process.** $W_t\in\mathbb R^d$ has $W_0=0$, continuous paths, and independent increments $W_{t+\Delta t}-W_t\sim\mathcal N(0,\Delta t\,I)$, of size $\sqrt{\Delta t}$. That is why noise with per-step variance $O(\eta^2)$ adds up to an $O(\eta)$ effect per unit time, the same order as the $O(\eta)$ drift corrections.
@@ -240,15 +286,15 @@ $$
 is weak order 2. Its drift correction is the one backward error analysis gives
 for full-batch GD ([`td2_1_flows`](td2_1_flows.html)).
 
-**Why keep the noise at order 1?** Gradient flow is *also* weak order 1 (3.2.A.2).
+**Why keep the noise at order 1?** Gradient flow is *also* weak order 1 (2.2.A.2).
 The noise term scales with $\mathrm{tr}\,\Sigma/B$ and the drift correction with
-$\|G\|^2$; their ratio is about $B_{\rm simple}/B$ (§3.1). For small batches, and
+$\|G\|^2$; their ratio is about $B_{\rm simple}/B$ (§2.1). For small batches, and
 near a minimum where $G\to0$ but the noise does not (unless the minimum
 interpolates), the noise dominates. Keeping
 it and dropping the drift correction is a physical choice, not a consequence of
-order counting, and the linear scaling rule inherits it (§3.5).
+order counting, and the linear scaling rule inherits it (§2.5).
 
-**Exercise 3.2.A — Derive the SMEs by moment matching.** One more tool, the
+**Exercise 2.2.A — Derive the SMEs by moment matching.** One more tool, the
 **generator**: for $dX=b\,dt+\sigma\,dW$ with $D=\sigma\sigma^\top$ and smooth $\varphi$,
 $\mathcal L\varphi=b\cdot\nabla\varphi+\tfrac12\mathrm{tr}(D\,\nabla^2\varphi)$. Dynkin's
 formula says $\frac{d}{dt}\mathbb E\,\varphi(X_t)=\mathbb E\,\mathcal L\varphi(X_t)$;
@@ -316,12 +362,12 @@ For the absolute third moment, $\tilde\Delta=\int_0^\eta b\,dt+\int_0^\eta\sigma
 
 The noise needs no correction: $\eta D=\eta^2\Sigma/B$ is exactly SGD's second moment. But it does nothing for the *first* moment, which is off by $\frac{\eta^2}2HG$ without the drift correction: the discrete step uses the gradient at the start of the step, while the flow sees it shrink along the way.
 
-**5.** The noise coefficient $\sqrt{\eta/B}$ and the drift $-\nabla L$ are unchanged, so the order-1 SME is invariant; the scaled run reaches each $t=k\eta$ in $\kappa$ times fewer steps with the same number of examples. The order-2 correction becomes $\frac{\kappa\eta}4\|\nabla L\|^2$. So the linear scaling rule is exact for the order-1 SME and fails at the next order, when the drift correction is comparable to the noise term (§3.4, §3.5).
+**5.** The noise coefficient $\sqrt{\eta/B}$ and the drift $-\nabla L$ are unchanged, so the order-1 SME is invariant; the scaled run reaches each $t=k\eta$ in $\kappa$ times fewer steps with the same number of examples. The order-2 correction becomes $\frac{\kappa\eta}4\|\nabla L\|^2$. So the linear scaling rule is exact for the order-1 SME and fails at the next order, when the drift correction is comparable to the noise term (§2.4, §2.5).
 """
     ),
     markdown(
         r"""
-**Code 3.2.B — Weak error, measured exactly.** Does the noise term of the order-1
+**Code 2.2.B — Weak error, measured exactly.** Does the noise term of the order-1
 SME buy accuracy over plain gradient flow, and does the order-2 drift correction
 gain an order? Take $L=\tfrac12hx^2$ with additive gradient noise of variance
 $s^2/B$. SGD and all three continuous models (gradient flow, order-1 SME, and
@@ -365,12 +411,12 @@ order. Right: at the minimum there is no signal, gradient flow's error is the wh
 $O(\eta)$ variance, and both SMEs are accurate to $O(\eta^2)$.
 """
     ),
-    # ================================================================ 3.3
+    # ================================================================ 2.3
     markdown(
         r"""
-<a id="td23-3"></a>
+<a id="td22-3"></a>
 
-## 3.3 Fluctuations in a basin
+## 2.3 Fluctuations in a basin
 
 Near a minimum, SGD at a constant learning rate does not converge; it keeps
 jiggling. In a quadratic basin with Hessian $H$, and with the gradient-noise
@@ -379,10 +425,10 @@ Gaussian cloud whose excess loss is $\frac{\eta}{4B}\mathrm{tr}\,\Sigma$ (step $
 batch $B$), whatever $H$ is. The cloud is a Boltzmann distribution $\propto e^{-cL}$
 only if $\Sigma\propto I$.
 
-**Paper:** [Li, Tai and E](https://arxiv.org/abs/1511.06251) (rated at the top), §3: solvable quadratic examples, with a descent phase followed by a fluctuation phase.
+**Paper:** [Li, Tai and E](https://arxiv.org/abs/1511.06251) (see [Readings](#td22-readings)), §3: solvable quadratic examples, with a descent phase followed by a fluctuation phase.
 
 Put the minimum at $0$ with $L\approx\tfrac12\theta^\top H\theta$, $H\succ0$. The order-1
-SME of §3.2 becomes an Ornstein–Uhlenbeck (OU) process,
+SME of §2.2 becomes an Ornstein–Uhlenbeck (OU) process,
 $d\theta=-H\theta\,dt+\sqrt{\eta/B}\,\Sigma^{1/2}dW$. Its stationary law is
 $\mathcal N(0,\Pi)$, where $\Pi$ solves the **Lyapunov equation**
 
@@ -396,17 +442,15 @@ sharper direction has proportionally smaller fluctuations. A learning-rate cut
 lowers the floor at once, and the loss follows mode by mode. The often-assumed
 $\Sigma\propto H$ gives a *round* cloud, not a Boltzmann one.
 
-<a id="td23-3-walkthrough"></a>
+<a id="td22-3-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* Hessian eigenvalues $h_j$; a general SDE $dX=b\,dt+\sigma\,dW$ has
+**Derivations and walkthrough.** *Notation:* Hessian eigenvalues $h_j$; a general SDE $dX=b\,dt+\sigma\,dW$ has
 drift $b$ and diffusion $D=\sigma\sigma^\top$ (for the SME, $b=-\nabla L$,
 $D=\frac\eta B\Sigma$).
 
 **When is the stationary law Boltzmann?** The density $p(\theta,t)$ of $X_t$ obeys
 the **Fokker–Planck equation** $\partial_tp=-\nabla\cdot J$, with probability current
-$J_i=b_i\,p-\frac12\sum_j\partial_j(D_{ij}\,p)$ (integrate Dynkin's formula of 3.2.A by
+$J_i=b_i\,p-\frac12\sum_j\partial_j(D_{ij}\,p)$ (integrate Dynkin's formula of 2.2.A by
 parts). With $b=-\nabla L$ and constant isotropic noise $D=2T\,I$,
 $J=-p\nabla L-T\nabla p$ vanishes for $p\propto e^{-L/T}$ (for confining $L$):
 overdamped Langevin dynamics, with Gibbs law at temperature $T$.
@@ -425,16 +469,16 @@ $\approx e^{-L_a/T}(2\pi T)^{d/2}\det(H_a)^{-1/2}$, so at equal loss flatter bas
 hold more probability. That rests on constant isotropic noise. With SGD's noise,
 which basin wins is a question about escape rates under anisotropic,
 state-dependent noise (Kramers-type calculations; ask your agent), and about
-whether training gets near stationarity at all (§3.7).
+whether training gets near stationarity at all (§2.7).
 
-**Exercise 3.3.A — The Lyapunov equation and the loss floor.** The setting:
+**Exercise 2.3.A — The Lyapunov equation and the loss floor.** The setting:
 $L=\tfrac12\theta^\top H\theta$ with $H\succ0$, frozen noise covariance $\Sigma$,
 diffusion $D=\frac\eta B\Sigma$, stationary covariance $\Pi$. (Items 1, 2, the first
 identity of 3, and 4(a) repeat items 1–4 of the MDL day's MDL1 exercise 4.B.3, whose
 $C$ and $\Sigma$ are $\Sigma$ and $\Pi$ here.) Items 4 and 6 compute what
 discreteness and state-dependent noise change.
 
-1. For the OU process, apply Dynkin's formula (3.2.A) with $\varphi=\theta_i\theta_j$ to show $\frac{d}{dt}M=-HM-MH+D$, where $M(t)=\mathbb E\,\theta\theta^\top$ (start from mean zero) and $D=\frac\eta B\Sigma$. Conclude that the stationary $\Pi$ solves the Lyapunov equation. Solve it in $H$'s eigenbasis, and show that $\Pi=\frac\eta{2B}\Sigma H^{-1}$ when $\Sigma$ commutes with $H$.
+1. For the OU process, apply Dynkin's formula (2.2.A) with $\varphi=\theta_i\theta_j$ to show $\frac{d}{dt}M=-HM-MH+D$, where $M(t)=\mathbb E\,\theta\theta^\top$ (start from mean zero) and $D=\frac\eta B\Sigma$. Conclude that the stationary $\Pi$ solves the Lyapunov equation. Solve it in $H$'s eigenbasis, and show that $\Pi=\frac\eta{2B}\Sigma H^{-1}$ when $\Sigma$ commutes with $H$.
 2. Show that $\mathcal N(0,\Pi)\propto e^{-cL}$ for some $c>0$ iff $\Sigma\propto I$, without assuming that $\Sigma$ and $H$ commute. Compute $\Pi$ for $\Sigma=sH$ and for $\Sigma=sI$, and say which is Boltzmann.
 3. Show $\tfrac12\mathrm{tr}(H\Pi)=\frac\eta{4B}\mathrm{tr}\,\Sigma$ and $\mathrm{tr}(H^2\Pi)=\frac\eta{2B}\mathrm{tr}(H\Sigma)$ for any $\Sigma$. Deduce the equilibrium simple noise scale $\mathrm{tr}\,\Sigma/\mathbb E\|G\|^2=2B/(\eta\bar h)$, with $\bar h=\mathrm{tr}(H\Sigma)/\mathrm{tr}\,\Sigma$.
 4. *(Discrete time.)* Take SGD with additive noise, $\theta_{k+1}=(I-\eta H)\theta_k-\eta\xi_k$ with $\mathrm{Cov}\,\xi_k=\Sigma/B$.
@@ -444,7 +488,7 @@ discreteness and state-dependent noise change.
    - (d) Does the order-2 SME's drift, here $-(H+\frac\eta2H^2)\theta$, fix the discrepancy?
    - (e) Follow one mode along a linear-scaling family $(\kappa\eta,\kappa B)$. For what $\kappa$ is its floor twice the SDE value, and twice that of the original run?
 5. *(Learning-rate decay.)* At $t=0$, switch $\eta\to\eta'$ at fixed $B$. With $\Sigma$ commuting with $H$, show that mode $j$'s excess loss relaxes as $\mathcal E_j(t)=\mathcal E'_j+(\mathcal E_j-\mathcal E'_j)e^{-2h_jt}$, where $\mathcal E_j=\frac{\eta\Sigma_{jj}}{4B}$, $\mathcal E'_j=\frac{\eta'\Sigma_{jj}}{4B}$, and $t$ counts in units of the *new* step. How many steps does mode $j$ take? What changes immediately at a learning-rate cut, and what sets how quickly the loss follows?
-6. *(Least squares, exactly. Code 3.3.B uses this.)* For $\ell_i=\tfrac12(x_i^\top\theta-y_i)^2$, write $\delta=\theta-\theta^*$, $A_i=x_ix_i^\top$, $u_i=x_i(y_i-x_i^\top\theta^*)$ (so $\frac1N\sum_iu_i=0$), $H=\frac1N\sum_iA_i$ and $\Sigma^*=\frac1N\sum_iu_iu_i^\top$. For SGD with replacement, show that the stationary covariance satisfies exactly
+6. *(Least squares, exactly. Code 2.3.B uses this.)* For $\ell_i=\tfrac12(x_i^\top\theta-y_i)^2$, write $\delta=\theta-\theta^*$, $A_i=x_ix_i^\top$, $u_i=x_i(y_i-x_i^\top\theta^*)$ (so $\frac1N\sum_iu_i=0$), $H=\frac1N\sum_iA_i$ and $\Sigma^*=\frac1N\sum_iu_iu_i^\top$. For SGD with replacement, show that the stationary covariance satisfies exactly
 $$
 \Pi=(I-\eta H)\Pi(I-\eta H)+\frac{\eta^2}B\Big(\frac1N\sum_iA_i\Pi A_i-H\Pi H\Big)+\frac{\eta^2}B\Sigma^* .
 $$
@@ -495,7 +539,7 @@ Each mode's excess loss is enhanced by $(1-\eta h_j/2)^{-1}$, which diverges at 
 
 **5.** With $\Sigma$ diagonal in $H$'s eigenbasis, part 1 decouples into $\dot M_{jj}=-2h_jM_{jj}+\frac{\eta'}B\Sigma_{jj}$ after the switch (time $t=k\eta'$). The solution relaxes exponentially, at rate $2h_j$, from the old stationary value to the new one; multiplying by $h_j/2$ gives $\mathcal E_j(t)$. In steps, mode $j$ needs about $1/(2\eta'h_j)$.
 
-What changes immediately is the *target*: the floor $\frac{\eta}{4B}\mathrm{tr}\,\Sigma$ is pure fluctuation, ten times lower the moment $\eta$ is cut tenfold. The loss follows mode by mode, at rates $2h_j$. A mode's share $\frac{\eta\Sigma_{jj}}{4B}$ does not depend on its curvature, so the speed depends on where the noise sits: noise in sharp modes drops within a few times $1/(2\eta'h_{\max})$ steps, which looks immediate; noise in flat modes drops slowly. This is one ingredient of the decay phase of warmup–stable–decay schedules ([`td2_2_edge_of_stability`, "Warmup and WSD"](td2_2_edge_of_stability.html#td22-8)): a high constant learning rate hides progress under a fluctuation floor, and the decay reveals it.
+What changes immediately is the *target*: the floor $\frac{\eta}{4B}\mathrm{tr}\,\Sigma$ is pure fluctuation, ten times lower the moment $\eta$ is cut tenfold. The loss follows mode by mode, at rates $2h_j$. A mode's share $\frac{\eta\Sigma_{jj}}{4B}$ does not depend on its curvature, so the speed depends on where the noise sits: noise in sharp modes drops within a few times $1/(2\eta'h_{\max})$ steps, which looks immediate; noise in flat modes drops slowly. This is one ingredient of the decay phase of warmup–stable–decay schedules ([`td2_3_edge_of_stability`, "Warmup and WSD"](td2_3_edge_of_stability.html#td23-8)): a high constant learning rate hides progress under a fluctuation floor, and the decay reveals it.
 
 **6.** $\nabla\ell_i(\theta^*+\delta)=x_i(x_i^\top\theta^*+x_i^\top\delta-y_i)=A_i\delta-u_i$. A batch step is $\delta'=(I-\eta\bar A)\delta+\eta\bar u$, with $\bar A=\frac1B\sum_bA_{i_b}$ and $\bar u=\frac1B\sum_bu_{i_b}$. The batch is independent of $\delta$, and $\mathbb E\delta=0$ at stationarity (from $\mathbb E\delta'=(I-\eta H)\mathbb E\delta$), so the cross terms vanish:
 
@@ -505,20 +549,20 @@ $$
 
 Next, $\mathbb E\,\bar u\bar u^\top=\Sigma^*/B$ (i.i.d. with mean zero) and $\mathbb E\bar A=H$. The pairs $b\ne b'$ in $\mathbb E\,\bar A\Pi\bar A=\frac1{B^2}\sum_{b,b'}\mathbb E A_{i_b}\Pi A_{i_{b'}}$ contribute $\frac{B(B-1)}{B^2}H\Pi H$, and the $B$ diagonal pairs contribute $\frac1B\cdot\frac1N\sum_iA_i\Pi A_i$. Collecting terms gives the stated equation.
 
-The middle term is the extra gradient noise from being away from the minimum (the covariance of the $A_i\delta$ part of the per-example gradient), $O(\eta)$ relative to $\Sigma^*$. At small $B$ it lowers the stability threshold below $\eta h_{\max}=2$, a toy version of SGD's batch-size-dependent stability edge ([`td2_2_edge_of_stability`, "The edge of stochastic stability"](td2_2_edge_of_stability.html#td22-6)). The equation is linear in $\Pi$, so the code solves it as a $d^2\times d^2$ linear system.
+The middle term is the extra gradient noise from being away from the minimum (the covariance of the $A_i\delta$ part of the per-example gradient), $O(\eta)$ relative to $\Sigma^*$. At small $B$ it lowers the stability threshold below $\eta h_{\max}=2$, a toy version of SGD's batch-size-dependent stability edge ([`td2_3_edge_of_stability`, "The edge of stochastic stability"](td2_3_edge_of_stability.html#td23-6)). The equation is linear in $\Pi$, so the code solves it as a $d^2\times d^2$ linear system.
 """
     ),
     markdown(
         r"""
-**Code 3.3.B — Checking the loss floor on linear regression.** How accurate is
+**Code 2.3.B — Checking the loss floor on linear regression.** How accurate is
 the SDE's floor for real minibatch SGD, with state-dependent noise, as
 $\eta\lambda_{\max}$ (step times largest Hessian eigenvalue) grows? $\Pi$ is the
 stationary covariance of $\theta-\theta^*$ ($\theta^*$ the minimizer). "SDE" is the
 Lyapunov solution with $\Sigma$ at $\theta^*$; "exact discrete" is the fixed point of
-the recursion of 3.3.A.6. The cells run SGD (with replacement) on least squares
+the recursion of 2.3.A.6. The cells run SGD (with replacement) on least squares
 with $d=8$, $N=1000$, and curvatures spread over a factor of 10. The sweep scales
 $\eta$ and $B$ together at fixed $\eta/B$, so the SDE predicts the same answer for
-every row: it *is* the linear scaling rule of §3.5, in a basin. Each row runs 200
+every row: it *is* the linear scaling rule of §2.5, in a basin. Each row runs 200
 chains from the minimum, averaging after six relaxation times $1/(\eta h_{\min})$ of
 the flattest mode.
 """
@@ -549,7 +593,7 @@ def pi_sde(eta, B):
     return lyap(H, eta / B * Sigma)
 
 def cov_map(eta, B):
-    # One SGD step maps vec(Pi) -> op @ vec(Pi) + c exactly, for mean-zero laws such as chains started at w_star (3.3.A.6).
+    # One SGD step maps vec(Pi) -> op @ vec(Pi) + c exactly, for mean-zero laws such as chains started at w_star (2.3.A.6).
     M = np.eye(d) - eta * H
     return np.kron(M, M) + eta**2 / B * (K4 - np.kron(H, H)), (eta**2 / B * Sigma).ravel()
 
@@ -613,10 +657,10 @@ The measurement matches the exact discrete theory to within a few percent (Monte
 Carlo error). The SDE is right at small $\eta$ and drifts away as $\eta\lambda_{\max}$
 grows, though $\eta/B$ never changes: 50% above at $\eta\lambda_{\max}\approx0.9$, six
 times above at $1.8$, divergent at the stability edge. In the $B=1$ row the small
-gap comes mostly from the state-dependent noise term of 3.3.A.6.
+gap comes mostly from the state-dependent noise term of 2.3.A.6.
 
 Next, a learning-rate decay. The dashed line is not a fit: it iterates the exact
-covariance map of 3.3.A.6 from the same start.
+covariance map of 2.3.A.6 from the same start.
 """
     ),
     code(
@@ -635,7 +679,7 @@ for k in range(3000):
     exact.append(excess(P.reshape(d, d)))
 plt.figure(figsize=(6, 3.4))
 plt.semilogy(trace, lw=1, alpha=0.8, label="SGD, mean over 200 chains")
-plt.semilogy(exact, "k--", lw=1.2, label="exact expectation (3.3.A.6)")
+plt.semilogy(exact, "k--", lw=1.2, label="exact expectation (2.3.A.6)")
 plt.axvline(1500, color="gray", lw=0.8)
 plt.xlabel("step"); plt.ylabel("excess loss  L(w) − L(w*)"); plt.legend()
 plt.title("η → η/10 at step 1500")
@@ -646,7 +690,7 @@ print("relaxation times 1/(2 η' h_j) in steps, sharpest mode first:",
     ),
     markdown(
         r"""
-Finally, sampling with replacement against random reshuffling (3.1.A.2) at
+Finally, sampling with replacement against random reshuffling (2.1.A.2) at
 $B=10$, so an epoch is $m=100$ steps. The second column, $m\,\eta\,h_{\min}$, is the
 length of an epoch in relaxation times $1/(\eta h_{\min})$ of the flattest mode.
 """
@@ -670,12 +714,12 @@ agree and the SDE value applies (up to the discrete-time enhancement in the last
 row).
 """
     ),
-    # ================================================================ 3.4 (critical batch size)
+    # ================================================================ 2.4 (critical batch size)
     markdown(
         r"""
-<a id="td23-cbs"></a>
+<a id="td22-cbs"></a>
 
-## 3.4 Critical batch size
+## 2.4 Critical batch size
 
 If you retune the learning rate for each batch size, past what batch size do
 extra examples stop helping? A one-step model says: past the noise scale
@@ -683,22 +727,20 @@ $B_{\rm noise}=\mathrm{tr}(H\Sigma)/G^\top HG$, with $G$ the gradient, $H$ the H
 and $\Sigma$ the per-example gradient covariance. Below it, doubling the batch
 nearly halves the steps; above it, extra examples are wasted.
 
-**Paper:** [McCandlish et al.](https://arxiv.org/abs/1812.06162) (rated at the top), §2 for the model. Appendix A.1 has the two-batch estimator; Appendix C explains the temperature dependence of the noise scale (3.3.A.3 here).
+**Paper:** [McCandlish et al.](https://arxiv.org/abs/1812.06162) (see [Readings](#td22-readings)), §2 for the model. Appendix A.1 has the two-batch estimator; Appendix C explains the temperature dependence of the noise scale (2.3.A.3 here).
 
 With the best step size, one step at batch $B$ makes a fraction
 $1/(1+B_{\rm noise}/B)$ of a full-batch step's progress. So steps and examples trade
 off along a hyperbola whose knee is the critical batch size
 $B_{\rm crit}\approx B_{\rm noise}$. The Hessian-free simple noise scale
-$B_{\rm simple}=\mathrm{tr}\,\Sigma/\|G\|^2$ (§3.1) is usually within a small factor of
+$B_{\rm simple}=\mathrm{tr}\,\Sigma/\|G\|^2$ (§2.1) is usually within a small factor of
 $B_{\rm noise}$. In McCandlish et al.'s experiments it predicted $B_{\rm crit}$ to within
 an order of magnitude, for values from about 20 to millions, and both grew as the
 loss fell.
 
-<a id="td23-cbs-walkthrough"></a>
+<a id="td22-cbs-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* Gradient $G=\nabla L$, Hessian $H$, per-example gradient covariance
+**Derivations and walkthrough.** *Notation:* Gradient $G=\nabla L$, Hessian $H$, per-example gradient covariance
 $\Sigma$, minibatch gradient $g_B$ over $B$ examples drawn with replacement (so
 $\mathrm{Cov}\,g_B=\Sigma/B$), and step size $\epsilon$ (McCandlish et al.'s symbol; it is
 the $\eta$ of other sections). For one step $\theta\to\theta-\epsilon g_B$,
@@ -709,7 +751,7 @@ $$
 
 This rough local model needs $G\ne0$ and positive curvature along the step
 ($G^\top HG>0$, $\mathrm{tr}(H\Sigma)>0$), and ignores third-order terms. Minimizing
-over $\epsilon$ (3.4.A.1) gives
+over $\epsilon$ (2.4.A.1) gives
 
 $$
 \epsilon_{\rm opt}(B)=\frac{\epsilon_{\max}}{1+B_{\rm noise}/B},\qquad
@@ -733,16 +775,16 @@ $$
 At $B=B_{\rm crit}$ you pay twice the minimum steps and twice the minimum examples.
 
 **Measuring it.** With replacement, $\mathbb E\|g_B\|^2=\|G\|^2+\mathrm{tr}\,\Sigma/B$, so
-two batch sizes give two equations in two unknowns (3.4.A.3); in data-parallel
+two batch sizes give two equations in two unknowns (2.4.A.3); in data-parallel
 training the per-device and all-reduced gradients supply them for free. Two
 warnings. The estimate of $\|G\|^2$ is a small difference of large numbers, so
 average numerator and denominator separately before dividing. And $B_{\rm simple}$
 depends on the temperature of the run you measure it in: at equilibrium in a
 basin it is $\frac{2B}{\eta\bar h}$, with $\bar h=\mathrm{tr}(H\Sigma)/\mathrm{tr}\,\Sigma$
-(3.3.A.3), so it rises tenfold when you cut $\eta$ tenfold. McCandlish et al.
+(2.3.A.3), so it rises tenfold when you cut $\eta$ tenfold. McCandlish et al.
 recommend measuring on a run with a well-tuned learning rate.
 
-**Exercise 3.4.A — The one-step model and the two-batch estimator.**
+**Exercise 2.4.A — The one-step model and the two-batch estimator.**
 
 1. Derive $\epsilon_{\rm opt}$ and $\Delta L_{\rm opt}$ from the quadratic expansion. Why does the expansion use $\mathrm{tr}(H\Sigma)/B$, and how would it change for batches drawn without replacement from $N$ examples?
 2. Assume each step at batch $B$ makes progress $\Delta L_{\max}/(1+B_{\rm noise}/B)$, with $\Delta L_{\max}$ and $B_{\rm noise}$ fixed. Show that $S=S_{\min}(1+B_{\rm noise}/B)$ and $E=E_{\min}(1+B/B_{\rm noise})$ with $E_{\min}=S_{\min}B_{\rm noise}$. Derive the tradeoff and $B_{\rm crit}=B_{\rm noise}$.
@@ -781,9 +823,9 @@ Both are linear in $(n_s,n_b)$, so they are unbiased; substitute the expectation
     ),
     markdown(
         r"""
-**Code 3.4.B — The steps–examples tradeoff, measured.** Does the hyperbola of
-3.4.A.2 hold, with $B_{\rm crit}\approx B_{\rm noise}$, on a problem where both can be
-computed? The cell reuses the least-squares problem of Code 3.3.B ($d=8$, $N=1000$).
+**Code 2.4.B — The steps–examples tradeoff, measured.** Does the hyperbola of
+2.4.A.2 hold, with $B_{\rm crit}\approx B_{\rm noise}$, on a problem where both can be
+computed? The cell reuses the least-squares problem of Code 2.3.B ($d=8$, $N=1000$).
 For each batch size from 1 to 512 it tries 18 learning rates (up to the stability
 edge), runs 16 chains from a common start, and records the fewest steps $S(B)$
 after which the mean excess loss falls below $0.01$ (it starts at about 3). It fits
@@ -855,13 +897,13 @@ of the steps, and the fitted $B_{\rm crit}$ lies inside the range of $B_{\rm noi
 McCandlish et al. predict $B_{\rm crit}\approx B_{\rm noise}$ "appropriately averaged"
 over training (their Appendix D).
 
-**Exercise 3.4.C (code) — Estimate $B_{\rm simple}$.** Fill in
-`noise_scale_estimates`, using the two-batch estimators of 3.4.A.3. The next cell
+**Exercise 2.4.C (code) — Estimate $B_{\rm simple}$.** Fill in
+`noise_scale_estimates`, using the two-batch estimators of 2.4.A.3. The next cell
 trains logistic regression with SGD ($B=16$, $\eta=0.5$, then $0.05$ from step 3000).
 Every 100 steps it compares the exact $\mathrm{tr}\,\Sigma/\|G\|^2$ with your estimate
 (2000 minibatches at each of $B_s=8$ and $B_b=128$), per checkpoint and as a ratio
 of means over blocks of 5 checkpoints. The dashed lines are the OU prediction
-$\frac{2B\,\mathrm{tr}\,\Sigma}{\eta\,\mathrm{tr}(H\Sigma)}$ (3.3.A.3), with $H$ and $\Sigma$ at
+$\frac{2B\,\mathrm{tr}\,\Sigma}{\eta\,\mathrm{tr}(H\Sigma)}$ (2.3.A.3), with $H$ and $\Sigma$ at
 the minimizer.
 """
     ),
@@ -950,47 +992,34 @@ before dividing fixes most of this. "The" critical batch size depends on when yo
 ask, and at what learning rate.
 """
     ),
-    # ================================================================ 3.5 (LSR)
+    # ================================================================ 2.5 (LSR)
     markdown(
         r"""
-<a id="td23-lsr"></a>
+<a id="td22-lsr"></a>
 
-## 3.5 The linear scaling rule and where it fails
+## 2.5 The linear scaling rule and where it fails
 
 Multiply the batch size $B$ by $\kappa$, multiply the learning rate $\eta$ by
-$\kappa$. This *linear scaling rule* (LSR) works because the order-1 SME of §3.2
+$\kappa$. This *linear scaling rule* (LSR) works because the order-1 SME of §2.2
 depends on $(\eta,B)$ only through $\eta/B$. It fails once $\eta$ times the top
 Hessian eigenvalue is no longer small, or once $B$ passes the critical batch size
-of §3.4.
+of §2.4.
 
-**Paper:** [Li, Malladi and Arora](https://arxiv.org/abs/2102.12470) (rated at the top), §2–§5: the failure criterion and SVAG.
-"""
-        + reading(
-            "Accurate, large minibatch SGD: training ImageNet in 1 hour",
-            "https://arxiv.org/abs/1706.02677",
-            "Priya Goyal et al. (2017)",
-            "The empirical linear scaling rule with gradual warmup, holding up to batch size 8k for ResNet-50 on "
-            "ImageNet and degrading beyond.",
-            "§2 has the rule and its informal justification.",
-            importance=2,
-            length=1,
-        )
-        + r"""
+**Papers:** [Li, Malladi and Arora](https://arxiv.org/abs/2102.12470), §2–§5: the failure criterion and SVAG; Goyal et al., *Accurate, large minibatch SGD*, §2, for the empirical rule (see [Readings](#td22-readings)).
+
 Under $B\to\kappa B$, $\eta\to\kappa\eta$, the SDE is unchanged, and SDE time $t$
 ($t/\eta$ steps, $tB/\eta$ examples) is reached in $\kappa$ times fewer steps with the
-same number of examples. It must fail eventually, in three ways. *Higher-order drift* (§3.4): the curvature term
+same number of examples. It must fail eventually, in three ways. *Higher-order drift* (§2.4): the curvature term
 $\frac{\eta^2}2G^\top HG$ grows like $\kappa$ per example, so the LSR holds only while
-$B\ll B_{\rm noise}$. *Discreteness* (3.3.A.4): in a basin the floor grows by
+$B\ll B_{\rm noise}$. *Discreteness* (2.3.A.4): in a basin the floor grows by
 $(1-\kappa\eta h/2)^{-1}$ for a curvature $h$, however small $\eta/B$ is. And
-*everything the SME leaves out* (§3.7). Li, Malladi and Arora give a cheap test that
+*everything the SME leaves out* (§2.7). Li, Malladi and Arora give a cheap test that
 certifies failure, and a simulation, SVAG, that checks whether a run is at its SDE
 limit.
 
-<a id="td23-lsr-walkthrough"></a>
+<a id="td22-lsr-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* Gradient $G=\nabla L$, Hessian $H$ with eigenvalues $h$, per-example
+**Derivations and walkthrough.** *Notation:* Gradient $G=\nabla L$, Hessian $H$ with eigenvalues $h$, per-example
 gradient covariance $\Sigma$, minibatch gradient $g_B$; order-1 SME
 $d\theta=-\nabla L\,dt+\sqrt{\eta/B}\,\Sigma^{1/2}dW$.
 
@@ -1009,7 +1038,7 @@ the runs at $(B,\eta)$ and $(\kappa B,\kappa\eta)$ cannot agree to within a fact
 $C$ on three test functions (weight norm, gradient norm, noise trace per example).
 Since $\mathcal N=\mathbb E\,\mathrm{tr}\,\Sigma/B$, in the noisy regime the LSR fails
 beyond $\kappa B\approx C^2\,\mathbb E\,\mathrm{tr}\,\Sigma/\mathbb E\|\nabla L\|^2$, i.e. $C^2$
-times the equilibrium noise scale (ratio of means, as in 3.4.C), read off one
+times the equilibrium noise scale (ratio of means, as in 2.4.C), read off one
 small-batch run (their Theorem 5.6, with $C^2=2$ in experiments). It certifies
 failure, not success.
 
@@ -1017,23 +1046,23 @@ failure, not success.
 **SVAG** (Stochastic Variance Amplified Gradient). For an integer $l\ge1$, combine
 two independent minibatch gradients with weights $a_\pm=\frac{1\pm\sqrt{2l-1}}2$ and
 step with learning rate $\eta/l$. Each step matches an Euler–Maruyama step of size
-$\eta/l$ for the *same* SDE (3.5.A.1), so as $l\to\infty$ SVAG converges weakly to it
+$\eta/l$ for the *same* SDE (2.5.A.1), so as $l\to\infty$ SVAG converges weakly to it
 (their Theorem 4.3); $l=1$ is SGD. If the curves for $l=1,2,4,\dots$ coincide, SGD is
 at its SDE limit for those observables.
 
-**Exercise 3.5.A — SVAG, and what the noise-to-signal ratio measures.** In items 2
+**Exercise 2.5.A — SVAG, and what the noise-to-signal ratio measures.** In items 2
 and 3, $\Sigma$ is a scalar: the per-example gradient-noise variance along one mode.
 
 1. *(SVAG.)* Show $a_++a_-=1$ and $a_+^2+a_-^2=l$. Conclude that the SVAG gradient has mean $G$ and covariance $l\,\Sigma/B$, and that one SVAG step has the conditional mean and covariance of an Euler–Maruyama step of size $\eta/l$ for $d\theta=-\nabla L\,dt+\sqrt{\eta/B}\,\Sigma^{1/2}dW$, the same SDE for every $l$.
-2. *(The criterion in a basin.)* For one mode of curvature $h$ of discrete SGD with additive noise (3.3.A.4), show that at equilibrium $\mathcal N/\mathcal G=(2-\eta h)/(\eta h)$. (The OU model gives $2/(\eta h)$, its small-$\eta h$ limit; compare 3.3.A.3.) When does the noise dominate? Substitute into $\kappa>C^2(1+\mathcal N/\mathcal G)$ with $C^2=2$, and compare the threshold with the stability limit $\kappa\eta h<2$. Where is the criterion informative?
-3. *(SVAG in one mode.)* For one mode of curvature $h$ with additive noise, show that SVAG($l$) at learning rate $\eta$ and batch $B$ has stationary excess loss $\frac{\eta\Sigma}{4B}\big(1-\frac{\eta h}{2l}\big)^{-1}$. How fast does it approach the SDE value, and why does the $\eta\lambda_{\max}\approx1.8$ curve in Code 3.5.B need larger $l$?
+2. *(The criterion in a basin.)* For one mode of curvature $h$ of discrete SGD with additive noise (2.3.A.4), show that at equilibrium $\mathcal N/\mathcal G=(2-\eta h)/(\eta h)$. (The OU model gives $2/(\eta h)$, its small-$\eta h$ limit; compare 2.3.A.3.) When does the noise dominate? Substitute into $\kappa>C^2(1+\mathcal N/\mathcal G)$ with $C^2=2$, and compare the threshold with the stability limit $\kappa\eta h<2$. Where is the criterion informative?
+3. *(SVAG in one mode.)* For one mode of curvature $h$ with additive noise, show that SVAG($l$) at learning rate $\eta$ and batch $B$ has stationary excess loss $\frac{\eta\Sigma}{4B}\big(1-\frac{\eta h}{2l}\big)^{-1}$. How fast does it approach the SDE value, and why does the $\eta\lambda_{\max}\approx1.8$ curve in Code 2.5.B need larger $l$?
 
 <details><summary>Hint</summary>
 
 For 1, $\mathbb E(a_+g_1+a_-g_2)=(a_++a_-)G$ and the covariance is
 $(a_+^2+a_-^2)\Sigma/B$ for independent batches. For 2, $\mathcal G=\mathbb E\,G^2=h^2\Pi$
-with 3.3.A.4's $\Pi$ for one mode, and $\mathcal N=\Sigma/B$. For 3, SVAG is SGD
-with learning rate $\eta/l$ and per-step noise covariance $l\Sigma/B$; redo 3.3.A.4(b).
+with 2.3.A.4's $\Pi$ for one mode, and $\mathcal N=\Sigma/B$. For 3, SVAG is SGD
+with learning rate $\eta/l$ and per-step noise covariance $l\Sigma/B$; redo 2.3.A.4(b).
 </details>
 """
     ),
@@ -1041,37 +1070,37 @@ with learning rate $\eta/l$ and per-step noise covariance $l\Sigma/B$; redo 3.3.
         r"""
 **1.** $a_++a_-=1$, and $a_+^2+a_-^2=\frac{(1+s)^2+(1-s)^2}4=\frac{1+s^2}2=\frac{1+2l-1}2=l$, with $s=\sqrt{2l-1}$. The SVAG gradient $a_+g_1+a_-g_2$ (two independent batches) has mean $G$ and covariance $l\,\Sigma/B$. One step with learning rate $\eta/l$ has mean $-\frac\eta lG$ and covariance $\frac{\eta^2}{l^2}\cdot l\frac\Sigma B=\frac\eta l\cdot\frac\eta B\Sigma$: the mean and covariance of an Euler–Maruyama step of size $\Delta t=\eta/l$ for drift $-G$ and diffusion $D=\frac\eta B\Sigma$. The SDE being matched does not depend on $l$; only the step size does. (Convergence also needs the higher moments to shrink fast enough; Li, Malladi and Arora check this, Lemma 4.6.)
 
-**2.** From 3.3.A.4, one mode has $\Pi=\frac{\eta\Sigma}{Bh(2-\eta h)}$, so $\mathcal G=h^2\Pi=\frac{\eta h\Sigma}{B(2-\eta h)}$ and
+**2.** From 2.3.A.4, one mode has $\Pi=\frac{\eta\Sigma}{Bh(2-\eta h)}$, so $\mathcal G=h^2\Pi=\frac{\eta h\Sigma}{B(2-\eta h)}$ and
 
 $$
 \frac{\mathcal N}{\mathcal G}=\frac{\Sigma/B}{\eta h\Sigma/(B(2-\eta h))}=\frac{2-\eta h}{\eta h}.
 $$
 
-The noise dominates ($\mathcal N/\mathcal G>1$) only for $\eta h<1$; at $\eta h=1.5$ the gradient, though produced entirely by fluctuations, is larger than its noise. For small $\eta h$ the ratio is $2/(\eta h)$, the equilibrium $B_{\rm simple}/B$ of 3.3.A.3.
+The noise dominates ($\mathcal N/\mathcal G>1$) only for $\eta h<1$; at $\eta h=1.5$ the gradient, though produced entirely by fluctuations, is larger than its noise. For small $\eta h$ the ratio is $2/(\eta h)$, the equilibrium $B_{\rm simple}/B$ of 2.3.A.3.
 
-With $C^2=2$ the criterion reads $\kappa>2\big(1+\frac{2-\eta h}{\eta h}\big)=\frac4{\eta h}$, that is $\kappa\eta h>4$ (a formal comparison: a quadratic is outside their scale-invariant setting). But the scaled run already diverges at $\kappa\eta h=2$. So in a frozen basin the criterion only fires after the run has blown up: true, but it adds nothing to 3.3.A.4. It is informative in their setting, where the equilibrium of a scale-invariant net with weight decay is not a frozen basin and $\mathcal N/\mathcal G$ is a cheap summary of it. The toy shows what $\mathcal N/\mathcal G$ tracks: learning rate times noise-weighted curvature, read off without computing $H$.
+With $C^2=2$ the criterion reads $\kappa>2\big(1+\frac{2-\eta h}{\eta h}\big)=\frac4{\eta h}$, that is $\kappa\eta h>4$ (a formal comparison: a quadratic is outside their scale-invariant setting). But the scaled run already diverges at $\kappa\eta h=2$. So in a frozen basin the criterion only fires after the run has blown up: true, but it adds nothing to 2.3.A.4. It is informative in their setting, where the equilibrium of a scale-invariant net with weight decay is not a frozen basin and $\mathcal N/\mathcal G$ is a cheap summary of it. The toy shows what $\mathcal N/\mathcal G$ tracks: learning rate times noise-weighted curvature, read off without computing $H$.
 
-**3.** SVAG($l$) is SGD with step $\eta/l$ and gradient-noise covariance $l\Sigma/B$, so the per-step noise covariance is $(\eta/l)^2l\Sigma/B=\eta^2\Sigma/(lB)$. For one mode, $\Pi=(1-\frac{\eta h}l)^2\Pi+\frac{\eta^2\Sigma}{lB}$, so $\Pi\,\frac{\eta h}l\big(2-\frac{\eta h}l\big)=\frac{\eta^2\Sigma}{lB}$ and $\Pi=\frac{\eta\Sigma}{Bh(2-\eta h/l)}$. The excess loss is $\frac h2\Pi=\frac{\eta\Sigma}{4B}\big(1-\frac{\eta h}{2l}\big)^{-1}$. SVAG acts like SGD at the effective $\eta h/l$: the gap closes like $\frac{\eta h}{2l}$. At $\eta h=1.8$ the factor is $10$ at $l=1$, $1.8$ at $l=2$, $1.3$ at $l=4$ and $1.1$ at $l=8$, the pattern in Code 3.5.B.
+**3.** SVAG($l$) is SGD with step $\eta/l$ and gradient-noise covariance $l\Sigma/B$, so the per-step noise covariance is $(\eta/l)^2l\Sigma/B=\eta^2\Sigma/(lB)$. For one mode, $\Pi=(1-\frac{\eta h}l)^2\Pi+\frac{\eta^2\Sigma}{lB}$, so $\Pi\,\frac{\eta h}l\big(2-\frac{\eta h}l\big)=\frac{\eta^2\Sigma}{lB}$ and $\Pi=\frac{\eta\Sigma}{Bh(2-\eta h/l)}$. The excess loss is $\frac h2\Pi=\frac{\eta\Sigma}{4B}\big(1-\frac{\eta h}{2l}\big)^{-1}$. SVAG acts like SGD at the effective $\eta h/l$: the gap closes like $\frac{\eta h}{2l}$. At $\eta h=1.8$ the factor is $10$ at $l=1$, $1.8$ at $l=2$, $1.3$ at $l=4$ and $1.1$ at $l=8$, the pattern in Code 2.5.B.
 """
     ),
     markdown(
         r"""
-**Code 3.5.B — SVAG on the least-squares problem.** Is SGD at its SDE limit at two
-points of the family $\eta/B=0.01$ on the problem of Code 3.3.B:
+**Code 2.5.B — SVAG on the least-squares problem.** Is SGD at its SDE limit at two
+points of the family $\eta/B=0.01$ on the problem of Code 2.3.B:
 $(\eta,B)=(0.16,16)$, where $\eta\lambda_{\max}\approx0.3$, and $(0.96,96)$, where
 $\eta\lambda_{\max}\approx1.8$? For $l=1,2,4,8$ the cell divides SVAG's stationary
 excess loss by the SDE's. "The SDE" keeps the state-dependent noise, so its floor
 solves
 $H\Pi+\Pi H=\frac\eta B\big(\Sigma^*+\frac1N\sum_iA_i\Pi A_i-H\Pi H\big)$, with
 $A_i=x_ix_i^\top$ and $\Sigma^*=\Sigma$ the per-example gradient covariance at the
-minimum (the continuous-time version of 3.3.A.6). It is about 4% above the
+minimum (the continuous-time version of 2.3.A.6). It is about 4% above the
 frozen-noise value $\frac{\eta}{4B}\mathrm{tr}\,\Sigma$.
 """
     ),
     code(
         r"""
 def pi_sde_state(eta, B):
-    # Stationary covariance of the SDE with the state-dependent least-squares noise (continuous 3.3.A.6).
+    # Stationary covariance of the SDE with the state-dependent least-squares noise (continuous 2.3.A.6).
     I = np.eye(d)
     A = np.kron(I, H) + np.kron(H, I) - eta / B * (K4 - np.kron(H, H))
     return np.linalg.solve(A, (eta / B * Sigma).ravel()).reshape(d, d)
@@ -1109,30 +1138,22 @@ plt.legend(fontsize=8); plt.tight_layout(); plt.show()
 At $\eta\lambda_{\max}\approx0.3$ SGD is within about 10% of its SDE limit. At
 $\eta\lambda_{\max}\approx1.8$ its floor is several times the SDE's, and SVAG walks it
 down as $l$ grows: two runs of the "same" linear-scaling family are not both at
-the SDE limit (3.5.A.3 gives the rate for one mode).
+the SDE limit (2.5.A.3 gives the rate for one mode).
 """
     ),
-    # ================================================================ 3.6
+    # ================================================================ 2.6
     markdown(
         r"""
-<a id="td23-6"></a>
+<a id="td22-6"></a>
 
-## 3.6 Adam and the square-root rule
+## 2.6 Adam and the square-root rule
 
 For Adam and RMSprop the learning rate should scale like $\sqrt B$, not $B$, and
 the moving-average parameters and $\epsilon$ must scale too.
-"""
-        + reading(
-            "On the SDEs and scaling rules for adaptive gradient algorithms",
-            "https://arxiv.org/abs/2205.10287",
-            "Sadhika Malladi, Kaifeng Lyu, Abhishek Panigrahi, Sanjeev Arora (NeurIPS 2022)",
-            "SDEs for RMSprop and Adam with one step equal to time η², and the square-root scaling rule, "
-            "with proofs and checks on vision and language tasks.",
-            "§4.1 (the linear-loss warm-up) is the whole idea in one page.",
-            importance=3,
-            length=2,
-        )
-        + r"""
+
+**Paper:** Malladi, Lyu, Panigrahi and Arora, *On the SDEs and scaling rules for
+adaptive gradient algorithms* (see [Readings](#td22-readings)).
+
 RMSprop divides the minibatch gradient $g_B$ coordinatewise by $\sqrt v$, where $v$
 is an exponential moving average (EMA) of $g_B^2$. When noise dominates,
 $v\approx\mathrm{diag}(\Sigma)/B$ ($\Sigma$ the per-example gradient covariance), so the
@@ -1148,11 +1169,9 @@ $$
 
 with $\beta_1,\beta_2$ Adam's EMA parameters and $\epsilon$ the constant added to $\sqrt v$.
 
-<a id="td23-6-walkthrough"></a>
+<a id="td22-6-walkthrough"></a>
 
-### Optional: annotated derivations and walkthrough
-
-*Notation.* Full gradient $G$; vector squares, roots and division are
+**Derivations and walkthrough.** *Notation:* Full gradient $G$; vector squares, roots and division are
 coordinatewise. RMSprop steps $\theta\leftarrow\theta-\eta\,g/(\sqrt v+\epsilon)$, with $v$
 an EMA of $g^2$ with parameter $\beta$; Adam adds an EMA of $g$ with parameter
 $\beta_1$, and bias corrections.
@@ -1180,7 +1199,7 @@ opposite regime $v\approx G^2$ and the update is close to sign descent
 covers where that picture fails).
 
 
-**Exercise 3.6.A — Why a square root, and the floor.**
+**Exercise 2.6.A — Why a square root, and the floor.**
 
 1. *(Malladi et al.'s warm-up.)* Take a linear loss $f(\theta)=\langle\theta,\bar g\rangle$ and isotropic noise, $g_k\sim\mathcal N(\bar g,\sigma^2I)$. Assume $v_k\approx\bar g^2+\sigma^2$ (concentrated) and $\sigma\gg\|\bar g\|$, and ignore $\epsilon$. Show that RMSprop gives, approximately, $\theta_k-\theta_0\sim\mathcal N\big(-k\eta\bar g/\sigma,\ k\eta^2I\big)$. What must happen to $\eta$ and $k$ to keep this law fixed when $\sigma\to\sigma/\sqrt\kappa$?
 2. Why must $1-\beta$ scale like $\kappa$, and $\epsilon$ like $1/\sqrt\kappa$?
@@ -1209,10 +1228,10 @@ take the trace.
     ),
     markdown(
         r"""
-**Code 3.6.B — The square-root rule on a noisy quadratic.** Adam on a
+**Code 2.6.B — The square-root rule on a noisy quadratic.** Adam on a
 12-dimensional noisy quadratic (curvatures from 1 to 0.05, per-example noise
 variances from 0.5 to 4) at base batch size 4, with the batch scaled by $\kappa=4$
-and $16$ under each rule. The dashed lines are the floors of 3.6.A.3, derived
+and $16$ under each rule. The dashed lines are the floors of 2.6.A.3, derived
 without momentum; momentum leaves them unchanged when each mode relaxes slowly
 compared with its window of about $1/(1-\beta_1)$ steps. The linear-rule runs at
 large $\kappa$ violate this, yet land within about 10% of the prediction.
@@ -1260,46 +1279,31 @@ square-root rule: there the gradient is large compared with the noise in some
 coordinates (discretization and bias corrections may also contribute).
 """
     ),
-    # ================================================================ 3.7
+    # ================================================================ 2.7
     markdown(
         r"""
-<a id="td23-valid"></a>
+<a id="td22-valid"></a>
 
-## 3.7 When is the SDE picture valid?
+## 2.7 When is the SDE picture valid?
 
 Everything above expands in the step size $\eta$, which the theorems justify only
 as $\eta\to0$ on a fixed time horizon. Whether it is accurate at a practical
 learning rate has to be checked. Below, $h$ is a Hessian eigenvalue and
 $\lambda_{\max}$ the largest. ([`td2_1_flows`, §1.3](td2_1_flows.html#td21-s3) asks the same of the deterministic expansion.)
 
-**Paper:** [Li, Malladi and Arora](https://arxiv.org/abs/2102.12470) (rated at the top), for SVAG and the evidence; [Smith, Dherin, Barrett and De](https://arxiv.org/abs/2101.12176) (§3.1), §4, for item 4.
+**Paper:** [Li, Malladi and Arora](https://arxiv.org/abs/2102.12470) (see [Readings](#td22-readings)), for SVAG and the evidence; [Smith, Dherin, Barrett and De](https://arxiv.org/abs/2101.12176) (§2.1), §4, for item 4.
 
-1. **The bounds are not quantitative.** Weak order $p$ means error $C\eta^p$ with $C$ not estimated (§3.2).
-2. **$\eta h$ is not small in the top directions.** In a basin the floor is 50% above the SDE value at $\eta\lambda_{\max}\approx0.9$ (Code 3.3.B), and the order-2 SME gets the sign of that correction wrong (3.3.A.4). Under full-batch GD networks sit at the edge of stability, $\eta\lambda_{\max}\approx2$, where a [central flow](td2_2_edge_of_stability.html#td22-3) (the flow of the trajectory averaged over the fast oscillation), not gradient flow, models the deterministic part; under SGD a [batch sharpness](td2_2_edge_of_stability.html#td22-6) plays this role.
-3. **Long times and rare events.** Flat modes need about $1/(\eta h)$ steps to equilibrate, possibly longer than training. For isotropic Langevin dynamics, escape rates depend exponentially on barrier over temperature, so an $O(\eta h)$ relative error in the effective temperature (3.3.A.4) can change them by large factors; for anisotropic, state-dependent noise the relevant barrier is a quasipotential (the least-cost noise-driven path out of the basin; ask your agent), not the loss barrier. Arguments about which minima SGD "prefers" live here, where fixed-horizon bounds say nothing.
+1. **The bounds are not quantitative.** Weak order $p$ means error $C\eta^p$ with $C$ not estimated (§2.2).
+2. **$\eta h$ is not small in the top directions.** In a basin the floor is 50% above the SDE value at $\eta\lambda_{\max}\approx0.9$ (Code 2.3.B), and the order-2 SME gets the sign of that correction wrong (2.3.A.4). Under full-batch GD networks sit at the edge of stability, $\eta\lambda_{\max}\approx2$, where a [central flow](td2_3_edge_of_stability.html#td23-3) (the flow of the trajectory averaged over the fast oscillation), not gradient flow, models the deterministic part; under SGD a [batch sharpness](td2_3_edge_of_stability.html#td23-6) plays this role.
+3. **Long times and rare events.** Flat modes need about $1/(\eta h)$ steps to equilibrate, possibly longer than training. For isotropic Langevin dynamics, escape rates depend exponentially on barrier over temperature, so an $O(\eta h)$ relative error in the effective temperature (2.3.A.4) can change them by large factors; for anisotropic, state-dependent noise the relevant barrier is a quasipotential (the least-cost noise-driven path out of the basin; ask your agent), not the loss barrier. Arguments about which minima SGD "prefers" live here, where fixed-horizon bounds say nothing.
 4. **The finite-$\eta$ drift may matter more than the noise.** Smith et al. ([`td2_1_flows`, §1.4](td2_1_flows.html#td21-s4)) argue, holding the temperature fixed while changing higher-order terms, that SGD's generalization benefit comes from the finite-$\eta$ drift corrections, not the SDE temperature. On that view the order-1 SME keeps the wrong small term.
-5. **The one-step model of §3.4** assumes a roughly constant noise scale (Code 3.4.B saw $B_{\rm noise}$ grow twenty- to fortyfold) and ignores third-order terms.
-6. **Reshuffling.** The theorems assume i.i.d. sampling; with reshuffling, slow directions fluctuate less than the SDE predicts (3.1.A.2, Code 3.3.B).
+5. **The one-step model of §2.4** assumes a roughly constant noise scale (Code 2.4.B saw $B_{\rm noise}$ grow twenty- to fortyfold) and ignores third-order terms.
+6. **Reshuffling.** The theorems assume i.i.d. sampling; with reshuffling, slow directions fluctuate less than the SDE predicts (2.1.A.2, Code 2.3.B).
 7. **Heavy tails.** [Şimşekli, Sagun and Gürbüzbalaban](https://arxiv.org/abs/1901.06053) argued minibatch noise is heavy-tailed, which would give a Lévy-driven limit. Li, Malladi and Arora argue that the measurement can mislead, and find that SGD and Gaussian noisy GD of matched covariance reach the same CIFAR-10 accuracy (89.4% vs 89.3%).
 8. **Smoothness.** ReLU kinks, and normalization layers near the origin, violate the theorems' regularity assumptions.
-9. **It can be tested.** SVAG (§3.5) checks whether a run is at its SDE limit. In Li, Malladi and Arora's CIFAR-10 runs it was at small and moderate batch sizes, and was not once the linear scaling rule broke.
-"""
-    ),
-    # ================================================================ readings
-    markdown(
-        r"""
-<a id="td23-readings"></a>
-
-## Readings
-
-The papers are linked at the top and in each section. Also:
-[Li, Tai and E, JMLR 2019](https://jmlr.org/papers/v20/17-526.html) (the rigorous SME
-theorems); [Higham 2001](https://doi.org/10.1137/S0036144500378302) (Euler–Maruyama and
-weak versus strong convergence, with short programs);
-[Şimşekli, Sagun and Gürbüzbalaban](https://arxiv.org/abs/1901.06053) (heavy-tailed
-gradient noise, §3.7).
+9. **It can be tested.** SVAG (§2.5) checks whether a run is at its SDE limit. In Li, Malladi and Arora's CIFAR-10 runs it was at small and moderate batch sizes, and was not once the linear scaling rule broke.
 """
     ),
 ]
 
-raise SystemExit(run(CELLS, "td2_3_sgd_sde", "td2_3_sgd_sde"))
+raise SystemExit(run(CELLS, "td2_2_sgd_sde", "td2_2_sgd_sde"))

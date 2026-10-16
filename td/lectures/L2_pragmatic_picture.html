@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Pragmatic Picture</title>
+<!--
+  TD lecture 2: "The pragmatic picture", a short orienting lecture (about 15 minutes) for the
+  NB2 notebooks td2_1 to td2_8. The full outline with the longer speaker notes is
+  L2_pragmatic_picture.md; this deck follows its compressed path.
+  Figures: assets/L2/*.png, made by assets/L2/make_figures.py (each one restates a code cell
+  of the notebook named in the caption).
+
+  Keys: arrows / space move; N shows or hides the speaker notes on the slide;
+  S opens reveal.js's speaker view (notes, timer, next slide); Esc or O the overview; F fullscreen.
+  PDF: open this page with ?print-pdf appended and print to PDF from Chrome/Chromium
+  (add &showNotes to print the notes on separate pages).
+
+  reveal.js 5.1.0 and KaTeX 0.16.9, pinned, from cdnjs.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reset.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+  :root {
+    --paper: #fcfbf7;
+    --panel: #f3f0e8;
+    --ink: #1a1f26;
+    --ink-2: #4d5763;
+    --ink-3: #808b97;
+    --rule: #ddd7c9;
+    /* one accent per knob */
+    --c0: #1b6aa8;  /* framing: the two tools, the valley   */
+    --c1: #0f7a5f;  /* the expansions: step size, batch size */
+    --c2: #a2660f;  /* where they break: EoS, catapult, schedule */
+    --c3: #7a4d9e;  /* optimizer and width                  */
+    --c4: #b8442a;  /* normalization and weight decay       */
+    --c5: #2a6f8f;  /* what the knobs act on                */
+    --c6: #4d5763;  /* menu                                 */
+    --sans: "Adwaita Sans", Inter, "DejaVu Sans", "Liberation Sans", system-ui, sans-serif;
+  }
+  html, body, .reveal-viewport { background: var(--paper); color: var(--ink); }
+  .reveal { font-family: var(--sans); font-size: 30px; color: var(--ink); }
+  .reveal .slides { text-align: left; }
+  .reveal .slides section { padding: 0 8px; box-sizing: border-box; height: 100%; }
+  .reveal section[data-stage="0"] { --accent: var(--c0); }
+  .reveal section[data-stage="1"] { --accent: var(--c1); }
+  .reveal section[data-stage="2"] { --accent: var(--c2); }
+  .reveal section[data-stage="3"] { --accent: var(--c3); }
+  .reveal section[data-stage="4"] { --accent: var(--c4); }
+  .reveal section[data-stage="5"] { --accent: var(--c5); }
+  .reveal section[data-stage="6"] { --accent: var(--c6); }
+  .reveal .eyebrow {
+    margin: 0 0 10px; color: var(--accent, var(--ink-2)); font-size: 22px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .reveal h1, .reveal h2 { font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; margin: 0 0 22px; color: var(--ink); }
+  .reveal h1 { font-size: 62px; max-width: 20ch; }
+  .reveal h2 { font-size: 40px; }
+  .reveal p { margin: 0 0 14px; line-height: 1.35; }
+  .reveal ul, .reveal ol { margin: 0 0 0 1.1em; padding: 0; }
+  .reveal li { margin: 0 0 10px; line-height: 1.3; }
+  .reveal li::marker { color: var(--accent, var(--ink-2)); }
+  .reveal .small { font-size: 24px; color: var(--ink-2); }
+  .reveal .muted { color: var(--ink-2); }
+  .reveal strong { color: var(--ink); font-weight: 700; }
+  .reveal em { font-style: italic; }
+  .reveal a { color: var(--accent, var(--c0)); }
+  .reveal code { font-family: "DejaVu Sans Mono", monospace; font-size: 0.85em; background: var(--panel); padding: 1px 6px; border-radius: 4px; }
+  .reveal .eq { margin: 8px 0 18px; font-size: 31px; }
+  .reveal .katex { white-space: nowrap; }
+  .reveal .eq.big { font-size: 38px; }
+  .reveal .box { border-left: 5px solid var(--accent, var(--ink-2)); background: var(--panel); padding: 12px 20px; margin: 8px 0 16px; border-radius: 0 6px 6px 0; }
+  .reveal img.fig { display: block; margin: 0 auto; max-width: 100%; max-height: 460px; }
+  .reveal .cap { font-size: 21px; color: var(--ink-2); margin-top: 6px; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+  .reveal .cols.fig-right { grid-template-columns: 1fr 1.15fr; gap: 24px; }
+  .reveal .cols.fig-left { grid-template-columns: 1.15fr 1fr; gap: 24px; }
+  .reveal .cols .side { font-size: 25px; }
+  .reveal .cols .side li { margin-bottom: 9px; }
+  .reveal table { border-collapse: collapse; font-size: 23px; width: 100%; }
+  .reveal th, .reveal td { border-bottom: 1px solid var(--rule); padding: 7px 10px; text-align: left; vertical-align: top; }
+  .reveal th { color: var(--ink-2); font-weight: 600; }
+  .reveal .room { color: var(--ink-3); font-style: italic; font-size: 24px; }
+  .reveal .nb { font-family: "DejaVu Sans Mono", monospace; font-size: 0.8em; color: var(--accent, var(--ink-2)); white-space: nowrap; }
+  .reveal .speaker-notes { font-size: 20px; background: #fffef9; color: var(--ink); }
+  .reveal .speaker-notes a { color: var(--c0); }
+  .reveal .slide-number { background: transparent; color: var(--ink-3); font-size: 18px; right: auto; left: 14px; bottom: 10px; }
+  .reveal .slide-number a { color: var(--ink-3); }
+  .reveal .progress { color: var(--ink-3); }
+  .reveal .controls { color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<!-- ===================================================================== 0 title -->
+<section data-stage="0">
+  <p class="eyebrow">Training dynamics · Lecture 2</p>
+  <h1>The pragmatic picture</h1>
+  <p class="muted" style="font-size:32px">What the knobs of a training run do, and which derivation stands behind each one</p>
+  <p class="small" style="margin-top:56px">learning rate · batch size · schedule · optimizer · width · normalization and weight decay · what they act on</p>
+  <aside class="notes">
+    <p>About 15 minutes. Nothing is derived on the board: every result on these slides is an exercise with a worked solution in the notebook named at the bottom of the slide. The longer outline, with timings and the full speaker notes, is <code>L2_pragmatic_picture.md</code>. Keys: N toggles these notes, S opens the speaker view.</p>
+    <p>Notation on the board (matches NB2): loss $L$, gradient $g=\nabla L$, Hessian $H$, sharpness $S=\lambda_{\max}(H)$, step $\eta$, batch size $B$, per-example gradient covariance $\Sigma$. Time is $t=k\eta$, so gradient flow is $\dot\theta=-\nabla L$.</p>
+    <p>Symbol clashes to warn about once: $\Sigma$ is the target correlation in NB1 and the noise covariance here; $\lambda$ is a Hessian eigenvalue in <code>td2_1</code>/<code>td2_2</code>, the NTK in the catapult, and the weight decay in <code>td2_5</code>; $P$ is Adam's preconditioner in <code>td2_2</code>–<code>td2_5</code> and the parameter count in <code>td2_6</code>.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 1 the two tools -->
+<section data-stage="0">
+  <p class="eyebrow">Two kinds of tools, one picture</p>
+  <div class="cols fig-right">
+    <div class="side">
+      <p><b>1. Small-step expansions.</b> Treat training as a flow plus corrections, or as a stochastic differential equation. The expansion parameter is $\eta S$. These give the <em>scaling rules</em>.</p>
+      <p><b>2. Where they break.</b> Real training sits at $\eta S\approx2$, exactly where "small step" fails, and different tools take over.</p>
+      <p class="muted" style="font-size:23px;margin-top:18px">Keep this valley on the board. The bounce across the walls is the top eigenvector; progress is the drift along the floor. Segments on the learning rate, the schedule, curvature and what is learned first all come back to it.</p>
+    </div>
+    <div>
+      <img class="fig" src="assets/L2/valley.png" alt="Gradient descent at eta S = 2 bouncing across a narrow valley while drifting along its floor" style="max-height:480px">
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Every NB2 notebook stands alone. Each opens with its readings (every paper, rated, with a line on what it is for), then the derivations and code follow section by section, so students can read the papers, do the derivations, or both. Nobody is expected to finish.</p>
+    <p>The figure: a quadratic with curvature ratio 50, gradient descent at $\eta S=1.98$. The iterate bounces across the sharp direction at nearly constant amplitude while sliding down the flat one. In a real network the walls move (progressive sharpening), which is the edge-of-stability story two slides after the SDE.</p>
+    <p><em>(Room for the instructor's framing of the two tracks.)</em></p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 2 learning rate: IGR -->
+<section data-stage="1">
+  <p class="eyebrow">§1 · Learning rate as a step size</p>
+  <h2>Gradient descent follows a modified flow that penalizes the gradient norm</h2>
+  <div class="cols fig-right">
+    <div class="side">
+      <div class="eq" style="font-size:29px">$$\dot\theta=-\nabla\Big(L+\tfrac{\eta}{4}\|\nabla L\|^2\Big)$$</div>
+      <ul>
+        <li>On a quadratic, GD converges iff $\eta S<2$.</li>
+        <li>GD's gradient doesn't shrink along a step, so each step overshoots by $-\tfrac{\eta^2}{2}Hg$. As a drift, that is the penalty: <b>implicit gradient regularization</b>.</li>
+        <li>Asymptotic series. Degrades smoothly as $\eta S$ grows; no flow at all once $\eta\lambda\ge1$ in some direction.</li>
+        <li>Momentum: effective step $\eta/(1-\beta)$, edge $2(1+\beta)/\eta$.</li>
+      </ul>
+    </div>
+    <div>
+      <img class="fig" src="assets/L2/igr.png" alt="GD, gradient flow and the IGR flow on L = (ab-1)^2/2: sharpness along the run and the layer imbalance" style="max-height:300px">
+      <p class="cap">$L=\tfrac12(ab-1)^2$ from $(2,0.1)$. Gradient flow conserves $a^2-b^2$; GD shrinks it, and the IGR flow (dashed) accounts for 81%, 42% and 16% of the shift at $\eta S\approx0.2$, $0.8$, $1.4$.</p>
+    </div>
+  </div>
+  <p class="small"><span class="nb">td2_1_flows</span> §1.1–1.3 (Barrett &amp; Dherin), §1.5 momentum (Goh's Distill article)</p>
+  <aside class="notes">
+    <p>Limits, stated in <code>td2_1</code> itself: the penalty vanishes at critical points, so it doesn't help escape minima. It matters when minima form a family (here the hyperbola $ab=1$, where the sharpness is $\sqrt{D^2+4}$ with $D=a^2-b^2$). "GD ends at flatter minima" is Barrett and Dherin's prediction with experiments, not a theorem.</p>
+    <p>Momentum in one sentence: at equal effective learning rate, heavy ball's implicit penalty is $(1+\beta)/(1-\beta)$ times larger, valid only at much smaller curvatures.</p>
+    <p>Picked up in: <a href="../td2_1_flows.html#td21-s2">td2_1 §1.2</a> (the code after Exercise 1.2.d is this figure), <a href="../td2_1_flows.html#td21-s5">§1.5</a> for momentum.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 3 batch size -->
+<section data-stage="1">
+  <p class="eyebrow">§2 · Batch size</p>
+  <h2>To first order, SGD is gradient flow plus noise of strength $\eta/B$</h2>
+  <div class="cols fig-right">
+    <div class="side">
+      <div class="eq" style="font-size:27px">$$d\theta=-\nabla L\,dt+\sqrt{\tfrac{\eta}{B}}\,\Sigma^{1/2}dW$$</div>
+      <ul>
+        <li>Holding $\eta/B$ fixed holds the SDE fixed: the <b>linear scaling rule</b>.</li>
+        <li>In a basin the floor is $\tfrac{\eta}{4B}\mathrm{tr}\,\Sigma$, with no $H$ in it.</li>
+        <li>A one-step Taylor model gives the <b>critical batch</b> $B_{\rm noise}=\mathrm{tr}(H\Sigma)/(g^\top Hg)$, past which larger batches buy almost nothing.</li>
+        <li>Adam: temperature $\eta/\sqrt B$, hence a square-root rule.</li>
+      </ul>
+    </div>
+    <div>
+      <img class="fig" src="assets/L2/floor_scaling.png" alt="Excess loss of SGD on a quadratic for three runs with the same eta/B and one with twice it" style="max-height:340px">
+      <p class="cap">Diagonal quadratic, Gaussian gradient noise. Same $\eta/B$, same floor, until $\eta h$ stops being small in the top mode ($\eta=0.8$ sits above the line).</p>
+    </div>
+  </div>
+  <p class="small"><span class="nb">td2_2_sgd_sde</span> §2.1–2.6 (Li, Malladi &amp; Arora; McCandlish et al.; Malladi et al.), §2.7 validity</p>
+  <aside class="notes">
+    <p>The order-2 stochastic modified equation adds IGR's drift $\tfrac\eta4\|\nabla L\|^2$, which depends on $\eta$, not $\eta/B$, so the linear scaling rule is a first-order statement. It fails once $B$ approaches $B_{\rm noise}$, when $\eta h$ isn't small in the top directions (the orange run), and at the edge of stability. $\Delta L_{\rm opt}(B)=\Delta L_{\max}/(1+B_{\rm noise}/B)$.</p>
+    <p>Adam's rule, stated only: under $B\to\kappa B$, take $\eta\to\sqrt\kappa\eta$, $1-\beta_i\to\kappa(1-\beta_i)$, $\epsilon\to\epsilon/\sqrt\kappa$. Needs noise-dominated gradients.</p>
+    <p>Competing accounts, present evenly. What does the noise buy? One view: the temperature $\eta/B$ is the important parameter. Smith, Dherin, Barrett and De: the finite-$\eta$ drift corrections matter more for generalization (§2.7 item 4). Is the noise Gaussian? Şimşekli et al. argue heavy tails; Li, Malladi and Arora find matched-covariance Gaussian noise reaches the same CIFAR-10 accuracy (§2.7 item 7). "Is the Taylor expansion even valid?" §2.7 collects nine answers; weak-order bounds hold on a fixed horizon as $\eta\to0$ and nothing quantitative follows for a given $\eta$. Testable with SVAG (§2.5).</p>
+    <p>Picked up in: <a href="../td2_2_sgd_sde.html#td22-2">td2_2 §2.2</a> (the SDE), <a href="../td2_2_sgd_sde.html#td22-3">§2.3</a> (the floor), <a href="../td2_2_sgd_sde.html#td22-cbs">critical batch</a>, <a href="../td2_2_sgd_sde.html#td22-lsr">scaling rules</a>, <a href="../td2_2_sgd_sde.html#td22-valid">validity</a>.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 4 edge of stability -->
+<section data-stage="2">
+  <p class="eyebrow">§3 · Where the expansions break: the edge of stability</p>
+  <h2>Sharpness rises to $2/\eta$ and stays there while the loss keeps falling</h2>
+  <img class="fig" src="assets/L2/eos.png" alt="Sharpness of a small MLP under full-batch GD at three step sizes, each rising to its own 2/eta, and the loss" style="max-height:330px">
+  <div class="cols" style="gap:24px;margin-top:4px">
+    <div class="eq" style="font-size:26px;margin:0">$$\nabla L(\bar\theta+xu)=\nabla L(\bar\theta)+xSu+\tfrac12x^2\nabla S+O(x^3)$$</div>
+    <p class="cap" style="margin:0">Tanh MLP, 256 random labels, full-batch GD. All three runs follow the same curve in $t=k\eta$ until each hits its own $2/\eta$. The $x^2$ term survives the period-2 average: <b>self-stabilization</b>.</p>
+  </div>
+  <p class="small"><span class="nb">td2_3_edge_of_stability</span> §3.1–3.4 (Cohen et al.; Damian, Nichani &amp; Lee; central flows, Rod Flow)</p>
+  <aside class="notes">
+    <p>This is exactly where the expansion of the previous slide fails. The bounce across the valley is the oscillation along $u$; the $\tfrac12x^2\nabla S$ push moves the iterate toward lower walls.</p>
+    <p>The central flow models the time-averaged trajectory: $dw/dt=-[\nabla L+\tfrac12\sigma^2\nabla S]$, with $\sigma^2$ fixed by requiring $S$ to stay at $2/\eta$; its time-averaged loss is $L+\sigma^2/\eta$. State it, don't derive it (Exercise 3.3). Heuristic, and Cohen et al. state its limits. Rod Flow tracks the midpoint and half-length of consecutive iterates; principal flow resums the backward-error terms built from $H$ and captures the onset but not the stabilization (§3.4).</p>
+    <p>Open question to name: <em>why</em> progressive sharpening happens is only partly understood. <code>td2_3</code> takes it as given.</p>
+    <p>Under SGD the quantity at $2/\eta$ is a <em>batch sharpness</em> and the full-batch $S$ settles lower (§3.6). Adam holds a <em>preconditioned</em> sharpness at $38/\eta$ at $\beta_1=0.9$ (§3.5).</p>
+    <p>Show, if time: <a href="../assets/interactive/eos_toy_and_catapult.html">eos_toy_and_catapult.html</a>, panel 1, preset "EoS from below". Picked up in: <a href="../td2_3_edge_of_stability.html#td23-1">td2_3 §3.1</a> (this figure).</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 5 catapult -->
+<section data-stage="2">
+  <p class="eyebrow">§3 · Where the expansions break: the catapult</p>
+  <h2>A large step can lower the curvature in one shot</h2>
+  <div class="cols fig-left">
+    <div>
+      <img class="fig" src="assets/L2/catapult.png" alt="The exact catapult maps at eta lambda_0 = 1.5, 3 and 4.1: loss and curvature against step" style="max-height:330px">
+      <p class="cap">Width-$n$ two-layer net, one input, exact maps. $\eta\lambda_0<2$ lazy; $2<\eta\lambda_0<4$ the loss spikes, the curvature drops, training converges somewhere flatter; $\eta\lambda_0>4$ diverges.</p>
+    </div>
+    <div class="side">
+      <ul>
+        <li>Contrast with the edge of stability: self-stabilization is a sustained hover, the catapult a one-shot drop with nothing pushing the curvature back up.</li>
+        <li>The $4/\lambda_0$ edge is specific to this model; ReLU nets in the paper tolerate up to about $12/\lambda_0$.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="small"><span class="nb">td2_3_edge_of_stability</span> §3.7 (Lewkowycz et al.)</p>
+  <aside class="notes">
+    <p>Compressible to one sentence. The maps: with $b=\eta^2f^2/n$, $f\to f(1-\eta\lambda+b)$ and $\eta\lambda\to\eta\lambda+b(\eta\lambda-4)$. At $\eta\lambda_0=3$ the loss peaks near $n/2$ and the curvature lands at $\eta\lambda\approx0.24$.</p>
+    <p>Show, if time: the same interactive page, panel 2, presets lazy, catapult, divergent. Picked up in: <a href="../td2_3_edge_of_stability.html#td23-7">td2_3 §3.7</a>.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 6 schedule -->
+<section data-stage="2">
+  <p class="eyebrow">§4 · Schedule</p>
+  <h2>Both ends of a schedule have a mechanism, and each end has more than one</h2>
+  <div class="cols fig-right">
+    <div class="side">
+      <p><b>Warmup.</b> Edge-of-stability account: starting at the target $\eta$ from a sharp initialization catapults or diverges; ramping lets $S$ follow $2/\eta(t)$ down. Adam account: early $\hat v$ is estimated from few samples, so the adaptive step has high variance.</p>
+      <p><b>Decay.</b> Three pictures of one observation, that the loss drops when $\eta$ is cut: the fluctuation floor $\tfrac{\eta}{4B}\mathrm{tr}\,\Sigma$; Wen et al.'s river valley, where noise bounces the iterate between the hillsides and hides progress along the river; an edge-of-stability analogue, where the measured loss is $L+\sigma^2/\eta$.</p>
+    </div>
+    <div>
+      <img class="fig" src="assets/L2/floor_cut.png" alt="Excess loss of SGD before and after the learning rate is cut tenfold, against the exact expectation" style="max-height:340px">
+      <p class="cap">Same quadratic. The dashed line is the exact expectation, not a fit. The target drops tenfold at once; the loss follows mode by mode at rates $2\eta'h_j$.</p>
+    </div>
+  </div>
+  <p class="small"><span class="nb">td2_3_edge_of_stability</span> §3.8 (Kalra &amp; Barkeshli; Wen et al.) · <span class="nb">td2_2_sgd_sde</span> §2.3</p>
+  <aside class="notes">
+    <p>What changes immediately at a cut is the target; what sets the speed is where the noise sits. Noise in sharp modes drops within a few $1/(2\eta'h_{\max})$ steps and looks immediate; noise in flat modes drops slowly.</p>
+    <p>The edge-of-stability analogue for decay is labelled in <code>td2_3</code> as the notebook's own and not a claim of either paper. Exercise 3.8(a) tests warmup in the toy from two starting sharpnesses and asks when it helps and whether it can hurt.</p>
+    <p>Show, if time: <a href="../assets/interactive/eos_toy_and_catapult.html">eos_toy_and_catapult.html</a>, panel 1, presets "sharp start, no warmup" and "sharp start, warmup". Picked up in: <a href="../td2_3_edge_of_stability.html#td23-8">td2_2 §2.8</a>, <a href="../td2_2_sgd_sde.html#td22-3">td2_3 §3.3</a> (Code 2.3.B is this figure).</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 7 optimizer -->
+<section data-stage="3">
+  <p class="eyebrow">§5 · Optimizer</p>
+  <h2>An optimizer has to decide what counts as a small step. That decision is a norm.</h2>
+  <div class="eq" style="font-size:28px;margin-top:0">$$\Delta=\arg\min_{\|\Delta\|\le\eta}\langle g,\Delta\rangle=-\eta\,d^\star(g),\qquad d^\star(g)\in\arg\max_{\|d\|\le1}\langle g,d\rangle$$</div>
+  <img class="fig" src="assets/L2/balls.png" alt="Steepest descent under the Euclidean, l-infinity and an M-norm: unit balls with the step at the supporting line" style="max-height:250px">
+  <ul style="font-size:23px;margin-top:4px">
+    <li>Euclidean: GD. $\ell_\infty$: sign descent (Adam with its averages off). Fisher norm: natural gradient. Spectral norm on a weight matrix: $UV^\top$, which Muon approximates by Newton–Schulz.</li>
+    <li>Every optimizer is steepest descent under <em>some</em> norm, so the dictionary explains nothing on its own. A norm earns its place by parametrization invariance or by step sizes that transfer across width.</li>
+  </ul>
+  <p class="small"><span class="nb">td2_4_optimizer_geometry</span> §4.0–4.4 (Bernstein &amp; Newhouse; Martens; Jordan et al.)</p>
+  <aside class="notes">
+    <p>The parable, labelled as an analogy as <code>td2_4</code> §4.0 does: between point masses with disjoint supports, KL is infinite and Jensen–Shannon constant, so neither gives a gradient; Wasserstein-1 is $|\theta|$ because only it uses the geometry of the space. The parameter-space version is only the <em>question</em> "in which geometry should a step be measured?" The GAN theorems imply nothing about optimizers.</p>
+    <p>Natural gradient is invariant to reparametrization to first order. Raw sharpness is not: the Hessian is a quadratic form and its eigenvalues need a metric. This links to the MDL day's flatness discussion (Dinh et al.).</p>
+    <p>Adam's edge: with a frozen preconditioner, Adam at $\beta_1=0.9$ is stable iff $\eta\lambda_{\max}(P^{-1}H)<38$ (<code>td2_3</code> §3.5). "Adam is sign descent" is exact only with the averages off (§4.3.D gives the failures). The squared-penalty form of the problem points the same way as the trust-region form, with a step $\|g\|_*$ times longer.</p>
+    <p>Show, if time: <a href="../assets/interactive/steepest_descent_balls.html">steepest_descent_balls.html</a>, and try $g_2\approx0$ to see why sign descent is sensitive to small gradient components. Picked up in: <a href="../td2_4_optimizer_geometry.html#td24-1">td2_4 §4.1</a>, <a href="../td2_4_optimizer_geometry.html#td24-2">§4.2</a> natural gradient, <a href="../td2_4_optimizer_geometry.html#td24-3">§4.3</a> Adam, <a href="../td2_4_optimizer_geometry.html#td24-4">§4.4</a> Muon.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 8 width -->
+<section data-stage="3">
+  <p class="eyebrow">§6 · Width</p>
+  <h2>Which step sizes transfer across width? A spectral condition answers, and gives muP</h2>
+  <div class="cols fig-right">
+    <div class="side">
+      <div class="eq" style="font-size:27px">$$\|W_l\|_2=\Theta\Big(\sqrt{\tfrac{n_l}{n_{l-1}}}\Big),\quad\|\Delta W_l\|_2=\Theta\Big(\sqrt{\tfrac{n_l}{n_{l-1}}}\Big)$$</div>
+      <ul>
+        <li>Gradient updates are low-rank and aligned with the incoming features, so their spectral norm measures their effect on the activations.</li>
+        <li>For low-rank $G$, $\|\mathrm{sign}(G)\|_2=\Theta(\sqrt{n_ln_{l-1}})$, so Adam needs $\eta_l=\Theta(1/\text{fan-in})$: <b>muP's rule</b>. Muon's $\|UV^\top\|_2=1$ gives $\eta_l=\Theta(\sqrt{n_l/n_{l-1}})$ directly.</li>
+        <li>A dense random sign matrix would give only $\Theta(\sqrt n)$: the structure of the gradient sets the exponent.</li>
+      </ul>
+    </div>
+    <div>
+      <img class="fig" src="assets/L2/signnorm.png" alt="Spectral norm of sign(G) against width for low-rank and dense random G" style="max-height:360px">
+      <p class="cap">$\|\mathrm{sign}(G)\|_2$ against width, $G$ of rank 1, 4, 16 and dense Gaussian. Dotted: $\mathbb E|w_1|\,n$ and $2\sqrt n$.</p>
+    </div>
+  </div>
+  <p class="small"><span class="nb">td2_4_optimizer_geometry</span> §4.5 (Yang, Simon &amp; Bernstein), §4.6 the modular norm</p>
+  <aside class="notes">
+    <p>Claim boundary: the derivation needs updates that are low-rank or aligned with incoming features. That muP transfers in large transformers is an empirical finding consistent with this calculation, not implied by it.</p>
+    <p>Link back to L1: the parametrization decides whether a wide network learns features or stays lazy (Tensor Programs IV is in NB1 §7).</p>
+    <p>Picked up in: <a href="../td2_4_optimizer_geometry.html#td24-5">td2_4 §4.5</a> (§4.5.D is this figure; §4.5.C the derivation), <a href="../td2_4_optimizer_geometry.html#td24-6">§4.6</a> for the modular norm and the depth scaling it suggests.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 9 normalization and weight decay -->
+<section data-stage="4">
+  <p class="eyebrow">§7 · Normalization and weight decay</p>
+  <h2>Behind a normalization layer the loss sees only a direction. Weight decay sets the step it takes.</h2>
+  <div class="cols fig-right">
+    <div class="side">
+      <div class="eq" style="font-size:26px">$$\langle\nabla L(w),w\rangle=0,\ \ \eta_{\rm eff}\approx\frac{\eta}{\|w\|^2};\qquad\cos\theta^*=1-\eta\lambda$$</div>
+      <ul>
+        <li>The gradient is tangent, so a step lengthens $w$ by Pythagoras; without decay the norm only grows and the effective step decays like $1/\sqrt k$.</li>
+        <li>Weight decay pulls radially in. At equilibrium each block rotates by a fixed angle $\theta^*\approx\sqrt{2\eta\lambda}$ per step, whatever its gradient scale.</li>
+        <li>On scale-invariant weights, weight decay is a learning-rate schedule, not a regularizer of the function. Li &amp; Arora: exactly equivalent to an exponentially increasing $\eta$.</li>
+      </ul>
+    </div>
+    <div>
+      <img class="fig" src="assets/L2/wd.png" alt="RMS rotation angle per step and weight norm for five (eta, lambda, sigma) settings on a scale-invariant toy; settings with the same eta*lambda reach the same angle" style="max-height:330px">
+      <p class="cap">Noisy scale-invariant toy, SGD. Four settings share $\eta\lambda=10^{-3}$ and end at the same angle; the norm relaxes on a $1/(4\eta\lambda)$ timescale, often a sizeable part of a schedule.</p>
+    </div>
+  </div>
+  <p class="small"><span class="nb">td2_5_normalization_weight_decay</span> §5.1–5.2 (Kosson et al.; Li &amp; Arora; D'Angelo et al.)</p>
+  <aside class="notes">
+    <p>Scope: in a BatchNorm convnet almost every weight is scale-invariant; in a pre-LN transformer few matrices are exactly so, and the analysis is a model there (§5.1). Here $\lambda$ is the weight decay. The exact form is $\eta_{\rm eff}=\eta/((1-\eta\lambda)r^2)$.</p>
+    <p>Competing accounts of weight decay: the effective-learning-rate account above, versus D'Angelo et al., who argue weight decay is never useful as an explicit regularizer and whose vision mechanism is about keeping SGD's noise alive. Parameters that aren't scale-invariant can still be regularized. §5.2 and its readings give both.</p>
+    <p>Picked up in: <a href="../td2_5_normalization_weight_decay.html#s51">td2_5 §5.1</a>, <a href="../td2_5_normalization_weight_decay.html#s52">§5.2</a> (the five-setting cell is this figure). Short route through <code>td2_5</code>: 30 to 45 min.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 10 spikes and clipping -->
+<section data-stage="4">
+  <p class="eyebrow">§7 · Loss spikes and clipping</p>
+  <h2>Four documented spike mechanisms, sorted by whether they are an edge-of-stability crossing</h2>
+  <table>
+    <tr><th style="width:52%">Mechanism</th><th>Edge crossing?</th><th>Fix</th></tr>
+    <tr><td>Weight decay shrinks a normalized layer until $\eta_{\rm eff}S$ crosses 2</td><td>yes</td><td>schedule $\eta\lambda$; watch $\|w\|$</td></tr>
+    <tr><td>Adam's second moment goes stale, so the preconditioned sharpness crosses $38/\eta$</td><td>yes</td><td>$\beta_2$, $\epsilon$ (Bai et al.; Molybog et al.)</td></tr>
+    <tr><td>Attention-logit growth</td><td>no</td><td>QK-layernorm</td></tr>
+    <tr><td>Output-logit drift along a flat direction</td><td>no</td><td>z-loss</td></tr>
+  </table>
+  <div class="box" style="margin-top:18px">
+    <b>Clipping.</b> Under $(L_0,L_1)$-smoothness, where curvature grows with the gradient norm, the right step is $\propto1/\|\nabla L\|$ where the gradient is large. That is clipping.
+  </div>
+  <p class="small"><span class="nb">td2_5_normalization_weight_decay</span> §5.3 spikes, §5.4 clipping (Zhang et al.)</p>
+  <aside class="notes">
+    <p>Whether the Bai et al. and Molybog et al. accounts of the Adam spike are the same instability isn't established; <code>td2_5</code> says so. The summary table at the end of §5.3 is the thing to show if there is time.</p>
+    <p>Picked up in: <a href="../td2_5_normalization_weight_decay.html#s53">td2_5 §5.3</a>, <a href="../td2_5_normalization_weight_decay.html#s54">§5.4</a>.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 11 curvature -->
+<section data-stage="5">
+  <p class="eyebrow">§8 · What the knobs act on: curvature</p>
+  <h2>The Hessian is a bulk at zero plus about $C$ outliers. The gradient lives in the outliers; progress mostly doesn't.</h2>
+  <div class="cols fig-left">
+    <div>
+      <img class="fig" src="assets/L2/spectrum.png" alt="Hessian spectrum of a small five-class classifier: a bulk at zero and about five outliers" style="max-height:300px">
+      <p class="cap">GELU MLP, 1229 parameters, $C=5$ Gaussian classes, cross-entropy, stopped at loss 0.24. Full <code>eigh</code>.</p>
+    </div>
+    <div class="side">
+      <ul>
+        <li>$H$ = Gauss–Newton + residual. The Gauss–Newton part shares its nonzero spectrum with the loss-weighted tangent kernel, so progressive sharpening with square loss <em>is</em> the kernel moving.</li>
+        <li>The outliers are tied to class means of gradients.</li>
+        <li>A step along a direction of curvature $\lambda$ gains $\Delta L=-\eta g^2(1-\eta\lambda/2)$: at the edge the gain cancels. The top subspace is the bounce; the drift along the floor lives in the bulk.</li>
+        <li>The basin is chosen early, when the kernel moves fastest.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="small" style="margin-top:0"><span class="nb">td2_6_curvature</span> §6.1–6.5 (Sagun et al.; Papyan; Song, Ahn &amp; Yun; Fort et al.; Frankle et al.)</p>
+  <aside class="notes">
+    <p>Claim boundary, as <code>td2_6</code> states it: "learning is not in the top subspace" describes a mid-training valley regime. Near interpolation with cross-entropy the notebook's own small network shows the opposite (the top subspace is where the margins grow), and the notebook says it hasn't isolated which difference from Song et al.'s setting matters. Present both.</p>
+    <p>With cross-entropy the outliers shrink as the margins grow, which is why this figure stops at loss 0.24; trained to interpolation the gap closes. The DA day's L2 picks up how these spectra are measured at scale (Hessian-vector products, Lanczos, SLQ).</p>
+    <p>Picked up in: <a href="../td2_6_curvature.html#td26-1">td2_6 §6.1</a> (decomposition), <a href="../td2_6_curvature.html#td26-2">§6.2</a> (kernel identity), <a href="../td2_6_curvature.html#td26-3">§6.3</a> (bulk and outliers), <a href="../td2_6_curvature.html#td26-4">§6.4</a> (the top subspace), <a href="../td2_6_curvature.html#td26-5">§6.5</a> (when the basin is chosen).</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 12 learned first -->
+<section data-stage="5">
+  <p class="eyebrow">§8 · What the knobs act on: order of learning</p>
+  <h2>Low-order statistics first, then the rest, at a sample cost set by where the signal hides</h2>
+  <ul>
+    <li><b>Moments before cumulants.</b> A model linear in its inputs sees only the first two moments, so a network with small pre-activations learns from Gaussian-equivalent statistics first. Train on the data and on its Gaussian clone: the early curves coincide.</li>
+    <li><b>The price of a hidden direction.</b> A direction visible only in the $k$-th cumulant costs about $d^{\,k-1}$ samples for information exponent $k\ge3$, far fewer if it correlates with lower-order structure.</li>
+    <li><b>Spectral bias.</b> A fixed kernel fits eigenfunction $k$ at rate $\lambda_k$: low frequencies first.</li>
+  </ul>
+  <div class="box">If L1 was skipped: shallow, $\dot a=s-a$; two-layer from small balanced init, $\dot a=2a(s-a)$, so the strongest structure first, after a plateau.</div>
+  <p class="small"><span class="nb">td2_7_learned_first</span> §7.1–7.3 (Refinetti et al.; Bardone &amp; Goldt; Basri et al.)</p>
+  <aside class="notes">
+    <p>Show, if time: <code>td2_7</code> §7.1, a small-init network trained on the data and on its Gaussian clone. The sliding-down-the-stairs picture and the "why the moment thing doesn't get you far" argument are §7.2.</p>
+    <p>Picked up in: <a href="../td2_7_learned_first.html#td27-1">td2_7 §7.1</a>, <a href="../td2_7_learned_first.html#td27-2">§7.2</a> (information exponent), <a href="../td2_7_learned_first.html#td27-3">§7.3</a> (spectral bias).</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 13 menu -->
+<section data-stage="6">
+  <p class="eyebrow">§9 · Menu</p>
+  <h2>Pick a knob. Each notebook stands alone, opens with its readings, and the derivations follow.</h2>
+  <table style="font-size:22px">
+    <tr><th>Knob or question</th><th>Notebook</th><th>Core reading</th></tr>
+    <tr><td>Learning rate as a step size: flows, IGR, momentum</td><td class="nb">td2_1_flows</td><td>Barrett &amp; Dherin</td></tr>
+    <tr><td>Batch size: SMEs, loss floor, critical batch, linear and square-root rules, validity</td><td class="nb">td2_2_sgd_sde</td><td>Li, Malladi &amp; Arora</td></tr>
+    <tr><td>Where the expansions break: EoS, central flows, Adam's and SGD's edges, catapult, warmup and WSD</td><td class="nb">td2_3_edge_of_stability</td><td>Cohen et al.</td></tr>
+    <tr><td>Optimizer and width: norms, natural gradient, Adam as sign descent, Muon, muP</td><td class="nb">td2_4_optimizer_geometry</td><td>Bernstein &amp; Newhouse</td></tr>
+    <tr><td>Normalization, weight decay, spikes, clipping</td><td class="nb">td2_5_normalization_weight_decay</td><td>Kosson et al.</td></tr>
+    <tr><td>What the Hessian looks like; when the basin is chosen</td><td class="nb">td2_6_curvature</td><td>Song, Ahn &amp; Yun</td></tr>
+    <tr><td>What is learned first</td><td class="nb">td2_7_learned_first</td><td>Refinetti et al.</td></tr>
+    <tr><td>Dropout, layer cushion, geometry-adaptive bases, critical periods, RL fine-tuning dynamics</td><td class="nb">td2_8_further_readings</td><td>readings with short exercises</td></tr>
+  </table>
+  <aside class="notes">
+    <p>Suggested routes (from <code>td2_8</code>'s map; suggestions only). Less background: NB1 §1, §4, §5, then <code>td2_1</code> followed by <code>td2_2</code>; flows and SDEs are one story, backward error analysis first for the step and then in distribution. Practitioner-minded: <code>td2_2</code> → <code>td2_4</code> → <code>td2_5</code>. More background: skim NB1, then any NB2 notebook; <code>td2_3</code> and <code>td2_6</code> are where the expansions break and the phenomenology lives.</p>
+    <p>Out of scope today, with where to go: whether SGD samples a Bayesian posterior is the MDL day's WB2 §8; infinite-width NTK theory is the Physics of Deep Learning day; measuring curvature at scale is the DA day's L2.</p>
+    <p><em>(Room for the instructor's own recommendations.)</em></p>
+  </aside>
+</section>
+
+<!-- ===================================================================== 14 routes -->
+<section data-stage="6">
+  <p class="eyebrow">§9 · Routes</p>
+  <h2>Three ways through the afternoon</h2>
+  <ul>
+    <li><b>Less background.</b> NB1 §1, §4 and §5 (mode equations, the kernel, lazy versus rich), then <span class="nb">td2_1</span> and <span class="nb">td2_2</span>. Flows and SDEs are one story: backward error analysis, first for the step and then in distribution.</li>
+    <li><b>Practitioner-minded.</b> <span class="nb">td2_2</span> → <span class="nb">td2_4</span> → <span class="nb">td2_5</span>: batch size, optimizer, normalization and weight decay.</li>
+    <li><b>More background.</b> Skim NB1, then any NB2 notebook. <span class="nb">td2_3</span> and <span class="nb">td2_6</span> are where the expansions break and the empirical phenomenology lives.</li>
+  </ul>
+  <p class="muted" style="margin-top:28px">Out of scope today: whether SGD samples a Bayesian posterior (MDL day, WB2 §8); infinite-width NTK theory (Physics of Deep Learning day); measuring curvature at scale (DA day, L2).</p>
+  <p class="room" style="margin-top:20px">(Room for the instructor's own recommendations.)</p>
+  <aside class="notes">
+    <p>Each notebook's page has a "Show all solutions" button and folded sections; the <code>.ipynb</code> next to it runs on a CPU in minutes. The interactive figures (mode explorer, EoS toy and catapult, steepest-descent balls) are in <code>td/assets/interactive/</code> and open on their own.</p>
+  </aside>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+  // Typeset the math first (slides and notes), then start reveal.js.
+  try {
+    renderMathInElement(document.querySelector('.reveal .slides'), {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false }
+      ],
+      throwOnError: false
+    });
+  } catch (e) { console.error(e); }
+
+  const params = new URLSearchParams(location.search);
+  Reveal.initialize({
+    width: 1280,
+    height: 720,
+    margin: 0.05,
+    center: false,
+    hash: true,
+    transition: 'none',
+    backgroundTransition: 'none',
+    slideNumber: 'c/t',
+    showNotes: params.has('showNotes') ? 'separate-page' : false,
+    pdfSeparateFragments: false,
+    plugins: [RevealNotes],
+    keyboard: {
+      78: () => {  // N: show or hide the notes on the slide itself
+        Reveal.configure({ showNotes: !Reveal.getConfig().showNotes });
+      }
+    }
+  });
+</script>
+</body>
+</html>

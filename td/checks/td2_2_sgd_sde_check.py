@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Checks for every closed-form result stated in td2_3_sgd_sde.
+"""Checks for every closed-form result stated in td2_2_sgd_sde.
 
-Run: python td/checks/td2_3_sgd_sde_check.py   (about 20 s on a laptop)
+Run: python td/checks/td2_2_sgd_sde_check.py   (about 20 s on a laptop)
 Each block prints OK or raises.
 """
 import numpy as np

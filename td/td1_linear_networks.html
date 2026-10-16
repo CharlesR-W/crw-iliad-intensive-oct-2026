@@ -270,6 +270,7 @@ article details.code > summary:hover { color: var(--fg); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
+<li><a href="#readings">Readings</a></li>
 <li><a href="#1-the-mode-odes">1. The mode ODEs</a></li>
 <li><a href="#2-depth">2. Depth</a></li>
 <li><a href="#3-the-landscape">3. The landscape</a></li>
@@ -288,19 +289,7 @@ article details.code > summary:hover { color: var(--fg); }
 <p class="run-note">To run the code, open <a href='td1_linear_networks.ipynb'><code>td1_linear_networks.ipynb</code></a> in Jupyter (CPU only; needs numpy, matplotlib and torch). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
 
 <p>A deep linear network can only represent a linear map, but gradient descent on it is nonlinear and exactly solvable. Long plateaus followed by sudden drops, the strongest structure learned first, saddle-to-saddle trajectories, and a tangent kernel that either moves or stays frozen all appear here in closed form.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1312.6120">Exact solutions to the nonlinear dynamics of learning in deep linear neural networks</a></strong>, Saxe, McClelland, Ganguli (ICLR 2014) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The exact solutions this notebook is built on: decoupled modes, sigmoidal learning curves with plateaus, and what depth changes.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2405.17580">Mixed dynamics in linear networks: unifying the lazy and active regimes</a></strong>, Tu, Aranguri, Jacot (NeurIPS 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>One formula for wide two-layer linear networks that covers lazy, rich and mixed learning, with a phase diagram in width and initialization scale.</p>
-</div>
-
-<p><strong>Route.</strong> Each section gives its question, answer and paper first; derivations, worked exercises and code follow under “Optional”.</p>
+<p><strong>Route.</strong> The <a href="#td1-readings">Readings</a> come first: every paper of the notebook, grouped by section. The sections after them are the derivations and walkthrough (exercises with worked solutions, and code), for whoever wants them.</p>
 <ul>
 <li><a href="#td1-s1">§1 The mode ODEs</a>: one solvable ODE per singular mode of the data.</li>
 <li><a href="#td1-s2">§2 Depth</a> (side branch): plateaus grow as a power of the initial scale.</li>
@@ -308,7 +297,7 @@ article details.code > summary:hover { color: var(--fg); }
 <li><a href="#td1-s4">§4 The end-to-end flow and its kernel</a>: the network’s NTK and one conserved number per mode.</li>
 <li><a href="#td1-s5">§5 Rich, lazy and mixed</a>: one dial; large balanced initialization is not lazy.</li>
 <li><a href="#td1-s6">§6 Derived or planted</a>: which Saxe-style heuristics come from the math, and which from the setup.</li>
-<li><a href="#td1-s7">§7 Going further</a>: readings.</li>
+<li><a href="#td1-s7">§7 Going further</a>: the Physics of Deep Learning day’s kernel notebooks, and where NB2 picks this up.</li>
 </ul>
 <p>The code cells share these helpers (numpy and matplotlib):</p>
 
@@ -384,34 +373,111 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 
-<details class="sec sec2" data-sec="1-the-mode-odes">
-<summary><h2 id="1-the-mode-odes">1. The mode ODEs</h2></summary>
+<details class="sec sec2" data-sec="readings" open>
+<summary><h2 id="readings">Readings</h2></summary>
 <div class="sec-body">
-<a id="td1-s1"></a>
-<p>Train a two-layer linear network <span class="math inline">W=W_2W_1</span> on whitened inputs with square loss, and write the input–output correlation as <span class="math inline">\Sigma=\mathbb E[yx^\top]=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top</span> (its SVD). Under gradient flow, each mode’s strength <span class="math inline">a=u^\top Wv</span> obeys one scalar ODE, <span class="math inline">\tau\dot a=\sqrt{4a^2+d^2}\,(s-a)</span>, where <span class="math inline">d</span> is a conserved imbalance between the two layers and <span class="math inline">\tau=1/\eta</span> (so <span class="math inline">t</span> counts steps). Small balanced weights give a sigmoid after a plateau whose length is set by <span class="math inline">s</span>, so strong modes are learned first. Large imbalance gives a plain exponential at a rate that does not depend on <span class="math inline">s</span>.</p>
+<a id="td1-readings"></a>
+<p><strong>The notebook as a whole.</strong> The exact solutions (<a href="#td1-s1">§1</a>, <a href="#td1-s2">§2</a>) and the lazy / rich / mixed picture (<a href="#td1-s4">§4</a>, <a href="#td1-s5">§5</a>).</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/1312.6120">Exact solutions to the nonlinear dynamics of learning in deep linear neural networks</a></strong>, Saxe, McClelland, Ganguli (ICLR 2014) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Sections 1–3 derive the decoupled mode equations and their logistic solutions; this section follows them. Their <span class="math inline">\Sigma</span>’s are sums over examples rather than averages, and they count layers including the input, so their <span class="math inline">N_l</span> is our <span class="math inline">N+1</span>.</p>
+<p>The exact solutions this notebook is built on: decoupled modes, sigmoidal learning curves with plateaus, and what depth changes. Sections 1–3 derive the decoupled mode equations and their logistic solutions (§1); Eq. 15 and App. B give §2’s depth-<span class="math inline">N</span> equation. Their <span class="math inline">\Sigma</span>’s are sums over examples rather than averages, and they count layers including the input, so their <span class="math inline">N_l</span> is our <span class="math inline">N+1</span>.</p>
 </div>
 
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2405.17580">Mixed dynamics in linear networks: unifying the lazy and active regimes</a></strong>, Tu, Aranguri, Jacot (NeurIPS 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>One formula for wide two-layer linear networks that covers lazy, rich and mixed learning (§4–§5), with a phase diagram in width and initialization scale: with width <span class="math inline">w</span> and initialization variance <span class="math inline">\sigma^2</span>, singular values below about <span class="math inline">\sigma^2w</span> are learned lazily and larger ones actively.</p>
+</div>
+
+<p><strong>The mode ODEs and alignment (<a href="#td1-s1">§1</a>).</strong></p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2111.00034">Neural networks as kernel learners: the silent alignment effect</a></strong>, Atanasov, Bordelon, Pehlevan (ICLR 2022) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>Why the hidden layer lines up with the data’s modes before the loss moves: from small initialization the tangent kernel aligns while still small (proved for scalar-output linear networks), so the trained network is close to kernel regression with its <em>final</em> kernel.</p>
 </div>
 
+<p><strong>Depth (<a href="#td1-s2">§2</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2106.15933">Saddle-to-saddle dynamics in deep linear networks: small initialization training, symmetry, and sparsity</a></strong>, Jacot, Ged, Şimşek, Hongler, Gabriel (2021) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Proves that from a small random initialization of per-layer scale <span class="math inline">\alpha</span> the first escape from the origin follows a rank-one path, taking time <span class="math inline">\propto-\log\alpha</span> at depth 2 and <span class="math inline">\alpha^{-(N-2)}</span> beyond. The full saddle-to-saddle sequence is a conjecture supported by numerics.</p>
+</div>
+
+<p><strong>The landscape (<a href="#td1-s3">§3</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2107.13289">The loss landscape of deep linear neural networks: a second-order analysis</a></strong>, Achour, Malgouyres, Gerchinovitz (JMLR 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Characterizes every critical point (Prop. 1–2) and classifies them into global minima, strict saddles and non-strict saddles (Theorem 7). Their depth <span class="math inline">H</span> counts weight matrices. They do not assume whitening.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1810.02281">A convergence analysis of gradient descent for deep linear neural networks</a></strong>, Arora, Cohen, Golowich, Hu (ICLR 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The kind of convergence theorem the landscape alone does not give: a linear rate, given width, approximately balanced initialization, low initial loss and a small step.</p>
+</div>
+
+<p><strong>The end-to-end flow (<a href="#td1-s4">§4</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1802.06509">On the optimization of deep networks: implicit acceleration by overparameterization</a></strong>, Arora, Cohen, Hazan (ICML 2018) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The balanced end-to-end equation at any depth: a preconditioner favouring directions already large in <span class="math inline">W</span>, and for <span class="math inline">N&gt;2</span> not the gradient flow of any regularized loss.</p>
+</div>
+
+<p><strong>Rich, lazy and mixed (<a href="#td1-s5">§5</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1812.07956">On lazy training in differentiable programming</a></strong>, Chizat, Oyallon, Bach (NeurIPS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Lazy training comes from a choice of scaling (such as a large output multiplier), not from overparameterization as such.</p>
+</div>
+
+<p><strong>Derived or planted (<a href="#td1-s6">§6</a>).</strong></p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1810.10531">A mathematical theory of semantic development in deep neural networks</a></strong>, Saxe, McClelland, Ganguli (PNAS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The source of heuristic 2: the exact solutions applied to tree-structured data, giving coarse-to-fine differentiation, illusory correlations and category coherence.</p>
+</div>
+
+<p><strong>Beyond linear networks (<a href="#td1-s7">§7</a>).</strong> Two extensions of the mode picture.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2207.10430">The neural race reduction: dynamics of abstraction in gated networks</a></strong>, Saxe, Sodhani, Lewallen (ICML 2022) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Gated linear pathways compute nonlinear functions, and their learning reduces to mode ODEs like §1’s: a race between pathways.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2506.06489">Alternating gradient flows: a theory of feature learning in two-layer neural networks</a></strong>, Kunin, Marchetti, Chen, Karkada, Simon, DeWeese, Ganguli, Miolane (NeurIPS 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Small-initialization training of two-layer networks as alternating steps, each neuron activation bringing a loss drop: saddle-to-saddle learning beyond linear networks.</p>
+</div>
+
+<p><strong>Also:</strong></p>
+<ul>
+<li><a href="#td1-s3">§3</a>: Baldi, Hornik, <a href="https://doi.org/10.1016/0893-6080(89)90014-2">Neural networks and principal component analysis: learning from examples without local minima</a> (1989; the two-layer case, PCA for an autoencoder); Kawaguchi, <a href="https://arxiv.org/abs/1605.07110">Deep learning without poor local minima</a> (2016; any depth and width, degenerate saddles from two hidden layers).</li>
+<li><a href="#td1-s5">§5</a>: Li, Luo, Lyu, <a href="https://arxiv.org/abs/2012.09839">Towards resolving the implicit bias of gradient descent for matrix factorization: greedy low-rank learning</a> (2021); Kumar, Bordelon, Gershman, Pehlevan, <a href="https://arxiv.org/abs/2310.06110">Grokking as the transition from lazy to rich training dynamics</a> (2023).</li>
+<li><a href="#td1-s6">§6</a>: Pennington, Schoenholz, Ganguli, <a href="https://arxiv.org/abs/1711.04735">Resurrecting the sigmoid in deep learning through dynamical isometry</a> (2017; heuristic 4); Advani, Saxe, Sompolinsky, <a href="https://doi.org/10.1016/j.neunet.2020.08.022">High-dimensional dynamics of generalization error in neural networks</a> (2020; heuristic 5; the arXiv version, <a href="https://arxiv.org/abs/1710.03667">1710.03667</a>, lists Advani and Saxe only).</li>
+<li>Wide networks beyond kernels (<a href="#td1-s7">§7</a>): Mei, Montanari, Nguyen, <a href="https://arxiv.org/abs/1804.06561">A mean field view of the landscape of two-layer neural networks</a> (2018); Yang, Hu, <a href="https://arxiv.org/abs/2011.14522">Tensor Programs IV: feature learning in infinite-width neural networks</a> (2021; muP); Bordelon, Pehlevan, <a href="https://arxiv.org/abs/2205.09653">Self-consistent dynamical field theory of kernel evolution in wide neural networks</a> (2022).</li>
+</ul>
+<div class="refs">
+
+<p><strong>For reference (books):</strong> <a href="https://arxiv.org/abs/2106.10165">The Principles of Deep Learning Theory</a>, Roberts, Yaida, Hanin (Cambridge UP 2022), finite width as a <span class="math inline">1/n</span> expansion around infinite width.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="1-the-mode-odes">
+<summary><h2 id="1-the-mode-odes">1. The mode ODEs</h2></summary>
+<div class="sec-body">
+<a id="td1-s1"></a>
+<p>Train a two-layer linear network <span class="math inline">W=W_2W_1</span> on whitened inputs with square loss, and write the input–output correlation as <span class="math inline">\Sigma=\mathbb E[yx^\top]=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top</span> (its SVD). Under gradient flow, each mode’s strength <span class="math inline">a=u^\top Wv</span> obeys one scalar ODE, <span class="math inline">\tau\dot a=\sqrt{4a^2+d^2}\,(s-a)</span>, where <span class="math inline">d</span> is a conserved imbalance between the two layers and <span class="math inline">\tau=1/\eta</span> (so <span class="math inline">t</span> counts steps). Small balanced weights give a sigmoid after a plateau whose length is set by <span class="math inline">s</span>, so strong modes are learned first. Large imbalance gives a plain exponential at a rate that does not depend on <span class="math inline">s</span>.</p>
+<p><strong>Papers:</strong> Saxe, McClelland &amp; Ganguli (2014), Sections 1–3; Atanasov, Bordelon &amp; Pehlevan (2022) on silent alignment (see <a href="#td1-readings">Readings</a>).</p>
 <p><strong>The core idea.</strong> Rescaling one layer up and the next down leaves <span class="math inline">W</span> unchanged; this symmetry conserves the imbalance <span class="math inline">D=W_2^\top W_2-W_1W_1^\top</span>. If the hidden layer is aligned with the singular vectors of <span class="math inline">\Sigma</span>, the flow splits into independent two-weight problems, one per mode. Small random weights produce that alignment themselves, before the loss moves.</p>
 
 <p>▶ <strong>Interactive figure:</strong> <a href="assets/interactive/mode_explorer.html"><code>mode_explorer.html</code></a> (opens full page). Sliders for <span class="math inline">s</span>, the initial strength <span class="math inline">a_0</span>, the imbalance <span class="math inline">d</span> and the depth <span class="math inline">N</span>, with up to five modes overlaid. A second panel plots each mode’s kernel <span class="math inline">\sqrt{4a^2+d^2}</span> (and its depth-<span class="math inline">N</span> analogue), so you can see a frozen kernel versus a growing one. Presets include “large balanced init”, which is not lazy.</p>
 <div class="figure-frame"><iframe src="assets/interactive/mode_explorer.html" title="Interactive figure: mode_explorer.html" loading="lazy"></iframe></div>
 
 
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td1-s1-walkthrough"></a>
-<p><strong>Notation.</strong> Whitened inputs <span class="math inline">x\in\mathbb R^{n_x}</span> (<span class="math inline">\mathbb E[xx^\top]=I</span>), targets <span class="math inline">y\in\mathbb R^{n_y}</span>; layers <span class="math inline">W_1</span> (<span class="math inline">h\times n_x</span>) and <span class="math inline">W_2</span> (<span class="math inline">n_y\times h</span>), <span class="math inline">W=W_2W_1</span>; loss <span class="math inline">L=\tfrac12\mathbb E\|y-Wx\|^2</span>; <span class="math inline">\Sigma=\mathbb E[yx^\top]=USV^\top=\sum_{\alpha=1}^rs_\alpha u_\alpha v_\alpha^\top</span> with distinct <span class="math inline">s_1&gt;\dots&gt;s_r&gt;0</span>; error <span class="math inline">E:=\Sigma-W</span>; mode strength <span class="math inline">a_\alpha:=u_\alpha^\top Wv_\alpha</span>. Gradient descent with step <span class="math inline">\eta</span> is the flow <span class="math inline">\tau\dot\theta=-\nabla L</span> with <span class="math inline">\tau:=1/\eta</span>, so <span class="math inline">t</span> counts steps (Saxe et al.’s convention; NB2 uses <span class="math inline">t=k\eta</span>).</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> whitened inputs <span class="math inline">x\in\mathbb R^{n_x}</span> (<span class="math inline">\mathbb E[xx^\top]=I</span>), targets <span class="math inline">y\in\mathbb R^{n_y}</span>; layers <span class="math inline">W_1</span> (<span class="math inline">h\times n_x</span>) and <span class="math inline">W_2</span> (<span class="math inline">n_y\times h</span>), <span class="math inline">W=W_2W_1</span>; loss <span class="math inline">L=\tfrac12\mathbb E\|y-Wx\|^2</span>; <span class="math inline">\Sigma=\mathbb E[yx^\top]=USV^\top=\sum_{\alpha=1}^rs_\alpha u_\alpha v_\alpha^\top</span> with distinct <span class="math inline">s_1&gt;\dots&gt;s_r&gt;0</span>; error <span class="math inline">E:=\Sigma-W</span>; mode strength <span class="math inline">a_\alpha:=u_\alpha^\top Wv_\alpha</span>. Gradient descent with step <span class="math inline">\eta</span> is the flow <span class="math inline">\tau\dot\theta=-\nabla L</span> with <span class="math inline">\tau:=1/\eta</span>, so <span class="math inline">t</span> counts steps (Saxe et al.’s convention; NB2 uses <span class="math inline">t=k\eta</span>).</p>
 <p><strong>1.1 Gradient flow.</strong> With whitened inputs <span class="math inline">L=\tfrac12\|\Sigma-W\|_F^2+\text{const}</span> (Exercise 1.1), so</p>
 <p><span class="math display">
 \tau\dot W_1=W_2^\top E,\qquad \tau\dot W_2=E\,W_1^\top,\qquad E=\Sigma-W_2W_1. \tag{1.1}
@@ -718,27 +784,15 @@ u_\alpha^\top W(t)v_\beta=\tfrac12\Big[(z^+_\alpha\cdot z^+_\beta)e^{(s_\alpha+s
 </div>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="2-depth">
 <summary><h2 id="2-depth">2. Depth</h2></summary>
 <div class="sec-body">
 <a id="td1-s2"></a>
 <p>Extra linear layers add nothing to what the network can represent. What do they change? With <span class="math inline">N</span> layers, <span class="math inline">W=W_N\cdots W_1</span>, a balanced mode of strength <span class="math inline">a</span> and target singular value <span class="math inline">s</span> obeys <span class="math inline">\tau\dot a=Na^{2-2/N}(s-a)</span>. From depth 3, the plateau grows as a power of <span class="math inline">1/a_0</span> (<span class="math inline">a_0</span> the initial strength) instead of logarithmically, and the largest stable learning rate falls like <span class="math inline">1/N</span>. A side branch: nothing later depends on it.</p>
-<div class="reading">
+<p><strong>Papers:</strong> the depth-<span class="math inline">N</span> equation is Saxe et al.’s (2014, Eq. 15 and App. B); Jacot et al. (2021) on saddle-to-saddle escape (see <a href="#td1-readings">Readings</a>).</p>
 
-<p><strong><a href="https://arxiv.org/abs/2106.15933">Saddle-to-saddle dynamics in deep linear networks: small initialization training, symmetry, and sparsity</a></strong>, Jacot, Ged, Şimşek, Hongler, Gabriel (2021) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Proves that from a small random initialization of per-layer scale <span class="math inline">\alpha</span> the first escape from the origin follows a rank-one path, taking time <span class="math inline">\propto-\log\alpha</span> at depth 2 and <span class="math inline">\alpha^{-(N-2)}</span> beyond. The full saddle-to-saddle sequence is a conjecture supported by numerics.</p>
-</div>
-
-<p>The depth-<span class="math inline">N</span> equation itself is Saxe et al.’s (2014, Eq. 15 and App. B; top of the page).</p>
-
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-2">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-2">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td1-s2-walkthrough"></a>
-<p><strong>Notation.</strong> As in §1: whitened inputs, <span class="math inline">\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top</span>, error <span class="math inline">E=\Sigma-W</span>, mode strength <span class="math inline">a=u^\top Wv</span>, <span class="math inline">\tau=1/\eta</span>. At depth 2 a balanced mode has a plateau of about <span class="math inline">(\tau/2s)\ln(s/a_0)</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> as in §1: whitened inputs, <span class="math inline">\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top</span>, error <span class="math inline">E=\Sigma-W</span>, mode strength <span class="math inline">a=u^\top Wv</span>, <span class="math inline">\tau=1/\eta</span>. At depth 2 a balanced mode has a plateau of about <span class="math inline">(\tau/2s)\ln(s/a_0)</span>.</p>
 <p><strong>2.1 The depth-<span class="math inline">N</span> mode equation.</strong> With aligned layers <span class="math inline">W_j=R_j\operatorname{diag}(w_j)R_{j-1}^\top</span> (<span class="math inline">R_j</span> orthogonal, <span class="math inline">R_0=V</span>, <span class="math inline">R_N=U</span>), mode <span class="math inline">\alpha</span> is carried by one scalar per layer, with <span class="math inline">a=w_1\cdots w_N</span>, <span class="math inline">\tau\dot w_j=\big(\prod_{i\ne j}w_i\big)(s-a)</span> and conserved differences <span class="math inline">w_{j+1}^2-w_j^2</span> (Exercise 2.1). Balanced, on the positive branch (<span class="math inline">a&gt;0</span>),</p>
 <p><span class="math display">
 \boxed{\;\tau\dot a=N\,a^{2-2/N}\,(s-a)\;} \tag{2.1}
@@ -840,33 +894,15 @@ N = 4: t_1/2 at a0 = 1e-6 is     499.7 tau (prediction     500.0)</pre>
 <p>The power-law prediction is the leading term as <span class="math inline">a_0\to0</span>. At <span class="math inline">a_0\sim10^{-1}</span> the blow-up time overshoots the time to reach <span class="math inline">s/2</span>, so the points sit below the line there.</p>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="3-the-landscape">
 <summary><h2 id="3-the-landscape">3. The landscape</h2></summary>
 <div class="sec-body">
 <a id="td1-s3"></a>
 <p>What does “no bad local minima” buy you? For deep linear networks with square loss, every critical point is a partial SVD reconstruction <span class="math inline">\Sigma_S=\sum_{\alpha\in S}s_\alpha u_\alpha v_\alpha^\top</span> of the target correlation <span class="math inline">\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top</span>, every local minimum is global, and the other critical points are saddles (some degenerate from depth 3). None of this says how long training takes. A side branch: nothing later depends on it.</p>
-<div class="reading">
+<p><strong>Papers:</strong> Achour, Malgouyres &amp; Gerchinovitz (2024) on the critical points; Arora, Cohen, Golowich &amp; Hu (2019) on convergence (see <a href="#td1-readings">Readings</a>).</p>
 
-<p><strong><a href="https://arxiv.org/abs/2107.13289">The loss landscape of deep linear neural networks: a second-order analysis</a></strong>, Achour, Malgouyres, Gerchinovitz (JMLR 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Characterizes every critical point (Prop. 1–2) and classifies them into global minima, strict saddles and non-strict saddles (Theorem 7). Their depth <span class="math inline">H</span> counts weight matrices. They do not assume whitening.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1810.02281">A convergence analysis of gradient descent for deep linear neural networks</a></strong>, Arora, Cohen, Golowich, Hu (ICLR 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The kind of convergence theorem the landscape alone does not give: a linear rate, given width, approximately balanced initialization, low initial loss and a small step.</p>
-</div>
-
-<p>Also: Baldi, Hornik, <a href="https://doi.org/10.1016/0893-6080(89)90014-2">Neural networks and principal component analysis: learning from examples without local minima</a> (1989; the two-layer case, PCA for an autoencoder); Kawaguchi, <a href="https://arxiv.org/abs/1605.07110">Deep learning without poor local minima</a> (2016; any depth and width, degenerate saddles from two hidden layers).</p>
-
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-3">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-3">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td1-s3-walkthrough"></a>
-<p><strong>Notation.</strong> Depth-<span class="math inline">N</span> network <span class="math inline">W=W_N\cdots W_1</span>, whitened inputs, <span class="math inline">L=\tfrac12\|\Sigma-W\|_F^2+\text{const}</span>, <span class="math inline">E=\Sigma-W</span>, distinct singular values <span class="math inline">s_\alpha</span>. Gradient: <span class="math inline">\nabla_{W_j}L=-(W_N\cdots W_{j+1})^\top E(W_{j-1}\cdots W_1)^\top</span> (Exercise 2.1). <span class="math inline">r_{\max}</span> is the narrowest width, so <span class="math inline">\operatorname{rank}W\le r_{\max}</span>. Without whitening, <span class="math inline">\Sigma_{xx}=\mathbb E[xx^\top]</span>, <span class="math inline">\Sigma_{yx}=\mathbb E[yx^\top]</span>, <span class="math inline">\Sigma_{xy}=\Sigma_{yx}^\top</span>. <span class="math inline">\tau=1/\eta</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> depth-<span class="math inline">N</span> network <span class="math inline">W=W_N\cdots W_1</span>, whitened inputs, <span class="math inline">L=\tfrac12\|\Sigma-W\|_F^2+\text{const}</span>, <span class="math inline">E=\Sigma-W</span>, distinct singular values <span class="math inline">s_\alpha</span>. Gradient: <span class="math inline">\nabla_{W_j}L=-(W_N\cdots W_{j+1})^\top E(W_{j-1}\cdots W_1)^\top</span> (Exercise 2.1). <span class="math inline">r_{\max}</span> is the narrowest width, so <span class="math inline">\operatorname{rank}W\le r_{\max}</span>. Without whitening, <span class="math inline">\Sigma_{xx}=\mathbb E[xx^\top]</span>, <span class="math inline">\Sigma_{yx}=\mathbb E[yx^\top]</span>, <span class="math inline">\Sigma_{xy}=\Sigma_{yx}^\top</span>. <span class="math inline">\tau=1/\eta</span>.</p>
 <p><strong>3.1 Critical points are partial reconstructions.</strong> At a critical point <span class="math inline">W^\top E=0</span> and <span class="math inline">EW^\top=0</span>, so <span class="math inline">\Sigma=W+E</span> splits into two non-overlapping pieces, and (Exercise 3.1)</p>
 <p><span class="math display">
 W=\Sigma_S:=\sum_{\alpha\in S}s_\alpha u_\alpha v_\alpha^\top,\qquad L=\tfrac12\sum_{\alpha\notin S}s_\alpha^2+\text{const},
@@ -986,27 +1022,15 @@ N=2, a minimum:   [-0. -0. -0. -0. -0.  0.  0.  0.  0.  2.  3.  3.  4.  4.  4.  
 </div>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="4-the-end-to-end-flow-and-its-kernel">
 <summary><h2 id="4-the-end-to-end-flow-and-its-kernel">4. The end-to-end flow and its kernel</h2></summary>
 <div class="sec-body">
 <a id="td1-s4"></a>
 <p>How does the end-to-end map <span class="math inline">W=W_2W_1</span> move? As <span class="math inline">\tau\dot W=K_t[E]</span>, a weight-dependent linear operator applied to the error <span class="math inline">E=\Sigma-W</span> (with <span class="math inline">\Sigma=\mathbb E[yx^\top]</span>, <span class="math inline">\tau=1/\eta</span>). <span class="math inline">K_t</span> is the network’s neural tangent kernel (NTK); whether it moves is the lazy-versus-rich question. With balanced layers it is zero on directions not yet learned. In general each singular mode carries one conserved number <span class="math inline">\Delta</span>, counting layer imbalance and misalignment, which fixes how far that mode’s kernel can move.</p>
-<div class="reading">
+<p><strong>Papers:</strong> Arora, Cohen &amp; Hazan (2018) for the balanced end-to-end equation; Tu, Aranguri and Jacot (2024) prove the matrix form for wide Gaussian initializations (see <a href="#td1-readings">Readings</a>). General wide-network NTK: the Physics of Deep Learning day’s <a href="../../IliadPhysicsLearning/notebooks/second-draft/02_ntk_limit_kernel_learners_solutions.ipynb">Notebook 2</a> and §7.</p>
 
-<p><strong><a href="https://arxiv.org/abs/1802.06509">On the optimization of deep networks: implicit acceleration by overparameterization</a></strong>, Arora, Cohen, Hazan (ICML 2018) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The balanced end-to-end equation at any depth: a preconditioner favouring directions already large in <span class="math inline">W</span>, and for <span class="math inline">N&gt;2</span> not the gradient flow of any regularized loss.</p>
-</div>
-
-<p>Tu, Aranguri and Jacot (top of the page) prove the matrix form for wide Gaussian initializations. General wide-network NTK: the Physics of Deep Learning day’s <a href="../../IliadPhysicsLearning/notebooks/second-draft/02_ntk_limit_kernel_learners_solutions.ipynb">Notebook 2</a> and §7.</p>
-
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-4">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-4">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td1-s4-walkthrough"></a>
-<p><strong>Notation.</strong> Two layers <span class="math inline">W=W_2W_1</span>, whitened inputs, <span class="math inline">\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top</span>, <span class="math inline">E=\Sigma-W</span>, <span class="math inline">\tau=1/\eta</span>; the flow (1.1) is <span class="math inline">\tau\dot W_1=W_2^\top E</span>, <span class="math inline">\tau\dot W_2=EW_1^\top</span>, with conserved imbalance <span class="math inline">D=W_2^\top W_2-W_1W_1^\top</span>. An aligned mode (§1.3) has input weight <span class="math inline">b</span>, output weight <span class="math inline">c</span>, strength <span class="math inline">a=bc</span>, imbalance <span class="math inline">d=c^2-b^2</span>, and obeys <span class="math inline">\tau\dot a=\sqrt{4a^2+d^2}\,(s-a)</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> two layers <span class="math inline">W=W_2W_1</span>, whitened inputs, <span class="math inline">\Sigma=\sum_\alpha s_\alpha u_\alpha v_\alpha^\top</span>, <span class="math inline">E=\Sigma-W</span>, <span class="math inline">\tau=1/\eta</span>; the flow (1.1) is <span class="math inline">\tau\dot W_1=W_2^\top E</span>, <span class="math inline">\tau\dot W_2=EW_1^\top</span>, with conserved imbalance <span class="math inline">D=W_2^\top W_2-W_1W_1^\top</span>. An aligned mode (§1.3) has input weight <span class="math inline">b</span>, output weight <span class="math inline">c</span>, strength <span class="math inline">a=bc</span>, imbalance <span class="math inline">d=c^2-b^2</span>, and obeys <span class="math inline">\tau\dot a=\sqrt{4a^2+d^2}\,(s-a)</span>.</p>
 <p><strong>4.1 The end-to-end flow.</strong> From (1.1),</p>
 <p><span class="math display">
 \tau\dot W=W_2W_2^\top\,E+E\,W_1^\top W_1=:K_t[E]. \tag{4.1}
@@ -1104,33 +1128,15 @@ N=2, a minimum:   [-0. -0. -0. -0. -0.  0.  0.  0.  0.  2.  3.  3.  4.  4.  4.  
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="5-rich-lazy-and-mixed">
 <summary><h2 id="5-rich-lazy-and-mixed">5. Rich, lazy and mixed</h2></summary>
 <div class="sec-body">
 <a id="td1-s5"></a>
 <p>When is training lazy (a frozen kernel, as in kernel regression) and when rich (a kernel that grows with what is learned)? Here both are settings of one dial: each mode’s conserved invariant <span class="math inline">\Delta</span> (§4) against its target singular value <span class="math inline">s</span>. Small <span class="math inline">\Delta</span> gives saddle-to-saddle, strongest-first learning; large <span class="math inline">\Delta</span> freezes the kernel; in between, strong modes are rich and weak ones lazy. “Large initialization is lazy” holds for large <em>Gaussian</em> weights, which are strongly imbalanced, and fails for large <em>balanced</em> ones.</p>
-<div class="reading">
+<p><strong>Papers:</strong> Tu, Aranguri &amp; Jacot (2024) for the phase diagram; Chizat, Oyallon &amp; Bach (2019) on lazy training (see <a href="#td1-readings">Readings</a>).</p>
 
-<p><strong><a href="https://arxiv.org/abs/2405.17580">Mixed dynamics in linear networks: unifying the lazy and active regimes</a></strong>, Tu, Aranguri, Jacot (NeurIPS 2024) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The phase diagram: with width <span class="math inline">w</span> and initialization variance <span class="math inline">\sigma^2</span>, singular values below about <span class="math inline">\sigma^2w</span> are learned lazily and larger ones actively.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1812.07956">On lazy training in differentiable programming</a></strong>, Chizat, Oyallon, Bach (NeurIPS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Lazy training comes from a choice of scaling (such as a large output multiplier), not from overparameterization as such.</p>
-</div>
-
-<p>Also: Li, Luo, Lyu, <a href="https://arxiv.org/abs/2012.09839">Towards resolving the implicit bias of gradient descent for matrix factorization: greedy low-rank learning</a> (2021); Kumar, Bordelon, Gershman, Pehlevan, <a href="https://arxiv.org/abs/2310.06110">Grokking as the transition from lazy to rich training dynamics</a> (2023).</p>
-
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-5">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-5">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td1-s5-walkthrough"></a>
-<p><strong>Notation.</strong> As in §4: a mode with singular value <span class="math inline">s</span> has strength <span class="math inline">a=u^\top Wv</span>, kernel <span class="math inline">k=|p|^2+|q|^2</span> (<span class="math inline">p=W_1v</span>, <span class="math inline">q=W_2^\top u</span>), invariant <span class="math inline">\Delta^2=k(0)^2-4a(0)^2</span>, and obeys (4.3), <span class="math inline">\tau\dot a=\sqrt{4a^2+\Delta^2}\,(s-a)</span>: exactly for separated modes, approximately for wide random initializations. <span class="math inline">\Delta=|c^2-b^2|</span> for an aligned mode with input weight <span class="math inline">b</span> and output weight <span class="math inline">c</span>; <span class="math inline">\Delta\approx2\sigma^2h</span> for Gaussian weights of variance <span class="math inline">\sigma^2</span> at width <span class="math inline">h</span>. <span class="math inline">\Sigma_S=\sum_{\alpha\in S}s_\alpha u_\alpha v_\alpha^\top</span>; <span class="math inline">\tau=1/\eta</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> as in §4: a mode with singular value <span class="math inline">s</span> has strength <span class="math inline">a=u^\top Wv</span>, kernel <span class="math inline">k=|p|^2+|q|^2</span> (<span class="math inline">p=W_1v</span>, <span class="math inline">q=W_2^\top u</span>), invariant <span class="math inline">\Delta^2=k(0)^2-4a(0)^2</span>, and obeys (4.3), <span class="math inline">\tau\dot a=\sqrt{4a^2+\Delta^2}\,(s-a)</span>: exactly for separated modes, approximately for wide random initializations. <span class="math inline">\Delta=|c^2-b^2|</span> for an aligned mode with input weight <span class="math inline">b</span> and output weight <span class="math inline">c</span>; <span class="math inline">\Delta\approx2\sigma^2h</span> for Gaussian weights of variance <span class="math inline">\sigma^2</span> at width <span class="math inline">h</span>. <span class="math inline">\Sigma_S=\sum_{\alpha\in S}s_\alpha u_\alpha v_\alpha^\top</span>; <span class="math inline">\tau=1/\eta</span>.</p>
 <p><strong>5.1 Rich: saddle to saddle.</strong> If <span class="math inline">\Delta_\alpha\ll s_\alpha</span> and <span class="math inline">|a_\alpha(0)|\ll s_\alpha</span> for every mode, each follows a near-logistic with half-time <span class="math inline">t_\alpha\approx(\tau/2s_\alpha)\ln(4s_\alpha/\Delta_\alpha)</span>, like a balanced mode with <span class="math inline">a_0=\Delta/4</span> (Exercise 5.2; this matches §1.5’s seed at large width). So <span class="math inline">W(t)</span> passes near <span class="math inline">\Sigma_{\{1\}}</span>, then <span class="math inline">\Sigma_{\{1,2\}}</span>, and so on, the saddles of §3: a staircase loss, effective rank growing one step at a time, and the kernel on mode <span class="math inline">\alpha</span> growing from <span class="math inline">\Delta_\alpha</span> to <span class="math inline">2s_\alpha</span>. The low-rank bias is in the <em>trajectory</em>: the optimum is <span class="math inline">\Sigma</span> whatever the path, so the bias shows only under early stopping (a near-hard threshold on the singular values, where a frozen isotropic kernel shrinks every mode by the same factor) or where the minimizer is not unique (matrix completion, sensing). Li, Luo and Lyu prove that the first phase is greedy rank-one learning.</p>
 <p><strong>5.2 Lazy: a frozen kernel.</strong> If <span class="math inline">\max(|a_0|,s)\ll\Delta</span>, the kernel <span class="math inline">\sqrt{4a^2+\Delta^2}</span> changes by a relative amount of at most about <span class="math inline">2\max(a_0^2,s^2)/\Delta^2</span> (Exercise 5.1), and <span class="math inline">\tau\dot a\approx\Delta(s-a)</span>: every mode relaxes at rate <span class="math inline">\Delta/\tau</span>, with no plateau and no ordering. This is kernel regression with the initial NTK, and the mode’s weights move by a relative <span class="math inline">O(s/\Delta)</span>. Examples: one large layer (<span class="math inline">|d|\gg s</span>), Gaussian weights with <span class="math inline">\sigma^2h\gg s</span>, and fan-in initialization at large width (<span class="math inline">\Delta\approx h/n_x</span>). The stable step is then about <span class="math inline">2/\Delta</span>, so a larger kernel does not reduce the number of steps. This is Chizat, Oyallon and Bach’s point: a large output scale grows the kernel while the needed function change stays fixed.</p>
 <p><strong>5.3 Large balanced weights are not lazy.</strong> An aligned balanced mode (<span class="math inline">\Delta=0</span>) started at <span class="math inline">a_0\gg s</span> has kernel <span class="math inline">2a</span>, which falls from <span class="math inline">2a_0</span> to <span class="math inline">2s</span>, a relative change of <span class="math inline">1-s/a_0</span>. Balanced layers make the function the <em>square</em> of the per-layer scale, so large balanced weights mean a large initial function, and removing the excess is an <span class="math inline">O(1)</span> change of the weights that carry it: 5.2’s criterion fails through <span class="math inline">|a_0|</span>. Large Gaussian initialization is lazy for a different reason: its input and output vectors are nearly orthogonal, which makes <span class="math inline">\Delta</span> large while <span class="math inline">a_0</span> stays small.</p>
@@ -1331,9 +1337,6 @@ mode-kernel change 97%; three layers, small Gaussian">
 <p>The two large modes are rich: their kernels grow by factors near <span class="math inline">2s/\Delta</span> and they rise along S-shaped curves, the strongest first. The two small modes are lazy: their kernels barely move and they relax at the common rate <span class="math inline">\Delta</span>, finishing <em>after</em> the rich modes. The predictions of (4.3) lie on top of the simulations.</p>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="6-which-heuristics-are-derived-and-which-are-planted">
 <summary><h2 id="6-which-heuristics-are-derived-and-which-are-planted">6. Which heuristics are derived, and which are planted</h2></summary>
 <div class="sec-body">
@@ -1380,19 +1383,10 @@ mode-kernel change 97%; three layers, small Gaussian">
 </tr>
 </tbody>
 </table></div>
-<div class="reading">
+<p><strong>Paper:</strong> Saxe, McClelland &amp; Ganguli (2019) on semantic development (see <a href="#td1-readings">Readings</a>).</p>
 
-<p><strong><a href="https://arxiv.org/abs/1810.10531">A mathematical theory of semantic development in deep neural networks</a></strong>, Saxe, McClelland, Ganguli (PNAS 2019) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The source of heuristic 2: the exact solutions applied to tree-structured data, giving coarse-to-fine differentiation, illusory correlations and category coherence.</p>
-</div>
-
-<p>Also: Pennington, Schoenholz, Ganguli, <a href="https://arxiv.org/abs/1711.04735">Resurrecting the sigmoid in deep learning through dynamical isometry</a> (2017; heuristic 4); Advani, Saxe, Sompolinsky, <a href="https://doi.org/10.1016/j.neunet.2020.08.022">High-dimensional dynamics of generalization error in neural networks</a> (2020; heuristic 5; the arXiv version, <a href="https://arxiv.org/abs/1710.03667">1710.03667</a>, lists Advani and Saxe only).</p>
-
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-6">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-6">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td1-s6-walkthrough"></a>
-<p>The table above, with reasons. <strong>Derived</strong> means it follows from §1–§5 (linear network, square loss, whitened inputs); <strong>planted</strong> names what the headline needs from the data or the initialization; <strong>transfer</strong> is the evidence beyond linear networks. Notation: <span class="math inline">\Sigma_{xx}=\mathbb E[xx^\top]</span>, <span class="math inline">\Sigma_{yx}=\mathbb E[yx^\top]</span> with singular values <span class="math inline">s</span>; <span class="math inline">a_0</span> the initial mode strength; <span class="math inline">\Delta</span> the per-mode invariant of §4 (<span class="math inline">\approx2\sigma^2h</span> for Gaussian weights of variance <span class="math inline">\sigma^2</span> at width <span class="math inline">h</span>); <span class="math inline">\tau=1/\eta</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> The table above, with reasons. <strong>Derived</strong> means it follows from §1–§5 (linear network, square loss, whitened inputs); <strong>planted</strong> names what the headline needs from the data or the initialization; <strong>transfer</strong> is the evidence beyond linear networks. Notation: <span class="math inline">\Sigma_{xx}=\mathbb E[xx^\top]</span>, <span class="math inline">\Sigma_{yx}=\mathbb E[yx^\top]</span> with singular values <span class="math inline">s</span>; <span class="math inline">a_0</span> the initial mode strength; <span class="math inline">\Delta</span> the per-mode invariant of §4 (<span class="math inline">\approx2\sigma^2h</span> for Gaussian weights of variance <span class="math inline">\sigma^2</span> at width <span class="math inline">h</span>); <span class="math inline">\tau=1/\eta</span>.</p>
 <p><strong>1. Stagewise learning.</strong> <em>Derived:</em> from small initialization, modes are learned in order of decreasing <span class="math inline">s</span>, each after a plateau <span class="math inline">\approx(\tau/2s)\ln(4s/\Delta)</span>; alignment is derived for the first mode (§1.5) and checked numerically for the rest. <em>Planted:</em> (i) small initialization (<span class="math inline">\Delta\ll s</span>, else no stages, §5.2); (ii) spectral gaps, since separate steps need <span class="math inline">\delta s/s\gg2\ln9/\ln(1/a_0)\approx4.4/\ln(1/a_0)</span> (Exercise 6.1); (iii) whitened inputs, which make the stages the SVD of <span class="math inline">\Sigma_{yx}</span> (with <span class="math inline">\Sigma_{xx}\ne I</span> the modes couple unless <span class="math inline">\Sigma_{xx}</span> and <span class="math inline">\Sigma_{yx}</span> share singular vectors). <em>Transfer:</em> roughly stagewise learning appears in some nonlinear settings (§7), but the “modes” are not an SVD of the data.</p>
 <p><strong>2. Semantic development.</strong> <em>Derived:</em> given 1, coarse distinctions come first if they carry larger <span class="math inline">s</span>, with stage-like transitions, and a shallow network shows no stages. <em>Planted:</em> the data. Saxe, McClelland and Ganguli (2019) generate features by branching diffusion down a tree (each feature flips sign with probability <span class="math inline">\epsilon</span> per branch) with one-hot inputs, which makes the singular vectors the tree’s splits with <span class="math inline">s</span> decreasing down the tree (Exercise 6.2). Whether real item–feature statistics have such a spectrum, the dynamics cannot say. <em>Transfer:</em> a qualitative match to an earlier nonlinear simulation (their Fig. 2).</p>
 <p><strong>3. Low-rank-first learning.</strong> <em>Derived:</em> with <span class="math inline">\Delta\ll s</span> the path visits <span class="math inline">\Sigma_{\{1\}},\Sigma_{\{1,2\}},\dots</span> (§5.1), a property of initialization scale, factorization and gradient flow together, not of the loss (the shallow model has the same loss and learns all modes at once). Proved: the first escape (Jacot et al.) and the first greedy rank-one phase (Li, Luo, Lyu); the full sequence is conjectured in general. <em>Planted:</em> small initialization and spectral gaps. The optimum is <span class="math inline">\Sigma</span> anyway, so the bias matters only with early stopping or underdetermined problems. <em>Transfer:</em> §7’s alternating gradient flows.</p>
@@ -1525,32 +1519,11 @@ loss of the saddle that drops the weakest mode: 0.5 * 0.5**2 = 0.125</pre>
 </div>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="7-going-further">
 <summary><h2 id="7-going-further">7. Going further</h2></summary>
 <div class="sec-body">
 <a id="td1-s7"></a>
-<p>Readings only. Two extensions of the mode picture beyond linear networks:</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2207.10430">The neural race reduction: dynamics of abstraction in gated networks</a></strong>, Saxe, Sodhani, Lewallen (ICML 2022) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Gated linear pathways compute nonlinear functions, and their learning reduces to mode ODEs like §1’s: a race between pathways.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2506.06489">Alternating gradient flows: a theory of feature learning in two-layer neural networks</a></strong>, Kunin, Marchetti, Chen, Karkada, Simon, DeWeese, Ganguli, Miolane (NeurIPS 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Small-initialization training of two-layer networks as alternating steps, each neuron activation bringing a loss drop: saddle-to-saddle learning beyond linear networks.</p>
-</div>
-
-<p><strong>The analytic escape hatch.</strong> For a day of exactly solvable theory instead, the Physics of Deep Learning day builds the kernel story from scratch: <a href="../../IliadPhysicsLearning/notebooks/second-draft/01_fixed_features_kernel_learning_solutions.ipynb">Notebook 1, <em>Fixed features and kernel learning</em></a> (gradient flow as a spectral filter), <a href="../../IliadPhysicsLearning/notebooks/second-draft/02_ntk_limit_kernel_learners_solutions.ipynb">Notebook 2, <em>Why wide neural networks become kernel learners</em></a> (the NTK and NNGP limits), and <a href="../../IliadPhysicsLearning/notebooks/second-draft/03_beyond_ntk_feature_learning_and_cumulants_solutions.ipynb">Notebook 3, <em>Beyond fixed kernels</em></a> (moving kernels, cumulants, and an exactly solvable deep linear network at finite width). Also: Mei, Montanari, Nguyen, <a href="https://arxiv.org/abs/1804.06561">A mean field view of the landscape of two-layer neural networks</a> (2018); Yang, Hu, <a href="https://arxiv.org/abs/2011.14522">Tensor Programs IV: feature learning in infinite-width neural networks</a> (2021; muP); Bordelon, Pehlevan, <a href="https://arxiv.org/abs/2205.09653">Self-consistent dynamical field theory of kernel evolution in wide neural networks</a> (2022).</p>
-<div class="refs">
-
-<p><strong>For reference (books):</strong> <a href="https://arxiv.org/abs/2106.10165">The Principles of Deep Learning Theory</a>, Roberts, Yaida, Hanin (Cambridge UP 2022), finite width as a <span class="math inline">1/n</span> expansion around infinite width.</p>
-</div>
-
+<p><strong>The analytic escape hatch.</strong> For a day of exactly solvable theory instead, the Physics of Deep Learning day builds the kernel story from scratch: <a href="../../IliadPhysicsLearning/notebooks/second-draft/01_fixed_features_kernel_learning_solutions.ipynb">Notebook 1, <em>Fixed features and kernel learning</em></a> (gradient flow as a spectral filter), <a href="../../IliadPhysicsLearning/notebooks/second-draft/02_ntk_limit_kernel_learners_solutions.ipynb">Notebook 2, <em>Why wide neural networks become kernel learners</em></a> (the NTK and NNGP limits), and <a href="../../IliadPhysicsLearning/notebooks/second-draft/03_beyond_ntk_feature_learning_and_cumulants_solutions.ipynb">Notebook 3, <em>Beyond fixed kernels</em></a> (moving kernels, cumulants, and an exactly solvable deep linear network at finite width).</p>
 <p><strong>In NB2.</strong> The mode picture returns in <a href="td2_7_learned_first.html">what is learned first</a>, the kernel <span class="math inline">K_t</span> in <a href="td2_6_curvature.html">curvature</a> (as the Gauss–Newton matrix), and muP in <a href="td2_4_optimizer_geometry.html">optimizer geometry</a>.</p>
 </div>
 </details>

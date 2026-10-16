@@ -270,12 +270,12 @@ article details.code > summary:hover { color: var(--fg); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
+<li><a href="#readings">Readings</a></li>
 <li><a href="#61-the-gaussnewton-decomposition">6.1 The Gauss–Newton decomposition</a></li>
 <li><a href="#62-the-gaussnewton-matrix-and-the-loss-weighted-tangent-kernel-share-their-spectrum">6.2 The Gauss–Newton matrix and the loss-weighted tangent kernel share their spectrum</a></li>
 <li><a href="#63-bulk-and-outliers">6.3 Bulk and outliers</a></li>
 <li><a href="#64-the-tiny-subspace-the-gradient-is-there-learning-mostly-is-not">6.4 The tiny subspace: the gradient is there, learning (mostly) is not</a></li>
 <li><a href="#65-when-the-basin-is-chosen">6.5 When the basin is chosen</a></li>
-<li><a href="#readings">Readings</a></li>
 </ol>
 </details>
 <div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 7 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
@@ -287,19 +287,7 @@ article details.code > summary:hover { color: var(--fg); }
 <p class="run-note">To run the code, open <a href='td2_6_curvature.ipynb'><code>td2_6_curvature.ipynb</code></a> in Jupyter (CPU only; needs numpy, matplotlib and torch). Every code cell's output is shown on this page; exercise solutions are folded under <em>Solution</em>.</p>
 
 <p>The Hessian of a classifier’s training loss is a bulk of near-zero eigenvalues plus a few large outliers, about one per class. This notebook asks where the outliers come from, whether the gradient’s pull toward them means learning happens there, and how early a run commits to one basin.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1706.04454">Empirical analysis of the Hessian of over-parametrized neural networks</a></strong>, Sagun, Evci, Güney, Dauphin and Bottou (2017) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>The bulk-plus-outliers picture on small MLPs: adding parameters grows the bulk at zero; changing the data moves the outliers.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2010.15110">Deep learning versus kernel learning: an empirical study of loss landscape geometry and the time evolution of the Neural Tangent Kernel</a></strong>, Fort, Dziugaite, Paul, Kharaghani, Roy and Ganguli (NeurIPS 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>If you read one paper: basin commitment and the tangent kernel’s motion measured side by side.</p>
-</div>
-
-<p><strong>Route.</strong></p>
+<p><strong>Route.</strong> The <a href="#td26-readings">Readings</a> come first: every paper of the notebook, grouped by section. The sections after them are the derivations and walkthrough (exercises with worked solutions, and code), for whoever wants them.</p>
 <ul>
 <li><a href="#td26-1">6.1 The Gauss–Newton decomposition</a>: which part of the Hessian you keep when you drop the network’s second derivatives.</li>
 <li><a href="#td26-2">6.2 Gauss–Newton and the tangent kernel</a>: curvature eigenvalues are kernel eigenvalues.</li>
@@ -390,28 +378,73 @@ article details.code > summary:hover { color: var(--fg); }
 </details>
 </div>
 
-<details class="sec sec2" data-sec="61-the-gaussnewton-decomposition">
-<summary><h2 id="61-the-gaussnewton-decomposition">6.1 The Gauss–Newton decomposition</h2></summary>
+<details class="sec sec2" data-sec="readings" open>
+<summary><h2 id="readings">Readings</h2></summary>
 <div class="sec-body">
-<a id="td26-1"></a>
-<p>Second-order optimizers, influence functions and Laplace approximations use the Gauss–Newton matrix in place of the Hessian: the part built from first derivatives of the network only, positive semidefinite by construction. The part it drops vanishes at interpolation for square loss, but for cross-entropy it shrinks only like one over the logit scale.</p>
+<a id="td26-readings"></a>
+<p><strong>The Gauss–Newton decomposition (<a href="#td26-1">§6.1</a>).</strong> Also the Gauss–Newton side of <a href="#td26-2">§6.2</a>, which is linear algebra rather than a paper’s result.</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/1412.1193">New insights and perspectives on the natural gradient method</a></strong>, Martens (JMLR 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>The clearest account of how the Gauss–Newton matrix, the Fisher and the empirical Fisher relate (§§8–11), and when they coincide.</p>
 </div>
 
+<p><strong>Bulk and outliers (<a href="#td26-3">§6.3</a>).</strong> The short paper, then the long one.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1706.04454">Empirical analysis of the Hessian of over-parametrized neural networks</a></strong>, Sagun, Evci, Güney, Dauphin and Bottou (2017) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Short and readable: bulk plus outliers on Gaussian-mixture data and small MLPs, with the outliers in the Gauss–Newton part; adding parameters grows the bulk at zero, changing the data moves the outliers. Its appendix shows how much the outlier count depends on the cutoff rule (often a lot).</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2008.11865">Traces of class/cross-class structure pervade deep learning spectra</a></strong>, Papyan (JMLR 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Class-level structure (about <span class="math inline">C</span> outliers) in the Hessians, Fisher matrices and gradients of real networks, a weaker cross-class layer below it, knockout experiments that attribute each level, and how BatchNorm shrinks the outliers. Long; the introduction’s summary is enough to orient.</p>
+</div>
+
+<p><strong>The tiny subspace (<a href="#td26-4">§6.4</a>).</strong> The observation, then the intervention.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1812.04754">Gradient descent happens in a tiny subspace</a></strong>, Gur-Ari, Roberts and Dyer (2018) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The observation: within tens of steps the gradient concentrates in the top-<span class="math inline">k</span> Hessian eigenspace, <span class="math inline">k</span> about the number of classes, and that subspace then changes little.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2405.16002">Does SGD really happen in tiny subspaces?</a></strong>, Song, Ahn and Yun (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The intervention: projecting updates onto that dominant subspace stops learning, and projecting it out does not hurt; explained by noise in an ill-conditioned valley, or by edge-of-stability oscillation for GD.</p>
+</div>
+
+<p><strong>When the basin is chosen (<a href="#td26-5">§6.5</a>).</strong> If you read one paper of the notebook, read Fort et al.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2010.15110">Deep learning versus kernel learning: an empirical study of loss landscape geometry and the time evolution of the Neural Tangent Kernel</a></strong>, Fort, Dziugaite, Paul, Kharaghani, Roy and Ganguli (NeurIPS 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Basin commitment and the tangent kernel’s motion measured side by side. ResNet-20 on CIFAR: a chaotic transient of 2–3 epochs fixes the basin, the same window in which the empirical NTK moves fastest; the kernel then keeps moving slowly.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/1912.05671">Linear mode connectivity and the lottery ticket hypothesis</a></strong>, Frankle, Dziugaite, Roy and Carbin (ICML 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Defines instability to SGD noise as the error barrier between forked children, and measures when networks of various sizes become stable.</p>
+</div>
+
+<p><strong>Also:</strong> <a href="https://arxiv.org/abs/1901.10159">Ghorbani, Krishnan and Xiao 2019</a> (full Hessian densities of ImageNet-scale networks by stochastic Lanczos; without BatchNorm, outliers appear early and hold the gradient); <a href="https://arxiv.org/abs/2111.00034">Atanasov, Bordelon and Pehlevan 2022</a> (silent alignment, the matrix version of 6.5’s timing); <a href="https://arxiv.org/abs/1611.07476">Sagun, Bottou and LeCun 2016</a>; Papyan <a href="https://arxiv.org/abs/1811.07062">2018</a> and <a href="https://arxiv.org/abs/1901.08244">2019</a>.</p>
+</div>
+</details>
+<details class="sec sec2" data-sec="61-the-gaussnewton-decomposition">
+<summary><h2 id="61-the-gaussnewton-decomposition">6.1 The Gauss–Newton decomposition</h2></summary>
+<div class="sec-body">
+<a id="td26-1"></a>
+<p>Second-order optimizers, influence functions and Laplace approximations use the Gauss–Newton matrix in place of the Hessian: the part built from first derivatives of the network only, positive semidefinite by construction. The part it drops vanishes at interpolation for square loss, but for cross-entropy it shrinks only like one over the logit scale.</p>
+<p><strong>Paper:</strong> Martens, <em>New insights and perspectives on the natural gradient method</em> (see <a href="#td26-readings">Readings</a>).</p>
 <p>Take <span class="math inline">n</span> examples with logits <span class="math inline">z_i=f(\theta;x_i)\in\mathbb R^C</span>, per-example loss <span class="math inline">\ell_i</span>, <span class="math inline">L=\frac1n\sum_i\ell_i</span>, Jacobians <span class="math inline">J_i=\partial z_i/\partial\theta\in\mathbb R^{C\times P}</span> and logit-space loss Hessians <span class="math inline">A_i=\nabla_z^2\ell_i</span>. Differentiating twice through the logits,</p>
 <p><span class="math display">
 H=\nabla^2_\theta L=\underbrace{\frac1n\sum_iJ_i^\top A_i\,J_i}_{H_{\rm GN}}
 \;+\;\underbrace{\frac1n\sum_i\sum_{c=1}^C\frac{\partial\ell_i}{\partial z_{ic}}\,\nabla^2_\theta z_{ic}}_{H_{\rm res}} .
 </span></p>
 <p><span class="math inline">H_{\rm GN}\succeq0</span> whenever <span class="math inline">\ell</span> is convex in the logits (square loss, softmax cross-entropy), so every negative eigenvalue of <span class="math inline">H</span> comes from the residual <span class="math inline">H_{\rm res}</span>. For classifiers <span class="math inline">H_{\rm GN}</span> is also the Fisher information of the model’s predictive distribution (Martens §§8–9), which is why “Fisher”, “Gauss–Newton” and “GGN” are used interchangeably; the <em>empirical</em> Fisher, built at the observed labels, is a different matrix (§11). In practice the damped <span class="math inline">H_{\rm GN}</span> is inverted approximately with K-FAC (<a href="https://arxiv.org/abs/1503.05671">Martens and Grosse 2015</a>); the Data Attribution day picks up from there.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td26-1-walkthrough"></a>
-<p><em>Notation:</em> as above; <span class="math inline">\theta\in\mathbb R^P</span>; <span class="math inline">J\in\mathbb R^{nC\times P}</span> stacks the <span class="math inline">J_i</span>.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> as above; <span class="math inline">\theta\in\mathbb R^P</span>; <span class="math inline">J\in\mathbb R^{nC\times P}</span> stacks the <span class="math inline">J_i</span>.</p>
 <p><strong>Square loss.</strong> For <span class="math inline">\ell=\frac12\|z-y\|^2</span> with one-hot <span class="math inline">y</span>, <span class="math inline">A_i=I_C</span> and <span class="math inline">\partial\ell/\partial z=z_i-y_i</span>. At an interpolating minimum every residual vanishes, so <span class="math inline">H=H_{\rm GN}=\frac1nJ^\top J</span> exactly.</p>
 <p><strong>Cross-entropy.</strong> With <span class="math inline">p=\mathrm{softmax}(z)</span> and <span class="math inline">\ell=-\log p_y</span>, <span class="math inline">\nabla_z\ell=p-e_y</span> (<span class="math inline">e_y</span> the <span class="math inline">y</span>-th unit vector) and <span class="math inline">A=\mathrm{diag}(p)-pp^\top</span>. The residual <span class="math inline">p-e_y</span> never vanishes at finite logits. Near interpolation, with <span class="math inline">1-p_y=\varepsilon</span>, both <span class="math inline">A</span> and <span class="math inline">p-e_y</span> are of order <span class="math inline">\varepsilon</span>, so <span class="math inline">H_{\rm GN}</span> and <span class="math inline">H_{\rm res}</span> shrink together; their ratio is set by the size of the logits, and improves only as the margins (correct-class logit minus the largest other logit) grow, slowly (Exercise 6.1.B).</p>
 <p><strong>Rank.</strong> <span class="math inline">A\mathbf 1=0</span>, because adding a constant to every logit leaves <span class="math inline">p</span> unchanged; when all <span class="math inline">p_c&gt;0</span> the rank of <span class="math inline">A</span> is exactly <span class="math inline">C-1</span>. So <span class="math inline">\mathrm{rank}\,H_{\rm GN}\le n(C-1)</span> (<span class="math inline">\le nC</span> for square loss), and when <span class="math inline">P&gt;n(C-1)</span> at least <span class="math inline">P-n(C-1)</span> eigenvalues of <span class="math inline">H_{\rm GN}</span> are exactly zero. Part of the near-zero “bulk” of measured spectra (6.3) is this rank deficiency, which <span class="math inline">H_{\rm res}</span> spreads into small eigenvalues of both signs.</p>
@@ -620,25 +653,19 @@ CE, end of training: 466 positive, 193 negative, 17 numerically zero eigenvalues
 <p>Here <span class="math inline">n(C-1)=384&lt;P=676</span>, so <span class="math inline">H_{\rm GN}</span> has at least 292 exactly zero eigenvalues. The bulk of <span class="math inline">H</span>, of both signs, is mostly <span class="math inline">H_{\rm res}</span> acting on that null space and on the small eigenvalues of <span class="math inline">H_{\rm GN}</span>. The outliers are <span class="math inline">H_{\rm GN}</span>’s.</p>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="62-the-gaussnewton-matrix-and-the-loss-weighted-tangent-kernel-share-their-spectrum">
 <summary><h2 id="62-the-gaussnewton-matrix-and-the-loss-weighted-tangent-kernel-share-their-spectrum">6.2 The Gauss–Newton matrix and the loss-weighted tangent kernel share their spectrum</h2></summary>
 <div class="sec-body">
 <a id="td26-2"></a>
 <p>Curvature lives in parameter space; the tangent kernel, which says how the outputs move under a gradient step, lives in function space. Both are built from the same Jacobian, so the Gauss–Newton matrix and the kernel weighted by the loss Hessian have the same nonzero eigenvalues. Their eigenvectors are tied only through the Jacobian.</p>
-<p>This is linear algebra rather than a paper’s result; Martens (6.1) covers the Gauss–Newton side.</p>
+<p>This is linear algebra rather than a paper’s result; Martens (in the <a href="#td26-readings">Readings</a>, under §6.1) covers the Gauss–Newton side.</p>
 <p>Stack the Jacobians <span class="math inline">J_i=\partial z_i/\partial\theta</span> (<span class="math inline">n</span> examples, <span class="math inline">C</span> logits, <span class="math inline">P</span> parameters) into <span class="math inline">J\in\mathbb R^{nC\times P}</span> and the logit-space loss Hessians <span class="math inline">A_i=\nabla_z^2\ell_i</span> into the block-diagonal <span class="math inline">A</span>. The empirical tangent kernel is <span class="math inline">\Theta=JJ^\top</span>: under gradient flow on <span class="math inline">L=\frac1n\sum_j\ell_j</span> the logits move as <span class="math inline">\dot z_i=-\frac1n\sum_jJ_iJ_j^\top\nabla_z\ell_j</span>. Since <span class="math inline">H_{\rm GN}=\frac1nJ^\top AJ=M^\top M</span> and <span class="math inline">\frac1nA^{1/2}\Theta A^{1/2}=MM^\top</span> with <span class="math inline">M=n^{-1/2}A^{1/2}J</span>, with multiplicity</p>
 <p><span class="math display">
 \mathrm{spec}_{\neq0}\,H_{\rm GN}=\mathrm{spec}_{\neq0}\Big(\tfrac1n\,A^{1/2}\,\Theta\,A^{1/2}\Big).
 </span></p>
 <p>For square loss (<span class="math inline">A=I</span>) at an interpolating minimum, the sharpness <span class="math inline">S=\lambda_{\max}(H)</span> is the top kernel eigenvalue <span class="math inline">\lambda_{\max}(\Theta)/n</span>: progressive sharpening is the top of the kernel growing, and the edge of stability holds it near <span class="math inline">2n/\eta</span> (<span class="math inline">\eta</span> the step size). For cross-entropy an example fitted with confidence <span class="math inline">1-\varepsilon_i</span> has <span class="math inline">A_i=O(\varepsilon_i)</span> and drops out: the top of the Hessian is the kernel restricted to the examples the model is still unsure about.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-2">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-2">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td26-2-walkthrough"></a>
-<p><em>Notation:</em> as above; <span class="math inline">H</span> is the loss Hessian, <span class="math inline">H_{\rm res}=H-H_{\rm GN}</span> the residual of 6.1.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> as above; <span class="math inline">H</span> is the loss Hessian, <span class="math inline">H_{\rm res}=H-H_{\rm GN}</span> the residual of 6.1.</p>
 <p><strong>Directions.</strong> If <span class="math inline">v</span> is a unit eigenvector of the weighted kernel with eigenvalue <span class="math inline">\lambda</span>, then <span class="math inline">u=n^{-1/2}J^\top A^{1/2}v/\sqrt\lambda</span> is one of <span class="math inline">H_{\rm GN}</span>, and <span class="math inline">A^{1/2}Ju=\sqrt{n\lambda}\,v</span>: <span class="math inline">u</span> moves the <em>loss-weighted</em> logits along <span class="math inline">v</span>. Neither side’s rotation forces the other’s: with square loss, <span class="math inline">J\mapsto JQ</span> (<span class="math inline">Q</span> orthogonal on parameter space) rotates <span class="math inline">H_{\rm GN}</span>’s eigenvectors and leaves <span class="math inline">\Theta</span> fixed, and <span class="math inline">J\mapsto RJ</span> (<span class="math inline">R</span> orthogonal on the output side) rotates <span class="math inline">\Theta</span>’s and leaves <span class="math inline">H_{\rm GN}</span> fixed. So a kernel distance that mixes spectrum and rotation, as in 6.5, speaks about curvature only through its spectral part, and only after the <span class="math inline">A</span>-reweighting (Code 6.2.B shows the unweighted kernel growing while the weighted one shrinks).</p>
 <p><strong>Exercise 6.2.A — The identity and its consequences.</strong> Notation as above. Items 2–3 show why, with square loss near interpolation, sustained progressive sharpening means the kernel is not frozen.</p>
 <ol type="1">
@@ -754,32 +781,15 @@ step 2000: train loss 2.26e-04; max rel. difference, top 50 eigenvalues of H_GN 
 </details>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="63-bulk-and-outliers">
 <summary><h2 id="63-bulk-and-outliers">6.3 Bulk and outliers</h2></summary>
 <div class="sec-body">
 <a id="td26-3"></a>
 <p>Measured Hessian spectra of classifiers show a bulk of eigenvalues near zero, which grows when the network grows, and a few large outliers tied to the <span class="math inline">C</span> classes, which move when the data change. The outliers sit in the Gauss–Newton part and come from class means of per-example gradient vectors; the within-class scatter of those vectors forms the bulk.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1706.04454">Empirical analysis of the Hessian of over-parametrized neural networks</a></strong>, Sagun, Evci, Güney, Dauphin and Bottou (2017) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>Short and readable: bulk plus outliers on Gaussian-mixture data and small MLPs, with the outliers in the Gauss–Newton part. Its appendix shows how much the outlier count depends on the cutoff rule (often a lot).</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2008.11865">Traces of class/cross-class structure pervade deep learning spectra</a></strong>, Papyan (JMLR 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>Class-level structure (about <span class="math inline">C</span> outliers) in the Hessians, Fisher matrices and gradients of real networks, a weaker cross-class layer below it, knockout experiments that attribute each level, and how BatchNorm shrinks the outliers. Long; the introduction’s summary is enough to orient.</p>
-</div>
-
+<p><strong>Papers:</strong> Sagun et al. (2017) on bulk and outliers; Papyan (2020) on class and cross-class structure (see <a href="#td26-readings">Readings</a>).</p>
 <p>How many outliers? About <span class="math inline">C</span> dominant ones (about <span class="math inline">k</span> for small MLPs on <span class="math inline">k</span> Gaussian clusters), and below them a weaker cross-class layer of at most <span class="math inline">C(C-2)</span> directions (Papyan measures about <span class="math inline">C^2-2C</span>) that can merge into the bulk; exactly <span class="math inline">C-1</span> in one special case, a zero last layer. Papers report <span class="math inline">C</span>, <span class="math inline">C-1</span> or about <span class="math inline">C^2</span> depending on what they count, the cutoff rule, the loss, normalization (BatchNorm shrinks the outliers) and the stage of training.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-3">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-3">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td26-3-walkthrough"></a>
-<p><em>Notation:</em> <span class="math inline">n</span> examples with true classes <span class="math inline">y_i</span>; logits <span class="math inline">z_i</span> with Jacobians <span class="math inline">J_i=\partial z_i/\partial\theta</span>; predicted probabilities <span class="math inline">p_i=\mathrm{softmax}(z_i)</span> with entries <span class="math inline">p_{ik}</span>; <span class="math inline">e_k</span> the <span class="math inline">k</span>-th unit vector in <span class="math inline">\mathbb R^C</span>; <span class="math inline">H_{\rm GN}=\frac1n\sum_iJ_i^\top A_iJ_i</span> with the softmax Hessian <span class="math inline">A_i=\mathrm{diag}(p_i)-p_ip_i^\top</span> (6.1).</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> <span class="math inline">n</span> examples with true classes <span class="math inline">y_i</span>; logits <span class="math inline">z_i</span> with Jacobians <span class="math inline">J_i=\partial z_i/\partial\theta</span>; predicted probabilities <span class="math inline">p_i=\mathrm{softmax}(z_i)</span> with entries <span class="math inline">p_{ik}</span>; <span class="math inline">e_k</span> the <span class="math inline">k</span>-th unit vector in <span class="math inline">\mathbb R^C</span>; <span class="math inline">H_{\rm GN}=\frac1n\sum_iJ_i^\top A_iJ_i</span> with the softmax Hessian <span class="math inline">A_i=\mathrm{diag}(p_i)-p_ip_i^\top</span> (6.1).</p>
 <p><strong>Why the outliers track classes.</strong> Writing <span class="math inline">A_i=\sum_kp_{ik}(e_k-p_i)(e_k-p_i)^\top</span> (Exercise 6.1.B, item 2) gives <span class="math inline">J_i^\top A_iJ_i=\sum_kp_{ik}v_{ik}v_{ik}^\top</span>, with</p>
 <p><span class="math display">
 v_{ik}=J_i^\top(e_k-p_i)=-\nabla_\theta\,\ell(z_i,k),
@@ -934,36 +944,19 @@ zero last layer, C=8, mse: biggest gap after eigenvalue 8; those 8 equal to 3.26
 <p>So the class level is clean on this data: a knee after <span class="math inline">C</span>, and a top-<span class="math inline">C</span> eigenspace that nearly coincides with the span of the class-mean gradients. The cross-class level is clean for small <span class="math inline">C</span> and merges into the bulk at <span class="math inline">C=8</span>. That merging, more pronounced on real data, is one reason the papers disagree about the count.</p>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="64-the-tiny-subspace-the-gradient-is-there-learning-mostly-is-not">
 <summary><h2 id="64-the-tiny-subspace-the-gradient-is-there-learning-mostly-is-not">6.4 The tiny subspace: the gradient is there, learning (mostly) is not</h2></summary>
 <div class="sec-body">
 <a id="td26-4"></a>
 <p>Early in training the gradient comes to point almost entirely into the few top-curvature directions of the Hessian. Yet an optimizer restricted to that subspace stops making progress, and one that avoids it trains normally. The top component is the restoring force of an oscillation across a steep valley; progress is the slow drift along the valley floor, in the bulk.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1812.04754">Gradient descent happens in a tiny subspace</a></strong>, Gur-Ari, Roberts and Dyer (2018) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>The observation: within tens of steps the gradient concentrates in the top-<span class="math inline">k</span> Hessian eigenspace, <span class="math inline">k</span> about the number of classes, and that subspace then changes little.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2405.16002">Does SGD really happen in tiny subspaces?</a></strong>, Song, Ahn and Yun (ICLR 2025) <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The intervention: projecting updates onto that dominant subspace stops learning, and projecting it out does not hurt; explained by noise in an ill-conditioned valley, or by edge-of-stability oscillation for GD.</p>
-</div>
-
+<p><strong>Papers:</strong> Gur-Ari, Roberts and Dyer (2018), the observation; Song, Ahn and Yun (2025), the intervention (see <a href="#td26-readings">Readings</a>).</p>
 <p>Take an eigendirection of the Hessian with curvature <span class="math inline">\lambda</span>, and let <span class="math inline">g</span> be the gradient’s component along it. A step <span class="math inline">-\eta g</span> (<span class="math inline">\eta</span> the step size) changes the loss, to second order, by</p>
 <p><span class="math display">
 \Delta L=-\eta g^2\Big(1-\frac{\eta\lambda}{2}\Big).
 </span></p>
 <p>At the edge of stability, <span class="math inline">\eta\lambda\approx2</span>, the decrease cancels: the step overshoots to the opposite wall. Below the edge with SGD noise, the step lowers the loss only by removing what the noise injected, a fixed stationary floor. Either way the large gradient component along steep directions is not progress.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-4">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-4">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td26-4-walkthrough"></a>
-<p><em>Prerequisites.</em> <strong>Edge of stability</strong> (<a href="td2_2_edge_of_stability.html"><code>td2_2</code></a>): GD on <span class="math inline">\tfrac12\lambda x^2</span> converges iff <span class="math inline">\eta\lambda&lt;2</span>; in full-batch training the sharpness <span class="math inline">S=\lambda_{\max}(H)</span> rises to about <span class="math inline">2/\eta</span> and hovers there (<a href="https://arxiv.org/abs/2103.00065">Cohen et al. 2021</a>), with the iterate oscillating along the top eigenvector (<a href="https://arxiv.org/abs/2209.15594">Damian, Nichani and Lee</a>). <strong>SGD noise floor</strong> (<a href="td2_3_sgd_sde.html"><code>td2_3</code></a>): near a minimum, SGD with step <span class="math inline">\eta</span> and batch <span class="math inline">B</span> fluctuates at a stationary excess loss of about <span class="math inline">\frac{\eta}{4B}\mathrm{tr}\,\Sigma</span> (<span class="math inline">\Sigma</span> the per-example gradient covariance; quadratic basin, <span class="math inline">\eta h\ll1</span> in the noisy directions).</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Prerequisites:</em> <strong>Edge of stability</strong> (<a href="td2_3_edge_of_stability.html"><code>td2_3</code></a>): GD on <span class="math inline">\tfrac12\lambda x^2</span> converges iff <span class="math inline">\eta\lambda&lt;2</span>; in full-batch training the sharpness <span class="math inline">S=\lambda_{\max}(H)</span> rises to about <span class="math inline">2/\eta</span> and hovers there (<a href="https://arxiv.org/abs/2103.00065">Cohen et al. 2021</a>), with the iterate oscillating along the top eigenvector (<a href="https://arxiv.org/abs/2209.15594">Damian, Nichani and Lee</a>). <strong>SGD noise floor</strong> (<a href="td2_2_sgd_sde.html"><code>td2_2</code></a>): near a minimum, SGD with step <span class="math inline">\eta</span> and batch <span class="math inline">B</span> fluctuates at a stationary excess loss of about <span class="math inline">\frac{\eta}{4B}\mathrm{tr}\,\Sigma</span> (<span class="math inline">\Sigma</span> the per-example gradient covariance; quadratic basin, <span class="math inline">\eta h\ll1</span> in the noisy directions).</p>
 <p><em>Notation:</em> <span class="math inline">H</span> is the Hessian of the training loss <span class="math inline">L</span>, <span class="math inline">P_k</span> the orthogonal projector onto its top-<span class="math inline">k</span> eigenvectors, <span class="math inline">\nabla L</span> the full-batch gradient, <span class="math inline">g_B</span> a minibatch gradient.</p>
 <p><strong>The observation</strong> (Gur-Ari, Roberts and Dyer). With <span class="math inline">k</span> the number of classes, the fraction of the full-batch gradient in the top-<span class="math inline">k</span> eigenspace,</p>
 <p><span class="math display">
@@ -1033,7 +1026,7 @@ a^2\,\mathbb Ex^2=\frac{a\eta\sigma^2}{2-\eta a}.
 <p><strong>Code 6.4.B — Alignment, and what projecting does.</strong> The first cell trains a tanh network with square loss (4 overlapping classes, 256 points) in three regimes, tracking the loss, the sharpness and <span class="math inline">f_{\rm top}</span> for the top-4 eigenspace. That eigenspace comes from a warm-started power iteration and is approximate (an exact check gave subspace overlap 0.985), so read the curves as qualitative. The second cell forks unprojected, Dom and Bulk updates from (a) the SGD run, Song et al.’s regime, and (b) a cross-entropy run on separable data after 100% training accuracy, the late regime. Look for:</p>
 <ul>
 <li>GD below the edge: <span class="math inline">f_{\rm top}</span> drops to zero.</li>
-<li>GD at the edge (<span class="math inline">\eta=0.5</span>, <span class="math inline">2/\eta=4</span>): the sharpness starts at 10 and drops within a few steps (a catapult; <a href="td2_2_edge_of_stability.html#td22-7"><code>td2_2_edge_of_stability</code> §2.7</a>), then sits near <span class="math inline">2/\eta</span> from about step 80. <span class="math inline">f_{\rm top}</span> stays near 0 until roughly step 180, then jumps to near 1 once an oscillation along the top directions has grown; the loss spikes are bursts of it. “At the edge” and “aligned” are not simultaneous here.</li>
+<li>GD at the edge (<span class="math inline">\eta=0.5</span>, <span class="math inline">2/\eta=4</span>): the sharpness starts at 10 and drops within a few steps (a catapult; <a href="td2_3_edge_of_stability.html#td23-7"><code>td2_3_edge_of_stability</code> §3.7</a>), then sits near <span class="math inline">2/\eta</span> from about step 80. <span class="math inline">f_{\rm top}</span> stays near 0 until roughly step 180, then jumps to near 1 once an oscillation along the top directions has grown; the loss spikes are bursts of it. “At the edge” and “aligned” are not simultaneous here.</li>
 <li>SGD: <span class="math inline">f_{\rm top}</span> is high on average (about 0.7 in this single run), driven by noise, far below the edge.</li>
 <li>In (a), Dom stalls (loss near 0.032) while Bulk tracks SGD (Bulk 0.032 to about 0.026, SGD 0.031 to about 0.025 over 250 steps): a modest effect, in a single run. In (b) it is the other way round.</li>
 </ul>
@@ -1156,32 +1149,15 @@ SGD, lr 0.1, batch 8: mean f_top over steps 200-400 = 0.69, final sharpness 5.45
 </div>
 </div>
 </details>
-
-</div>
-</details>
 <details class="sec sec2" data-sec="65-when-the-basin-is-chosen">
 <summary><h2 id="65-when-the-basin-is-chosen">6.5 When the basin is chosen</h2></summary>
 <div class="sec-body">
 <a id="td26-5"></a>
 <p>Fork a run at step <span class="math inline">t</span>, train two children with independent minibatch noise, and measure the loss on the straight line between them: once there is no barrier, the run has committed to a basin. Commitment comes early, and in a ResNet on CIFAR it coincides with the window in which the tangent kernel moves fastest. In a solvable model the basin is chosen while the relevant kernel (Gauss–Newton) eigenvalue is still in its early exponential growth.</p>
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2010.15110">Deep learning versus kernel learning: an empirical study of loss landscape geometry and the time evolution of the Neural Tangent Kernel</a></strong>, Fort, Dziugaite, Paul, Kharaghani, Roy and Ganguli (NeurIPS 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>ResNet-20 on CIFAR: a chaotic transient of 2–3 epochs fixes the basin, the same window in which the empirical NTK moves fastest; the kernel then keeps moving slowly.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/1912.05671">Linear mode connectivity and the lottery ticket hypothesis</a></strong>, Frankle, Dziugaite, Roy and Carbin (ICML 2020) <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Defines instability to SGD noise as the error barrier between forked children, and measures when networks of various sizes become stable.</p>
-</div>
-
+<p><strong>Papers:</strong> Fort et al. (2020), the notebook’s key paper; Frankle et al. (2020) on instability to SGD noise (see <a href="#td26-readings">Readings</a>).</p>
 <p>In a model linear in its parameters (a fixed kernel, the lazy limit) the loss is convex, so there is no basin to choose. The smallest model with a choice is the scalar two-layer net <span class="math inline">f=w_1w_2</span> with loss <span class="math inline">\frac12(w_1w_2-s)^2</span>, <span class="math inline">s&gt;0</span>: its minima form two branches (<span class="math inline">w_1,w_2&gt;0</span> or both <span class="math inline">&lt;0</span>) on either side of a saddle at the origin. From small balanced initialization, noise fixes the branch early in the escape from the saddle, while the kernel <span class="math inline">\Theta=w_1^2+w_2^2</span> is still one to two orders of magnitude below its final value. A conserved imbalance <span class="math inline">d=w_2^2-w_1^2</span> well above the noise fixes the branch at initialization, even when it is far too small to make the dynamics lazy.</p>
-<details class="sec sec3" data-sec="optional-annotated-derivations-and-walkthrough-5">
-<summary><h3 id="optional-annotated-derivations-and-walkthrough-5">Optional: annotated derivations and walkthrough</h3></summary>
-<div class="sec-body">
 <a id="td26-5-walkthrough"></a>
-<p><em>Notation:</em> <span class="math inline">\theta_A,\theta_B</span> are the final parameters of two children trained from a common checkpoint; <span class="math inline">\mathcal E</span> is the error (test or training); <span class="math inline">\Theta_t=J_tJ_t^\top</span> is the empirical tangent-kernel Gram matrix at step <span class="math inline">t</span>, with <span class="math inline">J_t</span> the Jacobian of the network’s outputs on a data set.</p>
+<p><strong>Derivations and walkthrough.</strong> <em>Notation:</em> <span class="math inline">\theta_A,\theta_B</span> are the final parameters of two children trained from a common checkpoint; <span class="math inline">\mathcal E</span> is the error (test or training); <span class="math inline">\Theta_t=J_tJ_t^\top</span> is the empirical tangent-kernel Gram matrix at step <span class="math inline">t</span>, with <span class="math inline">J_t</span> the Jacobian of the network’s outputs on a data set.</p>
 <p><strong>Operational definition</strong> (Frankle et al.). Copy the parameters at step <span class="math inline">t</span>, train two children to the end with independent minibatch noise, and evaluate the error along the straight line between them. The <em>error barrier</em> is</p>
 <p><span class="math display">
 \max_{\alpha\in[0,1]}\mathcal E\big((1-\alpha)\theta_A+\alpha\theta_B\big)-\tfrac12\big(\mathcal E(\theta_A)+\mathcal E(\theta_B)\big),
@@ -1398,16 +1374,6 @@ strongly imbalanced (lazy), w2(0) = ±3
 <pre class="out-stdout">(5.1s)</pre>
 </div>
 </div>
-</div>
-</details>
-
-</div>
-</details>
-<details class="sec sec2" data-sec="readings">
-<summary><h2 id="readings">Readings</h2></summary>
-<div class="sec-body">
-<a id="td26-readings"></a>
-<p>The lead papers are at the top of each section. Also: <a href="https://arxiv.org/abs/1901.10159">Ghorbani, Krishnan and Xiao 2019</a> (full Hessian densities of ImageNet-scale networks by stochastic Lanczos; without BatchNorm, outliers appear early and hold the gradient); <a href="https://arxiv.org/abs/2111.00034">Atanasov, Bordelon and Pehlevan 2022</a> (silent alignment, the matrix version of 6.5’s timing); <a href="https://arxiv.org/abs/1611.07476">Sagun, Bottou and LeCun 2016</a>; Papyan <a href="https://arxiv.org/abs/1811.07062">2018</a> and <a href="https://arxiv.org/abs/1901.08244">2019</a>.</p>
 </div>
 </details>
 

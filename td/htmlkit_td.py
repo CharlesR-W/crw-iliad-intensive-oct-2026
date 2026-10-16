@@ -509,10 +509,16 @@ class _TopLevel(HTMLParser):
             self.depth -= 1
 
 
+# `##` sections with these titles start open: each notebook's readings come first
+# (CRW, 2026-10-14), and a reader opening the page should see them without a click.
+OPEN_SECTIONS = {"Readings"}
+
+
 def _fold(body: str, level: int = 2) -> str:
     """Make each top-level <h2> section a collapsed <details class="sec sec2"> with the
-    heading as its summary, then the <h3> and <h4> subsections inside it the same way. Bare
-    `<a id>` anchors just before a heading move into its section."""
+    heading as its summary (open if its title is in OPEN_SECTIONS), then the <h3> and <h4>
+    subsections inside it the same way. Bare `<a id>` anchors just before a heading move
+    into its section."""
     if level > 4:
         return body
     items = _TopLevel(body).items
@@ -533,7 +539,9 @@ def _fold(body: str, level: int = 2) -> str:
         h1 = body.index(f"</{tag}>", h0) + len(f"</{tag}>")
         sid = html.escape(items[i][2].get("id", ""))
         inner = _fold(body[h1:end].strip("\n"), level + 1)
-        out.append(f'<details class="sec sec{level}" data-sec="{sid}">\n<summary>{body[h0:h1]}</summary>\n'
+        title = re.sub(r"<[^>]+>", "", body[h0:h1]).strip()
+        opened = " open" if level == 2 and title in OPEN_SECTIONS else ""
+        out.append(f'<details class="sec sec{level}" data-sec="{sid}"{opened}>\n<summary>{body[h0:h1]}</summary>\n'
                    f'<div class="sec-body">\n{body[start:h0].strip()}\n{inner}\n</div>\n</details>\n')
     return "".join(out)
 
