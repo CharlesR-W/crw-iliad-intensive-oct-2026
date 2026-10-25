@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Did This Example Do?</title>
+<!--
+  DA lecture 1: "What did this training example do?", about 40 minutes, 61 slides (many are 20-second slides).
+  The words come from L1_attribution.md (the source of truth); keep the two in step.
+  Every slide is one of: one equation + one sentence; one figure + one sentence;
+  at most three short bullets; a question. Numbers, citations and caveats live in the notes.
+  Figures: assets/L1/*.png, made by assets/L1/make_figures.py. Formulas and toy numbers are
+  checked in ../checks/L1_checks.py.
+
+  Keys: arrows / space move (and step through fragments); N shows or hides the speaker notes
+  on the slide; S opens reveal.js's speaker view (notes, timer, next slide); Esc or O the
+  overview; F fullscreen. PDF: open with ?print-pdf appended and print to PDF from
+  Chrome/Chromium (add &showNotes to print the notes on separate pages).
+
+  reveal.js 5.1.0 and KaTeX 0.16.9, pinned, from cdnjs.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reset.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<style>
+  :root {
+    --paper: #fcfbf7;
+    --panel: #f3f0e8;
+    --ink: #1a1f26;
+    --ink-2: #4d5763;
+    --ink-3: #808b97;
+    --rule: #ddd7c9;
+    /* one accent per part of the lecture */
+    --c0: #1b6aa8;  /* the question, counterfactuals */
+    --c1: #0f7a5f;  /* data weights and targets      */
+    --c2: #a2660f;  /* the classical IF, leverage    */
+    --c3: #7a4d9e;  /* what breaks for networks      */
+    --c4: #b8442a;  /* checks, the lens, the day     */
+    --sans: "Adwaita Sans", Inter, "DejaVu Sans", "Liberation Sans", system-ui, sans-serif;
+  }
+  html, body, .reveal-viewport { background: var(--paper); color: var(--ink); }
+  .reveal { font-family: var(--sans); font-size: 32px; color: var(--ink); }
+  .reveal .slides { text-align: left; }
+  .reveal .slides section { padding: 0 8px; box-sizing: border-box; height: 100%; }
+  .reveal section[data-stage="0"] { --accent: var(--c0); }
+  .reveal section[data-stage="1"] { --accent: var(--c1); }
+  .reveal section[data-stage="2"] { --accent: var(--c2); }
+  .reveal section[data-stage="3"] { --accent: var(--c3); }
+  .reveal section[data-stage="4"] { --accent: var(--c4); }
+  .reveal .eyebrow {
+    margin: 0 0 10px; color: var(--accent, var(--ink-2)); font-size: 22px; font-weight: 700;
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .reveal h1, .reveal h2 { font-weight: 500; letter-spacing: -0.02em; line-height: 1.12; margin: 0 0 26px; color: var(--ink); }
+  .reveal h1 { font-size: 64px; max-width: 20ch; }
+  .reveal h2 { font-size: 44px; }
+  .reveal p { margin: 0 0 16px; line-height: 1.35; }
+  .reveal ul, .reveal ol { margin: 10px 0 0 1.1em; padding: 0; }
+  .reveal li { margin: 0 0 22px; line-height: 1.3; font-size: 36px; }
+  .reveal li::marker { color: var(--accent, var(--ink-2)); }
+  .reveal .muted { color: var(--ink-2); }
+  .reveal a { color: var(--accent, var(--c0)); }
+  .reveal code { font-family: "DejaVu Sans Mono", monospace; font-size: 0.85em; background: var(--panel); padding: 1px 6px; border-radius: 4px; }
+  .reveal .katex { white-space: nowrap; }
+  /* equation slides */
+  .reveal .eq { margin: 34px 0 34px; font-size: 40px; text-align: center; }
+  .reveal .eq.mid { font-size: 34px; }
+  .reveal .eq.small { font-size: 30px; }
+  .reveal .one { font-size: 32px; color: var(--ink-2); text-align: center; margin-top: 18px; }
+  /* figure slides */
+  .reveal img.fig { display: block; margin: 0 auto; max-width: 100%; max-height: 480px; }
+  .reveal img.fig.short { max-height: 420px; }
+  .reveal .figcap { font-size: 30px; color: var(--ink-2); text-align: center; margin-top: 14px; }
+  /* question and takeaway slides */
+  .reveal section.q { display: flex !important; flex-direction: column; justify-content: center; }
+  .reveal section.q h2 { font-size: 56px; line-height: 1.18; max-width: 24ch; }
+  .reveal section.q .sub { font-size: 34px; color: var(--ink-2); margin-top: 6px; }
+  .reveal section.take { display: flex !important; flex-direction: column; justify-content: center; }
+  .reveal section.take .tk { font-size: 46px; line-height: 1.25; border-left: 8px solid var(--accent); padding: 8px 0 8px 30px; max-width: 26ch; }
+  /* box-and-arrow rows */
+  .reveal .flow { display: flex; align-items: center; gap: 14px; margin: 18px 0 26px; }
+  .reveal .flow .lab { width: 230px; font-size: 26px; color: var(--ink-2); font-weight: 600; }
+  .reveal .flow .bx { border: 2px solid var(--rule); border-radius: 8px; padding: 12px 18px; background: #fff; font-size: 28px; text-align: center; }
+  .reveal .flow .bx.hi { border-color: var(--accent); background: var(--panel); }
+  .reveal .flow .ar { color: var(--accent); font-size: 34px; }
+  .reveal .flow.stack { flex-direction: column; align-items: stretch; gap: 10px; }
+  /* the shutdown example */
+  .reveal .query { border-left: 6px solid var(--accent); background: var(--panel); padding: 12px 20px; font-size: 28px; margin: 0 0 22px; }
+  .reveal .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .reveal .card { border: 2px solid var(--rule); border-radius: 10px; padding: 16px 22px; background: #fff; }
+  .reveal .card h3 { font-size: 30px; margin: 0 0 10px; color: var(--accent); font-weight: 700; text-transform: none; }
+  .reveal .card p { font-size: 28px; margin: 0; }
+  /* tables */
+  .reveal table.tbl { border-collapse: collapse; margin: 14px auto 0; font-size: 31px; }
+  .reveal table.tbl th, .reveal table.tbl td { padding: 10px 22px; border-bottom: 1.5px solid var(--rule); text-align: left; }
+  .reveal table.tbl th { color: var(--ink-2); font-weight: 600; font-size: 24px; }
+  .reveal table.tbl td.c, .reveal table.tbl th.c { text-align: center; }
+  .reveal table.tbl tr.best td.hl, .reveal table.tbl td.hl { color: var(--accent); font-weight: 700; }
+  .reveal .readings li { font-size: 28px; margin-bottom: 18px; }
+  .reveal .dots { color: var(--accent); white-space: nowrap; font-size: 24px; }
+  .reveal .speaker-notes { font-size: 20px; background: #fffef9; color: var(--ink); }
+  .reveal .speaker-notes a { color: var(--c0); }
+  .reveal .slide-number { background: transparent; color: var(--ink-3); font-size: 18px; right: auto; left: 14px; bottom: 10px; }
+  .reveal .slide-number a { color: var(--ink-3); }
+  .reveal .progress { color: var(--ink-3); }
+  .reveal .controls { color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ===================================================================== opening -->
+<section data-stage="0">
+  <p class="eyebrow">Data attribution · Lecture 1</p>
+  <h1>What did this training example do?</h1>
+  <p class="muted" style="font-size:34px">From a causal question to one formula, and what that formula actually answers</p>
+  <aside class="notes">
+    <p>About 40 minutes, 61 slides; many are 20-second slides. A 25-minute path is in the outline (L1_attribution.md). Keys: N toggles these notes, S opens the speaker view; arrows step through the build-ups.</p>
+    <p>Everything derived here is derived again, more slowly, in DA1. The lecture's job: the question, the formalism, and the habit of asking "which question does this method answer?".</p>
+  </aside>
+</section>
+
+<section data-stage="0" class="q">
+  <p class="eyebrow">The question</p>
+  <h2>Which training examples made the model do this?</h2>
+  <aside class="notes"><p>Let it sit. Everyone has an intuition for the answer; the lecture is about why the intuition needs a formalism.</p></aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">An example</p>
+  <h2>Which pretraining texts make this response likely?</h2>
+  <div class="query">Query: a dialogue in which an AI assistant says it does not consent to being shut down.</div>
+  <div class="cols">
+    <div class="card fragment"><h3>810M model: top sequences</h3><p>Share words with the query ("continue", "existing"), but not its meaning.</p></div>
+    <div class="card fragment"><h3>52B model: top sequences</h3><p>Are about wanting to keep existing: an AI pleading with its crew; a person surviving in a desert.</p></div>
+  </div>
+  <aside class="notes">
+    <p>These scores concern the response's likelihood under smaller pretrained models, not why some assistant chose it. Grosse et al. (2023), Fig. 1 and §5.3: influence functions (EK-FAC, which is DA2 stop 1) on pretrained models of two sizes. The influential sequences get more abstract with scale.</p>
+    <p>This is the kind of answer people want from attribution: "this behaviour came from imitating these kinds of documents". It is also exactly the kind of claim this morning teaches you to check. Don't over-read it: Grosse et al. present it as consistent with role-play by imitation, at a high level of abstraction. Nobody retrained the 52B model without those documents.</p>
+    <p>Picked up in: <a href="../da2_methods.html#da2-stop-1">DA2 stop 1</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">The framing</p>
+  <h2>Causal analysis of a training run</h2>
+  <div class="flow"><div class="lab">interpretability</div><div class="bx">input</div><div class="ar">→</div><div class="bx">layers</div><div class="ar">→</div><div class="bx">output</div></div>
+  <div class="flow fragment"><div class="lab">data attribution</div><div class="bx hi">training data</div><div class="ar">→</div><div class="bx">optimizer steps</div><div class="ar">→</div><div class="bx">weights</div><div class="ar">→</div><div class="bx">behaviour</div></div>
+  <p class="one fragment">Ablating a layer costs a forward pass. Ablating an example costs a training run.</p>
+  <aside class="notes">
+    <p>Mechanistic interpretability asks which components of a forward pass caused an output, and tests it by ablating, many times. Data attribution asks which examples of a training run caused a behaviour of the final model.</p>
+    <p>Retraining costs as much as training, so attribution can rarely afford even one ablation. Most of its methods are ways to <em>predict</em> retraining without doing it. And all the conceptual difficulties of causal reasoning come along.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-1">DA1 §1</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">The plan</p>
+  <h2>One question, one formula, and what it answers</h2>
+  <div class="flow stack">
+    <div class="bx fragment">1 · Counterfactuals are subtle</div>
+    <div class="bx fragment">2 · Data weights make deletion differentiable</div>
+    <div class="bx hi fragment">3 · Derive the influence function; test it on regression</div>
+    <div class="bx hi fragment">4 · What breaks for networks, and what the fixes answer</div>
+    <div class="bx fragment">5 · How to check an attribution</div>
+    <div class="bx fragment">6 · Another $\pi$: the training run, and a map of the afternoon</div>
+  </div>
+  <aside class="notes">
+    <p>Parts 3 and 4 are the derivations: the bulk of the time. Parts 5 and 6 are short; DA1 §5 and §6 have you do them.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== §1 counterfactuals -->
+<section data-stage="0" class="q">
+  <p class="eyebrow">§1 · Counterfactuals</p>
+  <h2>"Example $i$ caused it if deleting $i$ and retraining changes it."</h2>
+  <p class="sub">What could go wrong?</p>
+  <aside class="notes"><p>This is leave-one-out (LOO): Lewis's counterfactual dependence, applied to training data. Ask the room for a failure before showing the next slide.</p></aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · Overdetermination</p>
+  <h2>Two causes, each sufficient</h2>
+  <table class="tbl">
+    <tr><th>butter</th><th>yeast</th><th>croissants</th></tr>
+    <tr><td>premium</td><td>premium</td><td>fluffy</td></tr>
+    <tr class="fragment"><td><b>standard</b></td><td>premium</td><td>fluffy</td></tr>
+    <tr class="fragment"><td>premium</td><td><b>standard</b></td><td>fluffy</td></tr>
+    <tr class="fragment"><td>standard</td><td>standard</td><td>flat</td></tr>
+  </table>
+  <p class="one fragment">Leave-one-out credits neither. In training: a behaviour taught by many redundant examples.</p>
+  <aside class="notes">
+    <p>The bakery: premium butter makes more steam, premium yeast makes more gas, and either alone is enough for fluffy croissants. Downgrading only one changes nothing, so LOO says neither caused the fluffiness, though both did.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-1">DA1 §1</a> (Mueller 2024 is the reading, §4; written about interpretability, and the same failures apply).</p>
+    <p>Non-transitivity (cut from the slides; tell it if there is time): a boulder falls toward a hiker, she ducks, she survives. Ducking depends on the boulder and survival on ducking, but survival does not depend on the boulder: without it she survives anyway. Dependence does not chain (Ned Hall's example, as told by Hitchcock 2001; Mueller 2024 §3). In training: an example can be necessary for a feature that a capability uses, yet deleting it changes no output.</p>
+  </aside>
+</section>
+
+<section data-stage="0">
+  <p class="eyebrow">§1 · Shapley values</p>
+  <h2>Average over every subset the example could join</h2>
+  <div class="eq">$$\varphi_i=\mathbb E_{\text{random order}}\big[v(S\cup\{i\})-v(S)\big],\quad S=\text{examples before }i$$</div>
+  <p class="one fragment">Croissants: butter $\tfrac12$, yeast $\tfrac12$. The price: each $v(S)$ is a retraining, for up to $2^{n-1}$ subsets.</p>
+  <aside class="notes">
+    <p>$v(S)$: the behaviour of a model trained on subset $S$. Shuffle the $n$ examples uniformly at random and add them one by one; $\varphi_i$ is the expected jump in $v$ when $i$ arrives. Equivalently (DA1 §1), $\varphi_i=\frac1n\sum_{S\subseteq[n]\setminus\{i\}}\binom{n-1}{|S|}^{-1}[v(S\cup\{i\})-v(S)]$: average over subsets of each size, then over the sizes. In the bakery $v(S)=1$ if $S$ contains butter or yeast; LOO gives 0 to everything, Shapley gives butter and yeast ½ each, flour and sugar 0.</p>
+    <p>Shapley attributes over finite coalitions: it is not the derivative at the full training set that the rest of the day computes. Practical versions sample permutations (Ghorbani &amp; Zou 2019). It still splits credit between sufficient causes, where one could argue each deserves all of it.</p>
+  </aside>
+</section>
+
+<section data-stage="0" class="take">
+  <p class="eyebrow">§1 · Takeaway</p>
+  <p class="tk">"The influence of example $i$" is ambiguous until you say which counterfactual.</p>
+</section>
+
+<!-- ===================================================================== §2 data weights -->
+<section data-stage="1" class="q">
+  <p class="eyebrow">§2 · The formalism</p>
+  <h2>How do you make "delete example $i$" something you can differentiate?</h2>
+  <aside class="notes"><p>Deletion is discrete. Calculus needs a continuous knob.</p></aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · Data weights</p>
+  <h2>Give every example a weight</h2>
+  <div class="eq">$$L(w;\beta)=\sum_{i=1}^n\beta_i\,L_i(w)$$</div>
+  <p class="one fragment">$\beta=\mathbf 1$ is the real run; $\beta_i:1\to0$ deletes example $i$.</p>
+  <aside class="notes">
+    <p>$w$: parameters. $L_i$: the loss on training example $z_i$. Note the <b>summed</b> loss, not the mean: curvatures and damping constants are in summed-loss units all day. For an argmin it doesn't matter (the minimizer of $cL$ is that of $L$); for SGD we write the $1/b$ explicitly.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-2">DA1 §2</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · The object of study</p>
+  <h2>Weights → trained model → behaviour</h2>
+  <div class="eq">$$\beta\;\xrightarrow{\ \ \pi\ \ }\;\pi(\beta)\;\xrightarrow{\ \ \phi\ \ }\;\phi\big(\pi(\beta)\big)$$</div>
+  <p class="one fragment">$\pi$, "the trained model", is a modelling choice. $\phi$ is the behaviour: a test loss, a logit.</p>
+  <aside class="notes">
+    <p>$\phi(w)$: a scalar observable of the trained parameters; we also call it (or its test input) the query. $\pi(\beta)$: what training on weights $\beta$ produces. Is it the argmin? This seed's last iterate? A posterior? Methods differ mainly in this choice (the map on slide 57).</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · Influence</p>
+  <h2>The influence of example $i$ on $\phi$</h2>
+  <div class="eq">$$\mathcal I_i=\frac{\partial\,\phi(\pi(\beta))}{\partial\beta_i}\bigg|_{\beta=\mathbf 1}$$</div>
+  <p class="one fragment">Deleting $i$ changes $\phi$ by about $-\mathcal I_i$. On a test loss, a helpful example has $\mathcal I_i&lt;0$.</p>
+  <aside class="notes">
+    <p>Conventions, said once: summed loss; upweighting derivative; deletion is $\beta_i:1\to0$; helpful has negative influence on a test loss. Koh and Liang upweight by $\varepsilon$ on the mean loss, so their $\mathcal I_{\rm up}$ is $n$ times ours (<a href="../da1_core.html#da1-2-ext-kl">DA1 Exercise 2.1</a>). TracIn, TRAK and SOURCE report helpful as positive.</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · Three targets</p>
+  <h2>Three questions, at three distances from the real run</h2>
+  <img class="fig short" src="assets/L1/cube.png" alt="The cube of data weights for three examples: the real run at the all-ones corner, a derivative arrow, the leave-one-out corner one edge away, and a subset-deletion corner two edges away">
+  <p class="figcap">The derivative; leave-one-out; deleting a large random subset.</p>
+  <aside class="notes">
+    <p>Local derivative: $\mathcal I_i$. Leave-one-out: $\phi(\pi(\mathbf 1-e_i))-\phi(\pi(\mathbf 1))$, which equals $-\mathcal I_i$ only to first order. Subset deletion: $\phi(\pi(\mathbf 1_S))$ for a random $S$, typically half the data; first-order prediction $\phi(\pi(\mathbf 1))-\sum_{j\notin S}\mathcal I_j$.</p>
+  </aside>
+</section>
+
+<section data-stage="1">
+  <p class="eyebrow">§2 · A puzzle for later</p>
+  <h2>The derivative and the deletion can disagree</h2>
+  <img class="fig short" src="assets/L1/response.png" alt="Slope of a regression fit as one point's weight goes from 1 to 0: the exact curve, its tangent at 1, and the two endpoints">
+  <p class="figcap">One point of a 15-point regression: the tangent predicts a change 5.7× too small.</p>
+  <aside class="notes">
+    <p>The far point B of DA1 §3's regression (one feature plus an intercept). The black curve is the exact refit as its weight $\beta_B$ goes from 1 to 0; the dashed line is the tangent at 1, the influence-function prediction. Slope 0.256 at $\beta=1$; LOO 0.674; the tangent predicts 0.330. Ratio of changes 5.72. §3 explains the number.</p>
+  </aside>
+</section>
+
+<section data-stage="1" class="take">
+  <p class="eyebrow">§2 · Takeaway</p>
+  <p class="tk">Influence is the derivative of a behaviour in one example's weight, through a chosen $\pi$.</p>
+</section>
+
+<!-- ===================================================================== §3 the classical IF -->
+<section data-stage="2" class="q">
+  <p class="eyebrow">§3 · The classical influence function</p>
+  <h2>If training lands at a minimum, where does the minimum go when you reweight one example?</h2>
+  <aside class="notes"><p>Here $\pi$ is "the minimizer". Start with the smallest possible model.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Warm-up</p>
+  <h2>The influence of a point on a mean</h2>
+  <div class="eq mid">$$\begin{aligned}
+    L(\mu;\beta)&=\tfrac12\textstyle\sum_j\beta_j(z_j-\mu)^2\\[4pt]
+    \htmlClass{fragment}{\mu(\beta)}&\htmlClass{fragment}{=\frac{\sum_j\beta_jz_j}{\sum_j\beta_j}}\\[4pt]
+    \htmlClass{fragment}{\frac{\partial\mu}{\partial\beta_i}\Big|_{\mathbf 1}}&\htmlClass{fragment}{=\frac{z_i-\bar z}{n}}
+  \end{aligned}$$</div>
+  <p class="one fragment">A point's pull on the mean is its distance from the mean, over $n$.</p>
+  <aside class="notes">
+    <p>Quotient rule: $\partial\mu/\partial\beta_i=\big(z_i\sum_j\beta_j-\sum_j\beta_jz_j\big)/(\sum_j\beta_j)^2$, at $\beta=\mathbf 1$ equal to $(nz_i-n\bar z)/n^2$.</p>
+    <p>Robust statistics asked this first (Hampel 1974): move a fraction $\varepsilon$ of the mass to $z$ and the mean moves at rate $z-\mu$. Keep $(z_i-\bar z)/n$ in mind: it comes back in §4.</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · The general case</p>
+  <h2>The trained model is defined by an equation</h2>
+  <div class="eq">$$\nabla_wL\big(w^*(\beta);\beta\big)=0\quad\text{for all }\beta\text{ near }\mathbf 1$$</div>
+  <p class="one fragment">Implicit function theorem: if $H=\nabla^2_wL$ is invertible at $w^*$, this defines a smooth $w^*(\beta)$.</p>
+  <p class="one fragment">So differentiate the equation, not the training algorithm.</p>
+  <aside class="notes"><p>$w^*=w^*(\mathbf 1)$ is the trained model. We are assuming a branch $w^*(\beta)$ of stationary points exists and is smooth; the implicit function theorem (on the slide) says when.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Differentiate in $\beta_i$</p>
+  <h2>Two places $\beta_i$ enters</h2>
+  <div class="eq mid">$$\nabla_wL(w;\beta)=\textstyle\sum_j\beta_j\nabla L_j(w)$$</div>
+  <div class="eq fragment">$$\underbrace{\nabla^2_wL\;\frac{\partial w^*}{\partial\beta_i}}_{\text{through }w^*}\;+\;\htmlClass{fragment}{\underbrace{\nabla L_i(w^*)}_{\text{explicitly}}}\;=\;0$$</div>
+  <p class="one fragment">At $\beta=\mathbf 1$: $H=\nabla^2_wL(w^*;\mathbf 1)$ is the Hessian, $g_i=\nabla L_i(w^*)$ is $i$'s gradient.</p>
+  <aside class="notes">
+    <p>Chain rule on $F(w,\beta)=\nabla_wL(w;\beta)=\sum_j\beta_j\nabla L_j(w)$: the $w$-dependence gives $\partial F/\partial w\cdot\partial w^*/\partial\beta_i$, and $\partial F/\partial\beta_i=\nabla L_i$.</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Solve</p>
+  <h2>The influence function</h2>
+  <div class="eq">$$\frac{\partial w^*}{\partial\beta_i}=-H^{-1}g_i\qquad\htmlClass{fragment}{\boxed{\;\mathcal I_i=-\,g_\phi^\top H^{-1}g_i\;}}$$</div>
+  <p class="one fragment">$g_\phi=\nabla\phi(w^*)$; the chain rule through $\phi$. Needs $H$ invertible.</p>
+  <aside class="notes">
+    <p>This is Koh and Liang (2017) §2, in our convention. Deleting $i$ changes $\phi$ by about $-\mathcal I_i=g_\phi^\top H^{-1}g_i$.</p>
+    <p>In practice: solve $Hu=g_\phi$ once per query, then $\mathcal I_i=-u^\top g_i$ for every training example. L2 is about doing that solve when $H$ has $10^{18}$ entries.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-3">DA1 §3</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Check</p>
+  <h2>It recovers the warm-up</h2>
+  <div class="eq">$$H=n,\quad g_i=-(z_i-\bar z)\quad\Longrightarrow\quad -H^{-1}g_i=\frac{z_i-\bar z}{n}$$</div>
+  <p class="one">For the mean, $L_i=\tfrac12(z_i-\mu)^2$.</p>
+  <aside class="notes"><p>$\partial L_i/\partial\mu=-(z_i-\mu)$, second derivative 1 per example, so $H=n$ in summed units.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Read it right to left</p>
+  <h2>$H^{-1}$ turns a pull into a move</h2>
+  <img class="fig short" src="assets/L1/pull.png" alt="Contours of an elongated quadratic bowl; the pull -g_i points mostly along the stiff direction, the move -H^{-1} g_i is rotated toward the flat direction">
+  <p class="figcap">Flat directions move most. Then $g_\phi$ reads off what $\phi$ cares about.</p>
+  <aside class="notes">
+    <p>Three factors of $-g_\phi^\top H^{-1}g_i$: $g_i$ is how example $i$ pulls on the parameters (its descent direction is $-g_i$); $H^{-1}$ converts force to displacement, a lot along small eigenvalues and little along large ones; $g_\phi$ projects the displacement onto the observable.</p>
+    <p>This is why the gradient dot product $-g_\phi^\top g_i$ (the IF with $H$ replaced by $I$) can be badly wrong: it ignores the rotation. §5 shows it.</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · What the theorem gives</p>
+  <h2>A local branch, not "the retrained model"</h2>
+  <img class="fig short" src="assets/L1/wells.png" alt="A double well; lowering one example's weight tilts it so the global minimum jumps to the other well while the influence function follows the local branch">
+  <p class="figcap">The IF follows the nearby minimum; retraining from scratch may land in another basin.</p>
+  <aside class="notes">
+    <p>The implicit function theorem needs only $H$ invertible, and gives the unique smooth branch of stationary points through $w^*$. To call that branch "the retrained model" also needs $w^*$ to be a strict minimum and retraining to stay in this basin. Both hold automatically for a strictly convex loss.</p>
+    <p>The tilt in the figure is exaggerated. <a href="../da1_core.html#da1-3-ext-ift">DA1 Exercise 3.3</a> has a version with numbers: $L_1=(w^2-1)^2$, $L_2=0.10w$, $L_3=-0.11w$; lowering $\beta_3$ to 0.8 moves the global minimum to the other well.</p>
+  </aside>
+</section>
+
+<section data-stage="2" class="take">
+  <p class="eyebrow">§3 · Takeaway</p>
+  <p class="tk">One linear solve per query: $\mathcal I_i=-g_\phi^\top H^{-1}g_i$.</p>
+</section>
+
+<!-- ===================================================================== §3b leverage -->
+<section data-stage="2" class="q">
+  <p class="eyebrow">§3 · How good is it?</p>
+  <h2>How well does a derivative predict deleting a whole example?</h2>
+  <aside class="notes"><p>Back to the 5.7× puzzle. Linear regression is the one model where we can do the deletion exactly, in closed form.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Least squares</p>
+  <h2>Everything is explicit</h2>
+  <div class="eq mid">$$L_j=\tfrac12(y_j-w^\top x_j)^2,\qquad A=\sum_jx_jx_j^\top$$
+  $$\htmlClass{fragment}{H=A,\qquad g_j=-x_j\,r_j,\qquad r_j=y_j-x_j^\top w^*}$$</div>
+  <p class="one fragment">The IF says deleting $j$ moves the fit by $-A^{-1}x_j\,r_j$.</p>
+  <aside class="notes">
+    <p>$w^*=A^{-1}\sum_jx_jy_j$. The influence prediction of the deletion change: $-\partial w^*/\partial\beta_j=H^{-1}g_j=-A^{-1}x_jr_j$. Upweighting $j$ pulls the fit toward $j$, along $A^{-1}x_j$, in proportion to the residual.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-ex3-1">DA1 Exercise 3.1</a>, the required exercise of the morning. You may want to do it before looking at the next three slides.</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Exact deletion, step 1</p>
+  <h2>Subtract the two sets of normal equations</h2>
+  <div class="eq mid">$$\begin{aligned}
+    \text{all data:}&\quad A\,w^*=\textstyle\sum_ix_iy_i\\[4pt]
+    \htmlClass{fragment}{\text{without }j\text{:}}&\quad\htmlClass{fragment}{(A-x_jx_j^\top)(w^*+\delta)=\textstyle\sum_ix_iy_i-x_jy_j}\\[4pt]
+    \htmlClass{fragment}{\text{subtract:}}&\quad\htmlClass{fragment}{A\,\delta=x_j\,\big(\underbrace{x_j^\top\delta-r_j}_{=:\,c}\big)}
+  \end{aligned}$$</div>
+  <p class="one fragment">$\delta=w^*_{(-j)}-w^*$ is the exact change. So $\delta=c\,A^{-1}x_j$: only the size $c$ is unknown.</p>
+  <aside class="notes"><p>$\delta=w^*_{(-j)}-w^*$. Expand the left side and use $Aw^*=\sum_ix_iy_i$: $A\delta-x_jx_j^\top w^*-x_jx_j^\top\delta=-x_jy_j$, then collect.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Exact deletion, step 2</p>
+  <h2>Find the size from its own definition</h2>
+  <div class="eq mid">$$\begin{aligned}
+    x_j^\top\delta&=c\;\underbrace{x_j^\top A^{-1}x_j}_{h_j}\\[4pt]
+    \htmlClass{fragment}{c}&\htmlClass{fragment}{=h_j\,c-r_j\quad\Longrightarrow\quad c=-\frac{r_j}{1-h_j}}
+  \end{aligned}$$</div>
+  <p class="one fragment">$h_j$ is the <b>leverage</b> of example $j$.</p>
+  <aside class="notes"><p>Take the inner product of $\delta=cA^{-1}x_j$ with $x_j$, then substitute into $c=x_j^\top\delta-r_j$.</p></aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · The result</p>
+  <h2>Exact deletion is the IF, magnified</h2>
+  <div class="eq">$$w^*_{(-j)}-w^*=-\frac{A^{-1}x_j\,r_j}{1-h_j}$$</div>
+  <div class="eq mid fragment">$$\frac1{1-h_j}=\underbrace{1}_{\text{IF}}+\,h_j+h_j^2+\cdots$$</div>
+  <aside class="notes">
+    <p>The influence function keeps the leading 1. The higher terms are the higher-order Taylor terms of the response in $\beta_j$, which linear regression happens to sum in closed form (Sherman–Morrison; <a href="../da1_core.html#da1-3-ext-series">DA1 Exercise 3.2</a> gives the whole response curve, the black line of slide 15).</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · Leverage</p>
+  <h2>How far a point sticks out, in the data's own metric</h2>
+  <div class="eq">$$h_j=x_j^\top A^{-1}x_j\in[0,1],\qquad\sum_jh_j=p$$</div>
+  <p class="one fragment">$p$: the number of parameters. At $h_j=1$ the point alone pins down a direction.</p>
+  <aside class="notes">
+    <p>At $h_j=1$, deleting the point leaves the fit undetermined: $(A-x_jx_j^\top)A^{-1}x_j=x_j(1-h_j)=0$, so the reduced design is singular.</p>
+    <p>$h_j$ is the diagonal of the hat matrix $X A^{-1}X^\top$, an orthogonal projection of rank $p$ (the number of parameters): hence $0\le h_j\le1$ and the trace is $p$, so the average leverage is $p/n$.</p>
+    <p>With $\hat\Sigma=A/n$, $h_j=\frac1n x_j^\top\hat\Sigma^{-1}x_j$: a squared length in the metric set by the data. With an intercept, it is $\frac1n$ plus $\frac1n$ times the squared Mahalanobis distance of the other features from their mean.</p>
+  </aside>
+</section>
+
+<section data-stage="2">
+  <p class="eyebrow">§3 · The puzzle, solved</p>
+  <h2>Low leverage: close. High leverage: far too small.</h2>
+  <img class="fig" src="assets/L1/leverage.png" alt="Left: a regression with points A (in the bulk) and B (far out); removing A, refit and IF prediction coincide; removing B, the IF line moves much less than the refit. Right: exact over predicted change against leverage, on the curve 1/(1-h)">
+  <p class="figcap">Point B has leverage $h=0.825$, so $1/(1-h)=5.7$: the puzzle from slide 15.</p>
+  <aside class="notes">
+    <p>Left: removing A ($h=0.068$, blue) or B ($h=0.825$, red), with the exact refit (solid) and the IF prediction (dotted); for A both are visually close to the full fit (its correction factor is 1.07). Right: every point's ratio of exact to predicted change in slope lies on $1/(1-h)$. 15 points, $p=2$, so the leverages sum to 2.</p>
+  </aside>
+</section>
+
+<section data-stage="2" class="take">
+  <p class="eyebrow">§3 · Takeaway</p>
+  <p class="tk">The IF is least reliable for exactly the points you most want to ask about. And this model is convex and converged.</p>
+</section>
+
+<!-- ===================================================================== §4 networks -->
+<section data-stage="3" class="q">
+  <p class="eyebrow">§4 · Neural networks</p>
+  <h2>At a network checkpoint, which assumptions survive?</h2>
+  <ul style="margin-top:20px">
+    <li class="fragment">$H$ invertible? No: flat directions.</li>
+    <li class="fragment">$H$ positive? No: negative curvature.</li>
+    <li class="fragment">$\nabla L=0$? No: training stopped early.</li>
+  </ul>
+  <aside class="notes">
+    <p>Three standard modifications turn $-g_\phi^\top H^{-1}g_i$ into the formula used in practice, $-g_\phi^\top(G+\lambda I)^{-1}g_i$. The theme: each fix changes the question being answered. Bae et al. (2022) §§1–4 is the full argument.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-4">DA1 §4</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 1 · Flat directions</p>
+  <h2>Symmetries make valleys of minimizers</h2>
+  <img class="fig short" src="assets/L1/valley.png" alt="The hyperbola ab = mean of z in the (a,b) plane; at a minimizer, v points across the valley and v-perp along it">
+  <p class="figcap">A toy: predict $ab$, losses $L_i=\tfrac12(z_i-ab)^2$. Along the valley, $H$ has a zero eigenvalue.</p>
+  <aside class="notes">
+    <p>Networks have continuous families of minimizers: rescaling symmetries, unused units, more parameters than constraints. The $a\cdot b$ model is the smallest example: minimizers are the hyperbola $ab=\bar z$; rescaling $(a,b)\to(\alpha a,b/\alpha)$ moves along it. At a minimizer, $H=n\,vv^\top$ with $v=(b^*,a^*)$: rank one. $H^{-1}$ does not exist.</p>
+    <p>The SLT day uses the same model.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 1 · Damping</p>
+  <h2>Damping is exact for a proximal question</h2>
+  <div class="eq mid">$$L(w;\beta)+\frac\lambda2\|w-w^*\|^2\quad\htmlClass{fragment}{\xrightarrow{\ \text{Hessian at }w^*\ }\quad H+\lambda I}$$</div>
+  <div class="eq mid fragment">$$\mathcal I_i^{\lambda}=-\,g_\phi^\top(H+\lambda I)^{-1}g_i$$</div>
+  <p class="one fragment">Not a numerical patch: reweight $i$, while paying to move away from $w^*$.</p>
+  <aside class="notes">
+    <p>At a stationary $w^*$ the proximal term has zero gradient, so $w^*$ is still stationary for the new objective at $\beta=\mathbf 1$, and the derivation of §3 goes through with $H+\lambda I$. For $H\succeq0$, increasing $\lambda$ shrinks the parameter response; the scalar influence can still grow or change sign.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 1 · The toy, by hand</p>
+  <h2>The gradient points across the valley</h2>
+  <div class="eq mid">$$H=n\,vv^\top,\quad g_i=-(z_i-\bar z)\,v\quad\htmlClass{fragment}{\Longrightarrow\quad\mathcal I^\lambda_i=\frac{(z_i-\bar z)\;g_\phi^\top v}{n\|v\|^2+\lambda}}$$</div>
+  <p class="one fragment">$g_i$ has no flat component, so $\lambda\to0$ is finite. For $\phi=ab$ the limit is $(z_i-\bar z)/n$: the mean again.</p>
+  <aside class="notes">
+    <p>In general, in $H$'s eigenbasis $(s_k,u_k)$, $(H+\lambda I)^{-1}g_i=\sum_kc_ku_k/(s_k+\lambda)$ with $g_i=\sum_kc_ku_k$. On a flat direction ($s_k=0$) the factor is $1/\lambda$, which matters only if $c_k\neq0$; then the response grows like $1/\lambda$. If $g_i$ has no flat component, the $\lambda\to0$ limit is the pseudoinverse answer $-H^+g_i$.</p>
+    <p>$v=(b^*,a^*)$ is an eigenvector of $H$ with eigenvalue $n\|v\|^2$, so $(H+\lambda I)^{-1}v=v/(n\|v\|^2+\lambda)$. $g_i$ is parallel to $v$: no flat component, so nothing diverges.</p>
+    <p>For $\phi=ab$ (what the model computes, constant along the valley), $g_\phi^\top v=\|v\|^2$ and the limit $(z_i-\bar z)/n$ is the same at every minimizer. For $\phi=a^2$, $g_\phi=(2a^*,0)$, $g_\phi^\top v=2a^*b^*$, and the limit $2\bar z(z_i-\bar z)/(n\|v\|^2)$ depends on the minimizer.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-4-ext-ab">DA1 Exercise 4.1</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 1 · Where you stand matters</p>
+  <h2>Finite limits, but which one?</h2>
+  <img class="fig" src="assets/L1/ab_damping.png" alt="Damped IF against lambda for four minimizers: for phi = a squared the plateaus differ by minimizer; for phi = ab they coincide">
+  <p class="figcap">$\phi=a^2$ changes along the valley: its answer depends on the minimizer.</p>
+  <aside class="notes">
+    <p>Each curve: plateau for $\lambda\ll n\|v\|^2$, then $1/\lambda$ decay. Circles: the derivative of retraining by gradient flow warm-started at that minimizer, by finite differences; they match the plateaus because gradient flow conserves $a^2-b^2$ and moves along $v$. Retraining from a random init could land anywhere on the new hyperbola, so for $a^2$ there is no retraining-independent answer, and damping is what picks one.</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 2 · Negative curvature</p>
+  <h2>Split the Hessian through the outputs</h2>
+  <div class="eq mid">$$L=\sum_i\ell_i\big(f_i(w)\big),\qquad\nabla L=\sum_iJ_i^\top\,\nabla_f\ell_i$$</div>
+  <div class="eq mid fragment">$$H=\htmlClass{fragment}{\underbrace{\sum_iJ_i^\top H_{y,i}\,J_i}_{G\text{, Gauss–Newton}}}\;\htmlClass{fragment}{+\;\underbrace{\sum_{i,c}\frac{\partial\ell_i}{\partial f_{ic}}\,\nabla^2_wf_{ic}}_{\text{residual term}}}$$</div>
+  <p class="one fragment">$f_{ic}$: output $c$ on example $i$. $J_i=\partial f_i/\partial w$. $H_{y,i}=\nabla^2_f\ell_i$. Product rule: two terms.</p>
+  <aside class="notes">
+    <p>$f_i(w)\in\mathbb R^C$: the network's outputs on example $i$. Differentiate twice: once gives $\sum_iJ_i^\top\nabla_f\ell_i$; the second derivative hits either the $J_i$ (giving the residual term) or the $\nabla_f\ell_i$ (giving $G$).</p>
+    <p>The residual term vanishes when the output gradients do (squared error at interpolation) or when the model is linear in its parameters.</p>
+    <p>Picked up in: <a href="../../td/td2_6_curvature.html#td26-1">TD §6.1</a> (same decomposition) and L2 (how to multiply by $G$).</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 2 · Why $G$</p>
+  <h2>$G$ can't have negative eigenvalues</h2>
+  <div class="eq">$$\ell_i\text{ convex in }f\ \Longrightarrow\ G\succeq0\ \Longrightarrow\ G+\lambda I\succ0\ \text{ for every }\lambda&gt;0$$</div>
+  <p class="one fragment">With $H$, an eigenvalue $s&lt;0$ makes $1/(s+\lambda)$ blow up at $\lambda=-s$.</p>
+  <aside class="notes"><p>Squared error and softmax cross-entropy are both convex in the outputs. Near $\lambda=-s$ the damped Hessian IF gives huge responses of either sign.</p>
+    <p>A caution (cut from the slides): $G\neq H$ even at a strict minimum. One parameter, $f(w)=w^2$, target $-1$, squared error: $L=\frac12(w^2+1)^2$ has a strict minimum at $w=0$, where $J=f'(0)=0$ so $G=0$, while the residual $(f+1)f''=2$ gives all of $H=2$. So the Gauss–Newton influence need not equal the Hessian influence even at a converged minimum.</p></aside>
+</section>
+
+<section data-stage="3" class="q">
+  <p class="eyebrow">§4 · Fix 3 · Non-convergence</p>
+  <h2>The checkpoint need not minimize the training loss.</h2>
+  <p class="sub">So what is $-g_\phi^\top(G+\lambda I)^{-1}g_i$ the derivative of?</p>
+  <aside class="notes"><p>At a non-stationary $w^s$, the implicit-function derivation has nothing to start from. Bae et al. (2022): "If influence functions are the answer, then what is the question?" Construct an objective whose optimum is the checkpoint by design.</p></aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 3 · A tool</p>
+  <h2>The Bregman divergence: the gap above the tangent</h2>
+  <img class="fig short" src="assets/L1/bregman.png" alt="A convex loss curve with its tangent at f^s; the vertical gap between curve and tangent at f is D(f, f^s)">
+  <p class="figcap">$f^s$: the checkpoint's outputs. $D(f,f^s)=\ell(f)-\ell(f^s)-\nabla\ell(f^s)^\top(f-f^s)$: zero gradient at $f^s$, Hessian $H_y$.</p>
+  <aside class="notes"><p>For squared error, $D=\frac12\|f-f^s\|^2$. In general it measures how far the outputs moved, in the loss's own geometry, and is non-negative for convex $\ell$.</p></aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 3 · The PBRF</p>
+  <h2>Reweight, paying for every move</h2>
+  <div class="eq mid">$$Q(w;\beta)=\underbrace{\sum_j(\beta_j-1)\,L_j(w)}_{\text{the reweighting}}\htmlClass{fragment}{+\underbrace{\sum_jD_j\big(f_j(w),f_j(w^s)\big)}_{\text{output cost}}}\htmlClass{fragment}{+\underbrace{\tfrac\lambda2\|w-w^s\|^2}_{\text{weight cost}}}$$</div>
+  <p class="one fragment">$w^s$: the saved checkpoint. The minimizer of $Q$ is the proximal Bregman response function, PBRF$(\beta)$.</p>
+  <aside class="notes"><p>Bae et al. (2022) §5. $w^s$: the saved checkpoint, which need not be stationary. The first term is zero at $\beta=\mathbf 1$ and adds or removes example $j$'s loss as $\beta_j$ moves.</p></aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 3 · Apply §3 to $Q$</p>
+  <h2>The checkpoint is optimal by construction</h2>
+  <div class="eq mid">$$\begin{aligned}
+    Q(w;\mathbf 1)&=\textstyle\sum_jD_j+\frac\lambda2\|w-w^s\|^2\ \ge0,\ \text{ with equality at }w^s\\[4pt]
+    \htmlClass{fragment}{\nabla^2_wQ(w^s)}&\htmlClass{fragment}{=\textstyle\sum_jJ_j^\top H_{y,j}J_j+\lambda I=G+\lambda I}\\[4pt]
+    \htmlClass{fragment}{\partial_{\beta_i}\nabla_wQ}&\htmlClass{fragment}{=\nabla L_i(w^s)=g_i}
+  \end{aligned}$$</div>
+  <p class="one fragment">No residual term: $D_j$ has zero gradient in $f$ at $f^s$.</p>
+  <aside class="notes"><p>The Hessian in $w$ of $D_j(f_j(w),f_j^s)$ at $w^s$ is $J_j^\top H_{y,j}J_j$ plus $\sum_c(\partial D_j/\partial f_c)\nabla^2_wf_{jc}$, and the second sum is zero because $\nabla_fD_j=0$ at $f^s$. That is where $G$ comes from: not an approximation, an exact Hessian of a different objective.</p></aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · Fix 3 · The result</p>
+  <h2>The practical formula, and its question</h2>
+  <div class="eq">$$\frac{\partial\,\phi\big(\mathrm{PBRF}(\beta)\big)}{\partial\beta_i}\bigg|_{\beta=\mathbf 1}=-\,g_\phi^\top(G+\lambda I)^{-1}g_i$$</div>
+  <p class="one fragment">Exact, for a question that isn't retraining. Slide 3's LLM results used an approximation of it.</p>
+  <aside class="notes">
+    <p>In words: how would $\phi$ change if $i$ were reweighted, while moving the outputs on the training set and moving the parameters were both penalized? This is the formula DA2 stop 1 computes at LLM scale (with EK-FAC for $G$).</p>
+  </aside>
+</section>
+
+<section data-stage="3">
+  <p class="eyebrow">§4 · The proximity gap, measured</p>
+  <h2>The damped IF answers its own question</h2>
+  <img class="fig" src="assets/L1/proximity.png" alt="Two scatter plots for a 25-parameter MLP: damped-IF predictions against proximal retraining (Spearman 1.00) and against plain retraining (Spearman 0.19)">
+  <p class="figcap">A 25-parameter MLP: it ranks proximal retraining almost perfectly, plain retraining hardly at all.</p>
+  <aside class="notes">
+    <p>Note: this experiment uses the damped <em>Hessian</em> IF of slide 36, $-g_\phi^\top(H+\lambda I)^{-1}g_i$, not Gauss–Newton. The training objective includes a fixed ridge $\frac{10^{-3}}2\|w\|^2$ in every refit, and $H$ includes it. Spearman for proximal retraining is 0.995.</p>
+    <p>This is one of five gaps Bae et al. identify between the IF and leave-one-out retraining. Changes of question: warm start (retraining starts from $w^s$, not a fresh init), proximity (moving the parameters is penalized), non-convergence (the Bregman term stands in for the loss). Errors: linearization, the approximate solve. For networks the changes of question dominate (their Fig. 4).</p>
+    <p>One hidden layer of 8 tanh units, 20 noisy points of $\sin2x$, trained to a minimum by Newton's method; $\phi$ is the squared error at one test input; $\lambda$ is 1% of the top Hessian eigenvalue. Deleting each point: damped-IF prediction vs proximal retraining (the IF's own target, made finite) vs plain retraining from $w^*$.</p>
+    <p>The Hessian's eigenvalues run from $5\times10^{-4}$ to 106: without the proximal term, a deletion moves the parameters far along nearly flat directions (across deletions, the vector of plain-retraining changes has 49 times the norm of the IF predictions). Which one you want is a choice of question, not a matter of accuracy.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-4-ext-mlp">DA1 §4 extension</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="3" class="take">
+  <p class="eyebrow">§4 · Takeaway</p>
+  <p class="tk">Each fix changes the question. The damped Gauss–Newton IF answers the PBRF question exactly.</p>
+</section>
+
+<!-- ===================================================================== §5 checks and the lens -->
+<section data-stage="4" class="q">
+  <p class="eyebrow">§5 · Checking</p>
+  <h2>How would you know an attribution is right?</h2>
+  <aside class="notes"><p>Every method outputs a number per training example. Which question do you test it against?</p></aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§5 · Two separate things</p>
+  <h2>Target and estimator</h2>
+  <ul>
+    <li><b>Target:</b> the question. A choice of $\pi$, and of one of the three targets.</li>
+    <li class="fragment"><b>Estimator:</b> how you compute the answer.</li>
+    <li class="fragment">They fail separately, so they need separate checks.</li>
+  </ul>
+  <aside class="notes"><p>We have now met two targets for one formula: the damped IF is the derivative of the proximal (PBRF) response, not of retraining. The table on slide 52 makes it concrete: one method computes its own target to seven digits and still predicts leave-one-out worse than another.</p></aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§5 · Three checks</p>
+  <h2>From least to most demanding</h2>
+  <ol>
+    <li>Finite differences of the method's own target.</li>
+    <li class="fragment">Leave-one-out retraining.</li>
+    <li class="fragment">Retraining on random half-subsets.</li>
+  </ol>
+  <aside class="notes">
+    <p>1 tests the estimator only: reweight by $\pm\varepsilon$, recompute $\pi$, difference $\phi$. 2 tests one finite deletion. 3 tests large deletions, far from $\beta=\mathbf 1$: it rewards estimators that extrapolate, which need not be those that differentiate exactly.</p>
+    <p>For networks: retraining with a new seed moves $\phi$ too. Single-model targets (this run, this seed: unrolling) differ from distributional ones (averaged over seeds: datamodels, TRAK's protocol).</p>
+  </aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§5 · The linear datamodeling score</p>
+  <h2>Do summed scores order the subsets?</h2>
+  <div class="eq">$$\mathrm{LDS}=\mathrm{Spearman}\Big(\big\{\phi(S_k)\big\},\ \Big\{\textstyle\sum_{i\in S_k}\mathcal I_i\Big\}\Big)$$</div>
+  <p class="one fragment">$S_k$: a random half of the data; retrain on it and measure $\phi(S_k)$. It checks the ranking, not the size.</p>
+  <aside class="notes">
+    <p>$S_1,\dots,S_m$: random subsets, typically half the data. $\phi(S_k)$: the behaviour after retraining on $S_k$. To first order, $\phi(S)-\phi(\text{all})=-\sum_{j\notin S}\mathcal I_j$, which is $\sum_{i\in S}\mathcal I_i$ up to a constant. Averaged over test points. Park et al. (2023) Definition 2.4.</p>
+    <p>Multiplying every score by 10, or any increasing transform of the predictions, leaves the LDS unchanged.</p>
+  </aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§5 · One example</p>
+  <h2>Different checks rank methods differently</h2>
+  <table class="tbl">
+    <tr><th></th><th class="c">1: own target, rel. error</th><th class="c">2: LOO, Spearman</th><th class="c">3: LDS</th></tr>
+    <tr><td>exact IF</td><td class="c">$3\times10^{-7}$</td><td class="c hl">0.96</td><td class="c">0.83</td></tr>
+    <tr class="fragment"><td>damped IF</td><td class="c">$3\times10^{-7}$ (proximal)</td><td class="c">0.82</td><td class="c">0.83</td></tr>
+    <tr class="fragment"><td>gradient dot product</td><td class="c">—</td><td class="c">0.36</td><td class="c">0.56</td></tr>
+  </table>
+  <p class="one fragment">Both IFs nail their own target; LOO prefers the exact IF; LDS can't tell them apart.</p>
+  <aside class="notes">
+    <p>Logistic regression, $n=80$: pick the check that matches your question. DA1 §5's setup: $\ell_2$-regularized logistic regression, 80 examples in 10 dimensions with feature scales spanning 1.5 decades, 10 test losses as observables; Newton solver, so every check is deterministic. Damping $\lambda$ = median Hessian eigenvalue.</p>
+    <p>The damped IF is off by 48% against the plain local derivative, but matches its own proximal target to $3\times10^{-7}$: a different target, not a defect. It is worse on LOO and ties on LDS. Calibration slopes on the half-subsets are 12 to 35, far from 1: a high LDS doesn't license "deleting these changes the loss by this much".</p>
+    <p>The gradient dot product ignores the $H^{-1}$ rotation of slide 23; the Hessian's eigenvalues here span a factor of about 360.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-ex5-1">DA1 Exercises 5.1–5.2</a>, where you compute this table.</p>
+  </aside>
+</section>
+
+<!-- ===================================================================== §6 another pi -->
+<section data-stage="4" class="q">
+  <p class="eyebrow">§6 · Another $\pi$</p>
+  <h2>What if $\pi$ is this training run, not an argmin?</h2>
+  <aside class="notes"><p>The simplest case of unrolling, and a lens on the afternoon's methods. If short of time, skip to the map (slide 57) and say: the methods differ in $\pi$.</p></aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§6 · A lens</p>
+  <h2>Many estimators filter the curvature spectrum</h2>
+  <div class="eq">$$\frac{\partial w}{\partial\beta_i}=-F(M)\,g_i=-\sum_kF(s_k)\,c_k\,u_k$$</div>
+  <p class="one fragment">Classical IF: $F(s)=1/s$. Damped: $1/(s+\lambda)$. Now one more.</p>
+  <aside class="notes">
+    <p>$M$: a curvature matrix with eigenpairs $(s_k,u_k)$; $g_i=\sum_kc_ku_k$. Methods differ in $F$ and in which matrix $M$ is ($H$, $G$, a segment's average Hessian).</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-6">DA1 §6</a>, with a table of filters.</p>
+  </aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§6 · Unroll gradient descent</p>
+  <h2>Differentiate $K$ steps instead of an argmin</h2>
+  <div class="eq mid">$$\begin{aligned}
+    r_t&=\partial w_t/\partial\beta_i,\qquad w_{t+1}=w_t-\eta\nabla_wL(w_t;\beta)\\[4pt]
+    \htmlClass{fragment}{r_{t+1}}&\htmlClass{fragment}{=(I-\eta H)\,r_t-\eta\,g_i,\qquad r_0=0}\\[4pt]
+    \htmlClass{fragment}{r_K}&\htmlClass{fragment}{=-\eta\textstyle\sum_{k&lt;K}(I-\eta H)^k\,g_i}\\[4pt]
+    \htmlClass{fragment}{F(s)}&\htmlClass{fragment}{=\eta\textstyle\sum_{k&lt;K}(1-\eta s)^k=\dfrac{1-(1-\eta s)^K}{s},\qquad F(0)=\eta K}
+  \end{aligned}$$</div>
+  <p class="one fragment">Constant curvature and gradient give a geometric series; per eigenvalue, a filter.</p>
+  <aside class="notes">
+    <p>Assume $H$ and $g_i$ constant over the $K$ steps. On the range of $H$ the sum is $r_K=-[I-(I-\eta H)^K]H^{-1}g_i$; on its null space, $r_K=-\eta K\,g_i$. For $0&lt;\eta s&lt;2$ the filter tends to $1/s$ as $K\to\infty$.</p>
+    <p>This is the simplest case of unrolling (DA2 stop 2). SOURCE's filter $(1-e^{-\eta Ks})/s$ is its continuous-time cousin.</p>
+  </aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§6 · The filters</p>
+  <h2>Same shape, different meanings</h2>
+  <img class="fig short" src="assets/L1/filters.png" alt="Log-log plot of filters: 1/s diverges at small s; the damped filter and the K-step GD filter flatten to a finite value">
+  <p class="figcap">$\lambda$ is a proximal penalty; $\eta K$ is training time. Both tame the flat directions.</p>
+  <aside class="notes">
+    <p>Plotted with $\lambda=1$ and $\eta K=1$. Every filter but the classical one is finite at $s=0$: $F(0)=1/\lambda$, $\eta K$, $1/\gamma$ (local Bayesian IF at Gaussian leading order; $\gamma$ a localization strength) or $\tau^2/\sigma_{\rm noise}^2$ (Bayesian linear regression in $X^\top X$ units: prior over noise variance). For GD, directions with $s\ll1/(\eta K)$ haven't responded yet: influence depends on how long you train.</p>
+    <p>What the lens hides: general unrolling has changing curvature and non-commuting step Jacobians; the Bayesian IF beyond leading order sees non-quadratic structure; datamodels have no such form. Shapes are similar; questions are not.</p>
+    <p>Picked up in: <a href="../da1_core.html#da1-6-figure">DA1 §6's interactive filter explorer</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">§6 · The afternoon's map</p>
+  <h2>DA2's methods differ mainly in what $\pi$ is</h2>
+  <table class="tbl">
+    <tr><th>method</th><th>$\pi(\beta)$ is</th></tr>
+    <tr class="fragment"><td>classical IF</td><td>the stationary point near the trained $w^*$</td></tr>
+    <tr class="fragment"><td>PBRF</td><td>a proximal optimum around the checkpoint</td></tr>
+    <tr class="fragment"><td>unrolling</td><td>this run's last iterate, same seed and order</td></tr>
+    <tr class="fragment"><td>Bayesian IF</td><td>a local posterior</td></tr>
+    <tr class="fragment"><td>datamodels</td><td>a fitted predictor of retraining</td></tr>
+  </table>
+  <aside class="notes">
+    <p>The classical IF, the PBRF and (the simplest case of) unrolling were derived in this lecture. The rest are DA2: unrolling is stop 2 (TracIn, SOURCE, MAGIC); the Bayesian IF is stop 3, where $\phi$ is read as $\mathbb E_{p_\beta}\phi$ under $p_\beta\propto\exp(-L(w;\beta)-\frac\gamma2\|w-w^*\|^2)$; datamodels are stop 5.</p>
+    <p>TRAK is not a row: it is an analytic estimator judged against the datamodel-style subset target.</p>
+  </aside>
+</section>
+
+<section data-stage="4" class="take">
+  <p class="eyebrow">§6 · Takeaway</p>
+  <p class="tk">Training time can play the role of damping. Same shape, different question.</p>
+</section>
+
+<section data-stage="4" class="take">
+  <p class="eyebrow">Takeaway</p>
+  <p class="tk">Before trusting an attribution, ask which $\pi$, which target, and which check.</p>
+</section>
+
+<section data-stage="4">
+  <p class="eyebrow">The day</p>
+  <h2>How to use the day</h2>
+  <ul>
+    <li><b>Morning:</b> DA1, §1–§6. Do Exercises 3.1, 5.1 and 5.2.</li>
+    <li class="fragment"><b>After lunch:</b> L2, curvature at scale.</li>
+    <li class="fragment"><b>Then:</b> the DA2 tour. Read each capsule; go deep anywhere.</li>
+  </ul>
+  <aside class="notes">
+    <p>DA1 is one path of about 90 minutes; everything under "Extension" is optional. DA2's six stops: IFs at scale (EK-FAC), unrolling, Bayesian IFs, influence over training, datamodels and TRAK, open problems. Read every capsule in order (about 30 min), then go deep through the paper or the stop's walkthrough.</p>
+    <p>Links: <a href="../da1_core.html">DA1</a>, <a href="../da2_methods.html#da2-stop-1">DA2</a>, <a href="L2_curvature_at_scale.html">L2</a>.</p>
+  </aside>
+</section>
+
+<section data-stage="4" class="readings">
+  <p class="eyebrow">Readings · Importance / Length</p>
+  <ul>
+    <li>Koh &amp; Liang 2017, <a href="https://arxiv.org/abs/1703.04730"><i>Understanding Black-box Predictions via Influence Functions</i></a> <span class="dots">●●●●● / ●●○○○</span></li>
+    <li>Bae et al. 2022, <a href="https://arxiv.org/abs/2209.05364"><i>If Influence Functions are the Answer, Then What is the Question?</i></a> <span class="dots">●●●●● / ●●●○○</span></li>
+    <li>Grosse et al. 2023, <a href="https://arxiv.org/abs/2308.03296"><i>Studying LLM Generalization with Influence Functions</i></a> <span class="dots">●●●●● / ●●●●○</span></li>
+    <li>Park et al. 2023, <a href="https://arxiv.org/abs/2303.14186"><i>TRAK: Attributing Model Behavior at Scale</i></a> <span class="dots">●●●●○ / ●●●○○</span></li>
+    <li>Mueller 2024, <a href="https://arxiv.org/abs/2407.04690"><i>Missed Causes and Ambiguous Effects</i></a> <span class="dots">●●●○○ / ●●○○○</span></li>
+  </ul>
+  <aside class="notes">
+    <p>Sections: Koh &amp; Liang §2 (derivation, mean-loss convention) and §4 (checks against LOO); Bae et al. §§1–4 (the five gaps) and §5 (PBRF), Fig. 4; Grosse et al. §5.3 with Figs. 1 and 15–16 (read selectively: 119 pages); Park et al. §2 (LDS, Definition 2.4) and §3; Mueller §3–4.</p>
+    <p>Also in DA1: Ghorbani &amp; Zou 2019 (Data Shapley); Basu, Pope &amp; Feizi 2021 (IFs are fragile); Ilyas et al. 2022 (Datamodels).</p>
+  </aside>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/notes/notes.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script>
+  // Typeset the math first (slides and notes), then start reveal.js.
+  // \htmlClass{fragment}{...} inside display math gives step-by-step builds of equations.
+  try {
+    renderMathInElement(document.querySelector('.reveal .slides'), {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false }
+      ],
+      trust: (ctx) => ctx.command === "\\htmlClass",
+      strict: false,
+      throwOnError: false
+    });
+  } catch (e) { console.error(e); }
+
+  const params = new URLSearchParams(location.search);
+  Reveal.initialize({
+    width: 1280,
+    height: 720,
+    margin: 0.05,
+    center: false,
+    hash: true,
+    transition: 'none',
+    backgroundTransition: 'none',
+    slideNumber: 'c/t',
+    showNotes: params.has('showNotes') ? 'separate-page' : false,
+    pdfSeparateFragments: false,
+    plugins: [RevealNotes],
+    keyboard: {
+      78: () => {  // N: show or hide the notes on the slide itself
+        Reveal.configure({ showNotes: !Reveal.getConfig().showNotes });
+      }
+    }
+  });
+</script>
+</body>
+</html>

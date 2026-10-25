@@ -334,7 +334,7 @@
   <p class="figcap">Toy MLP: the five outliers are done by about $m=12$.</p>
   <aside class="notes">
     <p>Dotted lines: the top five eigenvalues of the toy Hessian. This asymmetry is the whole story of what SLQ can and cannot see.</p>
-    <p>Code you have seen: <a href="../../td/td2_2_edge_of_stability.html#td22-5">TD 2.2 §2.5</a>'s <code>top_eig_lanczos</code> calls scipy's <code>eigsh</code> (implicitly restarted Lanczos) on double-backward HVPs.</p>
+    <p>Code you have seen: <a href="../../td/td2_3_edge_of_stability.html#td23-5">TD 2.3 §3.5</a>'s <code>top_eig_lanczos</code> calls scipy's <code>eigsh</code> (implicitly restarted Lanczos) on double-backward HVPs.</p>
     <p>The eigenpairs route to IFs: Schioppa et al. (2022) get top eigenpairs by Arnoldi (the non-symmetric version) and compute IFs in that subspace, up to a 300M-parameter ViT.</p>
   </aside>
 </section>

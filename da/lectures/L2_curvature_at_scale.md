@@ -78,8 +78,8 @@ Each segment lists time, slides (one line each, as shown), the board, speaker no
 - Lanczos: $Q_m=[q_1,\dots,q_m]$ is an orthonormal basis of $\mathcal K_m$ built by $Hq_k=\beta_{k-1}q_{k-1}+\alpha_kq_k+\beta_kq_{k+1}$ from $q_1=v$. Each new product is orthogonalized against only the two previous vectors; symmetry does the rest in exact arithmetic. Cost: $m$ HVPs plus $O(mP)$ vector work.
 - 4×4 example: $H=R\,\mathrm{diag}(0.2,0.5,1,5)R^\top$ with a fixed random rotation, $v=(1,1,1,1)/2$; numbers from the checks file. Why outside-in: Ritz values are optimal over polynomials of degree $m-1$, and a polynomial can single out an isolated eigenvalue far more easily than one in a cluster; the Kaniel–Paige bounds (refined by Saad) make this precise with Chebyshev polynomials.
 - Ghosts: the $q_k$ lose orthogonality once a Ritz value converges; by $m=60$ the toy has four copies of $\lambda_{\max}$. Full reorthogonalization keeps all of $Q_m$ and costs $O(m^2P)$ extra work; at LLM scale memory rules it out, and without it ghosts keep $m$ small (the 120B run uses $m=10$).
-- Code you have seen: TD 2.2 §2.5's `top_eig_lanczos` calls scipy's `eigsh` (implicitly restarted Lanczos) on double-backward HVPs. The eigenpairs route to IFs: Schioppa et al. (2022) get top eigenpairs by Arnoldi (the non-symmetric version) and compute IFs in that subspace, up to a 300M-parameter ViT.
-- **Picked up in:** [DA2 stop 1](../da2_methods.html#da2-stop-1), [TD 2.2 §2.5](../../td/td2_2_edge_of_stability.html#td22-5).
+- Code you have seen: TD 2.3 §3.5's `top_eig_lanczos` calls scipy's `eigsh` (implicitly restarted Lanczos) on double-backward HVPs. The eigenpairs route to IFs: Schioppa et al. (2022) get top eigenpairs by Arnoldi (the non-symmetric version) and compute IFs in that subspace, up to a 300M-parameter ViT.
+- **Picked up in:** [DA2 stop 1](../da2_methods.html#da2-stop-1), [TD 2.3 §3.5](../../td/td2_3_edge_of_stability.html#td23-5).
 
 ---
 

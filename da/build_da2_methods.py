@@ -1018,7 +1018,7 @@ code below, a curved two-parameter valley makes the local BIF twice the damped
 IF at small $\gamma$. Kreer et al. report LDS on CIFAR-10 comparable to EK-FAC.
 **Caveat:** the estimate is only as good as the sampler. SGLD mixing, its
 step-size bias and the choice of $\gamma$ are the practical risks. Langevin
-dynamics and Gibbs laws are in [TD §2.3](../td/td2_3_sgd_sde.html#td23-3).
+dynamics and Gibbs laws are in [TD2.2 §3](../td/td2_2_sgd_sde.html#td22-3).
 """
         + KREER + MLODOZENIEC
         + "\n\n**Also:**\n" + BAKER
