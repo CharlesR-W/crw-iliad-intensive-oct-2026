@@ -12,18 +12,19 @@ Readings to accompany Eric Michaud and Brianna Grado-White's lectures. Pick what
 **Start with Charles's “What if not Circuits?”, section I.** The rest of that essay is optional. As you read the papers below, ask what each takes a feature or circuit to be, what evidence would establish its existence, and what its methods actually measure.
 """)]
 
-def section(title, entries, optional_from=None):
+def section(title, entries, optional_from=None, intro=''):
     def render(items):
         return ''.join(reading(t,u,a,n,importance=i,length=l) for t,u,a,n,i,l in items)
     body = render(entries if optional_from is None else entries[:optional_from])
     if optional_from is not None:
         body += '\n\n<details>\n<summary>Optional: SAE variants (Gated, Top-K, JumpReLU, Matryoshka)</summary>\n\n'
         body += render(entries[optional_from:]) + '\n</details>\n'
-    CELLS.append(markdown('## '+title+'\n\n'+body))
+    CELLS.append(markdown('## '+title+'\n\n'+intro+'\n\n'+body))
 
 section('Framing: what are we trying to explain?', [
 ('What if not Circuits?', 'https://www.lesswrong.com/posts/mMERyrvEJ4xbiozie/what-if-not-circuits', 'Charles Renshaw-Whitman, 2026', 'First reading: section I, “What Might We Mean By Circuits?” Distinguish assumptions about circuits from assumptions about representations; treat the essay as a perspective to examine, not a conclusion required by this notebook.',5,2),
 ('A Pragmatic Vision for Interpretability','https://www.lesswrong.com/posts/StENzDcD3kpfGJssR/a-pragmatic-vision-for-inter','Neel Nanda et al., 2025','The explicit turn toward task-grounded, empirically evaluated interpretability; compare its success criteria with the ambition of reverse-engineering a model.',4,3),
+('Dmitry’s Koan','https://www.lesswrong.com/posts/3eo4SSZLfpHHCqoEQ/dmitry-s-koan','Dmitry Vaintrob, 2025','An explanation needs a specified precision scale: what error matters, relative to which baseline? Carry this question into the surrogate-model and causal-testing readings.',4,2),
 ])
 section('Representations and Toy Models of Superposition', [
 ('Toy Models of Superposition','https://transformer-circuits.pub/2022/toy_model/index.html','Elhage et al., 2022','The synthetic setting where features are known: investigate when sparse features share dimensions, how interference is filtered, and which conclusions depend on the toy setup.',5,4),
@@ -66,11 +67,25 @@ with decoder-column scale controlled. This schematic is not the objective of eve
 2. Reconstruction is unchanged while the penalty decreases by $1/c$: an uncontrolled scaling degeneracy.
 3. Compare methods at matched sparsity and dictionary size, then separately measure held-out concept detection, intervention specificity and downstream loss recovery. A dictionary can improve reconstruction by encoding nuisance variation without improving the chosen task. None of these measurements alone certifies a complete ontology.
 """)]
-section('Circuit tracing and circuit discovery', [
+section('Designed for interpretability: training networks from scratch', [
+('Weight-sparse transformers have interpretable circuits','https://arxiv.org/abs/2511.13653','Gao et al., 2025; ICML 2026','Start with the de novo models: constrain weights during training, then prune circuits for selected tasks. Examine the capability–interpretability tradeoff and the limits of scaling sparse models; the later dense-model bridge experiment is a separate surrogate approach.',4,3),
+('Bilinear MLPs enable weight-based mechanistic interpretability','https://arxiv.org/abs/2410.08417','Pearce et al., 2024; ICLR 2025','Bilinear layers make weight-based analysis tractable in trained image and small language models. Exact quadratic structure helps analysis, but does not by itself assign human meanings to components.',3,3),
+('B-cos Networks: Alignment is All We Need for Interpretability','https://arxiv.org/abs/2205.10268','Böhle, Fritz and Schiele, 2022','An optional vision example: train with transforms that encourage weight–input alignment and yield input-dependent contribution maps. This explanation target differs from recovering an LLM algorithm.',2,3),
+], intro='Here interpretability changes the architecture or constraints of the task model during its own training. Evaluate both the resulting explanations and the capability cost. These are different interventions from fitting an explanatory model to an already-trained network.')
+CELLS += [markdown(r"""
+### Exercise: tractable computation versus meaningful components
+
+For a bias-free bilinear layer $y=W_o[(W_ax)\odot(W_bx)]$, let $a_j^T,b_j^T$ be the rows of $W_a,W_b$. Show that
+$$y_k=x^TQ_kx,\qquad Q_k=\frac12\sum_j(W_o)_{kj}(a_jb_j^T+b_ja_j^T).$$
+What does this exact representation buy, and what remains to be shown before calling its eigenvectors interpretable features?
+"""), answer(r"""
+Expand $y_k=\sum_j(W_o)_{kj}(a_j^Tx)(b_j^Tx)$ and use $x^Ta_jb_j^Tx=x^Tb_ja_j^Tx$. Symmetrising gives the stated $Q_k$. Its eigendecomposition exposes exact quadratic contributions to this output coordinate. It does not establish semantic meaning, uniqueness within degenerate eigenspaces, or the role of those contributions in the complete network; these require further evidence.
+""")]
+section('Learned surrogates: transcoders and circuit tracing', [
+('Transcoders Find Interpretable LLM Feature Circuits','https://arxiv.org/abs/2406.11944','Dunefsky, Chlenski and Nanda, 2024','A precursor to cross-layer transcoders: fit a wide, sparsely activating replacement to a trained dense MLP’s input–output map, then analyse the replacement’s feature interactions.',3,3),
 ('Circuit Tracing: Revealing Computational Graphs in Language Models','https://transformer-circuits.pub/2025/attribution-graphs/methods.html','Ameisen et al., 2025','Cross-layer transcoders and attribution graphs: read the replacement-model construction and its limitations before interpreting edges as explanations of the original model.',4,4),
-('On the Biology of a Large Language Model','https://transformer-circuits.pub/2025/attribution-graphs/biology.html','Lindsey et al., 2025','Choose one case study, inspect its graph and interventions, and separate observations from the proposed computational story. Paired with the methods paper above; this is our working interpretation of “CTC/biology”.',4,4),
-('Towards Automated Circuit Discovery for Mechanistic Interpretability','https://arxiv.org/abs/2304.14997','Conmy et al., 2023','ACDC searches for task-relevant edges using patching; the dataset, graph granularity, metric and corruption scheme specify the discovery problem.',3,3),
-])
+('On the Biology of a Large Language Model','https://transformer-circuits.pub/2025/attribution-graphs/biology.html','Lindsey et al., 2025','Choose one case study, inspect its graph and interventions, and separate observations from the proposed computational story. Pair with the Circuit Tracing methods paper.',4,4),
+], intro='Here the original model already exists. We train a more interpretable approximation to some of its computation, then test how well explanations of that approximation transfer to the original. Read the dense-to-sparse bridges experiment in the weight-sparse-transformer paper as another example.')
 CELLS += [markdown(r"""
 ### Exercise: reconstruction is not mechanism equivalence
 
@@ -79,7 +94,8 @@ Construct $f,g:\mathbb R\to\mathbb R$ that agree on a training distribution supp
 Take $f(x)=x$ and $g(x)=x+\operatorname{ReLU}(x-1)$. They agree everywhere on the stipulated support, but $f(2)=2$ and $g(2)=3$. Check the original and replacement under the actual interventions, relevant held-out distributions, and matched behavioural metrics; inspect reconstruction-error contributions and mechanisms the replacement leaves fixed. Agreement on ordinary inputs is insufficient to guarantee agreement under interventions.
 """)]
 
-section('Causal scrubbing and causal abstraction', [
+section('Circuit discovery, causal scrubbing and causal abstraction', [
+('Towards Automated Circuit Discovery for Mechanistic Interpretability','https://arxiv.org/abs/2304.14997','Conmy et al., 2023','ACDC searches the original model’s computational graph for task-relevant edges using patching. Unlike a transcoder, it does not train a replacement MLP; dataset, metric and corruption scheme define the discovery problem.',3,3),
 ('Causal Scrubbing: a method for rigorously testing interpretability hypotheses','https://www.lesswrong.com/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing','Chan et al., Redwood Research, 2022','Read sections 2–4 and limitations: test a specified explanation with constrained resampling. Distinguish the original proposal from the later retrospective comments.',5,3),
 ('Causal Abstractions of Neural Networks','https://arxiv.org/abs/2106.02997','Geiger et al., 2021','Interchange interventions test whether a neural representation plays the causal role assigned by a higher-level model.',3,3),
 ('Finding Alignments Between Interpretable Causal Variables and Distributed Neural Representations','https://arxiv.org/abs/2303.02536','Geiger et al., 2023; CLeaR 2024','Distributed Alignment Search learns subspaces aligned with hypothesised variables; distinguish fitting the alignment from testing it.',4,3),
@@ -120,9 +136,24 @@ CELLS += [markdown(r"""
 1. The circle is a one-dimensional manifold with a two-dimensional linear span. A dictionary can use arbitrarily many local directions to describe it. Counting those elements counts a chosen discretisation, not necessarily independent semantic factors.
 2. $W_2R^{-1}RW_1=W_2W_1$. Deleting coordinate $i$ in the new basis instead inserts $I-R^{-1}e_ie_i^TR$ between $W_2$ and $W_1$, generally different from $I-e_ie_i^T$. Exact functional or parameter reconstruction does not uniquely pick the parts whose interventions should be meaningful.
 """)]
-section('Tensor similarity', [
-('When Are Two Networks the Same? Tensor Similarity for Mechanistic Interpretability','https://arxiv.org/abs/2605.15183','Nissen Gonzalez et al., including Logan Riggs Smith, 2026','Weight-based similarity accounting for symmetries in multilinear/tensor models. Read the architecture restrictions: this is not automatically a metric for arbitrary ordinary transformers.',2,4),
+section('Feature discovery through the empirical NTK', [
+('Feature Identification via the Empirical NTK','https://arxiv.org/abs/2510.00468','Jennifer Lin, 2025','Eigenspaces of trained-model eNTKs recover known features in Toy Models of Superposition and a modular-addition MLP. Read the kernel variants and the rotation within feature subspaces; this is evidence in small models, not a general feature-identification theorem.',4,3),
+('Mean field sequence: an introduction','https://www.lesswrong.com/posts/rduzFkTKx5pGKWKcL/mean-field-sequence-an-introduction','Dmitry Vaintrob and Lauren Greenspan, 2026','A complementary theory-led approach to interpretable structure, including modular addition. Distinguish adaptive mean-field limits from the frozen NTK limit; computing a trained model’s eNTK does not assume its training was lazy.',3,2),
+('A tale of three theories: sparsity, frustration, and statistical field theory','https://www.lesswrong.com/posts/siu22scEfuKxpSgfK/a-tale-of-three-theories-sparsity-frustration-and','Dmitry Vaintrob, 2026','Optional preliminary research write-up connecting sparse denoising, interference and frustration-induced structure across scales. A bridge from TMoS and computation in superposition to statistical-physics explanations.',2,2),
 ])
+CELLS += [markdown(r"""
+### Exercise: a kernel subspace is not a unique feature dictionary
+
+For scalar model output $f_\theta$, at a fixed trained checkpoint define
+$$J_{a\mu}=\frac{\partial f_\theta(x_a)}{\partial\theta_\mu},\qquad K=JJ^T.$$
+For vector outputs, one can retain sample–output pairs as matrix indices, or analyse a selected output's kernel. Specify the convention before comparing spectra.
+
+1. Show that $K$ is positive semidefinite. If $Ku=\lambda u$, $\|u\|=1$ and $\lambda>0$, show that $v=J^Tu/\sqrt\lambda$ is a unit eigenvector of $J^TJ$.
+2. If a top eigenvalue is repeated, can the spectrum alone select a unique basis of features? What additional evidence would help?
+"""), answer(r"""
+1. $z^TKz=\|J^Tz\|^2\ge0$. Also $\|v\|^2=u^TKu/\lambda=1$, and $J^TJv=\lambda v$. Data-space modes and parameter-space modes are related, but live in different spaces.
+2. Any orthogonal rotation inside a degenerate eigenspace is still an eigenbasis. A spectral gap can identify a subspace without identifying its preferred axes. Ground-truth feature alignment in a toy system, an explicitly motivated basis-selection criterion, and held-out causal tests provide different additional evidence. A large eigenvalue alone is not a semantic label.
+""")]
 section('Activation plateaus: Heimersheim and collaborators', [
 ('Activation Plateaus: Where and How They Emerge','https://www.lesswrong.com/posts/WMfSbt7AAcJdHzysB/activation-plateaus-where-and-how-they-emerge','Matthew Shinkle and Stefan Heimersheim, 2025','Start here: interpolating early activations can yield flat downstream responses separated by sharp transitions. GPT-2 Large experiments trace their gradual sharpening across layers to MLP sensitivity.',4,2),
 ('[Interim research report] Activation plateaus & sensitive directions in GPT2','https://www.lesswrong.com/posts/LajDyGyiyX8DNNsuF/interim-research-report-activation-plateaus-and-sensitive-1','Stefan Heimersheim and Jake Mendel, 2024','The original perturbation experiments and error-correction motivation. Read the September 2024 correction: confidence in the sensitive-direction comparison was reduced after identifying baseline effects.',3,3),

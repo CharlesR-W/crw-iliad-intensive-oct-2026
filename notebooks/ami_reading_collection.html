@@ -225,16 +225,17 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <li><a href="#framing-what-are-we-trying-to-explain">Framing: what are we trying to explain?</a></li>
 <li><a href="#representations-and-toy-models-of-superposition">Representations and Toy Models of Superposition</a></li>
 <li><a href="#from-dictionary-learning-to-scaled-features">From dictionary learning to scaled features</a></li>
-<li><a href="#circuit-tracing-and-circuit-discovery">Circuit tracing and circuit discovery</a></li>
-<li><a href="#causal-scrubbing-and-causal-abstraction">Causal scrubbing and causal abstraction</a></li>
+<li><a href="#designed-for-interpretability-training-networks-from-scratch">Designed for interpretability: training networks from scratch</a></li>
+<li><a href="#learned-surrogates-transcoders-and-circuit-tracing">Learned surrogates: transcoders and circuit tracing</a></li>
+<li><a href="#circuit-discovery-causal-scrubbing-and-causal-abstraction">Circuit discovery, causal scrubbing and causal abstraction</a></li>
 <li><a href="#negative-results-and-changes-of-direction">Negative results and changes of direction</a></li>
 <li><a href="#goodfire-feature-geometry-and-parameter-decomposition">Goodfire: feature geometry and parameter decomposition</a></li>
-<li><a href="#tensor-similarity">Tensor similarity</a></li>
+<li><a href="#feature-discovery-through-the-empirical-ntk">Feature discovery through the empirical NTK</a></li>
 <li><a href="#activation-plateaus-heimersheim-and-collaborators">Activation plateaus: Heimersheim and collaborators</a></li>
 <li><a href="#computation-in-superposition">Computation in superposition</a></li>
 </ol>
 </details>
-<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 7 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 9 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
 </nav>
 <main>
 <article>
@@ -257,6 +258,12 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 <p><strong><a href="https://www.lesswrong.com/posts/StENzDcD3kpfGJssR/a-pragmatic-vision-for-inter">A Pragmatic Vision for Interpretability</a></strong>, Neel Nanda et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>The explicit turn toward task-grounded, empirically evaluated interpretability; compare its success criteria with the ambition of reverse-engineering a model.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/3eo4SSZLfpHHCqoEQ/dmitry-s-koan">Dmitry’s Koan</a></strong>, Dmitry Vaintrob, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>An explanation needs a specified precision scale: what error matters, relative to which baseline? Carry this question into the surrogate-model and causal-testing readings.</p>
 </div>
 </div>
 </details>
@@ -372,9 +379,56 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="circuit-tracing-and-circuit-discovery">
-<summary><h2 id="circuit-tracing-and-circuit-discovery">Circuit tracing and circuit discovery</h2></summary>
+<details class="sec sec2" data-sec="designed-for-interpretability-training-networks-from-scratch">
+<summary><h2 id="designed-for-interpretability-training-networks-from-scratch">Designed for interpretability: training networks from scratch</h2></summary>
 <div class="sec-body">
+
+<p>Here interpretability changes the architecture or constraints of the task model during its own training. Evaluate both the resulting explanations and the capability cost. These are different interventions from fitting an explanatory model to an already-trained network.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2511.13653">Weight-sparse transformers have interpretable circuits</a></strong>, Gao et al., 2025; ICML 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Start with the de novo models: constrain weights during training, then prune circuits for selected tasks. Examine the capability–interpretability tradeoff and the limits of scaling sparse models; the later dense-model bridge experiment is a separate surrogate approach.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2410.08417">Bilinear MLPs enable weight-based mechanistic interpretability</a></strong>, Pearce et al., 2024; ICLR 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Bilinear layers make weight-based analysis tractable in trained image and small language models. Exact quadratic structure helps analysis, but does not by itself assign human meanings to components.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2205.10268">B-cos Networks: Alignment is All We Need for Interpretability</a></strong>, Böhle, Fritz and Schiele, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>An optional vision example: train with transforms that encourage weight–input alignment and yield input-dependent contribution maps. This explanation target differs from recovering an LLM algorithm.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercise-tractable-computation-versus-meaningful-components">
+<summary><h3 id="exercise-tractable-computation-versus-meaningful-components">Exercise: tractable computation versus meaningful components</h3></summary>
+<div class="sec-body">
+
+<p>For a bias-free bilinear layer <span class="math inline">y=W_o[(W_ax)\odot(W_bx)]</span>, let <span class="math inline">a_j^T,b_j^T</span> be the rows of <span class="math inline">W_a,W_b</span>. Show that <span class="math display">y_k=x^TQ_kx,\qquad Q_k=\frac12\sum_j(W_o)_{kj}(a_jb_j^T+b_ja_j^T).</span> What does this exact representation buy, and what remains to be shown before calling its eigenvectors interpretable features?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Expand <span class="math inline">y_k=\sum_j(W_o)_{kj}(a_j^Tx)(b_j^Tx)</span> and use <span class="math inline">x^Ta_jb_j^Tx=x^Tb_ja_j^Tx</span>. Symmetrising gives the stated <span class="math inline">Q_k</span>. Its eigendecomposition exposes exact quadratic contributions to this output coordinate. It does not establish semantic meaning, uniqueness within degenerate eigenspaces, or the role of those contributions in the complete network; these require further evidence.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="learned-surrogates-transcoders-and-circuit-tracing">
+<summary><h2 id="learned-surrogates-transcoders-and-circuit-tracing">Learned surrogates: transcoders and circuit tracing</h2></summary>
+<div class="sec-body">
+
+<p>Here the original model already exists. We train a more interpretable approximation to some of its computation, then test how well explanations of that approximation transfer to the original. Read the dense-to-sparse bridges experiment in the weight-sparse-transformer paper as another example.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2406.11944">Transcoders Find Interpretable LLM Feature Circuits</a></strong>, Dunefsky, Chlenski and Nanda, 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A precursor to cross-layer transcoders: fit a wide, sparsely activating replacement to a trained dense MLP’s input–output map, then analyse the replacement’s feature interactions.</p>
+</div>
 
 <div class="reading">
 
@@ -385,13 +439,7 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <div class="reading">
 
 <p><strong><a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">On the Biology of a Large Language Model</a></strong>, Lindsey et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>Choose one case study, inspect its graph and interventions, and separate observations from the proposed computational story. Paired with the methods paper above; this is our working interpretation of “CTC/biology”.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2304.14997">Towards Automated Circuit Discovery for Mechanistic Interpretability</a></strong>, Conmy et al., 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>ACDC searches for task-relevant edges using patching; the dataset, graph granularity, metric and corruption scheme specify the discovery problem.</p>
+<p>Choose one case study, inspect its graph and interventions, and separate observations from the proposed computational story. Pair with the Circuit Tracing methods paper.</p>
 </div>
 
 <details class="sec sec3" data-sec="exercise-reconstruction-is-not-mechanism-equivalence">
@@ -411,9 +459,15 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="causal-scrubbing-and-causal-abstraction">
-<summary><h2 id="causal-scrubbing-and-causal-abstraction">Causal scrubbing and causal abstraction</h2></summary>
+<details class="sec sec2" data-sec="circuit-discovery-causal-scrubbing-and-causal-abstraction">
+<summary><h2 id="circuit-discovery-causal-scrubbing-and-causal-abstraction">Circuit discovery, causal scrubbing and causal abstraction</h2></summary>
 <div class="sec-body">
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2304.14997">Towards Automated Circuit Discovery for Mechanistic Interpretability</a></strong>, Conmy et al., 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>ACDC searches the original model’s computational graph for task-relevant edges using patching. Unlike a transcoder, it does not train a replacement MLP; dataset, metric and corruption scheme define the discovery problem.</p>
+</div>
 
 <div class="reading main">
 
@@ -561,15 +615,50 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="tensor-similarity">
-<summary><h2 id="tensor-similarity">Tensor similarity</h2></summary>
+<details class="sec sec2" data-sec="feature-discovery-through-the-empirical-ntk">
+<summary><h2 id="feature-discovery-through-the-empirical-ntk">Feature discovery through the empirical NTK</h2></summary>
 <div class="sec-body">
 
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/2605.15183">When Are Two Networks the Same? Tensor Similarity for Mechanistic Interpretability</a></strong>, Nissen Gonzalez et al., including Logan Riggs Smith, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>Weight-based similarity accounting for symmetries in multilinear/tensor models. Read the architecture restrictions: this is not automatically a metric for arbitrary ordinary transformers.</p>
+<p><strong><a href="https://arxiv.org/abs/2510.00468">Feature Identification via the Empirical NTK</a></strong>, Jennifer Lin, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Eigenspaces of trained-model eNTKs recover known features in Toy Models of Superposition and a modular-addition MLP. Read the kernel variants and the rotation within feature subspaces; this is evidence in small models, not a general feature-identification theorem.</p>
 </div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/rduzFkTKx5pGKWKcL/mean-field-sequence-an-introduction">Mean field sequence: an introduction</a></strong>, Dmitry Vaintrob and Lauren Greenspan, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>A complementary theory-led approach to interpretable structure, including modular addition. Distinguish adaptive mean-field limits from the frozen NTK limit; computing a trained model’s eNTK does not assume its training was lazy.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/siu22scEfuKxpSgfK/a-tale-of-three-theories-sparsity-frustration-and">A tale of three theories: sparsity, frustration, and statistical field theory</a></strong>, Dmitry Vaintrob, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Optional preliminary research write-up connecting sparse denoising, interference and frustration-induced structure across scales. A bridge from TMoS and computation in superposition to statistical-physics explanations.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercise-a-kernel-subspace-is-not-a-unique-feature-dictionary">
+<summary><h3 id="exercise-a-kernel-subspace-is-not-a-unique-feature-dictionary">Exercise: a kernel subspace is not a unique feature dictionary</h3></summary>
+<div class="sec-body">
+
+<p>For scalar model output <span class="math inline">f_\theta</span>, at a fixed trained checkpoint define <span class="math display">J_{a\mu}=\frac{\partial f_\theta(x_a)}{\partial\theta_\mu},\qquad K=JJ^T.</span> For vector outputs, one can retain sample–output pairs as matrix indices, or analyse a selected output’s kernel. Specify the convention before comparing spectra.</p>
+<ol type="1">
+<li>Show that <span class="math inline">K</span> is positive semidefinite. If <span class="math inline">Ku=\lambda u</span>, <span class="math inline">\|u\|=1</span> and <span class="math inline">\lambda&gt;0</span>, show that <span class="math inline">v=J^Tu/\sqrt\lambda</span> is a unit eigenvector of <span class="math inline">J^TJ</span>.</li>
+<li>If a top eigenvalue is repeated, can the spectrum alone select a unique basis of features? What additional evidence would help?</li>
+</ol>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ol type="1">
+<li><span class="math inline">z^TKz=\|J^Tz\|^2\ge0</span>. Also <span class="math inline">\|v\|^2=u^TKu/\lambda=1</span>, and <span class="math inline">J^TJv=\lambda v</span>. Data-space modes and parameter-space modes are related, but live in different spaces.</li>
+<li>Any orthogonal rotation inside a degenerate eigenspace is still an eigenbasis. A spectral gap can identify a subspace without identifying its preferred axes. Ground-truth feature alignment in a toy system, an explicitly motivated basis-selection criterion, and held-out causal tests provide different additional evidence. A large eigenvalue alone is not a semantic label.</li>
+</ol>
+</div>
+</details>
+</div>
+</details>
+
 </div>
 </details>
 <details class="sec sec2" data-sec="activation-plateaus-heimersheim-and-collaborators">
