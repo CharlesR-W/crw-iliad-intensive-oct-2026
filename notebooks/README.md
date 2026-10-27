@@ -16,6 +16,14 @@ MDL4 is the 2026-10-13 merge of the former WB5 (universalities, `mdl4_universali
 
 ## For maintainers
 
+### October 29 reading collection
+
+[`ami_reading_collection.html`](ami_reading_collection.html) is a separate, provisional collection for **Ambitious Mechinterp and Activation Geometry**, built by `python3 notebooks/build_ami.py` from the repository root. Use `--check` to verify freshness. It reuses the MDL format, ratings, formula rendering, and folded solutions. It is not an additional MDL workbook.
+
+The requested opening is Charles's *What if not Circuits?*, section I; Neel's *A Pragmatic Vision for Interpretability* is also included. Sources were gathered on 2026-10-27. The remaining groups are deliberately loose while Charles adds readings. Working identifications: “representation types” is Olah's *Distributed Representations: Composition & Superposition* (also linked in Charles's essay); “CTC/biology” is the Circuit Tracing methods paper and its Biology companion. Goodfire and Heimersheim selections are candidates, not an exhaustive or instructor-approved syllabus. The homepage links the collection under the October 29 day. Charles authorizes direct pushes for reviewing these materials on the live site.
+
+### Existing MDL builders
+
 - Never hand-edit the `.html` files. Each is generated from one builder: `build_mdl1.py` … `build_mdl4.py`, `build_mdlX.py`. MDL1's cells live in per-section modules listed in `build_mdl1.py` (`wb2_keystone.py`, `wb2_classical.py`, `wb2_regularization.py`, `wb2_interpolation.py`, `wb2_pacbayes.py`, `wb2_bayes_sgd.py`, `wb2_ib.py`). The pre-restructure builders and pages (2026-10-09, before the keystone/trail format) are in `_pre_trail_2026-10-09/`; older ones in `_old_wb2/`, `_old_wb5/`.
 - Build with `python build_mdlN.py` (needs `pandoc` on PATH; it converts each cell's Markdown, including `$…$`/`$$…$$` math, to HTML at build time). Use `--check` to validate a builder and report whether its notebook is stale; it changes nothing on disk.
 - Shared helpers are in `nbkit.py`: `reading(..., importance=, length=)` requires both scores (1–5); books go in `references(book(...), ...)` at the end of a list; `supplemental()` inserts the main/supplemental divider; `markdown()` cells become the page; every `##`/`###`/`####` section is folded into a collapsed `<details class="sec">` at render time; each `answer()` cell becomes a collapsed "Solution" block after the cell before it, and `<details><summary>Hint</summary>` blocks in Markdown become folded hints. The page template (CSS, contents sidebar, KaTeX loader) is at the bottom of `nbkit.py`. The build fails on unbalanced `<details>`, TeX left outside math, missing local link targets, and dangling `#anchors`.

@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="nbkit.py (ami); do not edit by hand">
+<title>Ambitious Mechinterp and Activation Geometry — reading collection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<style>
+:root {
+  --bg: #fcfbf8; --fg: #1f2328; --muted: #61666d; --rule: #e3e0d8;
+  --link: #1f5f9e; --accent: #2b6cb0;
+  --sol: #2f7a5f; --sol-bg: #f1f7f4;
+  --hint: #9a6b12; --hint-bg: #fbf6ea;
+  --code-bg: #f0eee8; --th-bg: #f4f2ed; --tier-core: #2b6cb0;
+  --imp: #2b6cb0; --len: #b5651d;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+    --link: #8ab8f0; --accent: #8ab8f0;
+    --sol: #7cc9a6; --sol-bg: #1b2622;
+    --hint: #e0b964; --hint-bg: #26221a;
+    --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+    --imp: #8ab8f0; --len: #e3a35f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #16181c; --fg: #e4e6ea; --muted: #9aa0a8; --rule: #2e3238;
+  --link: #8ab8f0; --accent: #8ab8f0;
+  --sol: #7cc9a6; --sol-bg: #1b2622;
+  --hint: #e0b964; --hint-bg: #26221a;
+  --code-bg: #23262c; --th-bg: #1f2227; --tier-core: #8ab8f0;
+  --imp: #8ab8f0; --len: #e3a35f;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 1rem; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font: 400 1.075rem/1.65 var(--serif); font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+}
+.layout {
+  display: grid; grid-template-columns: minmax(0, 1fr);
+  max-width: 76rem; margin: 0 auto; padding: 0 16px;
+}
+main { min-width: 0; max-width: 46rem; width: 100%; margin: 0 auto; padding: 2.5rem 0 6rem; }
+@media (min-width: 70rem) {
+  .layout { grid-template-columns: 16rem minmax(0, 1fr); column-gap: 3rem; padding: 0 2rem; }
+  main { margin: 0; }
+}
+
+/* ---- contents ---- */
+nav.toc { font: 400 0.86rem/1.45 var(--sans); padding-top: 1.25rem; }
+@media (min-width: 70rem) {
+  nav.toc { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 2.5rem 0 2rem; }
+}
+nav.toc details > summary {
+  cursor: pointer; font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  font-size: .74rem; color: var(--muted); padding: .3rem 0; list-style: none;
+}
+nav.toc details > summary::-webkit-details-marker { display: none; }
+nav.toc details > summary::after { content: " +"; }
+nav.toc details[open] > summary::after { content: " \2212"; }
+nav.toc ol { list-style: none; margin: .4rem 0 1rem; padding: 0; border-left: 1px solid var(--rule); }
+nav.toc li a {
+  display: block; padding: .28rem 0 .28rem .8rem; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none;
+}
+nav.toc li a:hover { color: var(--fg); }
+nav.toc li a.active { color: var(--fg); border-left-color: var(--accent); }
+nav.toc .katex { font-size: 1em; }
+@media (max-width: 69.99rem) {
+  nav.toc { border-bottom: 1px solid var(--rule); padding-bottom: .5rem; max-width: 46rem; width: 100%; margin: 0 auto; }
+}
+.btn {
+  font: 500 .8rem/1 var(--sans); color: var(--fg); background: transparent; cursor: pointer;
+  border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .8rem;
+}
+.btn:hover { border-color: var(--sol); color: var(--sol); }
+
+/* ---- article ---- */
+article > :first-child { margin-top: 0; }
+h1, h2, h3, h4 { font-family: var(--sans); line-height: 1.25; letter-spacing: -.01em; }
+h1 { font-size: 2rem; font-weight: 600; margin: 0 0 .4rem; }
+h1 + p { font: 500 .9rem/1.4 var(--sans); color: var(--muted); margin-top: 0; }
+h1 + p strong { font-weight: 500; }
+h2 { font-size: 1.45rem; font-weight: 600; margin: 3.2rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 2.2rem 0 .6rem; }
+h4 { font-size: 1rem; font-weight: 600; margin: 1.6rem 0 .4rem; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+li > p { margin: 0 0 .5em; }
+a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: .1em .3em; border-radius: 4px; }
+pre { background: var(--code-bg); padding: .8em 1em; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 1em; border-left: 3px solid var(--rule); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
+img { max-width: 100%; height: auto; }
+[id] { scroll-margin-top: 1rem; }
+
+.table-wrap { overflow-x: auto; margin: 1.2em 0; }
+table { border-collapse: collapse; font: 400 .88rem/1.45 var(--sans); min-width: 60%; }
+th, td { border-bottom: 1px solid var(--rule); padding: .45em .7em; vertical-align: top; text-align: left; }
+th { background: var(--th-bg); font-weight: 600; }
+
+.katex { font-size: 1.07em; }
+/* KaTeX's hidden MathML is position:absolute; keep it inside its formula (no sideways page scroll). */
+.katex, .table-wrap, .katex-display { position: relative; }
+.math-punct { font-family: var(--serif); font-size: calc(1em / 1.07); }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .15em 0; margin: .9em 0; }
+.katex-error { color: #c0392b; }
+span.math { overflow-wrap: anywhere; }
+
+/* ---- solutions and hints ---- */
+article details { margin: 1.1em 0; border-radius: 0 6px 6px 0; }
+article details > summary {
+  cursor: pointer; list-style: none; user-select: none;
+  font: 600 .82rem/1.2 var(--sans); letter-spacing: .03em; padding: .6rem .9rem;
+}
+article details > summary::-webkit-details-marker { display: none; }
+article details > summary::before {
+  content: ""; display: inline-block; width: .45em; height: .45em; margin: 0 .55em .12em 0;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg); transition: transform .15s ease;
+}
+article details[open] > summary::before { transform: rotate(45deg); }
+summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details.solution { background: var(--sol-bg); border-left: 3px solid var(--sol); }
+details.solution > summary { color: var(--sol); text-transform: uppercase; }
+details.solution[open] > summary { border-bottom: 1px solid var(--rule); }
+.solution-body { padding: .9rem 1rem .2rem; }
+details.hint { background: var(--hint-bg); border-left: 3px solid var(--hint); }
+details.hint > summary { color: var(--hint); text-transform: uppercase; }
+details.hint > :not(summary) { padding-left: 1rem; padding-right: 1rem; }
+details.hint > :last-child { padding-bottom: .4rem; }
+
+/* ---- readings ---- */
+.reading { margin: 1.1em 0; padding: .1em 0 .1em 1rem; border-left: 2px solid var(--rule); }
+.reading.main { border-left: 4px solid var(--accent, #0b57d0); padding-left: calc(1rem - 2px); }
+.reading.main > p:first-child { font-size: 1.04em; }
+.supp { margin: 1.6em 0 .6em; padding-top: .5em; border-top: 1px solid var(--rule); color: var(--muted, #666); font-size: .92em; }
+.supp > span { font-variant: small-caps; letter-spacing: .04em; font-weight: 600; }
+.supp ~ .reading { opacity: .9; }
+.reading > p:first-child { margin-bottom: .35em; }
+.reading > p:last-child { margin-bottom: 0; }
+.tier {
+  display: inline-block; vertical-align: .12em; margin-left: .35em; padding: .12em .5em;
+  font: 600 .66rem/1.3 var(--sans); letter-spacing: .05em; text-transform: uppercase;
+  color: var(--muted); border: 1px solid var(--rule); border-radius: 999px;
+}
+.tier-core { color: var(--tier-core); border-color: currentColor; }
+
+/* ---- collapsible sections ---- */
+article details.sec { margin: 0; border-radius: 0; background: none; }
+article details.sec2 { border-top: 1px solid var(--rule); }
+article h1 ~ details.sec2:first-of-type, article p + details.sec2 { margin-top: 2.2rem; }
+article details.sec3, article details.sec4 { border-top: 1px dashed var(--rule); }
+article details.sec > summary {
+  display: flex; align-items: center; padding: 0;
+  font: inherit; letter-spacing: normal; text-transform: none;
+}
+article details.sec > summary::before { flex: none; margin: 0 .75em .1em .15em; color: var(--muted); }
+article details.sec > summary > :is(h2, h3, h4) { flex: 1; min-width: 0; margin: 0; padding: 0; border: 0; }
+article details.sec2 > summary { padding: 1.05rem 0; }
+article details.sec3 > summary { padding: .6rem 0; }
+article details.sec4 > summary { padding: .45rem 0; }
+article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
+.sec-body { padding: .1rem 0 1.4rem; }
+.sec-body > :first-child { margin-top: .4rem; }
+.tools { display: flex; flex-wrap: wrap; gap: .5rem; }
+
+/* ---- reading scores and textbook references ---- */
+.ratings { display: block; margin-top: .2em; font: 500 .76rem/1.4 var(--sans); color: var(--muted); }
+.rate { white-space: nowrap; margin-right: 1.2em; }
+.rate .on, .rate .off { letter-spacing: .1em; font-size: 1.15em; }
+.rate-imp .on { color: var(--imp); }
+.rate-len .on { color: var(--len); }
+.rate .off { opacity: .55; }
+.refs { margin: 1.4em 0 0; font: 400 .86rem/1.5 var(--sans); color: var(--muted); }
+.refs > p { margin: 0; }
+.legend { margin-top: 1.6rem; font: 400 .76rem/1.45 var(--sans); color: var(--muted); }
+.legend p { margin: 0; }
+.legend .legend-title { font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .72rem; margin-bottom: .4rem; }
+.legend .rate { display: block; font-weight: 600; margin-top: .3rem; }
+.legend ul { list-style: none; margin: .1rem 0 .4rem; padding: 0; }
+.legend li { margin: 0; }
+.legend .on { letter-spacing: .12em; }
+.legend ul:first-of-type .on { color: var(--imp); }
+.legend ul:last-of-type .on { color: var(--len); }
+.legend .off { letter-spacing: .12em; opacity: .55; }
+
+/* ---- print ---- */
+@media print {
+  :root { --bg: #fff; --fg: #000; --muted: #444; --sol-bg: #fff; --hint-bg: #fff; color-scheme: light; }
+  body { font-size: 10.5pt; }
+  nav.toc { display: none; }
+  .layout { display: block; max-width: none; padding: 0; }
+  main { max-width: none; padding: 0; }
+  details::details-content { content-visibility: visible; display: contents; }
+  details > summary::before { display: none; }
+  details, .reading, pre, .katex-display, table { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents">
+<details id="toc-box"><summary>Contents</summary>
+<ol>
+<li><a href="#framing-what-are-we-trying-to-explain">Framing: what are we trying to explain?</a></li>
+<li><a href="#representations-and-toy-models-of-superposition">Representations and Toy Models of Superposition</a></li>
+<li><a href="#from-dictionary-learning-to-scaled-features">From dictionary learning to scaled features</a></li>
+<li><a href="#circuit-tracing-and-circuit-discovery">Circuit tracing and circuit discovery</a></li>
+<li><a href="#causal-scrubbing-and-causal-abstraction">Causal scrubbing and causal abstraction</a></li>
+<li><a href="#negative-results-and-changes-of-direction">Negative results and changes of direction</a></li>
+<li><a href="#goodfire-feature-geometry-and-parameter-decomposition">Goodfire: feature geometry and parameter decomposition</a></li>
+<li><a href="#tensor-similarity">Tensor similarity</a></li>
+<li><a href="#computation-in-superposition-including-heimersheim">Computation in superposition, including Heimersheim</a></li>
+</ol>
+</details>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 6 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+</nav>
+<main>
+<article>
+<h1 id="ambitious-mechinterp-and-activation-geometry--reading-collection">Ambitious Mechinterp and Activation Geometry — reading collection</h1>
+<p><strong>Iliad Intensive · Thursday 29 October 2026</strong></p>
+<p>Readings to accompany Eric Michaud and Brianna Grado-White’s lectures. Pick what interests you; this is more than a day’s reading. These are loosely grouped starting points, not a prescribed sequence. Importance and length scores are provisional editorial estimates, using the MDL notebooks’ scale.</p>
+<p><strong>Start with Charles’s “What if not Circuits?”, section I.</strong> The rest of that essay is optional. As you read the papers below, ask what each takes a feature or circuit to be, what evidence would establish its existence, and what its methods actually measure.</p>
+
+<details class="sec sec2" data-sec="framing-what-are-we-trying-to-explain">
+<summary><h2 id="framing-what-are-we-trying-to-explain">Framing: what are we trying to explain?</h2></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://www.lesswrong.com/posts/mMERyrvEJ4xbiozie/what-if-not-circuits">What if not Circuits?</a></strong>, Charles Renshaw-Whitman, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>First reading: section I, “What Might We Mean By Circuits?” Distinguish assumptions about circuits from assumptions about representations; treat the essay as a perspective to examine, not a conclusion required by this notebook.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://www.lesswrong.com/posts/StENzDcD3kpfGJssR/a-pragmatic-vision-for-inter">A Pragmatic Vision for Interpretability</a></strong>, Neel Nanda et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The explicit turn toward task-grounded, empirically evaluated interpretability; compare its success criteria with the ambition of reverse-engineering a model.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="representations-and-toy-models-of-superposition">
+<summary><h2 id="representations-and-toy-models-of-superposition">Representations and Toy Models of Superposition</h2></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://transformer-circuits.pub/2022/toy_model/index.html">Toy Models of Superposition</a></strong>, Elhage et al., 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>The synthetic setting where features are known: investigate when sparse features share dimensions, how interference is filtered, and which conclusions depend on the toy setup.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://transformer-circuits.pub/2023/superposition-composition/index.html">Distributed Representations: Composition &amp; Superposition</a></strong>, Chris Olah, 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>Distinguishes compositional codes, superposition, and mere changes of basis. This is the likely intended “representation types” note, and is also linked from Charles’s opening essay.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-interference-and-what-a-probe-proves">
+<summary><h3 id="exercises-interference-and-what-a-probe-proves">Exercises: interference and what a probe proves</h3></summary>
+<div class="sec-body">
+
+<p>In the tied-weight toy model, <span class="math inline">x\in\mathbb R^n</span>, <span class="math inline">W\in\mathbb R^{m\times n}</span>, <span class="math inline">m&lt;n</span>: <span class="math display">h=Wx,\qquad \hat x=\operatorname{ReLU}(W^T h+b),\qquad
+\mathcal L=\mathbb E_x\sum_i I_i(x_i-\hat x_i)^2.</span> Here <span class="math inline">I_i</span> are feature-importance weights. These are synthetic features supplied by the experimenter.</p>
+<ol type="1">
+<li>Writing <span class="math inline">w_i</span> for column <span class="math inline">i</span> of <span class="math inline">W</span>, expand the preactivation of reconstructed feature <span class="math inline">i</span>. Identify the self-term and interference. Why does sparsity help without making interference vanish?</li>
+<li>Encode each colour–shape pair with a separate one-hot coordinate. Construct a perfect linear probe for “red”. Does this prove that a dedicated red coordinate is used by the model’s computation?</li>
+</ol>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ol type="1">
+<li><span class="math inline">\hat x_i=\operatorname{ReLU}(\|w_i\|^2x_i+\sum_{j\ne i}w_i^Tw_jx_j+b_i)</span>. Sparsity reduces typical coactivation; it does not force the cross-inner-products to zero. Bias and ReLU can reject weak interference, at the cost of discarding some signal. A claim about performance also needs the distribution of feature magnitudes and co-occurrences.</li>
+<li>Assign probe weight 1 to every red–shape coordinate and 0 elsewhere. It predicts red perfectly on the one-hot inputs, although the code has no separate red coordinate. Decodability alone neither identifies the model’s chosen factorisation nor proves downstream causal use.</li>
+</ol>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="from-dictionary-learning-to-scaled-features">
+<summary><h2 id="from-dictionary-learning-to-scaled-features">From dictionary learning to scaled features</h2></summary>
+<div class="sec-body">
+
+<div class="reading">
+
+<p><strong><a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html">Towards Monosemanticity: Decomposing Language Models With Dictionary Learning</a></strong>, Bricken et al., 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>The bridge from toy-model features to learned dictionaries in a small language model.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html">Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet</a></strong>, Templeton et al., 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Read the extraction method, examples and limitations together; feature activation, feature naming and steering provide different kinds of evidence.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2404.16014">Improving Dictionary Learning with Gated Sparse Autoencoders</a></strong>, Rajamanoharan et al., 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Separates feature selection from magnitude estimation to reduce shrinkage.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2406.04093">Scaling and evaluating sparse autoencoders</a></strong>, Gao et al., 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Top-K sparsity, scaling and evaluation; compare reconstruction with the separate tests of feature quality.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2407.14435">Jumping Ahead: Improving Reconstruction Fidelity with JumpReLU Sparse Autoencoders</a></strong>, Rajamanoharan et al., 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Thresholded activations and an L0 objective, trained with straight-through estimators.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2503.17547">Learning Multi-Level Features with Matryoshka Sparse Autoencoders</a></strong>, Bussmann et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Nested dictionaries as an attempt to capture features at multiple levels of abstraction.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-what-the-sparsity-penalty-buys">
+<summary><h3 id="exercises-what-the-sparsity-penalty-buys">Exercises: what the sparsity penalty buys</h3></summary>
+<div class="sec-body">
+
+<p>A schematic vanilla SAE has <span class="math inline">z=\operatorname{ReLU}(W_e(x-b_d)+b_e)</span>, <span class="math inline">\hat x=W_dz+b_d</span>, and objective <span class="math display">\mathbb E[\|x-\hat x\|_2^2+\lambda\|z\|_1],</span> with decoder-column scale controlled. This schematic is not the objective of every SAE variant.</p>
+<ol type="1">
+<li>For a unit decoder direction <span class="math inline">d</span> and a fixed residual <span class="math inline">r</span>, minimise <span class="math inline">\|r-ad\|^2+\lambda a</span> over <span class="math inline">a\ge0</span>. What bias does L1 introduce?</li>
+<li>Without controlling decoder scale, replace <span class="math inline">d</span> by <span class="math inline">cd</span> and <span class="math inline">a</span> by <span class="math inline">a/c</span>. What happens to reconstruction and the penalty?</li>
+<li>Propose a comparison in which better reconstruction would not by itself establish better interpretability.</li>
+</ol>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ol type="1">
+<li>Differentiating yields <span class="math inline">a^*=\max(0,d^Tr-\lambda/2)</span>. The active coefficient is shrunk relative to the nonnegative least-squares estimate. The factor of two changes if reconstruction loss includes a factor <span class="math inline">1/2</span>.</li>
+<li>Reconstruction is unchanged while the penalty decreases by <span class="math inline">1/c</span>: an uncontrolled scaling degeneracy.</li>
+<li>Compare methods at matched sparsity and dictionary size, then separately measure held-out concept detection, intervention specificity and downstream loss recovery. A dictionary can improve reconstruction by encoding nuisance variation without improving the chosen task. None of these measurements alone certifies a complete ontology.</li>
+</ol>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="circuit-tracing-and-circuit-discovery">
+<summary><h2 id="circuit-tracing-and-circuit-discovery">Circuit tracing and circuit discovery</h2></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://transformer-circuits.pub/2025/attribution-graphs/methods.html">Circuit Tracing: Revealing Computational Graphs in Language Models</a></strong>, Ameisen et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Cross-layer transcoders and attribution graphs: read the replacement-model construction and its limitations before interpreting edges as explanations of the original model.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">On the Biology of a Large Language Model</a></strong>, Lindsey et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Choose one case study, inspect its graph and interventions, and separate observations from the proposed computational story. Paired with the methods paper above; this is our working interpretation of “CTC/biology”.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2304.14997">Towards Automated Circuit Discovery for Mechanistic Interpretability</a></strong>, Conmy et al., 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>ACDC searches for task-relevant edges using patching; the dataset, graph granularity, metric and corruption scheme specify the discovery problem.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercise-reconstruction-is-not-mechanism-equivalence">
+<summary><h3 id="exercise-reconstruction-is-not-mechanism-equivalence">Exercise: reconstruction is not mechanism equivalence</h3></summary>
+<div class="sec-body">
+
+<p>Construct <span class="math inline">f,g:\mathbb R\to\mathbb R</span> that agree on a training distribution supported on <span class="math inline">[-1,1]</span> but disagree after an intervention that sets <span class="math inline">x=2</span>. What additional checks would you want before transferring an attribution graph from a replacement model to the original?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Take <span class="math inline">f(x)=x</span> and <span class="math inline">g(x)=x+\operatorname{ReLU}(x-1)</span>. They agree everywhere on the stipulated support, but <span class="math inline">f(2)=2</span> and <span class="math inline">g(2)=3</span>. Check the original and replacement under the actual interventions, relevant held-out distributions, and matched behavioural metrics; inspect reconstruction-error contributions and mechanisms the replacement leaves fixed. Agreement on ordinary inputs is insufficient to guarantee agreement under interventions.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="causal-scrubbing-and-causal-abstraction">
+<summary><h2 id="causal-scrubbing-and-causal-abstraction">Causal scrubbing and causal abstraction</h2></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://www.lesswrong.com/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing">Causal Scrubbing: a method for rigorously testing interpretability hypotheses</a></strong>, Chan et al., Redwood Research, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Read sections 2–4 and limitations: test a specified explanation with constrained resampling. Distinguish the original proposal from the later retrospective comments.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2106.02997">Causal Abstractions of Neural Networks</a></strong>, Geiger et al., 2021 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Interchange interventions test whether a neural representation plays the causal role assigned by a higher-level model.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://arxiv.org/abs/2303.02536">Finding Alignments Between Interpretable Causal Variables and Distributed Neural Representations</a></strong>, Geiger et al., 2023; CLeaR 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Distributed Alignment Search learns subspaces aligned with hypothesised variables; distinguish fitting the alignment from testing it.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://jmlr.org/papers/volume26/23-0058/23-0058.pdf">Causal Abstraction for Mechanistic Interpretability</a></strong>, Geiger et al., JMLR 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 5/5: a day or more (a monograph-length survey or thesis)">Length <span class="on">●●●●●</span><span class="off"></span></span></span></p>
+<p>Longer theoretical reference: maps between high- and low-level interventions, unifying several interpretability methods. Read selected sections.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/FhryNAFknqKAdDcYy/how-to-use-and-interpret-activation-patching">How to use and interpret activation patching</a></strong>, Heimersheim and Nanda, 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Practical companion on corruption, noising versus denoising, redundancy and metric choice.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-interchange-and-redundancy">
+<summary><h3 id="exercises-interchange-and-redundancy">Exercises: interchange and redundancy</h3></summary>
+<div class="sec-body">
+
+<p>For an orthogonal rotation <span class="math inline">R</span>, coordinate projector <span class="math inline">P</span>, base state <span class="math inline">h_b</span> and source state <span class="math inline">h_s</span>, a subspace interchange is <span class="math display">h&#39;=R^T[(I-P)Rh_b+PRh_s]=h_b+Q(h_s-h_b),\qquad Q=R^TPR.</span></p>
+<ol type="1">
+<li>Show that <span class="math inline">Q</span> is an orthogonal projector and that <span class="math inline">(I-Q)h&#39;=(I-Q)h_b</span>. What would an evaluation on the same pairs used to learn <span class="math inline">R</span> fail to establish?</li>
+<li>Let clean inputs be <span class="math inline">A=B=1</span> and corrupted inputs <span class="math inline">A=B=0</span>. Compare individually restoring one input and individually corrupting one input for <span class="math inline">C=A\land B</span> and <span class="math inline">C=A\lor B</span>.</li>
+</ol>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ol type="1">
+<li><span class="math inline">Q^T=Q</span> and <span class="math inline">Q^2=R^TPRR^TPR=Q</span>. Hence <span class="math inline">(I-Q)Q=0</span>, proving complement preservation. Fitting an alignment to examples does not establish generalisation to held-out interventions, or rule out competing high-level explanations.</li>
+<li>For AND, restoring either input alone leaves 0; corrupting either alone destroys the clean output. For OR, restoring either alone gives 1; corrupting either alone leaves 1. The apparent importance of a component depends on intervention direction and redundancy.</li>
+</ol>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="negative-results-and-changes-of-direction">
+<summary><h2 id="negative-results-and-changes-of-direction">Negative results and changes of direction</h2></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://www.lesswrong.com/posts/4uXCAJNuPKtKBsi28/negative-results-for-saes-on-downstream-tasks">Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research</a></strong>, Lewis Smith et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The GDM report linked from Charles’s essay: SAE-based approaches underperformed linear probes on the studied harmful-intent OOD detection task. Read the task and baselines before generalising the conclusion.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/gYfpPbww3wQRaxAFD/activation-space-interpretability-may-be-doomed">Activation space interpretability may be doomed</a></strong>, Chughtai and Bushnaq, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>An argument distinguishing structure visible in activations from mechanisms used in computation; a bridge to parameter decomposition, not a theorem that SAEs never help.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.lesswrong.com/posts/tEPHGZAb63dfq2v8n/how-useful-is-mechanistic-interpretability">How useful is mechanistic interpretability?</a></strong>, Greenblatt, Nanda and Shlegeris, 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>A dialogue about faithful explanation and practical impact; compare with the later Pragmatic Vision reading at the top.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="goodfire-feature-geometry-and-parameter-decomposition">
+<summary><h2 id="goodfire-feature-geometry-and-parameter-decomposition">Goodfire: feature geometry and parameter decomposition</h2></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://arxiv.org/abs/2509.02565">Understanding sparse autoencoder scaling in the presence of feature manifolds</a></strong>, Eric J. Michaud, Liv Gorton and Tom McGrath, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Especially relevant to the day’s lecturer: dictionary capacity can be spent covering manifolds rather than identifying additional underlying features.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.goodfire.com/research/can-saes-capture-neural-geometry">Can SAEs Capture Neural Geometry?</a></strong>, Bhalla, Fel et al., Goodfire, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>How linear dictionary elements can capture, fragment or dilute curved structure; compare the synthetic demonstrations with model examples.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.goodfire.com/research/bsf-vision">Uncovering Neural Geometry in Vision Models With Block-Sparse Featurizers</a></strong>, Fel, Kowal et al., 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A move from individual directions to multidimensional subspaces; the empirical setting here is vision models.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://arxiv.org/abs/2501.14926">Interpretability in Parameter Space: Minimizing Mechanistic Description Length with Attribution-based Parameter Decomposition</a></strong>, Braun et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>APD seeks simple, sparsely used parameter components with faithful behaviour, demonstrated in toy systems.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.goodfire.com/research/stochastic-param-decomp">Towards Scalable Parameter Decomposition</a></strong>, Bushnaq et al., Goodfire, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>SPD replaces attribution-based selection with stochastic ablation; a bridge from APD to subsequent methods.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://www.goodfire.com/research/interpreting-lm-parameters">Interpreting Language Model Parameters</a></strong>, Bushnaq et al., Goodfire, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 5/5: a day or more (a monograph-length survey or thesis)">Length <span class="on">●●●●●</span><span class="off"></span></span></span></p>
+<p>VPD and a 67M-parameter language model. Prioritise the introduction, section 2 and section 7, including “Attribution graphs are not computational graphs” and the adversarial robustness limitations.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://already-clean.goodfire.com/">Neural Networks Are Already Clean</a></strong>, Nick Cammarata, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Optional contemporary counterpoint: an informal working hypothesis about neuron interpretability, not an established refutation of superposition.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercises-geometry-and-the-choice-of-parts">
+<summary><h3 id="exercises-geometry-and-the-choice-of-parts">Exercises: geometry and the choice of parts</h3></summary>
+<div class="sec-body">
+
+<ol type="1">
+<li>Let <span class="math inline">h(\theta)=(\cos\theta,\sin\theta)</span>. Distinguish its manifold dimension, linear-span dimension and the number of dictionary directions one might use to approximate it. Why might more SAE latents fail to imply more underlying concepts?</li>
+<li>For <span class="math inline">f(x)=W_2W_1x</span> and invertible <span class="math inline">R</span>, show that <span class="math inline">\widetilde W_1=RW_1</span>, <span class="math inline">\widetilde W_2=W_2R^{-1}</span> preserves the function. Does deleting hidden coordinate <span class="math inline">i</span> before and after this change of basis generally preserve the same ablated function?</li>
+</ol>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<ol type="1">
+<li>The circle is a one-dimensional manifold with a two-dimensional linear span. A dictionary can use arbitrarily many local directions to describe it. Counting those elements counts a chosen discretisation, not necessarily independent semantic factors.</li>
+<li><span class="math inline">W_2R^{-1}RW_1=W_2W_1</span>. Deleting coordinate <span class="math inline">i</span> in the new basis instead inserts <span class="math inline">I-R^{-1}e_ie_i^TR</span> between <span class="math inline">W_2</span> and <span class="math inline">W_1</span>, generally different from <span class="math inline">I-e_ie_i^T</span>. Exact functional or parameter reconstruction does not uniquely pick the parts whose interventions should be meaningful.</li>
+</ol>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec2" data-sec="tensor-similarity">
+<summary><h2 id="tensor-similarity">Tensor similarity</h2></summary>
+<div class="sec-body">
+
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2605.15183">When Are Two Networks the Same? Tensor Similarity for Mechanistic Interpretability</a></strong>, Nissen Gonzalez et al., including Logan Riggs Smith, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Weight-based similarity accounting for symmetries in multilinear/tensor models. Read the architecture restrictions: this is not automatically a metric for arbitrary ordinary transformers.</p>
+</div>
+</div>
+</details>
+<details class="sec sec2" data-sec="computation-in-superposition-including-heimersheim">
+<summary><h2 id="computation-in-superposition-including-heimersheim">Computation in superposition, including Heimersheim</h2></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://arxiv.org/abs/2408.05451">Mathematical Models of Computation in Superposition</a></strong>, Hänni, Mendel, Vaintrob and Chan, 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Constructive results for sparse computation in narrower networks; distinguish existence from what SGD learns in language models.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://arxiv.org/abs/2606.14673">Compressed Computation is (probably) not Computation in Superposition</a></strong>, Bhagat et al., including Heimersheim, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A particular toy benchmark’s apparent advantage is explained by a label-mixing term. This is a benchmark critique, not an impossibility theorem.</p>
+</div>
+
+<div class="reading main">
+
+<p><strong><a href="https://arxiv.org/abs/2607.04800">Compressed Computation under L⁴ Loss is likely Computation in Superposition</a></strong>, Ferreira da Silva and Heimersheim, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Read beside the preceding negative result: a changed loss elicits behaviour explained using sparse codewords and pseudoinverse decoding.</p>
+</div>
+
+<details class="sec sec3" data-sec="exercise-changing-which-errors-matter">
+<summary><h3 id="exercise-changing-which-errors-matter">Exercise: changing which errors matter</h3></summary>
+<div class="sec-body">
+
+<p>Compare residual vectors <span class="math inline">(2,0,0,0)</span> and <span class="math inline">(1,1,1,1)</span> under <span class="math inline">\sum_i e_i^2</span> and <span class="math inline">\sum_i e_i^4</span>. Compute both gradients. Why is a change in training outcome under the new objective insufficient on its own to establish computation in superposition?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Both squared losses are 4; the fourth-power losses are 16 and 4. The coordinate gradients are <span class="math inline">2e_i</span> and <span class="math inline">4e_i^3</span>. Fourth-power loss penalises concentrated large errors more strongly. That motivates a different solution but does not identify its mechanism: inspect the learned representation, decoding and intervention evidence.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+
+</article>
+</main>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Math: pandoc leaves TeX in <span class="math inline|display">; KaTeX typesets it.
+  if (window.katex) {
+    document.querySelectorAll("span.math").forEach(function (el) {
+      katex.render(el.textContent, el, {
+        displayMode: el.classList.contains("display"), throwOnError: false, strict: "ignore"
+      });
+      // Glue punctuation that follows inline math into the formula's last box,
+      // so a line never starts with a lone "." or ",".
+      var next = el.nextSibling, bases = el.querySelectorAll(".katex-html > .base");
+      if (el.classList.contains("inline") && next && next.nodeType === 3 && bases.length) {
+        var m = /^[.,;:!?)\]]+/.exec(next.nodeValue);
+        if (m) {
+          next.nodeValue = next.nodeValue.slice(m[0].length);
+          var p = document.createElement("span"); p.className = "math-punct"; p.textContent = m[0];
+          bases[bases.length - 1].appendChild(p);
+        }
+      }
+    });
+  }
+  // Contents: open beside the text on wide screens, folded on narrow ones.
+  var toc = document.getElementById("toc-box");
+  var wide = window.matchMedia("(min-width: 70rem)");
+  function syncToc() { toc.open = wide.matches; }
+  syncToc(); wide.addEventListener("change", syncToc);
+  // Show / hide all solutions.
+  var sols = Array.prototype.slice.call(document.querySelectorAll("details.solution"));
+  var btn = document.getElementById("toggle-solutions");
+  function syncBtn() {
+    if (!btn) return;
+    var allOpen = sols.every(function (d) { return d.open; });
+    btn.textContent = (allOpen ? "Hide all " : "Show all ") + sols.length + " solutions";
+    btn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (btn) btn.addEventListener("click", function () {
+    var open = !sols.every(function (d) { return d.open; });
+    sols.forEach(function (d) { d.open = open; });
+    syncBtn();
+  });
+  sols.forEach(function (d) { d.addEventListener("toggle", syncBtn); });
+  // A link into a folded block opens it.
+  function reveal() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var el = id && document.getElementById(id);
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+    if (el) el.scrollIntoView();
+  }
+  window.addEventListener("hashchange", reveal);
+  if (location.hash) reveal();
+  // Sections are folded; remember which ones this viewer has open.
+  var secs = Array.prototype.slice.call(document.querySelectorAll("article details.sec"));
+  var secKey = "open-sections:ami", saved = null;
+  try { saved = JSON.parse(localStorage.getItem(secKey) || "null"); } catch (err) {}
+  if (Array.isArray(saved)) secs.forEach(function (d) { if (saved.indexOf(d.dataset.sec) >= 0) d.open = true; });
+  var secBtn = document.getElementById("toggle-sections");
+  function syncSecs() {
+    var open = secs.filter(function (d) { return d.open; });
+    try { localStorage.setItem(secKey, JSON.stringify(open.map(function (d) { return d.dataset.sec; }))); } catch (err) {}
+    if (!secBtn) return;
+    var allOpen = open.length === secs.length;
+    secBtn.textContent = allOpen ? "Collapse all sections" : "Expand all sections";
+    secBtn.setAttribute("aria-pressed", allOpen ? "true" : "false");
+  }
+  if (secBtn) secBtn.addEventListener("click", function () {
+    var open = !secs.every(function (d) { return d.open; });
+    secs.forEach(function (d) { d.open = open; });
+  });
+  secs.forEach(function (d) { d.addEventListener("toggle", syncSecs); });
+  syncSecs();
+  // A click on an in-page link opens the folded blocks around its target first.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var el = a && document.getElementById(decodeURIComponent(a.getAttribute("href").slice(1)));
+    for (var p = el && el.parentElement; p; p = p.parentElement) if (p.tagName === "DETAILS") p.open = true;
+  });
+  // Print everything, folded or not.
+  var before = [];
+  window.addEventListener("beforeprint", function () {
+    before = Array.prototype.map.call(document.querySelectorAll("article details"), function (d) {
+      var was = d.open; d.open = true; return [d, was];
+    });
+  });
+  window.addEventListener("afterprint", function () {
+    before.forEach(function (x) { x[0].open = x[1]; }); before = [];
+  });
+  // Highlight the current section in the contents.
+  var links = {};
+  document.querySelectorAll("nav.toc li a").forEach(function (a) { links[a.getAttribute("href").slice(1)] = a; });
+  var heads = Array.prototype.filter.call(document.querySelectorAll("article h2[id]"), function (h) { return links[h.id]; });
+  if ("IntersectionObserver" in window && heads.length) {
+    var current = null;
+    var obs = new IntersectionObserver(function () {
+      var best = heads[0];
+      heads.forEach(function (h) { if (h.getBoundingClientRect().top < window.innerHeight * 0.3) best = h; });
+      if (current) current.classList.remove("active");
+      current = links[best.id]; current.classList.add("active");
+    }, { rootMargin: "0px 0px -70% 0px" });
+    heads.forEach(function (h) { obs.observe(h); });
+  }
+});
+</script>
+</body>
+</html>
