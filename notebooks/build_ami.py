@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Loose reading collection for October 29; ordering beyond the opener is provisional."""
+"""Guided reading collection for October 29: a framing opener, then three parts in suggested order."""
 from nbkit import markdown, reading, answer, run
 
 CELLS = [markdown(r"""
@@ -7,10 +7,17 @@ CELLS = [markdown(r"""
 
 **Iliad Intensive · Thursday 29 October 2026**
 
-Readings to accompany Eric Michaud and Brianna Grado-White's lectures. Pick what interests you; this is more than a day's reading. These are loosely grouped starting points, not a prescribed sequence. Importance scores prioritise this day’s reading: 5 marks the four anchor readings; 4 a recommended next choice; 3 useful depth; 2 an optional extension; 1 a specialist rabbit hole. Length is scored separately. You are not expected to read every high-rated item.
+Readings to accompany Eric Michaud and Brianna Grado-White's lectures. This is more than a day's reading, so skip freely, but the collection is a guided path in three parts: Anthropic's Transformer Circuits programme and sparse autoencoders; then the methods that followed (transcoders, circuit tracing, feature geometry) alongside the middle-era work on testing circuit claims; then a miscellany of alternative approaches. Within each part, sections and readings are in suggested order. Importance scores prioritise this day’s reading: 5 marks the essential readings; 4 a recommended next choice; 3 useful depth; 2 an optional extension; 1 a specialist rabbit hole. Length is scored separately. You are not expected to read every high-rated item.
 
 **Start with Charles's “What if not Circuits?”, section I.** The rest of that essay is optional. As you read the papers below, ask what each takes a feature or circuit to be, what evidence would establish its existence, and what its methods actually measure.
 """)]
+
+LEVEL = 2  # framing sections are top-level; part() pushes later sections down a level
+
+def part(title, intro):
+    global LEVEL
+    LEVEL = 3
+    CELLS.append(markdown('## '+title+'\n\n'+intro))
 
 def section(title, entries, optional_from=None, intro=''):
     def render(items):
@@ -19,19 +26,22 @@ def section(title, entries, optional_from=None, intro=''):
     if optional_from is not None:
         body += '\n\n<details>\n<summary>Optional: SAE variants (Gated, Top-K, JumpReLU, Matryoshka)</summary>\n\n'
         body += render(entries[optional_from:]) + '\n</details>\n'
-    CELLS.append(markdown('## '+title+'\n\n'+intro+'\n\n'+body))
+    CELLS.append(markdown('#'*LEVEL+' '+title+'\n\n'+intro+'\n\n'+body))
 
-section('Framing: what are we trying to explain?', [
+section('Start here: what are we trying to explain?', [
 ('What if not Circuits?', 'https://www.lesswrong.com/posts/mMERyrvEJ4xbiozie/what-if-not-circuits', 'Charles Renshaw-Whitman, 2026', 'First reading: section I, “What Might We Mean By Circuits?” Distinguish assumptions about circuits from assumptions about representations; treat the essay as a perspective to examine, not a conclusion required by this notebook.',5,2),
-('A Pragmatic Vision for Interpretability','https://www.lesswrong.com/posts/StENzDcD3kpfGJssR/a-pragmatic-vision-for-inter','Neel Nanda et al., 2025','The explicit turn toward task-grounded, empirically evaluated interpretability; compare its success criteria with the ambition of reverse-engineering a model.',4,3),
+('A Pragmatic Vision for Interpretability','https://www.lesswrong.com/posts/StENzDcD3kpfGJssR/a-pragmatic-vision-for-inter','Neel Nanda et al., 2025','The explicit turn toward task-grounded, empirically evaluated interpretability; compare its success criteria with the ambition of reverse-engineering a model.',5,3),
 ('Dmitry’s Koan','https://www.lesswrong.com/posts/3eo4SSZLfpHHCqoEQ/dmitry-s-koan','Dmitry Vaintrob, 2025','An explanation needs a specified precision scale: what error matters, relative to which baseline? Carry this question into the surrogate-model and causal-testing readings.',4,2),
 ])
+
+part('Part I — Transformer Circuits and sparse autoencoders',
+     'The core programme: superposition as the reason neurons are hard to read, dictionary learning as the proposed fix, and the evidence that made the field step back. Read the two anchors (Toy Models, Scaling Monosemanticity) before moving on.')
 section('Representations and Toy Models of Superposition', [
 ('Toy Models of Superposition','https://transformer-circuits.pub/2022/toy_model/index.html','Elhage et al., 2022','The synthetic setting where features are known: investigate when sparse features share dimensions, how interference is filtered, and which conclusions depend on the toy setup.',5,4),
 ('Distributed Representations: Composition & Superposition','https://transformer-circuits.pub/2023/superposition-composition/index.html','Chris Olah, 2023','Distinguishes compositional codes, superposition, and mere changes of basis. This is the likely intended “representation types” note, and is also linked from Charles’s opening essay.',4,2),
 ])
 CELLS += [markdown(r"""
-### Exercises: interference and what a probe proves
+#### Exercises: interference and what a probe proves
 
 In the tied-weight toy model, $x\in\mathbb R^n$, $W\in\mathbb R^{m\times n}$, $m<n$:
 $$h=Wx,\qquad \hat x=\operatorname{ReLU}(W^T h+b),\qquad
@@ -53,7 +63,7 @@ section('From dictionary learning to scaled features', [
 ('Learning Multi-Level Features with Matryoshka Sparse Autoencoders','https://arxiv.org/abs/2503.17547','Bussmann et al., 2025','Nested dictionaries as an attempt to capture features at multiple levels of abstraction.',2,3),
 ], optional_from=2)
 CELLS += [markdown(r"""
-### Exercises: what the sparsity penalty buys
+#### Exercises: what the sparsity penalty buys
 
 A schematic vanilla SAE has $z=\operatorname{ReLU}(W_e(x-b_d)+b_e)$, $\hat x=W_dz+b_d$, and objective
 $$\mathbb E[\|x-\hat x\|_2^2+\lambda\|z\|_1],$$
@@ -67,43 +77,50 @@ with decoder-column scale controlled. This schematic is not the objective of eve
 2. Reconstruction is unchanged while the penalty decreases by $1/c$: an uncontrolled scaling degeneracy.
 3. Compare methods at matched sparsity and dictionary size, then separately measure held-out concept detection, intervention specificity and downstream loss recovery. A dictionary can improve reconstruction by encoding nuisance variation without improving the chosen task. None of these measurements alone certifies a complete ontology.
 """)]
-section('Designed for interpretability: training networks from scratch', [
-('Weight-sparse transformers have interpretable circuits','https://arxiv.org/abs/2511.13653','Gao et al., 2025; ICML 2026','Start with the de novo models: constrain weights during training, then prune circuits for selected tasks. Examine the capability–interpretability tradeoff and the limits of scaling sparse models; the later dense-model bridge experiment is a separate surrogate approach.',4,3),
-('Bilinear MLPs enable weight-based mechanistic interpretability','https://arxiv.org/abs/2410.08417','Pearce et al., 2024; ICLR 2025','Bilinear layers make weight-based analysis tractable in trained image and small language models. Exact quadratic structure helps analysis, but does not by itself assign human meanings to components.',3,3),
-('B-cos Networks: Alignment is All We Need for Interpretability','https://arxiv.org/abs/2205.10268','Böhle, Fritz and Schiele, 2022','An optional vision example: train with transforms that encourage weight–input alignment and yield input-dependent contribution maps. This explanation target differs from recovering an LLM algorithm.',2,3),
-], intro='Here interpretability changes the architecture or constraints of the task model during its own training. Evaluate both the resulting explanations and the capability cost. These are different interventions from fitting an explanatory model to an already-trained network.')
-CELLS += [markdown(r"""
-### Exercise: tractable computation versus meaningful components
+section('The SAE reckoning: negative results and changes of direction', [
+('Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research','https://www.lesswrong.com/posts/4uXCAJNuPKtKBsi28/negative-results-for-saes-on-downstream-tasks','Lewis Smith et al., 2025','The GDM report linked from Charles’s essay: SAE-based approaches underperformed linear probes on the studied harmful-intent OOD detection task. Read the task and baselines before generalising the conclusion.',5,3),
+('Activation space interpretability may be doomed','https://www.lesswrong.com/posts/gYfpPbww3wQRaxAFD/activation-space-interpretability-may-be-doomed','Chughtai and Bushnaq, 2025','An argument distinguishing structure visible in activations from mechanisms used in computation; a bridge to parameter decomposition, not a theorem that SAEs never help.',5,2),
+], intro='The result and the argument that pushed groups away from SAEs as a general-purpose tool; together with the Pragmatic Vision, the motivation for Part II and much of Part III.')
 
-For a bias-free bilinear layer $y=W_o[(W_ax)\odot(W_bx)]$, let $a_j^T,b_j^T$ be the rows of $W_a,W_b$. Show that
-$$y_k=x^TQ_kx,\qquad Q_k=\frac12\sum_j(W_o)_{kj}(a_jb_j^T+b_ja_j^T).$$
-What does this exact representation buy, and what remains to be shown before calling its eigenvectors interpretable features?
-"""), answer(r"""
-Expand $y_k=\sum_j(W_o)_{kj}(a_j^Tx)(b_j^Tx)$ and use $x^Ta_jb_j^Tx=x^Tb_ja_j^Tx$. Symmetrising gives the stated $Q_k$. Its eigendecomposition exposes exact quadratic contributions to this output coordinate. It does not establish semantic meaning, uniqueness within degenerate eigenspaces, or the role of those contributions in the complete network; these require further evidence.
-""")]
+part('Part II — Transcoders, circuit tracing, feature geometry and the middle era',
+     'Two responses to the limits of Part I: replace parts of the model with sparse surrogates and trace circuits through them, and take seriously that features may lie on manifolds rather than along single directions. The final section steps back to the middle era of circuit discovery and causal testing, whose tools are what you need to judge any circuit claim.')
 section('Learned surrogates: transcoders and circuit tracing', [
 ('Transcoders Find Interpretable LLM Feature Circuits','https://arxiv.org/abs/2406.11944','Dunefsky, Chlenski and Nanda, 2024','A precursor to cross-layer transcoders: fit a wide, sparsely activating replacement to a trained dense MLP’s input–output map, then analyse the replacement’s feature interactions.',3,3),
 ('Circuit Tracing: Revealing Computational Graphs in Language Models','https://transformer-circuits.pub/2025/attribution-graphs/methods.html','Ameisen et al., 2025','Cross-layer transcoders and attribution graphs: read the replacement-model construction and its limitations before interpreting edges as explanations of the original model.',4,4),
 ('On the Biology of a Large Language Model','https://transformer-circuits.pub/2025/attribution-graphs/biology.html','Lindsey et al., 2025','Choose one case study, inspect its graph and interventions, and separate observations from the proposed computational story. Pair with the Circuit Tracing methods paper.',4,4),
-], intro='Here the original model already exists. We train a more interpretable approximation to some of its computation, then test how well explanations of that approximation transfer to the original. Read the dense-to-sparse bridges experiment in the weight-sparse-transformer paper as another example.')
+], intro='Here the original model already exists. We train a more interpretable approximation to some of its computation, then test how well explanations of that approximation transfer to the original. Read the dense-to-sparse bridges experiment in the weight-sparse-transformer paper (Part III) as another example.')
 CELLS += [markdown(r"""
-### Exercise: reconstruction is not mechanism equivalence
+#### Exercise: reconstruction is not mechanism equivalence
 
 Construct $f,g:\mathbb R\to\mathbb R$ that agree on a training distribution supported on $[-1,1]$ but disagree after an intervention that sets $x=2$. What additional checks would you want before transferring an attribution graph from a replacement model to the original?
 """), answer(r"""
 Take $f(x)=x$ and $g(x)=x+\operatorname{ReLU}(x-1)$. They agree everywhere on the stipulated support, but $f(2)=2$ and $g(2)=3$. Check the original and replacement under the actual interventions, relevant held-out distributions, and matched behavioural metrics; inspect reconstruction-error contributions and mechanisms the replacement leaves fixed. Agreement on ordinary inputs is insufficient to guarantee agreement under interventions.
 """)]
 
-section('Circuit discovery, causal scrubbing and causal abstraction', [
-('Towards Automated Circuit Discovery for Mechanistic Interpretability','https://arxiv.org/abs/2304.14997','Conmy et al., 2023','ACDC searches the original model’s computational graph for task-relevant edges using patching. Unlike a transcoder, it does not train a replacement MLP; dataset, metric and corruption scheme define the discovery problem.',3,3),
+section('Feature manifolds and geometry (Goodfire)', [
+('Understanding sparse autoencoder scaling in the presence of feature manifolds','https://arxiv.org/abs/2509.02565','Eric J. Michaud, Liv Gorton and Tom McGrath, 2025','Especially relevant to the day’s lecturer: dictionary capacity can be spent covering manifolds rather than identifying additional underlying features.',4,3),
+('Can SAEs Capture Neural Geometry?','https://www.goodfire.com/research/can-saes-capture-neural-geometry','Bhalla, Fel et al., Goodfire, 2026','How linear dictionary elements can capture, fragment or dilute curved structure; compare the synthetic demonstrations with model examples.',3,3),
+('Uncovering Neural Geometry in Vision Models With Block-Sparse Featurizers','https://www.goodfire.com/research/bsf-vision','Fel, Kowal et al., 2026','A move from individual directions to multidimensional subspaces; the empirical setting here is vision models.',2,3),
+('Neural Networks Are Already Clean','https://already-clean.goodfire.com/','Nick Cammarata, 2026','Optional contemporary counterpoint: an informal working hypothesis about neuron interpretability, not an established refutation of superposition.',1,4),
+], intro='If a concept is a curved manifold rather than a direction, a linear dictionary spends many latents tiling it. Start with Eric Michaud’s paper.')
+CELLS += [markdown(r"""
+#### Exercise: counting latents on a manifold
+
+Let $h(\theta)=(\cos\theta,\sin\theta)$. Distinguish its manifold dimension, linear-span dimension and the number of dictionary directions one might use to approximate it. Why might more SAE latents fail to imply more underlying concepts?
+"""), answer(r"""
+The circle is a one-dimensional manifold with a two-dimensional linear span. A dictionary can use arbitrarily many local directions to describe it. Counting those elements counts a chosen discretisation, not necessarily independent semantic factors.
+""")]
+section('The middle era: circuit discovery, causal scrubbing and causal abstraction', [
 ('Causal Scrubbing: a method for rigorously testing interpretability hypotheses','https://www.lesswrong.com/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing','Chan et al., Redwood Research, 2022','Read sections 2–4 and limitations: test a specified explanation with constrained resampling. Distinguish the original proposal from the later retrospective comments.',5,3),
+('Towards Automated Circuit Discovery for Mechanistic Interpretability','https://arxiv.org/abs/2304.14997','Conmy et al., 2023','ACDC searches the original model’s computational graph for task-relevant edges using patching. Unlike a transcoder, it does not train a replacement MLP; dataset, metric and corruption scheme define the discovery problem.',3,3),
+('How to use and interpret activation patching','https://www.lesswrong.com/posts/FhryNAFknqKAdDcYy/how-to-use-and-interpret-activation-patching','Heimersheim and Nanda, 2024','Practical companion on corruption, noising versus denoising, redundancy and metric choice.',2,3),
 ('Causal Abstractions of Neural Networks','https://arxiv.org/abs/2106.02997','Geiger et al., 2021','Interchange interventions test whether a neural representation plays the causal role assigned by a higher-level model.',3,3),
 ('Finding Alignments Between Interpretable Causal Variables and Distributed Neural Representations','https://arxiv.org/abs/2303.02536','Geiger et al., 2023; CLeaR 2024','Distributed Alignment Search learns subspaces aligned with hypothesised variables; distinguish fitting the alignment from testing it.',4,3),
 ('Causal Abstraction for Mechanistic Interpretability','https://jmlr.org/papers/volume26/23-0058/23-0058.pdf','Geiger et al., JMLR 2025','Longer theoretical reference: maps between high- and low-level interventions, unifying several interpretability methods. Read selected sections.',1,5),
-('How to use and interpret activation patching','https://www.lesswrong.com/posts/FhryNAFknqKAdDcYy/how-to-use-and-interpret-activation-patching','Heimersheim and Nanda, 2024','Practical companion on corruption, noising versus denoising, redundancy and metric choice.',2,3),
+('How useful is mechanistic interpretability? — Nanda / Redwood dialogue','https://www.lesswrong.com/posts/tEPHGZAb63dfq2v8n/how-useful-is-mechanistic-interpretability','Neel Nanda, Ryan Greenblatt, Buck Shlegeris and Oliver Habryka, December 2023','The Nanda/Redwood conversation: what induction-head and feature explanations actually explain, what would count as a faithful mechanism, and how to measure usefulness. Read it as a snapshot of the era’s open questions, then compare with the later Pragmatic Vision reading at the top.',5,2),
 ])
 CELLS += [markdown(r"""
-### Exercises: interchange and redundancy
+#### Exercises: interchange and redundancy
 
 For an orthogonal rotation $R$, coordinate projector $P$, base state $h_b$ and source state $h_s$, a subspace interchange is
 $$h'=R^T[(I-P)Rh_b+PRh_s]=h_b+Q(h_s-h_b),\qquad Q=R^TPR.$$
@@ -113,28 +130,34 @@ $$h'=R^T[(I-P)Rh_b+PRh_s]=h_b+Q(h_s-h_b),\qquad Q=R^TPR.$$
 1. $Q^T=Q$ and $Q^2=R^TPRR^TPR=Q$. Hence $(I-Q)Q=0$, proving complement preservation. Fitting an alignment to examples does not establish generalisation to held-out interventions, or rule out competing high-level explanations.
 2. For AND, restoring either input alone leaves 0; corrupting either alone destroys the clean output. For OR, restoring either alone gives 1; corrupting either alone leaves 1. The apparent importance of a component depends on intervention direction and redundancy.
 """)]
-section('Negative results and changes of direction', [
-('Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research','https://www.lesswrong.com/posts/4uXCAJNuPKtKBsi28/negative-results-for-saes-on-downstream-tasks','Lewis Smith et al., 2025','The GDM report linked from Charles’s essay: SAE-based approaches underperformed linear probes on the studied harmful-intent OOD detection task. Read the task and baselines before generalising the conclusion.',4,3),
-('Activation space interpretability may be doomed','https://www.lesswrong.com/posts/gYfpPbww3wQRaxAFD/activation-space-interpretability-may-be-doomed','Chughtai and Bushnaq, 2025','An argument distinguishing structure visible in activations from mechanisms used in computation; a bridge to parameter decomposition, not a theorem that SAEs never help.',3,2),
-('How useful is mechanistic interpretability? — Nanda / Redwood dialogue','https://www.lesswrong.com/posts/tEPHGZAb63dfq2v8n/how-useful-is-mechanistic-interpretability','Neel Nanda, Ryan Greenblatt, Buck Shlegeris and Oliver Habryka, December 2023','The Nanda/Redwood conversation: what induction-head and feature explanations actually explain, what would count as a faithful mechanism, and how to measure usefulness. Compare with the later Pragmatic Vision reading at the top.',2,2),
-])
-section('Goodfire: feature geometry and parameter decomposition', [
-('Understanding sparse autoencoder scaling in the presence of feature manifolds','https://arxiv.org/abs/2509.02565','Eric J. Michaud, Liv Gorton and Tom McGrath, 2025','Especially relevant to the day’s lecturer: dictionary capacity can be spent covering manifolds rather than identifying additional underlying features.',4,3),
-('Can SAEs Capture Neural Geometry?','https://www.goodfire.com/research/can-saes-capture-neural-geometry','Bhalla, Fel et al., Goodfire, 2026','How linear dictionary elements can capture, fragment or dilute curved structure; compare the synthetic demonstrations with model examples.',3,3),
-('Uncovering Neural Geometry in Vision Models With Block-Sparse Featurizers','https://www.goodfire.com/research/bsf-vision','Fel, Kowal et al., 2026','A move from individual directions to multidimensional subspaces; the empirical setting here is vision models.',2,3),
+
+part('Part III — Alternative approaches',
+     'A miscellany of departures from activation-space dictionaries: train interpretable models from scratch, decompose parameters instead of activations, read features off the empirical NTK, study activation plateaus, and build theory of computation in superposition. Sample according to taste.')
+section('Designed for interpretability: training networks from scratch', [
+('Weight-sparse transformers have interpretable circuits','https://arxiv.org/abs/2511.13653','Gao et al., 2025; ICML 2026','Start with the de novo models: constrain weights during training, then prune circuits for selected tasks. Examine the capability–interpretability tradeoff and the limits of scaling sparse models; the later dense-model bridge experiment is a separate surrogate approach.',4,3),
+('Bilinear MLPs enable weight-based mechanistic interpretability','https://arxiv.org/abs/2410.08417','Pearce et al., 2024; ICLR 2025','Bilinear layers make weight-based analysis tractable in trained image and small language models. Exact quadratic structure helps analysis, but does not by itself assign human meanings to components.',3,3),
+('B-cos Networks: Alignment is All We Need for Interpretability','https://arxiv.org/abs/2205.10268','Böhle, Fritz and Schiele, 2022','An optional vision example: train with transforms that encourage weight–input alignment and yield input-dependent contribution maps. This explanation target differs from recovering an LLM algorithm.',2,3),
+], intro='Here interpretability changes the architecture or constraints of the task model during its own training. Evaluate both the resulting explanations and the capability cost. These are different interventions from fitting an explanatory model to an already-trained network.')
+CELLS += [markdown(r"""
+#### Exercise: tractable computation versus meaningful components
+
+For a bias-free bilinear layer $y=W_o[(W_ax)\odot(W_bx)]$, let $a_j^T,b_j^T$ be the rows of $W_a,W_b$. Show that
+$$y_k=x^TQ_kx,\qquad Q_k=\frac12\sum_j(W_o)_{kj}(a_jb_j^T+b_ja_j^T).$$
+What does this exact representation buy, and what remains to be shown before calling its eigenvectors interpretable features?
+"""), answer(r"""
+Expand $y_k=\sum_j(W_o)_{kj}(a_j^Tx)(b_j^Tx)$ and use $x^Ta_jb_j^Tx=x^Tb_ja_j^Tx$. Symmetrising gives the stated $Q_k$. Its eigendecomposition exposes exact quadratic contributions to this output coordinate. It does not establish semantic meaning, uniqueness within degenerate eigenspaces, or the role of those contributions in the complete network; these require further evidence.
+""")]
+section('Parameter decomposition', [
 ('Interpretability in Parameter Space: Minimizing Mechanistic Description Length with Attribution-based Parameter Decomposition','https://arxiv.org/abs/2501.14926','Braun et al., 2025','APD seeks simple, sparsely used parameter components with faithful behaviour, demonstrated in toy systems.',3,4),
 ('Towards Scalable Parameter Decomposition','https://www.goodfire.com/research/stochastic-param-decomp','Bushnaq et al., Goodfire, 2025','SPD replaces attribution-based selection with stochastic ablation; a bridge from APD to subsequent methods.',2,3),
 ('Interpreting Language Model Parameters','https://www.goodfire.com/research/interpreting-lm-parameters','Bushnaq et al., Goodfire, 2026','VPD and a 67M-parameter language model. Prioritise the introduction, section 2 and section 7, including “Attribution graphs are not computational graphs” and the adversarial robustness limitations.',4,5),
-('Neural Networks Are Already Clean','https://already-clean.goodfire.com/','Nick Cammarata, 2026','Optional contemporary counterpoint: an informal working hypothesis about neuron interpretability, not an established refutation of superposition.',1,4),
-])
+], intro='Decompose the weights rather than the activations, seeking parameter components that are simple, sparsely used and jointly faithful. The motivating argument, “Activation space interpretability may be doomed”, is in Part I.')
 CELLS += [markdown(r"""
-### Exercises: geometry and the choice of parts
+#### Exercise: the choice of parts
 
-1. Let $h(\theta)=(\cos\theta,\sin\theta)$. Distinguish its manifold dimension, linear-span dimension and the number of dictionary directions one might use to approximate it. Why might more SAE latents fail to imply more underlying concepts?
-2. For $f(x)=W_2W_1x$ and invertible $R$, show that $\widetilde W_1=RW_1$, $\widetilde W_2=W_2R^{-1}$ preserves the function. Does deleting hidden coordinate $i$ before and after this change of basis generally preserve the same ablated function?
+For $f(x)=W_2W_1x$ and invertible $R$, show that $\widetilde W_1=RW_1$, $\widetilde W_2=W_2R^{-1}$ preserves the function. Does deleting hidden coordinate $i$ before and after this change of basis generally preserve the same ablated function?
 """), answer(r"""
-1. The circle is a one-dimensional manifold with a two-dimensional linear span. A dictionary can use arbitrarily many local directions to describe it. Counting those elements counts a chosen discretisation, not necessarily independent semantic factors.
-2. $W_2R^{-1}RW_1=W_2W_1$. Deleting coordinate $i$ in the new basis instead inserts $I-R^{-1}e_ie_i^TR$ between $W_2$ and $W_1$, generally different from $I-e_ie_i^T$. Exact functional or parameter reconstruction does not uniquely pick the parts whose interventions should be meaningful.
+$W_2R^{-1}RW_1=W_2W_1$. Deleting coordinate $i$ in the new basis instead inserts $I-R^{-1}e_ie_i^TR$ between $W_2$ and $W_1$, generally different from $I-e_ie_i^T$. Exact functional or parameter reconstruction does not uniquely pick the parts whose interventions should be meaningful.
 """)]
 section('Feature discovery through the empirical NTK', [
 ('Feature Identification via the Empirical NTK','https://arxiv.org/abs/2510.00468','Jennifer Lin, 2025','Eigenspaces of trained-model eNTKs recover known features in Toy Models of Superposition and a modular-addition MLP. Read the kernel variants and the rotation within feature subspaces; this is evidence in small models, not a general feature-identification theorem.',4,3),
@@ -142,7 +165,7 @@ section('Feature discovery through the empirical NTK', [
 ('A tale of three theories: sparsity, frustration, and statistical field theory','https://www.lesswrong.com/posts/siu22scEfuKxpSgfK/a-tale-of-three-theories-sparsity-frustration-and','Dmitry Vaintrob, 2026','Optional preliminary research write-up connecting sparse denoising, interference and frustration-induced structure across scales. A bridge from TMoS and computation in superposition to statistical-physics explanations.',2,2),
 ])
 CELLS += [markdown(r"""
-### Exercise: a kernel subspace is not a unique feature dictionary
+#### Exercise: a kernel subspace is not a unique feature dictionary
 
 For scalar model output $f_\theta$, at a fixed trained checkpoint define
 $$J_{a\mu}=\frac{\partial f_\theta(x_a)}{\partial\theta_\mu},\qquad K=JJ^T.$$
@@ -160,7 +183,7 @@ section('Activation plateaus: Heimersheim and collaborators', [
 ('Evidence for feature-specific error correction in LLMs','https://arxiv.org/abs/2606.24964','Francisco Ferreira da Silva and Stefan Heimersheim, 2026','Optional follow-up comparing contrastive candidate feature directions with mixtures of directions, connecting plateau geometry to the error-correction hypothesis.',2,3),
 ])
 CELLS += [markdown(r"""
-### Exercise: a plateau along which direction?
+#### Exercise: a plateau along which direction?
 
 Let $F$ be the remainder of a network after a chosen activation layer. Along a straight interpolation $h(t)=(1-t)h_A+th_B$, define $y(t)=F(h(t))$. The chain rule gives
 $$\frac{dy}{dt}=J_F(h(t))(h_B-h_A).$$
@@ -178,7 +201,7 @@ section('Computation in superposition', [
 ('Compressed Computation under L⁴ Loss is likely Computation in Superposition','https://arxiv.org/abs/2607.04800','Ferreira da Silva and Heimersheim, 2026','Read beside the preceding negative result: a changed loss elicits behaviour explained using sparse codewords and pseudoinverse decoding.',2,3),
 ])
 CELLS += [markdown(r"""
-### Exercise: changing which errors matter
+#### Exercise: changing which errors matter
 
 Compare residual vectors $(2,0,0,0)$ and $(1,1,1,1)$ under $\sum_i e_i^2$ and $\sum_i e_i^4$. Compute both gradients. Why is a change in training outcome under the new objective insufficient on its own to establish computation in superposition?
 """), answer(r"""

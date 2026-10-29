@@ -222,30 +222,23 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <nav class="toc" aria-label="Contents">
 <details id="toc-box"><summary>Contents</summary>
 <ol>
-<li><a href="#framing-what-are-we-trying-to-explain">Framing: what are we trying to explain?</a></li>
-<li><a href="#representations-and-toy-models-of-superposition">Representations and Toy Models of Superposition</a></li>
-<li><a href="#from-dictionary-learning-to-scaled-features">From dictionary learning to scaled features</a></li>
-<li><a href="#designed-for-interpretability-training-networks-from-scratch">Designed for interpretability: training networks from scratch</a></li>
-<li><a href="#learned-surrogates-transcoders-and-circuit-tracing">Learned surrogates: transcoders and circuit tracing</a></li>
-<li><a href="#circuit-discovery-causal-scrubbing-and-causal-abstraction">Circuit discovery, causal scrubbing and causal abstraction</a></li>
-<li><a href="#negative-results-and-changes-of-direction">Negative results and changes of direction</a></li>
-<li><a href="#goodfire-feature-geometry-and-parameter-decomposition">Goodfire: feature geometry and parameter decomposition</a></li>
-<li><a href="#feature-discovery-through-the-empirical-ntk">Feature discovery through the empirical NTK</a></li>
-<li><a href="#activation-plateaus-heimersheim-and-collaborators">Activation plateaus: Heimersheim and collaborators</a></li>
-<li><a href="#computation-in-superposition">Computation in superposition</a></li>
+<li><a href="#start-here-what-are-we-trying-to-explain">Start here: what are we trying to explain?</a></li>
+<li><a href="#part-i--transformer-circuits-and-sparse-autoencoders">Part I — Transformer Circuits and sparse autoencoders</a></li>
+<li><a href="#part-ii--transcoders-circuit-tracing-feature-geometry-and-the-middle-era">Part II — Transcoders, circuit tracing, feature geometry and the middle era</a></li>
+<li><a href="#part-iii--alternative-approaches">Part III — Alternative approaches</a></li>
 </ol>
 </details>
-<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 9 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
+<div class="tools"><button type="button" id="toggle-sections" class="btn" aria-pressed="false">Expand all sections</button><button type="button" id="toggle-solutions" class="btn" aria-pressed="false">Show all 10 solutions</button></div><div class="legend"><p class="legend-title">Reading scores</p><p class="rate rate-imp">Importance</p><ul><li><span class="on">●●●●●</span><span class="off"></span> essential</li><li><span class="on">●●●●</span><span class="off">○</span> recommended</li><li><span class="on">●●●</span><span class="off">○○</span> worthwhile</li><li><span class="on">●●</span><span class="off">○○○</span> optional</li><li><span class="on">●</span><span class="off">○○○○</span> rabbit hole</li></ul><p class="rate rate-len">Length</p><ul><li><span class="on">●●●●●</span><span class="off"></span> a day or more</li><li><span class="on">●●●●</span><span class="off">○</span> half a day</li><li><span class="on">●●●</span><span class="off">○○</span> 1-2 hours</li><li><span class="on">●●</span><span class="off">○○○</span> 15-45 minutes</li><li><span class="on">●</span><span class="off">○○○○</span> under 15 minutes</li></ul></div>
 </nav>
 <main>
 <article>
 <h1 id="ambitious-mechinterp-and-activation-geometry--reading-collection">Ambitious Mechinterp and Activation Geometry — reading collection</h1>
 <p><strong>Iliad Intensive · Thursday 29 October 2026</strong></p>
-<p>Readings to accompany Eric Michaud and Brianna Grado-White’s lectures. Pick what interests you; this is more than a day’s reading. These are loosely grouped starting points, not a prescribed sequence. Importance scores prioritise this day’s reading: 5 marks the four anchor readings; 4 a recommended next choice; 3 useful depth; 2 an optional extension; 1 a specialist rabbit hole. Length is scored separately. You are not expected to read every high-rated item.</p>
+<p>Readings to accompany Eric Michaud and Brianna Grado-White’s lectures. This is more than a day’s reading, so skip freely, but the collection is a guided path in three parts: Anthropic’s Transformer Circuits programme and sparse autoencoders; then the methods that followed (transcoders, circuit tracing, feature geometry) alongside the middle-era work on testing circuit claims; then a miscellany of alternative approaches. Within each part, sections and readings are in suggested order. Importance scores prioritise this day’s reading: 5 marks the essential readings; 4 a recommended next choice; 3 useful depth; 2 an optional extension; 1 a specialist rabbit hole. Length is scored separately. You are not expected to read every high-rated item.</p>
 <p><strong>Start with Charles’s “What if not Circuits?”, section I.</strong> The rest of that essay is optional. As you read the papers below, ask what each takes a feature or circuit to be, what evidence would establish its existence, and what its methods actually measure.</p>
 
-<details class="sec sec2" data-sec="framing-what-are-we-trying-to-explain">
-<summary><h2 id="framing-what-are-we-trying-to-explain">Framing: what are we trying to explain?</h2></summary>
+<details class="sec sec2" data-sec="start-here-what-are-we-trying-to-explain">
+<summary><h2 id="start-here-what-are-we-trying-to-explain">Start here: what are we trying to explain?</h2></summary>
 <div class="sec-body">
 
 <div class="reading main">
@@ -254,9 +247,9 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>First reading: section I, “What Might We Mean By Circuits?” Distinguish assumptions about circuits from assumptions about representations; treat the essay as a perspective to examine, not a conclusion required by this notebook.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://www.lesswrong.com/posts/StENzDcD3kpfGJssR/a-pragmatic-vision-for-inter">A Pragmatic Vision for Interpretability</a></strong>, Neel Nanda et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p><strong><a href="https://www.lesswrong.com/posts/StENzDcD3kpfGJssR/a-pragmatic-vision-for-inter">A Pragmatic Vision for Interpretability</a></strong>, Neel Nanda et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
 <p>The explicit turn toward task-grounded, empirically evaluated interpretability; compare its success criteria with the ambition of reverse-engineering a model.</p>
 </div>
 
@@ -267,8 +260,14 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 </div>
 </div>
 </details>
-<details class="sec sec2" data-sec="representations-and-toy-models-of-superposition">
-<summary><h2 id="representations-and-toy-models-of-superposition">Representations and Toy Models of Superposition</h2></summary>
+<details class="sec sec2" data-sec="part-i--transformer-circuits-and-sparse-autoencoders">
+<summary><h2 id="part-i--transformer-circuits-and-sparse-autoencoders">Part I — Transformer Circuits and sparse autoencoders</h2></summary>
+<div class="sec-body">
+
+<p>The core programme: superposition as the reason neurons are hard to read, dictionary learning as the proposed fix, and the evidence that made the field step back. Read the two anchors (Toy Models, Scaling Monosemanticity) before moving on.</p>
+
+<details class="sec sec3" data-sec="representations-and-toy-models-of-superposition">
+<summary><h3 id="representations-and-toy-models-of-superposition">Representations and Toy Models of Superposition</h3></summary>
 <div class="sec-body">
 
 <div class="reading main">
@@ -283,8 +282,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Distinguishes compositional codes, superposition, and mere changes of basis. This is the likely intended “representation types” note, and is also linked from Charles’s opening essay.</p>
 </div>
 
-<details class="sec sec3" data-sec="exercises-interference-and-what-a-probe-proves">
-<summary><h3 id="exercises-interference-and-what-a-probe-proves">Exercises: interference and what a probe proves</h3></summary>
+<details class="sec sec4" data-sec="exercises-interference-and-what-a-probe-proves">
+<summary><h4 id="exercises-interference-and-what-a-probe-proves">Exercises: interference and what a probe proves</h4></summary>
 <div class="sec-body">
 
 <p>In the tied-weight toy model, <span class="math inline">x\in\mathbb R^n</span>, <span class="math inline">W\in\mathbb R^{m\times n}</span>, <span class="math inline">m&lt;n</span>: <span class="math display">h=Wx,\qquad \hat x=\operatorname{ReLU}(W^T h+b),\qquad
@@ -308,8 +307,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="from-dictionary-learning-to-scaled-features">
-<summary><h2 id="from-dictionary-learning-to-scaled-features">From dictionary learning to scaled features</h2></summary>
+<details class="sec sec3" data-sec="from-dictionary-learning-to-scaled-features">
+<summary><h3 id="from-dictionary-learning-to-scaled-features">From dictionary learning to scaled features</h3></summary>
 <div class="sec-body">
 
 <div class="reading">
@@ -353,8 +352,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </details>
 
-<details class="sec sec3" data-sec="exercises-what-the-sparsity-penalty-buys">
-<summary><h3 id="exercises-what-the-sparsity-penalty-buys">Exercises: what the sparsity penalty buys</h3></summary>
+<details class="sec sec4" data-sec="exercises-what-the-sparsity-penalty-buys">
+<summary><h4 id="exercises-what-the-sparsity-penalty-buys">Exercises: what the sparsity penalty buys</h4></summary>
 <div class="sec-body">
 
 <p>A schematic vanilla SAE has <span class="math inline">z=\operatorname{ReLU}(W_e(x-b_d)+b_e)</span>, <span class="math inline">\hat x=W_dz+b_d</span>, and objective <span class="math display">\mathbb E[\|x-\hat x\|_2^2+\lambda\|z\|_1],</span> with decoder-column scale controlled. This schematic is not the objective of every SAE variant.</p>
@@ -379,51 +378,38 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="designed-for-interpretability-training-networks-from-scratch">
-<summary><h2 id="designed-for-interpretability-training-networks-from-scratch">Designed for interpretability: training networks from scratch</h2></summary>
+<details class="sec sec3" data-sec="the-sae-reckoning-negative-results-and-changes-of-direction">
+<summary><h3 id="the-sae-reckoning-negative-results-and-changes-of-direction">The SAE reckoning: negative results and changes of direction</h3></summary>
 <div class="sec-body">
 
-<p>Here interpretability changes the architecture or constraints of the task model during its own training. Evaluate both the resulting explanations and the capability cost. These are different interventions from fitting an explanatory model to an already-trained network.</p>
-<div class="reading">
+<p>The result and the argument that pushed groups away from SAEs as a general-purpose tool; together with the Pragmatic Vision, the motivation for Part II and much of Part III.</p>
+<div class="reading main">
 
-<p><strong><a href="https://arxiv.org/abs/2511.13653">Weight-sparse transformers have interpretable circuits</a></strong>, Gao et al., 2025; ICML 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Start with the de novo models: constrain weights during training, then prune circuits for selected tasks. Examine the capability–interpretability tradeoff and the limits of scaling sparse models; the later dense-model bridge experiment is a separate surrogate approach.</p>
+<p><strong><a href="https://www.lesswrong.com/posts/4uXCAJNuPKtKBsi28/negative-results-for-saes-on-downstream-tasks">Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research</a></strong>, Lewis Smith et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>The GDM report linked from Charles’s essay: SAE-based approaches underperformed linear probes on the studied harmful-intent OOD detection task. Read the task and baselines before generalising the conclusion.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://arxiv.org/abs/2410.08417">Bilinear MLPs enable weight-based mechanistic interpretability</a></strong>, Pearce et al., 2024; ICLR 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Bilinear layers make weight-based analysis tractable in trained image and small language models. Exact quadratic structure helps analysis, but does not by itself assign human meanings to components.</p>
+<p><strong><a href="https://www.lesswrong.com/posts/gYfpPbww3wQRaxAFD/activation-space-interpretability-may-be-doomed">Activation space interpretability may be doomed</a></strong>, Chughtai and Bushnaq, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>An argument distinguishing structure visible in activations from mechanisms used in computation; a bridge to parameter decomposition, not a theorem that SAEs never help.</p>
 </div>
-
-<div class="reading">
-
-<p><strong><a href="https://arxiv.org/abs/2205.10268">B-cos Networks: Alignment is All We Need for Interpretability</a></strong>, Böhle, Fritz and Schiele, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>An optional vision example: train with transforms that encourage weight–input alignment and yield input-dependent contribution maps. This explanation target differs from recovering an LLM algorithm.</p>
-</div>
-
-<details class="sec sec3" data-sec="exercise-tractable-computation-versus-meaningful-components">
-<summary><h3 id="exercise-tractable-computation-versus-meaningful-components">Exercise: tractable computation versus meaningful components</h3></summary>
-<div class="sec-body">
-
-<p>For a bias-free bilinear layer <span class="math inline">y=W_o[(W_ax)\odot(W_bx)]</span>, let <span class="math inline">a_j^T,b_j^T</span> be the rows of <span class="math inline">W_a,W_b</span>. Show that <span class="math display">y_k=x^TQ_kx,\qquad Q_k=\frac12\sum_j(W_o)_{kj}(a_jb_j^T+b_ja_j^T).</span> What does this exact representation buy, and what remains to be shown before calling its eigenvectors interpretable features?</p>
-
-<details class="solution">
-<summary>Solution</summary>
-<div class="solution-body">
-<p>Expand <span class="math inline">y_k=\sum_j(W_o)_{kj}(a_j^Tx)(b_j^Tx)</span> and use <span class="math inline">x^Ta_jb_j^Tx=x^Tb_ja_j^Tx</span>. Symmetrising gives the stated <span class="math inline">Q_k</span>. Its eigendecomposition exposes exact quadratic contributions to this output coordinate. It does not establish semantic meaning, uniqueness within degenerate eigenspaces, or the role of those contributions in the complete network; these require further evidence.</p>
-</div>
-</details>
 </div>
 </details>
 
 </div>
 </details>
-<details class="sec sec2" data-sec="learned-surrogates-transcoders-and-circuit-tracing">
-<summary><h2 id="learned-surrogates-transcoders-and-circuit-tracing">Learned surrogates: transcoders and circuit tracing</h2></summary>
+<details class="sec sec2" data-sec="part-ii--transcoders-circuit-tracing-feature-geometry-and-the-middle-era">
+<summary><h2 id="part-ii--transcoders-circuit-tracing-feature-geometry-and-the-middle-era">Part II — Transcoders, circuit tracing, feature geometry and the middle era</h2></summary>
 <div class="sec-body">
 
-<p>Here the original model already exists. We train a more interpretable approximation to some of its computation, then test how well explanations of that approximation transfer to the original. Read the dense-to-sparse bridges experiment in the weight-sparse-transformer paper as another example.</p>
+<p>Two responses to the limits of Part I: replace parts of the model with sparse surrogates and trace circuits through them, and take seriously that features may lie on manifolds rather than along single directions. The final section steps back to the middle era of circuit discovery and causal testing, whose tools are what you need to judge any circuit claim.</p>
+
+<details class="sec sec3" data-sec="learned-surrogates-transcoders-and-circuit-tracing">
+<summary><h3 id="learned-surrogates-transcoders-and-circuit-tracing">Learned surrogates: transcoders and circuit tracing</h3></summary>
+<div class="sec-body">
+
+<p>Here the original model already exists. We train a more interpretable approximation to some of its computation, then test how well explanations of that approximation transfer to the original. Read the dense-to-sparse bridges experiment in the weight-sparse-transformer paper (Part III) as another example.</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2406.11944">Transcoders Find Interpretable LLM Feature Circuits</a></strong>, Dunefsky, Chlenski and Nanda, 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
@@ -442,8 +428,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Choose one case study, inspect its graph and interventions, and separate observations from the proposed computational story. Pair with the Circuit Tracing methods paper.</p>
 </div>
 
-<details class="sec sec3" data-sec="exercise-reconstruction-is-not-mechanism-equivalence">
-<summary><h3 id="exercise-reconstruction-is-not-mechanism-equivalence">Exercise: reconstruction is not mechanism equivalence</h3></summary>
+<details class="sec sec4" data-sec="exercise-reconstruction-is-not-mechanism-equivalence">
+<summary><h4 id="exercise-reconstruction-is-not-mechanism-equivalence">Exercise: reconstruction is not mechanism equivalence</h4></summary>
 <div class="sec-body">
 
 <p>Construct <span class="math inline">f,g:\mathbb R\to\mathbb R</span> that agree on a training distribution supported on <span class="math inline">[-1,1]</span> but disagree after an intervention that sets <span class="math inline">x=2</span>. What additional checks would you want before transferring an attribution graph from a replacement model to the original?</p>
@@ -459,9 +445,61 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="circuit-discovery-causal-scrubbing-and-causal-abstraction">
-<summary><h2 id="circuit-discovery-causal-scrubbing-and-causal-abstraction">Circuit discovery, causal scrubbing and causal abstraction</h2></summary>
+<details class="sec sec3" data-sec="feature-manifolds-and-geometry-goodfire">
+<summary><h3 id="feature-manifolds-and-geometry-goodfire">Feature manifolds and geometry (Goodfire)</h3></summary>
 <div class="sec-body">
+
+<p>If a concept is a curved manifold rather than a direction, a linear dictionary spends many latents tiling it. Start with Eric Michaud’s paper.</p>
+<div class="reading">
+
+<p><strong><a href="https://arxiv.org/abs/2509.02565">Understanding sparse autoencoder scaling in the presence of feature manifolds</a></strong>, Eric J. Michaud, Liv Gorton and Tom McGrath, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Especially relevant to the day’s lecturer: dictionary capacity can be spent covering manifolds rather than identifying additional underlying features.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.goodfire.com/research/can-saes-capture-neural-geometry">Can SAEs Capture Neural Geometry?</a></strong>, Bhalla, Fel et al., Goodfire, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>How linear dictionary elements can capture, fragment or dilute curved structure; compare the synthetic demonstrations with model examples.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://www.goodfire.com/research/bsf-vision">Uncovering Neural Geometry in Vision Models With Block-Sparse Featurizers</a></strong>, Fel, Kowal et al., 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>A move from individual directions to multidimensional subspaces; the empirical setting here is vision models.</p>
+</div>
+
+<div class="reading">
+
+<p><strong><a href="https://already-clean.goodfire.com/">Neural Networks Are Already Clean</a></strong>, Nick Cammarata, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
+<p>Optional contemporary counterpoint: an informal working hypothesis about neuron interpretability, not an established refutation of superposition.</p>
+</div>
+
+<details class="sec sec4" data-sec="exercise-counting-latents-on-a-manifold">
+<summary><h4 id="exercise-counting-latents-on-a-manifold">Exercise: counting latents on a manifold</h4></summary>
+<div class="sec-body">
+
+<p>Let <span class="math inline">h(\theta)=(\cos\theta,\sin\theta)</span>. Distinguish its manifold dimension, linear-span dimension and the number of dictionary directions one might use to approximate it. Why might more SAE latents fail to imply more underlying concepts?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>The circle is a one-dimensional manifold with a two-dimensional linear span. A dictionary can use arbitrarily many local directions to describe it. Counting those elements counts a chosen discretisation, not necessarily independent semantic factors.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec3" data-sec="the-middle-era-circuit-discovery-causal-scrubbing-and-causal-abstraction">
+<summary><h3 id="the-middle-era-circuit-discovery-causal-scrubbing-and-causal-abstraction">The middle era: circuit discovery, causal scrubbing and causal abstraction</h3></summary>
+<div class="sec-body">
+
+<div class="reading main">
+
+<p><strong><a href="https://www.lesswrong.com/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing">Causal Scrubbing: a method for rigorously testing interpretability hypotheses</a></strong>, Chan et al., Redwood Research, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Read sections 2–4 and limitations: test a specified explanation with constrained resampling. Distinguish the original proposal from the later retrospective comments.</p>
+</div>
 
 <div class="reading">
 
@@ -469,10 +507,10 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>ACDC searches the original model’s computational graph for task-relevant edges using patching. Unlike a transcoder, it does not train a replacement MLP; dataset, metric and corruption scheme define the discovery problem.</p>
 </div>
 
-<div class="reading main">
+<div class="reading">
 
-<p><strong><a href="https://www.lesswrong.com/posts/JvZhhzycHu2Yd57RN/causal-scrubbing-a-method-for-rigorously-testing">Causal Scrubbing: a method for rigorously testing interpretability hypotheses</a></strong>, Chan et al., Redwood Research, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Read sections 2–4 and limitations: test a specified explanation with constrained resampling. Distinguish the original proposal from the later retrospective comments.</p>
+<p><strong><a href="https://www.lesswrong.com/posts/FhryNAFknqKAdDcYy/how-to-use-and-interpret-activation-patching">How to use and interpret activation patching</a></strong>, Heimersheim and Nanda, 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Practical companion on corruption, noising versus denoising, redundancy and metric choice.</p>
 </div>
 
 <div class="reading">
@@ -493,14 +531,14 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Longer theoretical reference: maps between high- and low-level interventions, unifying several interpretability methods. Read selected sections.</p>
 </div>
 
-<div class="reading">
+<div class="reading main">
 
-<p><strong><a href="https://www.lesswrong.com/posts/FhryNAFknqKAdDcYy/how-to-use-and-interpret-activation-patching">How to use and interpret activation patching</a></strong>, Heimersheim and Nanda, 2024 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Practical companion on corruption, noising versus denoising, redundancy and metric choice.</p>
+<p><strong><a href="https://www.lesswrong.com/posts/tEPHGZAb63dfq2v8n/how-useful-is-mechanistic-interpretability">How useful is mechanistic interpretability? — Nanda / Redwood dialogue</a></strong>, Neel Nanda, Ryan Greenblatt, Buck Shlegeris and Oliver Habryka, December 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 5/5: essential: if you read one thing here, read this">Importance <span class="on">●●●●●</span><span class="off"></span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
+<p>The Nanda/Redwood conversation: what induction-head and feature explanations actually explain, what would count as a faithful mechanism, and how to measure usefulness. Read it as a snapshot of the era’s open questions, then compare with the later Pragmatic Vision reading at the top.</p>
 </div>
 
-<details class="sec sec3" data-sec="exercises-interchange-and-redundancy">
-<summary><h3 id="exercises-interchange-and-redundancy">Exercises: interchange and redundancy</h3></summary>
+<details class="sec sec4" data-sec="exercises-interchange-and-redundancy">
+<summary><h4 id="exercises-interchange-and-redundancy">Exercises: interchange and redundancy</h4></summary>
 <div class="sec-body">
 
 <p>For an orthogonal rotation <span class="math inline">R</span>, coordinate projector <span class="math inline">P</span>, base state <span class="math inline">h_b</span> and source state <span class="math inline">h_s</span>, a subspace interchange is <span class="math display">h&#39;=R^T[(I-P)Rh_b+PRh_s]=h_b+Q(h_s-h_b),\qquad Q=R^TPR.</span></p>
@@ -523,51 +561,60 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="negative-results-and-changes-of-direction">
-<summary><h2 id="negative-results-and-changes-of-direction">Negative results and changes of direction</h2></summary>
-<div class="sec-body">
 
-<div class="reading">
-
-<p><strong><a href="https://www.lesswrong.com/posts/4uXCAJNuPKtKBsi28/negative-results-for-saes-on-downstream-tasks">Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research</a></strong>, Lewis Smith et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>The GDM report linked from Charles’s essay: SAE-based approaches underperformed linear probes on the studied harmful-intent OOD detection task. Read the task and baselines before generalising the conclusion.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://www.lesswrong.com/posts/gYfpPbww3wQRaxAFD/activation-space-interpretability-may-be-doomed">Activation space interpretability may be doomed</a></strong>, Chughtai and Bushnaq, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>An argument distinguishing structure visible in activations from mechanisms used in computation; a bridge to parameter decomposition, not a theorem that SAEs never help.</p>
-</div>
-
-<div class="reading">
-
-<p><strong><a href="https://www.lesswrong.com/posts/tEPHGZAb63dfq2v8n/how-useful-is-mechanistic-interpretability">How useful is mechanistic interpretability? — Nanda / Redwood dialogue</a></strong>, Neel Nanda, Ryan Greenblatt, Buck Shlegeris and Oliver Habryka, December 2023 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 2/5: 15-45 minutes (a long post, or a short paper's main text)">Length <span class="on">●●</span><span class="off">○○○</span></span></span></p>
-<p>The Nanda/Redwood conversation: what induction-head and feature explanations actually explain, what would count as a faithful mechanism, and how to measure usefulness. Compare with the later Pragmatic Vision reading at the top.</p>
-</div>
 </div>
 </details>
-<details class="sec sec2" data-sec="goodfire-feature-geometry-and-parameter-decomposition">
-<summary><h2 id="goodfire-feature-geometry-and-parameter-decomposition">Goodfire: feature geometry and parameter decomposition</h2></summary>
+<details class="sec sec2" data-sec="part-iii--alternative-approaches">
+<summary><h2 id="part-iii--alternative-approaches">Part III — Alternative approaches</h2></summary>
 <div class="sec-body">
 
+<p>A miscellany of departures from activation-space dictionaries: train interpretable models from scratch, decompose parameters instead of activations, read features off the empirical NTK, study activation plateaus, and build theory of computation in superposition. Sample according to taste.</p>
+
+<details class="sec sec3" data-sec="designed-for-interpretability-training-networks-from-scratch">
+<summary><h3 id="designed-for-interpretability-training-networks-from-scratch">Designed for interpretability: training networks from scratch</h3></summary>
+<div class="sec-body">
+
+<p>Here interpretability changes the architecture or constraints of the task model during its own training. Evaluate both the resulting explanations and the capability cost. These are different interventions from fitting an explanatory model to an already-trained network.</p>
 <div class="reading">
 
-<p><strong><a href="https://arxiv.org/abs/2509.02565">Understanding sparse autoencoder scaling in the presence of feature manifolds</a></strong>, Eric J. Michaud, Liv Gorton and Tom McGrath, 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>Especially relevant to the day’s lecturer: dictionary capacity can be spent covering manifolds rather than identifying additional underlying features.</p>
+<p><strong><a href="https://arxiv.org/abs/2511.13653">Weight-sparse transformers have interpretable circuits</a></strong>, Gao et al., 2025; ICML 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 4/5: recommended: one of the best readings for this section">Importance <span class="on">●●●●</span><span class="off">○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Start with the de novo models: constrain weights during training, then prune circuits for selected tasks. Examine the capability–interpretability tradeoff and the limits of scaling sparse models; the later dense-model bridge experiment is a separate surrogate approach.</p>
 </div>
 
 <div class="reading">
 
-<p><strong><a href="https://www.goodfire.com/research/can-saes-capture-neural-geometry">Can SAEs Capture Neural Geometry?</a></strong>, Bhalla, Fel et al., Goodfire, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>How linear dictionary elements can capture, fragment or dilute curved structure; compare the synthetic demonstrations with model examples.</p>
+<p><strong><a href="https://arxiv.org/abs/2410.08417">Bilinear MLPs enable weight-based mechanistic interpretability</a></strong>, Pearce et al., 2024; ICLR 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>Bilinear layers make weight-based analysis tractable in trained image and small language models. Exact quadratic structure helps analysis, but does not by itself assign human meanings to components.</p>
 </div>
 
 <div class="reading">
 
-<p><strong><a href="https://www.goodfire.com/research/bsf-vision">Uncovering Neural Geometry in Vision Models With Block-Sparse Featurizers</a></strong>, Fel, Kowal et al., 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
-<p>A move from individual directions to multidimensional subspaces; the empirical setting here is vision models.</p>
+<p><strong><a href="https://arxiv.org/abs/2205.10268">B-cos Networks: Alignment is All We Need for Interpretability</a></strong>, Böhle, Fritz and Schiele, 2022 <span class="ratings"><span class="rate rate-imp" title="Importance 2/5: optional: more on one specific point">Importance <span class="on">●●</span><span class="off">○○○</span></span> <span class="rate rate-len" title="Length 3/5: 1-2 hours (a typical paper, read through)">Length <span class="on">●●●</span><span class="off">○○</span></span></span></p>
+<p>An optional vision example: train with transforms that encourage weight–input alignment and yield input-dependent contribution maps. This explanation target differs from recovering an LLM algorithm.</p>
 </div>
 
+<details class="sec sec4" data-sec="exercise-tractable-computation-versus-meaningful-components">
+<summary><h4 id="exercise-tractable-computation-versus-meaningful-components">Exercise: tractable computation versus meaningful components</h4></summary>
+<div class="sec-body">
+
+<p>For a bias-free bilinear layer <span class="math inline">y=W_o[(W_ax)\odot(W_bx)]</span>, let <span class="math inline">a_j^T,b_j^T</span> be the rows of <span class="math inline">W_a,W_b</span>. Show that <span class="math display">y_k=x^TQ_kx,\qquad Q_k=\frac12\sum_j(W_o)_{kj}(a_jb_j^T+b_ja_j^T).</span> What does this exact representation buy, and what remains to be shown before calling its eigenvectors interpretable features?</p>
+
+<details class="solution">
+<summary>Solution</summary>
+<div class="solution-body">
+<p>Expand <span class="math inline">y_k=\sum_j(W_o)_{kj}(a_j^Tx)(b_j^Tx)</span> and use <span class="math inline">x^Ta_jb_j^Tx=x^Tb_ja_j^Tx</span>. Symmetrising gives the stated <span class="math inline">Q_k</span>. Its eigendecomposition exposes exact quadratic contributions to this output coordinate. It does not establish semantic meaning, uniqueness within degenerate eigenspaces, or the role of those contributions in the complete network; these require further evidence.</p>
+</div>
+</details>
+</div>
+</details>
+
+</div>
+</details>
+<details class="sec sec3" data-sec="parameter-decomposition">
+<summary><h3 id="parameter-decomposition">Parameter decomposition</h3></summary>
+<div class="sec-body">
+
+<p>Decompose the weights rather than the activations, seeking parameter components that are simple, sparsely used and jointly faithful. The motivating argument, “Activation space interpretability may be doomed”, is in Part I.</p>
 <div class="reading">
 
 <p><strong><a href="https://arxiv.org/abs/2501.14926">Interpretability in Parameter Space: Minimizing Mechanistic Description Length with Attribution-based Parameter Decomposition</a></strong>, Braun et al., 2025 <span class="ratings"><span class="rate rate-imp" title="Importance 3/5: worthwhile: for most people taking this section">Importance <span class="on">●●●</span><span class="off">○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
@@ -586,28 +633,16 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>VPD and a 67M-parameter language model. Prioritise the introduction, section 2 and section 7, including “Attribution graphs are not computational graphs” and the adversarial robustness limitations.</p>
 </div>
 
-<div class="reading">
-
-<p><strong><a href="https://already-clean.goodfire.com/">Neural Networks Are Already Clean</a></strong>, Nick Cammarata, 2026 <span class="ratings"><span class="rate rate-imp" title="Importance 1/5: rabbit hole: only if this exact point grips you">Importance <span class="on">●</span><span class="off">○○○○</span></span> <span class="rate rate-len" title="Length 4/5: half a day (a long paper or long technical post)">Length <span class="on">●●●●</span><span class="off">○</span></span></span></p>
-<p>Optional contemporary counterpoint: an informal working hypothesis about neuron interpretability, not an established refutation of superposition.</p>
-</div>
-
-<details class="sec sec3" data-sec="exercises-geometry-and-the-choice-of-parts">
-<summary><h3 id="exercises-geometry-and-the-choice-of-parts">Exercises: geometry and the choice of parts</h3></summary>
+<details class="sec sec4" data-sec="exercise-the-choice-of-parts">
+<summary><h4 id="exercise-the-choice-of-parts">Exercise: the choice of parts</h4></summary>
 <div class="sec-body">
 
-<ol type="1">
-<li>Let <span class="math inline">h(\theta)=(\cos\theta,\sin\theta)</span>. Distinguish its manifold dimension, linear-span dimension and the number of dictionary directions one might use to approximate it. Why might more SAE latents fail to imply more underlying concepts?</li>
-<li>For <span class="math inline">f(x)=W_2W_1x</span> and invertible <span class="math inline">R</span>, show that <span class="math inline">\widetilde W_1=RW_1</span>, <span class="math inline">\widetilde W_2=W_2R^{-1}</span> preserves the function. Does deleting hidden coordinate <span class="math inline">i</span> before and after this change of basis generally preserve the same ablated function?</li>
-</ol>
+<p>For <span class="math inline">f(x)=W_2W_1x</span> and invertible <span class="math inline">R</span>, show that <span class="math inline">\widetilde W_1=RW_1</span>, <span class="math inline">\widetilde W_2=W_2R^{-1}</span> preserves the function. Does deleting hidden coordinate <span class="math inline">i</span> before and after this change of basis generally preserve the same ablated function?</p>
 
 <details class="solution">
 <summary>Solution</summary>
 <div class="solution-body">
-<ol type="1">
-<li>The circle is a one-dimensional manifold with a two-dimensional linear span. A dictionary can use arbitrarily many local directions to describe it. Counting those elements counts a chosen discretisation, not necessarily independent semantic factors.</li>
-<li><span class="math inline">W_2R^{-1}RW_1=W_2W_1</span>. Deleting coordinate <span class="math inline">i</span> in the new basis instead inserts <span class="math inline">I-R^{-1}e_ie_i^TR</span> between <span class="math inline">W_2</span> and <span class="math inline">W_1</span>, generally different from <span class="math inline">I-e_ie_i^T</span>. Exact functional or parameter reconstruction does not uniquely pick the parts whose interventions should be meaningful.</li>
-</ol>
+<p><span class="math inline">W_2R^{-1}RW_1=W_2W_1</span>. Deleting coordinate <span class="math inline">i</span> in the new basis instead inserts <span class="math inline">I-R^{-1}e_ie_i^TR</span> between <span class="math inline">W_2</span> and <span class="math inline">W_1</span>, generally different from <span class="math inline">I-e_ie_i^T</span>. Exact functional or parameter reconstruction does not uniquely pick the parts whose interventions should be meaningful.</p>
 </div>
 </details>
 </div>
@@ -615,8 +650,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="feature-discovery-through-the-empirical-ntk">
-<summary><h2 id="feature-discovery-through-the-empirical-ntk">Feature discovery through the empirical NTK</h2></summary>
+<details class="sec sec3" data-sec="feature-discovery-through-the-empirical-ntk">
+<summary><h3 id="feature-discovery-through-the-empirical-ntk">Feature discovery through the empirical NTK</h3></summary>
 <div class="sec-body">
 
 <div class="reading">
@@ -637,8 +672,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Optional preliminary research write-up connecting sparse denoising, interference and frustration-induced structure across scales. A bridge from TMoS and computation in superposition to statistical-physics explanations.</p>
 </div>
 
-<details class="sec sec3" data-sec="exercise-a-kernel-subspace-is-not-a-unique-feature-dictionary">
-<summary><h3 id="exercise-a-kernel-subspace-is-not-a-unique-feature-dictionary">Exercise: a kernel subspace is not a unique feature dictionary</h3></summary>
+<details class="sec sec4" data-sec="exercise-a-kernel-subspace-is-not-a-unique-feature-dictionary">
+<summary><h4 id="exercise-a-kernel-subspace-is-not-a-unique-feature-dictionary">Exercise: a kernel subspace is not a unique feature dictionary</h4></summary>
 <div class="sec-body">
 
 <p>For scalar model output <span class="math inline">f_\theta</span>, at a fixed trained checkpoint define <span class="math display">J_{a\mu}=\frac{\partial f_\theta(x_a)}{\partial\theta_\mu},\qquad K=JJ^T.</span> For vector outputs, one can retain sample–output pairs as matrix indices, or analyse a selected output’s kernel. Specify the convention before comparing spectra.</p>
@@ -661,8 +696,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="activation-plateaus-heimersheim-and-collaborators">
-<summary><h2 id="activation-plateaus-heimersheim-and-collaborators">Activation plateaus: Heimersheim and collaborators</h2></summary>
+<details class="sec sec3" data-sec="activation-plateaus-heimersheim-and-collaborators">
+<summary><h3 id="activation-plateaus-heimersheim-and-collaborators">Activation plateaus: Heimersheim and collaborators</h3></summary>
 <div class="sec-body">
 
 <div class="reading">
@@ -683,8 +718,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Optional follow-up comparing contrastive candidate feature directions with mixtures of directions, connecting plateau geometry to the error-correction hypothesis.</p>
 </div>
 
-<details class="sec sec3" data-sec="exercise-a-plateau-along-which-direction">
-<summary><h3 id="exercise-a-plateau-along-which-direction">Exercise: a plateau along which direction?</h3></summary>
+<details class="sec sec4" data-sec="exercise-a-plateau-along-which-direction">
+<summary><h4 id="exercise-a-plateau-along-which-direction">Exercise: a plateau along which direction?</h4></summary>
 <div class="sec-body">
 
 <p>Let <span class="math inline">F</span> be the remainder of a network after a chosen activation layer. Along a straight interpolation <span class="math inline">h(t)=(1-t)h_A+th_B</span>, define <span class="math inline">y(t)=F(h(t))</span>. The chain rule gives <span class="math display">\frac{dy}{dt}=J_F(h(t))(h_B-h_A).</span></p>
@@ -709,8 +744,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 
 </div>
 </details>
-<details class="sec sec2" data-sec="computation-in-superposition">
-<summary><h2 id="computation-in-superposition">Computation in superposition</h2></summary>
+<details class="sec sec3" data-sec="computation-in-superposition">
+<summary><h3 id="computation-in-superposition">Computation in superposition</h3></summary>
 <div class="sec-body">
 
 <div class="reading">
@@ -731,8 +766,8 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Read beside the preceding negative result: a changed loss elicits behaviour explained using sparse codewords and pseudoinverse decoding.</p>
 </div>
 
-<details class="sec sec3" data-sec="exercise-changing-which-errors-matter">
-<summary><h3 id="exercise-changing-which-errors-matter">Exercise: changing which errors matter</h3></summary>
+<details class="sec sec4" data-sec="exercise-changing-which-errors-matter">
+<summary><h4 id="exercise-changing-which-errors-matter">Exercise: changing which errors matter</h4></summary>
 <div class="sec-body">
 
 <p>Compare residual vectors <span class="math inline">(2,0,0,0)</span> and <span class="math inline">(1,1,1,1)</span> under <span class="math inline">\sum_i e_i^2</span> and <span class="math inline">\sum_i e_i^4</span>. Compute both gradients. Why is a change in training outcome under the new objective insufficient on its own to establish computation in superposition?</p>
@@ -743,6 +778,9 @@ article details.sec > summary:hover > :is(h2, h3, h4) { color: var(--accent); }
 <p>Both squared losses are 4; the fourth-power losses are 16 and 4. The coordinate gradients are <span class="math inline">2e_i</span> and <span class="math inline">4e_i^3</span>. Fourth-power loss penalises concentrated large errors more strongly. That motivates a different solution but does not identify its mechanism: inspect the learned representation, decoding and intervention evidence.</p>
 </div>
 </details>
+</div>
+</details>
+
 </div>
 </details>
 
